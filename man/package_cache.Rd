@@ -33,7 +33,7 @@ For a simple API to a session-wide instance of this class, see
 pc$list()
 pc$find(..., .list = NULL)
 pc$copy_to(..., .list = NULL)
-pc$add(file, path, md5 = NULL, ..., .list = NULL)
+pc$add(file, path, md5 = tools::md5sum(file)[[1]], ..., .list = NULL)
 pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
 pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
 pc$copy_or_add(target, urls, path, md5 = NULL, ..., .list = NULL,

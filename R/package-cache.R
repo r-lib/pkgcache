@@ -23,7 +23,7 @@
 #' pc$list()
 #' pc$find(..., .list = NULL)
 #' pc$copy_to(..., .list = NULL)
-#' pc$add(file, path, md5 = NULL, ..., .list = NULL)
+#' pc$add(file, path, md5 = tools::md5sum(file)[[1]], ..., .list = NULL)
 #' pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
 #' pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
 #' pc$copy_or_add(target, urls, path, md5 = NULL, ..., .list = NULL,
@@ -124,7 +124,8 @@ package_cache <- R6Class(
       res
     },
 
-    add = function(file, path, md5 = tools::md5sum(file), ..., .list = NULL) {
+    add = function(file, path, md5 = tools::md5sum(file)[[1]], ...,
+                   .list = NULL) {
 
       assert_that(is_existing_file(file))
 

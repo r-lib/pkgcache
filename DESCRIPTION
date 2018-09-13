@@ -26,11 +26,15 @@ Imports:
     tools,
     utils
 Suggests:
+    covr,
     debugme,
     fs,
+    jsonlite,
     mockery,
+    pingr,
+    rprojroot,
     testthat,
-    covr
+    withr
 Depends: 
     R (>= 3.1)
 Remotes:

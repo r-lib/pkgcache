@@ -38,7 +38,7 @@ install.packages("pkgcache")
 ## Metadata cache
 
 `cran_list()` lists all packages in the metadata cache. It includes
-BioConductor package, and all versions (i.e. both binary and source)
+Bioconductor package, and all versions (i.e. both binary and source)
 of the packages for the current platform and R version.
 
 ```{r}

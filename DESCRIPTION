@@ -28,6 +28,8 @@ Imports:
     utils
 Suggests:
     debugme,
+    fs,
+    mockery,
     testthat,
     covr
 Depends: 

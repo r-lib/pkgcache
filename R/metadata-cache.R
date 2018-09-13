@@ -202,7 +202,6 @@ cmc__get_cache_files <- function(self, private, which) {
 #' @param max_age Maximum age allowed to consider the data current.
 #' @return Metadata.
 #' @keywords internal
-#' @importFrom async async async_try_each
 
 cmc__async_ensure_cache <- function(self, private, max_age) {
   max_age
@@ -364,7 +363,6 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
 #' @param self self
 #' @param private private self
 #' @keywords internal
-#' @importFrom async when_all
 
 cmc__update_replica_pkgs <- function(self, private) {
   "!!DEBUG Update replica PACKAGES"

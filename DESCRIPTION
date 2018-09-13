@@ -12,7 +12,22 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/r-lib/pkgcache
 BugReports: https://github.com/r-lib/pkgcache/issues
-Suggests: 
+Imports:
+    assertthat,
+    async,
+    cli,
+    curl,
+    digest,
+    filelock,
+    glue,
+    R6,
+    rappdirs,
+    rematch2,
+    tibble,
+    tools,
+    utils
+Suggests:
+    debugme,
     testthat,
     covr
 Depends: 

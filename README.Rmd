@@ -14,48 +14,86 @@ knitr::opts_chunk$set(
 ```
 # pkgcache
 
+> Cache CRAN-like metadata and package files
+
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.org/package=pkgcache)
 [![Travis build status](https://travis-ci.org/r-lib/pkgcache.svg?branch=master)](https://travis-ci.org/r-lib/pkgcache)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/r-lib/pkgcache?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/pkgcache)
 [![Coverage status](https://codecov.io/gh/r-lib/pkgcache/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=master)
 
-The goal of pkgcache is to ...
+Metadata and package cache for CRAN-like repositories. This is a utilitiy
+package to be used by package management tools that want to take advantage
+of caching.
 
 ## Installation
 
-You can install the released version of pkgcache from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of pkgcache from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("pkgcache")
 ```
 
-## Example
+## Metadata cache
 
-This is a basic example which shows you how to solve a common problem:
+`cran_list()` lists all packages in the metadata cache. It includes
+BioConductor package, and all versions (i.e. both binary and source)
+of the packages for the current platform and R version.
 
-```{r example}
-## basic example code
+```{r}
+library(pkgcache)
+cran_list()
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+`cran_deps()` and `cran_revdeps()` can be used to look up dependencies
+and reverse dependencies:
 
-```{r cars}
-summary(cars)
+```{r}
+cran_deps("crayon")
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r}
+cran_revdeps("crayon")
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+The metadata is updated automatically if it is older than seven days,
+and it can also be updated manually with `cran_update()`.
+
+See the `cranlike_metadata_cache` R6 class for a lower level API, including
+asynchronous methods, and more control.
+
+## Package cache
+
+Package management tools may use the `cache_*` functions and in particular
+the `package_cache` class, to make use of local caching of package files.
+
+The `cache_*` API is high level, and uses a user level cache:
+
+```{r}
+cache_summary()
+```
+
+```{r}
+cache_list()
+```
+
+```{r}
+cache_find(package = "dplyr")
+```
+
+`cache_add_file()` can be used to add a file, `cache_delete_files()` to
+remove files, `cache_get_files()` to copy files out of the cache.
+
+The `package_cache` class provides a finer API, including asynchronous
+methods.
 
 ## Code of Conduct
 
 Please note that the 'pkgcache' project is released with a
 [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By contributing
 to this project, you agree to abide by its terms.
+
+## License
+
+MIT © [RStudio Inc](https://rstudio.com)

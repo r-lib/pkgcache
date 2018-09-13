@@ -17,7 +17,7 @@ status](https://ci.appveyor.com/api/projects/status/github/r-lib/pkgcache?branch
 status](https://codecov.io/gh/r-lib/pkgcache/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=master)
 
 Metadata and package cache for CRAN-like repositories. This is a
-utilitiy package to be used by package management tools that want to
+utility package to be used by package management tools that want to
 take advantage of caching.
 
 ## Installation

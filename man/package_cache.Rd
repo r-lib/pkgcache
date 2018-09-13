@@ -9,7 +9,10 @@
 package_cache
 }
 \description{
-Fields:
+This is an R6 class that implements a concurrency safe package cache.
+}
+\details{
+By default these fields are included for every package:
 \itemize{
 \item \code{fullpath} Full package path.
 \item \code{path} Package path, within the repository.
@@ -18,5 +21,85 @@ Fields:
 \item \code{etag} ETag for the last dowload, from the given URL.
 \item \code{md5} MD5 of the file, to make sure if it has not changed.
 }
+
+Additional fields can be added as needed.
+
+For a simple API to a session-wide instance of this class, see
+\code{\link[=cache_summary]{cache_summary()}} and the other functions listed there.
 }
-\keyword{internal}
+\section{Usage}{
+\preformatted{pc <- package_cache$new(path = NULL)
+
+pc$list()
+pc$find(..., .list = NULL)
+pc$copy_to(..., .list = NULL)
+pc$add(file, path, md5 = NULL, ..., .list = NULL)
+pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
+pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
+pc$copy_or_add(target, urls, path, md5 = NULL, ..., .list = NULL,
+               on_progress = NULL)
+pc$async_copy_or_add(target, urls, path, ..., md5 = NULL, ...,
+               .list = NULL, on_progress = NULL)
+pc$update_or_add(target, urls, path, ..., .list = NULL,
+               on_progress = NULL)
+pc$async_update_or_add(target, urls, path, ..., .list = NULL,
+               on_progress = NULL)
+pc$delete(..., .list = NULL)
+}
+}
+
+\section{Arguments}{
+
+\itemize{
+\item \code{path}: For \code{package_cache$new()} the location of the cache. For other
+functions the location of the file inside the cache.
+\item \code{...}: Extra attributes to search for. They have to be named.
+\item \code{.list}: Extra attibutes to saerch for, they have to in a named list.
+\item \code{file}:  Path to the file to add.
+\item \code{url}: URL attribute. This is used to update the file, if requested.
+\item \code{md5}: MD5 hash of the file.
+\item \code{on_progress}: Callback to create progress bard. Passed to
+\code{async::http_get()}
+\item \code{target}: Path to copy the (first) to hit to.
+\item \code{urls}: Character vector or URLs to try to download the file from.
+}
+}
+
+\section{Details}{
+
+
+\code{package_cache$new()} attaches to the cache at \code{path}. (By default
+a platform dependent user level cache directory.) If the cache does
+not exists, it creates it.
+
+\code{pc$list()} lists all files in the cache, returns a tibble with all the
+default columns, and potentially extra columns as well.
+
+\code{pc$find()} list all files that match the specified criteria (\code{fullpath},
+\code{path}, \code{package}, etc.). Custom columns can be searched for as well.
+
+\code{pc$copy_to()} will copy the first matching file from the cache to
+\code{target}. It returns the tibble of \emph{all} matching records, invisibly.
+If no file matches, it returns an empty (zero-row) tibble.
+
+\code{pc$add()} adds a file to the cache.
+
+\code{pc$add_url()} downloads a file and adds it to the cache.
+
+\code{pc$async_add_url()} is the same, but it is asynchronous.
+
+\code{pc$copy_or_add()} works like \code{pc$copy_to()}, but if the file is not in
+the cache, it tries to download it from one of the specified URLs first.
+
+\code{pc$async_copy_or_add()} is the same, but asynchronous.
+
+\code{pc$update_or_add()} is like \code{pc$copy_to_add()}, but if the file is in
+the cache it tries to update it from the urls, using the stored etag to
+avoid unneccesary downloads.
+
+\code{pc$async_update_or_add()} is the same, but it is asychronous.
+
+\code{pc$delete()} deletes the file(s) from the cache.
+}
+
+\keyword{datasets}

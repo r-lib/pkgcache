@@ -38,3 +38,6 @@ See \code{\link[rappdirs:user_cache_dir]{rappdirs::user_cache_dir()}}.}
 \code{cache_summary()} returns a short summary of the state of the cache,
 e.g. the number of files and their total size. It returns a named list.
 }
+\seealso{
+The \link{package_cache} R6 class for a more flexible API.
+}

@@ -1,7 +1,9 @@
 
 #' A simple package cache
 #'
-#' Fields:
+#' This is an R6 class that implements a concurrency safe package cache.
+#'
+#' By default these fields are included for every package:
 #' * `fullpath` Full package path.
 #' * `path` Package path, within the repository.
 #' * `package` Package name.
@@ -9,11 +11,85 @@
 #' * `etag` ETag for the last dowload, from the given URL.
 #' * `md5` MD5 of the file, to make sure if it has not changed.
 #'
+#' Additional fields can be added as needed.
+#'
+#' For a simple API to a session-wide instance of this class, see
+#' [cache_summary()] and the other functions listed there.
+#'
+#' @section Usage:
+#' ```
+#' pc <- package_cache$new(path = NULL)
+#'
+#' pc$list()
+#' pc$find(..., .list = NULL)
+#' pc$copy_to(..., .list = NULL)
+#' pc$add(file, path, md5 = NULL, ..., .list = NULL)
+#' pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
+#' pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
+#' pc$copy_or_add(target, urls, path, md5 = NULL, ..., .list = NULL,
+#'                on_progress = NULL)
+#' pc$async_copy_or_add(target, urls, path, ..., md5 = NULL, ...,
+#'                .list = NULL, on_progress = NULL)
+#' pc$update_or_add(target, urls, path, ..., .list = NULL,
+#'                on_progress = NULL)
+#' pc$async_update_or_add(target, urls, path, ..., .list = NULL,
+#'                on_progress = NULL)
+#' pc$delete(..., .list = NULL)
+#' ```
+#'
+#' @section Arguments:
+#' * `path`: For `package_cache$new()` the location of the cache. For other
+#'   functions the location of the file inside the cache.
+#' * `...`: Extra attributes to search for. They have to be named.
+#' * `.list`: Extra attibutes to saerch for, they have to in a named list.
+#' * `file`:  Path to the file to add.
+#' * `url`: URL attribute. This is used to update the file, if requested.
+#' * `md5`: MD5 hash of the file.
+#' * `on_progress`: Callback to create progress bard. Passed to
+#'   `async::http_get()`
+#' * `target`: Path to copy the (first) to hit to.
+#' * `urls`: Character vector or URLs to try to download the file from.
+#'
+#' @section Details:
+#'
+#' `package_cache$new()` attaches to the cache at `path`. (By default
+#' a platform dependent user level cache directory.) If the cache does
+#' not exists, it creates it.
+#'
+#' `pc$list()` lists all files in the cache, returns a tibble with all the
+#' default columns, and potentially extra columns as well.
+#'
+#' `pc$find()` list all files that match the specified criteria (`fullpath`,
+#' `path`, `package`, etc.). Custom columns can be searched for as well.
+#'
+#' `pc$copy_to()` will copy the first matching file from the cache to
+#' `target`. It returns the tibble of _all_ matching records, invisibly.
+#' If no file matches, it returns an empty (zero-row) tibble.
+#'
+#' `pc$add()` adds a file to the cache.
+#'
+#' `pc$add_url()` downloads a file and adds it to the cache.
+#'
+#' `pc$async_add_url()` is the same, but it is asynchronous.
+#'
+#' `pc$copy_or_add()` works like `pc$copy_to()`, but if the file is not in
+#' the cache, it tries to download it from one of the specified URLs first.
+#'
+#' `pc$async_copy_or_add()` is the same, but asynchronous.
+#'
+#' `pc$update_or_add()` is like `pc$copy_to_add()`, but if the file is in
+#' the cache it tries to update it from the urls, using the stored etag to
+#' avoid unneccesary downloads.
+#'
+#' `pc$async_update_or_add()` is the same, but it is asychronous.
+#'
+#' `pc$delete()` deletes the file(s) from the cache.
+#'
 #' @importFrom R6 R6Class
 #' @importFrom filelock lock unlock
 #' @importFrom tools md5sum
 #'
-#' @keywords internal
+#' @export
 
 package_cache <- R6Class(
   "package_cache",

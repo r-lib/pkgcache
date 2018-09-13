@@ -25,10 +25,11 @@ parameter of \code{\link[utils:install.packages]{utils::install.packages()}}.}
 }
 \value{
 A data frame (tibble) of the dependencies. For \code{cran_deps()}
-it includes the queried \code{packages} as well.
+and \code{cran_revdeps()} it includes the queried \code{packages} as well.
 }
 \description{
-It uses CRAN and BioConductor packages.
+It uses CRAN and BioConductor packages, for the current platform and
+R version, from the default repositories.
 }
 \details{
 \code{cran_list()} lists all packages.

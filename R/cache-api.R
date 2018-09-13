@@ -8,6 +8,7 @@
 #'   `R-pkg`, within the user's cache directory.
 #'   See [rappdirs::user_cache_dir()].
 #'
+#' @seealso The [package_cache] R6 class for a more flexible API.
 #' @rdname cache_api
 #' @export
 

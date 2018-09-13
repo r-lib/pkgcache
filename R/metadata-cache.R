@@ -1,7 +1,132 @@
 
 cmc__data <- new.env(parent = emptyenv())
 
-#' @importFrom async synchronise
+#' Metadata cache for a CRAN-like repository
+#'
+#' This is an R6 class that implements the metadata cache of a CRAN-like
+#' repository. For a higher level interface, see the [cran_list()],
+#' [cran_deps()], [cran_revdeps()] and [cran_update()] functions.
+#'
+#' The cache has several layers:
+#' * The data is stored inside the `cranlike_metadata_cache` object.
+#' * It is also stored as an RDS file, in the session temporary directory.
+#'   This ensures that the same data is used for all queries of a
+#'   `cranlike_metadata_cache` object.
+#' * It is stored in an RDS file in the user's cache directory.
+#' * The downloaded raw `PACKAGES*` files are cached, together with HTTP
+#'   etags, to minimize downloads.
+#'
+#' It has a synchronous and an asynchronous API.
+#'
+#' @section Usage:
+#' ```
+#' cmc <- cranlike_metadata_cache$new(
+#'   primary_path = user_cache_dir("R-pkg"), replica_path = tempfile(),
+#'   platforms = default_platforms(), r_version = current_r_version(),
+#'   bioc = TRUE, cran_mirror = default_cran_mirror(),
+#'   repos = getOption("repos"),
+#'   update_after = as.difftime(7, units = "days"))
+#'
+#' cmc$list(packages = NULL)
+#' cmc$async_list(packages = NULL)
+#'
+#' cmc$deps(packages, dependencies = NA, recursive = TRUE)
+#' cmc$async_deps(packages, dependencies = NA, recursive = TRUE)
+#'
+#' cmc$revdeps(packages, dependencies = NA, recursive = TRUE)
+#' cmc$async_revdeps(packages, dependencies = NA, recursive = TRUE)
+#'
+#' cmc$update()
+#' cmc$async_update()
+#' ```
+#'
+#' @section Arguments:
+#' * `primary_path`: Path of the primary, user level cache. Defaults to
+#'   the user level cache directory of the machine.
+#' * `replica_path`: Path of the replica. Defaults to a temporary directory
+#'   within the session temporary directory.
+#' * `platforms`: Subset of `c("macos", "windows", "source")`, platforms
+#'   to get data for.
+#' * `r_version`: R version to create the cache for.
+#' * `bioc`: Whether to include BioConductor packages.
+#' * `cran_mirror`: CRAN mirror to use, this takes precedence over `repos`.
+#' * `repos`: Repositories to use.
+#' * `update_after`: `difftime` object. Automatically update the cache if
+#'   it gets older than this. Set it to `Inf` to avoid updates. Defaults
+#'   to seven days.
+#' * `packages`: Packages to query, character vector.
+#' * `dependencies`: Which kind of dependencies to include. Works the same
+#'   way as the `dependencies` argument of [utils::install.packages()].
+#' * `recursive`: Whether to include recursive dependencies.
+#'
+#' @section Details:
+#'
+#' `cranlike_metadata_cache$new()` creates a new cache object. Creation
+#' does not trigger the population of the cache. It is only populated on
+#' demand, when queries are executed against it. In your package, you may
+#' want to create a cache instance in the `.onLoad()` function of the
+#' package, and store it in the package namespace. As this is a cheap
+#' operation, the package will still load fast, and then the package code
+#' can refer to the common cache object.
+#'
+#' `cmc$list()` lists all (or the specified) packages in the cache.
+#' It returns a tibble, see the list of columns below.
+#'
+#' `cmc$async_list()` is similar, but it is asynchronous, it returns an
+#' [async::deferred] object.
+#'
+#' `cmd$deps() returns a tibble, with the (potentially recursive)
+#' dependencies of `packages`.
+#'
+#' `cmd$async_deps()` is the same, but it is asynchronous, it
+#' returns an [async::deferred] object.
+#'
+#' `cmd$revdeps()` returns a tibble, with the (potentically recursive)
+#' reverse dependencies of `packages`.
+#'
+#' `cmd$async_revdeps()` does the same, asynchronously, it returns an
+#' [async::deferred] object.
+#'
+#' `cmd$update()` updates the the metadata (as needed) in the cache,
+#' and then returns a tibble with all packages, invisibly.
+#'
+#' `cmd$async_update()` is similar, but it is asynchronous.
+#'
+#' @section Columns:
+#' The metadata tibble contains all available versions (i.e. sources and
+#' binaries) for all packages. It usually has the following columns,
+#' some might be missing on some platforms.
+#' * `package`: Package name.
+#' * `title`: Package title.
+#' * `version`: Package version.
+#' * `depends`: `Depends` field from `DESCRIPTION`, or `NA_character_`.
+#' * `suggests`: `Suggests` field from `DESCRIPTION`, or `NA_character_`.
+#' * `built`:  `Built` field from `DESCIPTION`, if a binary package,
+#'   or `NA_character_`.
+#' * `imports`: `Imports` field from `DESCRIPTION`, or `NA_character_`.
+#' * `archs`: `Archs` entries from `PACKAGES` files. Might be missing.
+#' * `repodir`: The directory of the file, inside the repository.
+#' * `platform`: Possible values: `macos`, `windows, `source`.
+#' * `needscompilation`: Whether the package needs compilation.
+#' * `type`: `bioc` or `cran`  currently.
+#' * `target`: The path of the package file inside the repository.
+#' * `mirror`: URL of the CRAN/BioC mirror.
+#' * `sources`: List column with URLs to one or more possible locations
+#'   of the package file. For source CRAN packages, it contains URLs to
+#'   the `Archive` directory as well, in case the package has been
+#'   archived since the metadata was cached.
+#' * `deps`: All package dependencies, in a tibble.
+#' * `license`: Package license, might be `NA` for binary packages.
+#' * `linkingto`: `LinkingTo` field from `DESCRIPTION`, or `NA_character_`.
+#' * `enhances`: `Enhances` field from `DESCRIPTION`, or `NA_character_`.
+#' * `os_type`: `unix` or `windows` for OS specific packages. Usually `NA`.
+#' * `priority`:
+#' * `md5sum`: MD5 sum, if available, may be `NA`.
+#'
+#' The tibble contains some extra columns as well, these are for internal
+#' use only.
+#'
+#' @export
 
 cranlike_metadata_cache <- R6Class(
   "cranlike_metadata_cache",
@@ -571,7 +696,8 @@ type_bioc_matching_bioc_version <- function(r_version) {
 
 #' Query CRAN(like) package data
 #'
-#' It uses CRAN and BioConductor packages.
+#' It uses CRAN and BioConductor packages, for the current platform and
+#' R version, from the default repositories.
 #'
 #' `cran_list()` lists all packages.
 #'
@@ -587,7 +713,7 @@ type_bioc_matching_bioc_version <- function(r_version) {
 #'   parameter of [utils::install.packages()].
 #' @param recursive Whether to query recursive dependencies.
 #' @return A data frame (tibble) of the dependencies. For `cran_deps()`
-#'   it includes the queried `packages` as well.
+#'   and `cran_revdeps()` it includes the queried `packages` as well.
 #'
 #' @section Examples:
 #' ```

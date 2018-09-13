@@ -1,6 +1,6 @@
 
 find_in_data_frame <- function(df, ..., .list = NULL) {
-  cols <- c(list(...), .list)
+  cols <- drop_nulls(c(list(...), .list))
   idx <- seq_len(nrow(df))
   for (i in seq_along(cols)) {
     if (length(idx) == 0) break

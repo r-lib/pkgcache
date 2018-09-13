@@ -47,7 +47,7 @@ package_cache <- R6Class(
       res
     },
 
-    add = function(file, path, ..., .list = NULL) {
+    add = function(file, path, md5 = tools::md5sum(file), ..., .list = NULL) {
 
       assert_that(is_existing_file(file))
 
@@ -56,13 +56,15 @@ package_cache <- R6Class(
       dbfile <- get_db_file(private$path)
       db <- readRDS(dbfile)
 
-      idx <- find_in_data_frame(db, path = path, ..., .list = .list)
+      idx <- find_in_data_frame(
+        db, path = path, md5 = md5, ..., .list = .list)
 
       target <- file.path(private$path, path)
       mkdirp(dirname(target))
       file.copy(file, target, overwrite = TRUE)
-      db <- append_to_data_frame(db, fullpath = target, path = path, ...,
-                                 .list = .list)
+      db <- append_to_data_frame(
+        db, fullpath = target, path = path, ..., md5 = null2na(md5),
+        .list = .list)
       saveRDS(db, dbfile)
       db[nrow(db), ]
     },
@@ -91,16 +93,15 @@ package_cache <- R6Class(
                                  .list = NULL, on_progress = NULL) {
       self; private; target; urls; path; md5; list(...); .list; on_progress
       etag <- tempfile()
-      if (!is.null(md5)) .list$md5 <- md5
       async_constant()$
         then(~ self$copy_to(target, url = urls[1], ..., .list = .list))$
         then(function(res) {
           if (! nrow(res)) {
             download_one_of(urls, target, on_progress = on_progress)$
               then(function(d) {
-                .list$md5 <- md5sum(target)[[1]]
-                self$add(target, path, url = d$url, etag = d$etag, ...,
-                         .list = .list)
+                md5 <- md5sum(target)[[1]]
+                self$add(target, path, url = d$url, etag = d$etag,
+                         md5 = null2na(md5), ..., .list = .list)
               })$
               then(function(x) add_attr(x, "action", "Got"))
           } else {
@@ -123,7 +124,6 @@ package_cache <- R6Class(
     async_update_or_add = function(target, urls, path, md5 = NULL, ...,
                                    .list = NULL, on_progress = NULL) {
       self; private; target; urls; path; md5; list(...); .list; on_progress
-      if (!is.null(md5)) .list$md5 <- md5
       async_constant()$
         then(~ self$copy_to(target, url = urls[1], path = path, ...,
                             .list = .list))$
@@ -132,9 +132,9 @@ package_cache <- R6Class(
             ## Not in the cache, download and add it
             download_one_of(urls, target, on_progress = on_progress)$
               then(function(d) {
-                .list$md5 <- md5sum(target)[[1]]
-                self$add(target, path, url = d$url, etag = d$etag, ...,
-                         .list = .list)
+                md5 <- md5sum(target)[[1]]
+                self$add(target, path, url = d$url, etag = d$etag,
+                         md5 = null2na(md5), ..., .list = .list)
               })$
               then(function(x) add_attr(x, "action", "Got"))
           } else {
@@ -145,9 +145,10 @@ package_cache <- R6Class(
               then(function(d) {
                 if (d$response$status_code != 304) {
                   ## No current, update it
-                  .list$md5 <- md5sum(target)[[1]]
+                  md5 <- md5sum(target)[[1]]
                   x <- self$add(target, path, url = d$url,
-                                etag = d$etag, ..., .list = .list)
+                                etag = d$etag, md5 = null2na(md5), ...,
+                                .list = .list)
                   add_attr(x, "action", "Got")
                 } else {
                   ## Current, nothing to do
@@ -227,6 +228,10 @@ make_empty_db_data_frame <- function() {
   data.frame(
     stringsAsFactors = FALSE,
     fullpath = character(),
-    path     = character()
+    path     = character(),
+    package  = character(),
+    url      = character(),
+    etag     = character(),
+    md5      = character()
   )
 }

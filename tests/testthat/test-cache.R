@@ -57,8 +57,8 @@ test_that("add_url", {
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
-  exp <- list(fullpath = fullpath, path = path, url = url, etag = "foobar",
-              package = "p", md5 = md5sum(fullpath)[[1]])
+  exp <- list(fullpath = fullpath, path = path, package = "p", url = url,
+              etag = "foobar", md5 = md5sum(fullpath)[[1]])
   expect_equal(as.list(new), exp)
 })
 
@@ -125,8 +125,8 @@ test_that("update_or_add, not in cache", {
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
-  exp <- list(fullpath = fullpath, path = path, url = url, etag = "foobar",
-              package = "p", md5 = md5sum(fullpath)[[1]])
+  exp <- list(fullpath = fullpath, path = path, package = "p", url = url,
+              etag = "foobar", md5 = md5sum(fullpath)[[1]])
   attr(exp, "action") <- "Got"
   expect_equal(as.list(hit), exp)
 

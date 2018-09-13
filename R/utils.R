@@ -172,3 +172,11 @@ base_packages <- function() {
 is_na_scalar <- function(x) {
   length(x) == 1 && is.na(x)
 }
+
+drop_nulls <- function(x)  {
+  x[! vlapply(x, is.null)]
+}
+
+null2na <- function(x) {
+  x %||% NA_character_
+}

@@ -5,7 +5,7 @@ Authors@R:
     person(given = "Gábor",
            family = "Csárdi",
            role = c("aut", "cre"),
-           email = "csadi.gabor@gmail.com")
+           email = "csardi.gabor@gmail.com")
 Description: Metadata and package cache for CRAN-like repositories.
      This is a utility package to be used by package management tools
      that want to take advantage of caching.

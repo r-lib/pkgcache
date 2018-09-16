@@ -14,7 +14,7 @@
 #' Additional fields can be added as needed.
 #'
 #' For a simple API to a session-wide instance of this class, see
-#' [cache_summary()] and the other functions listed there.
+#' [pkg_cache_summary()] and the other functions listed there.
 #'
 #' @section Usage:
 #' ```

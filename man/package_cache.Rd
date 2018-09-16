@@ -25,7 +25,7 @@ By default these fields are included for every package:
 Additional fields can be added as needed.
 
 For a simple API to a session-wide instance of this class, see
-\code{\link[=cache_summary]{cache_summary()}} and the other functions listed there.
+\code{\link[=pkg_cache_summary]{pkg_cache_summary()}} and the other functions listed there.
 }
 \section{Usage}{
 \preformatted{pc <- package_cache$new(path = NULL)

@@ -70,14 +70,14 @@ including asynchronous methods, and more control.
 
 ## Package cache
 
-Package management tools may use the `cache_*` functions and in
+Package management tools may use the `pkg_cache_*` functions and in
 particular the `package_cache` class, to make use of local caching of
 package files.
 
-The `cache_*` API is high level, and uses a user level cache:
+The `pkg_cache_*` API is high level, and uses a user level cache:
 
 ``` r
-cache_summary()
+pkg_cache_summary()
 #> $cachepath
 #> [1] "/Users/gaborcsardi/Library/Caches/R-pkg"
 #> 
@@ -89,7 +89,7 @@ cache_summary()
 ```
 
 ``` r
-cache_list()
+pkg_cache_list()
 #> # A tibble: 40 x 8
 #>    fullpath     path     package  url       etag   md5    version platform
 #>    <chr>        <chr>    <chr>    <chr>     <chr>  <chr>  <chr>   <chr>   
@@ -107,7 +107,7 @@ cache_list()
 ```
 
 ``` r
-cache_find(package = "dplyr")
+pkg_cache_find(package = "dplyr")
 #> # A tibble: 2 x 8
 #>   fullpath      path     package url        etag   md5    version platform
 #> * <chr>         <chr>    <chr>   <chr>      <chr>  <chr>  <chr>   <chr>   
@@ -115,8 +115,9 @@ cache_find(package = "dplyr")
 #> 2 /Users/gabor… src/con… dplyr   https://c… "\"ad… cc51d… 0.7.6   source
 ```
 
-`cache_add_file()` can be used to add a file, `cache_delete_files()` to
-remove files, `cache_get_files()` to copy files out of the cache.
+`pkg_cache_add_file()` can be used to add a file,
+`pkg_cache_delete_files()` to remove files, `pkg_cache_get_files()` to
+copy files out of the cache.
 
 The `package_cache` class provides a finer API, including asynchronous
 methods.

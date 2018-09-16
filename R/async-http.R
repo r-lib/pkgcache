@@ -28,7 +28,6 @@
 #'
 #' @family async HTTP tools
 #' @importFrom curl parse_headers_list
-#' @import async
 #' @keywords internal
 #' @section Examples:
 #' ```

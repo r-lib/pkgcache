@@ -16,9 +16,9 @@ status](https://ci.appveyor.com/api/projects/status/github/r-lib/pkgcache?branch
 [![Coverage
 status](https://codecov.io/gh/r-lib/pkgcache/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=master)
 
-Metadata and package cache for CRAN-like repositories. This is a
-utility package to be used by package management tools that want to
-take advantage of caching.
+Metadata and package cache for CRAN-like repositories. This is a utility
+package to be used by package management tools that want to take
+advantage of caching.
 
 ## Installation
 
@@ -31,13 +31,13 @@ install.packages("pkgcache")
 
 ## Metadata cache
 
-`cran_list()` lists all packages in the metadata cache. It includes
-BioConductor package, and all versions (i.e. both binary and source) of
-the packages for the current platform and R version.
+`meta_cache_list()` lists all packages in the metadata cache. It
+includes Bioconductor package, and all versions (i.e. both binary and
+source) of the packages for the current platform and R version.
 
 ``` r
 library(pkgcache)
-cran_list()
+meta_cache_list()
 #> # A tibble: 30,246 x 29
 #>    package title version depends suggests built imports archs repodir
 #>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  
@@ -59,49 +59,11 @@ cran_list()
 #> #   priority <chr>, license_is_foss <chr>, md5sum <chr>, path <chr>
 ```
 
-`cran_deps()` and `cran_revdeps()` can be used to look up dependencies
-and reverse dependencies:
-
-``` r
-cran_deps("crayon")
-#> # A tibble: 2 x 29
-#>   package title version depends suggests built imports archs repodir
-#>   <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  
-#> 1 crayon  Colo… 1.3.4   <NA>    mockery… R 3.… grDevi… <NA>  bin/ma…
-#> 2 crayon  <NA>  1.3.4   <NA>    mockery… <NA>  grDevi… <NA>  src/co…
-#> # ... with 20 more variables: platform <chr>, rversion <chr>,
-#> #   needscompilation <chr>, ref <chr>, type <chr>, direct <lgl>,
-#> #   status <chr>, target <chr>, mirror <chr>, sources <list>, deps <list>,
-#> #   license <chr>, linkingto <chr>, enhances <chr>,
-#> #   license_restricts_use <chr>, os_type <chr>, priority <chr>,
-#> #   license_is_foss <chr>, md5sum <chr>, path <chr>
-```
-
-``` r
-cran_revdeps("crayon")
-#> # A tibble: 8,659 x 29
-#>    package title version depends suggests built imports archs repodir
-#>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  
-#>  1 abbyyR  Acce… 0.5.4   R (>= … testtha… R 3.… httr, … <NA>  bin/ma…
-#>  2 abcdeF… "ABC… 0.4     Rglpk,… LIM,syb… R 3.… <NA>    <NA>  bin/ma…
-#>  3 abcrf   Appr… 1.7.1   R(>= 3… <NA>     R 3.… "readr… abcr… bin/ma…
-#>  4 abctoo… Tool… 1.1.3   R (>= … ggplot2… R 3.… <NA>    abct… bin/ma…
-#>  5 abd     The … 0.2-8   R (>= … boot, c… R 3.… <NA>    <NA>  bin/ma…
-#>  6 ABHgen… Easy… 1.0.1   <NA>    knitr, … R 3.… ggplot… <NA>  bin/ma…
-#>  7 abjuti… "Use… 0.2.1   R (>= … testthat R 3.… "strin… <NA>  bin/ma…
-#>  8 acc     Expl… 1.3.3   R (>= … <NA>     R 3.… "zoo, … acc.… bin/ma…
-#>  9 accelm… Miss… 1.4     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
-#> 10 accSDA  Acce… 1.0.0   R (>= … <NA>     R 3.… "MASS … <NA>  bin/ma…
-#> # ... with 8,649 more rows, and 20 more variables: platform <chr>,
-#> #   rversion <chr>, needscompilation <chr>, ref <chr>, type <chr>,
-#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>,
-#> #   sources <list>, deps <list>, license <chr>, linkingto <chr>,
-#> #   enhances <chr>, license_restricts_use <chr>, os_type <chr>,
-#> #   priority <chr>, license_is_foss <chr>, md5sum <chr>, path <chr>
-```
+`meta_cache_deps()` and `meta_cache_revdeps()` can be used to look up
+dependencies and reverse dependencies.
 
 The metadata is updated automatically if it is older than seven days,
-and it can also be updated manually with `cran_update()`.
+and it can also be updated manually with `meta_cache_update()`.
 
 See the `cranlike_metadata_cache` R6 class for a lower level API,
 including asynchronous methods, and more control.

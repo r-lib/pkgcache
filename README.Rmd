@@ -37,28 +37,20 @@ install.packages("pkgcache")
 
 ## Metadata cache
 
-`cran_list()` lists all packages in the metadata cache. It includes
+`meta_cache_list()` lists all packages in the metadata cache. It includes
 Bioconductor package, and all versions (i.e. both binary and source)
 of the packages for the current platform and R version.
 
 ```{r}
 library(pkgcache)
-cran_list()
+meta_cache_list()
 ```
 
-`cran_deps()` and `cran_revdeps()` can be used to look up dependencies
-and reverse dependencies:
-
-```{r}
-cran_deps("crayon")
-```
-
-```{r}
-cran_revdeps("crayon")
-```
+`meta_cache_deps()` and `meta_cache_revdeps()` can be used to look up
+dependencies and reverse dependencies.
 
 The metadata is updated automatically if it is older than seven days,
-and it can also be updated manually with `cran_update()`.
+and it can also be updated manually with `meta_cache_update()`.
 
 See the `cranlike_metadata_cache` R6 class for a lower level API, including
 asynchronous methods, and more control.

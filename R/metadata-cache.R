@@ -4,8 +4,9 @@ cmc__data <- new.env(parent = emptyenv())
 #' Metadata cache for a CRAN-like repository
 #'
 #' This is an R6 class that implements the metadata cache of a CRAN-like
-#' repository. For a higher level interface, see the [cran_list()],
-#' [cran_deps()], [cran_revdeps()] and [cran_update()] functions.
+#' repository. For a higher level interface, see the [meta_cache_list()],
+#' [meta_cache_deps()], [meta_cache_revdeps()] and [meta_cache_update()]
+#' functions.
 #'
 #' The cache has several layers:
 #' * The data is stored inside the `cranlike_metadata_cache` object.
@@ -699,52 +700,55 @@ type_bioc_matching_bioc_version <- function(r_version) {
 #' It uses CRAN and BioConductor packages, for the current platform and
 #' R version, from the default repositories.
 #'
-#' `cran_list()` lists all packages.
+#' `meta_cache_list()` lists all packages.
 #'
-#' `cran_update()` updates all metadata. Note that metadata is automatically
-#' updated if it is older than seven days.
+#' `meta_cache_update()` updates all metadata. Note that metadata is
+#' automatically updated if it is older than seven days.
 #'
-#' `cran_deps()` queries packages dependencies.
+#' `meta_cache_deps()` queries packages dependencies.
 #'
-#' `cran_revdeps()` queries reverse package dependencies.
+#' `meta_cache_revdeps()` queries reverse package dependencies.
 #'
 #' @param packages Packages to query.
 #' @param dependencies Dependency types to query. See the `dependencies`
 #'   parameter of [utils::install.packages()].
 #' @param recursive Whether to query recursive dependencies.
-#' @return A data frame (tibble) of the dependencies. For `cran_deps()`
-#'   and `cran_revdeps()` it includes the queried `packages` as well.
+#' @return A data frame (tibble) of the dependencies. For
+#'   `meta_cache_deps()` and `meta_cache_revdeps()` it includes the
+#'   queried `packages` as well.
 #'
 #' @section Examples:
 #' ```
-#' cran_deps("dplyr")
-#' cran_list(c("MASS", dplyr"))
-#' cran_update()
+#' meta_cache_deps("dplyr")
+#' meta_cache_list(c("MASS", dplyr"))
+#' meta_cache_update()
 #' ```
 #'
 #' @export
 
-cran_deps <- function(packages, dependencies = NA, recursive = TRUE) {
+meta_cache_deps <- function(packages, dependencies = NA,
+                            recursive = TRUE) {
   global_metadata_cache$deps(packages, dependencies, recursive)
 }
 
 #' @export
-#' @rdname cran_deps
+#' @rdname meta_cache_deps
 
-cran_revdeps <- function(packages, dependencies = NA, recursive = TRUE) {
+meta_cache_revdeps <- function(packages, dependencies = NA,
+                               recursive = TRUE) {
   global_metadata_cache$revdeps(packages, dependencies, recursive)
 }
 
 #' @export
-#' @rdname cran_deps
+#' @rdname meta_cache_deps
 
-cran_update <- function() {
+meta_cache_update <- function() {
   invisible(global_metadata_cache$update()$pkgs)
 }
 
 #' @export
-#' @rdname cran_deps
+#' @rdname meta_cache_deps
 
-cran_list <- function(packages = NULL) {
+meta_cache_list <- function(packages = NULL) {
   global_metadata_cache$list(packages)
 }

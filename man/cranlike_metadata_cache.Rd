@@ -10,8 +10,9 @@ cranlike_metadata_cache
 }
 \description{
 This is an R6 class that implements the metadata cache of a CRAN-like
-repository. For a higher level interface, see the \code{\link[=cran_list]{cran_list()}},
-\code{\link[=cran_deps]{cran_deps()}}, \code{\link[=cran_revdeps]{cran_revdeps()}} and \code{\link[=cran_update]{cran_update()}} functions.
+repository. For a higher level interface, see the \code{\link[=meta_cache_list]{meta_cache_list()}},
+\code{\link[=meta_cache_deps]{meta_cache_deps()}}, \code{\link[=meta_cache_revdeps]{meta_cache_revdeps()}} and \code{\link[=meta_cache_update]{meta_cache_update()}}
+functions.
 }
 \details{
 The cache has several layers:

@@ -52,7 +52,7 @@ test_that("add_url", {
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
 
-  url <- "http://httpbin.org/etag/foobar"
+  url <- httpbin("/etag/foobar")
   new <- pc$add_url(url, "f/b", package = "p")
 
   path <- file.path("f", "b")
@@ -93,7 +93,7 @@ test_that("copy_or_add, negative", {
   new <- pc$add(f1, path = "f/b", package = "p", url = "u",
                 etag = "e", md5 = md5)
 
-  url <- "http://httpbin.org/etag/foobar"
+  url <- httpbin("/etag/foobar")
   hit <- pc$copy_or_add(url = url, f1 <- tempfile(), path = "f/b",
                         package = "p2")
 
@@ -104,7 +104,7 @@ test_that("copy_or_add, negative", {
   attr(exp, "action") <- "Got"
   expect_equal(as.list(hit), exp)
   expect_true(file.exists(f1))
-  expect_true(any(grepl("url\"*:.*http://httpbin.org/etag/foobar",
+  expect_true(any(grepl("url\"*:.*/etag/foobar",
                         readLines(f1))))
 
   hit2 <- pc$find(url = url)
@@ -119,7 +119,7 @@ test_that("update_or_add, not in cache", {
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
 
-  url <- "http://httpbin.org/etag/foobar"
+  url <- httpbin("/etag/foobar")
   hit <- pc$update_or_add(url = url, f1 <- tempfile(), path = "f/b",
                           package = "p")
 
@@ -131,7 +131,7 @@ test_that("update_or_add, not in cache", {
   expect_equal(as.list(hit), exp)
 
   expect_true(file.exists(f1))
-  expect_true(any(grepl("url\"*:.*http://httpbin.org/etag/foobar",
+  expect_true(any(grepl("url\"*:.*/etag/foobar",
                         readLines(f1))))
 
   hit2 <- pc$find(url = url)
@@ -147,7 +147,7 @@ test_that("update_or_add, cache is too old", {
 
   cat("f1\n", file = f1 <- tempfile())
 
-  url <- "http://httpbin.org/etag/foobar"
+  url <- httpbin("/etag/foobar")
   md5 <- unname(tools::md5sum(f1))
   pc$add(f1, path = "f/b", package = "p", url = url, etag = "e", md5 = md5)
 
@@ -162,7 +162,7 @@ test_that("update_or_add, cache is too old", {
   expect_equal(as.list(hit), exp)
 
   expect_true(file.exists(f1))
-  expect_true(any(grepl("url\"*:.*http://httpbin.org/etag/foobar",
+  expect_true(any(grepl("url\"*:.*/etag/foobar",
                         readLines(f1))))
 
   hit2 <- pc$find(url = url, etag = "foobar")
@@ -178,7 +178,7 @@ test_that("update_or_add, cache is current", {
 
   cat("f1\n", file = f1 <- tempfile())
 
-  url <- "http://httpbin.org/etag/foobar"
+  url <- httpbin("/etag/foobar")
   md5 <- unname(tools::md5sum(f1))
   pc$add(f1, path = "f/b", package = "p", url = url, etag = "foobar",
          md5 = md5)

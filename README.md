@@ -65,8 +65,8 @@ dependencies and reverse dependencies.
 The metadata is updated automatically if it is older than seven days,
 and it can also be updated manually with `meta_cache_update()`.
 
-See the `cranlike_metadata_cache` R6 class for a lower level API,
-including asynchronous methods, and more control.
+See the `cranlike_metadata_cache` R6 class for a lower level API, and
+more control.
 
 ## Package cache
 
@@ -119,8 +119,7 @@ pkg_cache_find(package = "dplyr")
 `pkg_cache_delete_files()` to remove files, `pkg_cache_get_files()` to
 copy files out of the cache.
 
-The `package_cache` class provides a finer API, including asynchronous
-methods.
+The `package_cache` class provides a finer API.
 
 ## Code of Conduct
 

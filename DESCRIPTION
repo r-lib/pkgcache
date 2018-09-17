@@ -1,5 +1,5 @@
 Package: pkgcache
-Title: Cache 'CRAN'-like metadata and R packages
+Title: Cache 'CRAN'-Like Metadata and R Packages
 Version: 1.0.0
 Authors@R: 
     person(given = "Gábor",

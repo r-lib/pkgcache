@@ -19,10 +19,10 @@ the \code{\link[=download_one_of]{download_one_of()}} functions.}
 
 \item{tmp_destfile}{Where to store the temporary destination file.}
 
-\item{...}{Additional arguments are passed to \code{\link[async:http_get]{async::http_get()}}.}
+\item{...}{Additional arguments are passed to \code{\link[=http_get]{http_get()}}.}
 }
 \value{
-An \link[async:deferred]{async::deferred} object. It resolves to a list with entries:
+A \link{deferred} object. It resolves to a list with entries:
 \itemize{
 \item \code{url}: The URL in the request.
 \item \code{destfile}: The destination file.

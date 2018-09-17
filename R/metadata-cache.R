@@ -73,20 +73,20 @@ cmc__data <- new.env(parent = emptyenv())
 #' `cmc$list()` lists all (or the specified) packages in the cache.
 #' It returns a tibble, see the list of columns below.
 #'
-#' `cmc$async_list()` is similar, but it is asynchronous, it returns an
-#' [async::deferred] object.
+#' `cmc$async_list()` is similar, but it is asynchronous, it returns a
+#' [deferred] object.
 #'
 #' `cmd$deps() returns a tibble, with the (potentially recursive)
 #' dependencies of `packages`.
 #'
 #' `cmd$async_deps()` is the same, but it is asynchronous, it
-#' returns an [async::deferred] object.
+#' returns a [deferred] object.
 #'
 #' `cmd$revdeps()` returns a tibble, with the (potentically recursive)
 #' reverse dependencies of `packages`.
 #'
 #' `cmd$async_revdeps()` does the same, asynchronously, it returns an
-#' [async::deferred] object.
+#' [deferred] object.
 #'
 #' `cmd$update()` updates the the metadata (as needed) in the cache,
 #' and then returns a tibble with all packages, invisibly.

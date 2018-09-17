@@ -46,7 +46,7 @@
 #' * `url`: URL attribute. This is used to update the file, if requested.
 #' * `md5`: MD5 hash of the file.
 #' * `on_progress`: Callback to create progress bard. Passed to
-#'   `async::http_get()`
+#'   [http_get()].
 #' * `target`: Path to copy the (first) to hit to.
 #' * `urls`: Character vector or URLs to try to download the file from.
 #'

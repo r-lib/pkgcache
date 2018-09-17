@@ -87,19 +87,19 @@ can refer to the common cache object.
 \code{cmc$list()} lists all (or the specified) packages in the cache.
 It returns a tibble, see the list of columns below.
 
-\code{cmc$async_list()} is similar, but it is asynchronous, it returns an
-\link[async:deferred]{async::deferred} object.
+\code{cmc$async_list()} is similar, but it is asynchronous, it returns a
+\link{deferred} object.
 
 \code{cmd$deps() returns a tibble, with the (potentially recursive) dependencies of}packages`.
 
 \code{cmd$async_deps()} is the same, but it is asynchronous, it
-returns an \link[async:deferred]{async::deferred} object.
+returns a \link{deferred} object.
 
 \code{cmd$revdeps()} returns a tibble, with the (potentically recursive)
 reverse dependencies of \code{packages}.
 
 \code{cmd$async_revdeps()} does the same, asynchronously, it returns an
-\link[async:deferred]{async::deferred} object.
+\link{deferred} object.
 
 \code{cmd$update()} updates the the metadata (as needed) in the cache,
 and then returns a tibble with all packages, invisibly.

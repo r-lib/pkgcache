@@ -18,8 +18,8 @@
 #'   It can be used to cache the file, with the [download_if_newer()] or
 #'   the [download_one_of()] functions.
 #' @param tmp_destfile Where to store the temporary destination file.
-#' @param ... Additional arguments are passed to [async::http_get()].
-#' @return An [async::deferred] object. It resolves to a list with entries:
+#' @param ... Additional arguments are passed to [http_get()].
+#' @return A [deferred] object. It resolves to a list with entries:
 #'   * `url`: The URL in the request.
 #'   * `destfile`: The destination file.
 #'   * `response`: The response object from the curl package.

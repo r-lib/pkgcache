@@ -124,6 +124,9 @@ test_that("load_primary_rds", {
 })
 
 test_that("load_primary_pkgs", {
+
+  withr::local_options(list(repos = NULL))
+
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
   dir.create(rep <- fs::path_norm(tempfile()))
@@ -282,6 +285,8 @@ test_that("deps will auto-update as needed", {
 
   skip_if_offline()
 
+  withr::local_options(list(repos = NULL))
+
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
   dir.create(rep <- fs::path_norm(tempfile()))
@@ -320,6 +325,8 @@ test_that("deps will auto-update as needed", {
 test_that("deps, extract_deps", {
 
   skip_if_offline()
+
+  withr::local_options(list(repos = NULL))
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)

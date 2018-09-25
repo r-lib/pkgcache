@@ -36,15 +36,12 @@ Suggests:
     desc,
     fs,
     jsonlite,
-    knitr,
     mockery,
     pingr,
     rprojroot,
-    rmarkdown,
     testthat,
     withr
 Depends: 
     R (>= 3.1)
-VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0

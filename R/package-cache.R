@@ -8,7 +8,7 @@
 #' * `path` Package path, within the repository.
 #' * `package` Package name.
 #' * `url` URL it was downloaded from.
-#' * `etag` ETag for the last dowload, from the given URL.
+#' * `etag` ETag for the last download, from the given URL.
 #' * `md5` MD5 of the file, to make sure if it has not changed.
 #'
 #' Additional fields can be added as needed.
@@ -41,7 +41,7 @@
 #' * `path`: For `package_cache$new()` the location of the cache. For other
 #'   functions the location of the file inside the cache.
 #' * `...`: Extra attributes to search for. They have to be named.
-#' * `.list`: Extra attibutes to saerch for, they have to in a named list.
+#' * `.list`: Extra attributes to search for, they have to in a named list.
 #' * `file`:  Path to the file to add.
 #' * `url`: URL attribute. This is used to update the file, if requested.
 #' * `md5`: MD5 hash of the file.
@@ -78,10 +78,10 @@
 #' `pc$async_copy_or_add()` is the same, but asynchronous.
 #'
 #' `pc$update_or_add()` is like `pc$copy_to_add()`, but if the file is in
-#' the cache it tries to update it from the urls, using the stored etag to
-#' avoid unneccesary downloads.
+#' the cache it tries to update it from the urls, using the stored ETag to
+#' avoid unnecessary downloads.
 #'
-#' `pc$async_update_or_add()` is the same, but it is asychronous.
+#' `pc$async_update_or_add()` is the same, but it is asynchronous.
 #'
 #' `pc$delete()` deletes the file(s) from the cache.
 #'

@@ -55,7 +55,7 @@ synchronise(afun())
 }
 
 \seealso{
-Other asyncronous HTTP calls: \code{\link{http_head}}
+Other asynchronous HTTP calls: \code{\link{http_head}}
 }
-\concept{asyncronous HTTP calls}
+\concept{asynchronous HTTP calls}
 \keyword{internal}

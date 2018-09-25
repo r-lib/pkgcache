@@ -23,7 +23,7 @@ This ensures that the same data is used for all queries of a
 \code{cranlike_metadata_cache} object.
 \item It is stored in an RDS file in the user's cache directory.
 \item The downloaded raw \code{PACKAGES*} files are cached, together with HTTP
-etags, to minimize downloads.
+ETags, to minimize downloads.
 }
 
 It has a synchronous and an asynchronous API.
@@ -95,7 +95,7 @@ It returns a tibble, see the list of columns below.
 \code{cmd$async_deps()} is the same, but it is asynchronous, it
 returns a \link{deferred} object.
 
-\code{cmd$revdeps()} returns a tibble, with the (potentically recursive)
+\code{cmd$revdeps()} returns a tibble, with the (potentially recursive)
 reverse dependencies of \code{packages}.
 
 \code{cmd$async_revdeps()} does the same, asynchronously, it returns an

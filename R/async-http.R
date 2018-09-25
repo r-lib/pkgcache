@@ -5,7 +5,7 @@
 #'
 #' `download_file` also has some nice improvements:
 #' * It uses a temporary file, so never leaves a partial file at `destfile`.
-#' * It can write the HTTP Etag from the response to a file, which can
+#' * It can write the HTTP ETag from the response to a file, which can
 #'   be used in [download_if_newer()], etc.
 #' * It returns the HTTP response as part of the error message if the
 #'   response status code indicates a client or server error.
@@ -13,8 +13,8 @@
 #'
 #' @param url URL to download.
 #' @param destfile Destination file.
-#' @param etag_file If not `NULL`, and the reponse is successful and
-#'   includes an `Etag` header, then this header is stored in this file.
+#' @param etag_file If not `NULL`, and the response is successful and
+#'   includes an `ETag` header, then this header is stored in this file.
 #'   It can be used to cache the file, with the [download_if_newer()] or
 #'   the [download_one_of()] functions.
 #' @param tmp_destfile Where to store the temporary destination file.
@@ -23,8 +23,8 @@
 #'   * `url`: The URL in the request.
 #'   * `destfile`: The destination file.
 #'   * `response`: The response object from the curl package.
-#'   * `etag`: The Etag of the response, of `NULL` if missing.
-#'   * `etag_file`: The file the Etag was written to, or `NULL` otherwise
+#'   * `etag`: The ETag of the response, of `NULL` if missing.
+#'   * `etag_file`: The file the ETag was written to, or `NULL` otherwise
 #'
 #' @family async HTTP tools
 #' @importFrom curl parse_headers_list
@@ -116,11 +116,11 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #'
 #' @inheritParams download_file
 #' @param etag_file If not `NULL` then the path to a file that may contain
-#'   the Etag of a previous request to this URL. If `destfile` exists, and
+#'   the ETag of a previous request to this URL. If `destfile` exists, and
 #'   `etag_file` exists and it is not empty, then the `If-None-Match` HTTP
-#'   header is used with this Etag to avoid downloading the file if it has
+#'   header is used with this ETag to avoid downloading the file if it has
 #'   not changed. If the file at `url` has changed, then it is downloaded,
-#'   and the the new Etag is stored in `etag_file`.
+#'   and the the new ETag is stored in `etag_file`.
 #' @inherit download_file return
 #'
 #' @family async HTTP tools
@@ -130,7 +130,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #' dest <- tempfile(fileext = ".jpeg")
 #' etag <- tempfile()
 #' dl <- function() {
-#'   ## This URL will repond with an Etag
+#'   ## This URL will repond with an ETag
 #'   download_if_newer("https://httpbin.org/etag/test", dest,
 #'                     etag_file = etag)
 #' }
@@ -145,7 +145,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #' readLines(etag)
 #' res1$response$status_code
 #'
-#' ## This will not download the file again, as the Etag matches
+#' ## This will not download the file again, as the ETag matches
 #' ## The status code is 304 Not Modified
 #' res2 <- synchronise(dl())
 #' res2$response$status_code
@@ -222,7 +222,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #' Download errors are ignored, as long as at least one download completes
 #' successfully.
 #'
-#' It also uses Etags, so if the destination file already exists, and one
+#' It also uses ETags, so if the destination file already exists, and one
 #' of the URLs contain the same file (and this request completes first),
 #' the file is not downloaded again.
 #'

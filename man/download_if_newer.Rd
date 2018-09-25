@@ -13,11 +13,11 @@ download_if_newer(url, destfile, etag_file = NULL,
 \item{destfile}{Destination file.}
 
 \item{etag_file}{If not \code{NULL} then the path to a file that may contain
-the Etag of a previous request to this URL. If \code{destfile} exists, and
+the ETag of a previous request to this URL. If \code{destfile} exists, and
 \code{etag_file} exists and it is not empty, then the \code{If-None-Match} HTTP
-header is used with this Etag to avoid downloading the file if it has
+header is used with this ETag to avoid downloading the file if it has
 not changed. If the file at \code{url} has changed, then it is downloaded,
-and the the new Etag is stored in \code{etag_file}.}
+and the the new ETag is stored in \code{etag_file}.}
 
 \item{tmp_destfile}{Where to store the temporary destination file.}
 
@@ -29,8 +29,8 @@ A \link{deferred} object. It resolves to a list with entries:
 \item \code{url}: The URL in the request.
 \item \code{destfile}: The destination file.
 \item \code{response}: The response object from the curl package.
-\item \code{etag}: The Etag of the response, of \code{NULL} if missing.
-\item \code{etag_file}: The file the Etag was written to, or \code{NULL} otherwise
+\item \code{etag}: The ETag of the response, of \code{NULL} if missing.
+\item \code{etag_file}: The file the ETag was written to, or \code{NULL} otherwise
 }
 }
 \description{
@@ -41,7 +41,7 @@ specified URL is different from the local one.
 \preformatted{dest <- tempfile(fileext = ".jpeg")
 etag <- tempfile()
 dl <- function() {
-  ## This URL will repond with an Etag
+  ## This URL will repond with an ETag
   download_if_newer("https://httpbin.org/etag/test", dest,
                     etag_file = etag)
 }
@@ -56,7 +56,7 @@ file.exists(etag)
 readLines(etag)
 res1$response$status_code
 
-## This will not download the file again, as the Etag matches
+## This will not download the file again, as the ETag matches
 ## The status code is 304 Not Modified
 res2 <- synchronise(dl())
 res2$response$status_code

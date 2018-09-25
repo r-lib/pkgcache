@@ -9,7 +9,7 @@ async_sequence(..., .list = NULL)
 \arguments{
 \item{...}{Asynchronous functions to compose.}
 
-\item{.list}{Mose asynchronous functions to compose.}
+\item{.list}{More asynchronous functions to compose.}
 }
 \value{
 Asynchronous function, the composition of all input functions.

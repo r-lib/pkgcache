@@ -12,8 +12,8 @@ download_file(url, destfile, etag_file = NULL,
 
 \item{destfile}{Destination file.}
 
-\item{etag_file}{If not \code{NULL}, and the reponse is successful and
-includes an \code{Etag} header, then this header is stored in this file.
+\item{etag_file}{If not \code{NULL}, and the response is successful and
+includes an \code{ETag} header, then this header is stored in this file.
 It can be used to cache the file, with the \code{\link[=download_if_newer]{download_if_newer()}} or
 the \code{\link[=download_one_of]{download_one_of()}} functions.}
 
@@ -27,8 +27,8 @@ A \link{deferred} object. It resolves to a list with entries:
 \item \code{url}: The URL in the request.
 \item \code{destfile}: The destination file.
 \item \code{response}: The response object from the curl package.
-\item \code{etag}: The Etag of the response, of \code{NULL} if missing.
-\item \code{etag_file}: The file the Etag was written to, or \code{NULL} otherwise
+\item \code{etag}: The ETag of the response, of \code{NULL} if missing.
+\item \code{etag_file}: The file the ETag was written to, or \code{NULL} otherwise
 }
 }
 \description{
@@ -38,7 +38,7 @@ This is the asynchronous version of \code{\link[utils:download.file]{utils::down
 \code{download_file} also has some nice improvements:
 \itemize{
 \item It uses a temporary file, so never leaves a partial file at \code{destfile}.
-\item It can write the HTTP Etag from the response to a file, which can
+\item It can write the HTTP ETag from the response to a file, which can
 be used in \code{\link[=download_if_newer]{download_if_newer()}}, etc.
 \item It returns the HTTP response as part of the error message if the
 response status code indicates a client or server error.

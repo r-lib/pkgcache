@@ -189,8 +189,8 @@ pop_event_loop <- function() {
 #'
 #' `async_debug_shortcuts()` adds handy shortcuts to most of the helper
 #' functions. E.g. `async_next()` can be invoked as `.an` (without the
-#' parens). You only need to run it once per R session. Note that it adds
-#' the shortcuts to the global environment.
+#' parentheses). You only need to run it once per R session. Note that it
+#' adds the shortcuts to the global environment.
 #'
 #' `.an` (or `async_next()`) runs the next iteration of the event loop.
 #' Note that it does not return until _something_ happens in the event loop:
@@ -205,7 +205,7 @@ pop_event_loop <- function() {
 #' event loop.
 #'
 #' `.asb` (or `async_step_back()`) stops the debugging of the callbacks.
-#' It does not actually exdecutes anything from the event loop, so to go
+#' It does not actually execute anything from the event loop, so to go
 #' back to the main async browser, you also need to execute `c` (continue).
 #'
 #' `.al` (or `async_list()`) lists all deferred values in the current async
@@ -235,7 +235,7 @@ pop_event_loop <- function() {
 #'    string. Only present if this code was parsed with source references
 #'    enabled.
 #'
-#' `.at` (or `async_tree()`) printf the DAG of the deferred values.
+#' `.at` (or `async_tree()`) print the DAG of the deferred values.
 #'
 #' `async_debug()` can be used to debug the action and/or parent callbacks
 #' of the specified deferred value.
@@ -580,7 +580,7 @@ debug_all <- function(fun) {
 #' `parent_resolve` is a function with (up to) three arguments:
 #' `value`, `resolve` and `id`. It will be called with the value of the
 #' parent, the `resolve` callback of the deferred, and the id of the parent.
-#' `parent_resolve` can resolve the dereffed by calling the supplied `resolve`
+#' `parent_resolve` can resolve the deferred by calling the supplied `resolve`
 #' callback, or it can keep waiting on other parents and/or external
 #' computation. It may throw an error to fail the deferred.
 #'
@@ -681,7 +681,7 @@ debug_all <- function(fun) {
 #' `$then()` creates another deferred value, that will resolve to the
 #' result of the `on_fulfilled` callback. Should this callback return
 #' with a deferred value, then `$then()` the deferred value will be a
-#' child of this newly creted deferred, and only resolve after that.
+#' child of this newly created deferred, and only resolve after that.
 #'
 #' See also [when_all()], [when_some()] and [when_any()], which can combine
 #' multiple deferred values into one.
@@ -753,7 +753,7 @@ debug_all <- function(fun) {
 #' Async phases can be embedded into each other. I.e. a program may call
 #' [synchronise()] while in the async phase. The outer async phase's event
 #' loop then stops until the inner async phase terminates. Deferred values
-#' cannot be passed through a `synchronise()` barrier, to anoter (sync or
+#' cannot be passed through a `synchronise()` barrier, to another (sync or
 #' async phase). Should this happen, an error is reported on the first
 #' operation on the leaked deferred value.
 #'
@@ -775,7 +775,7 @@ debug_all <- function(fun) {
 #' synchronise(http_status3())
 #' ```
 #'
-#' This async function can also be used asychronously, as a parent of
+#' This async function can also be used asynchronously, as a parent of
 #' another deferred value, in an async phase.
 #'
 #' @section Lazy evaluation:
@@ -810,7 +810,7 @@ debug_all <- function(fun) {
 #'
 #' This will _fail_ the children of the deferred, unless they have been
 #' completed already. It will also auto-cancel the parent DAG of the
-#' deferred, unless they are shared deferreds, see the next Section.
+#' deferred, unless they are shared, see the next Section.
 #'
 #' @section Auto-cancellation:
 #'
@@ -840,7 +840,7 @@ debug_all <- function(fun) {
 #' are cancelled and freed.
 #'
 #' Shared deferred values (see `$share()`) are not auto-cancelled when their
-#' children are resolved or errored, but they are always cancelled at the
+#' children are resolved or rejected, but they are always cancelled at the
 #' end of the async phase.
 #'
 #' @section Progress bars:
@@ -879,7 +879,7 @@ debug_all <- function(fun) {
 #'   is equivalent calling '$then()` on them, but [async_sequence()] is
 #'   easier to use programmatically.
 #' * [async_until()] and [async_whilst()] let you call an async function
-#'   repeatedly, until or while a (syncronous) condition holds.
+#'   repeatedly, until or while a (synchronous) condition holds.
 #' * [async_timeout()] runs an async function with a timeout.
 #'
 #' @section Examples:
@@ -1382,7 +1382,7 @@ delay <- mark_as_async(delay)
 #' @param .x A list or atomic vector.
 #' @param .p An asynchronous predicate function.
 #' @param ... Additional arguments to the predicate function.
-#' @param .limit Number of elements to process simulateneously.
+#' @param .limit Number of elements to process simultaneously.
 #'   If it is 1, then the predicate is applied sequentially.
 #' @return A deferred value for the result.
 #'
@@ -1764,7 +1764,7 @@ async_every <- function(.x, .p, ...) {
 
 async_every <- mark_as_async(async_every)
 
-#' Keep or drop elements using an asyncronous predicate function
+#' Keep or drop elements using an asynchronous predicate function
 #'
 #' `async_filter` keep the elements for which `.p` is true. (Tested
 #' via `isTRUE()`. `async_reject` is the opposite, it drops them.
@@ -1834,7 +1834,7 @@ async_reject <- mark_as_async(async_reject)
 #'    to zero.
 #' * `current`: already received bytes of the response.
 #'
-#' @family asyncronous HTTP calls
+#' @family asynchronous HTTP calls
 #' @keywords internal
 #' @importFrom curl new_handle handle_setheaders
 #' @section Examples:
@@ -1886,7 +1886,7 @@ http_get <- mark_as_async(http_get)
 #' @inheritParams http_get
 #' @return Deferred object.
 #'
-#' @family asyncronous HTTP calls
+#' @family asynchronous HTTP calls
 #' @keywords internal
 #' @importFrom curl handle_setopt
 #' @section Examples:
@@ -2097,7 +2097,7 @@ http_statuses <- c(
 #' @param .f Asynchronous function to apply.
 #' @param ... Additional arguments to `.f`.
 #' @param .args More additional arguments to `.f`.
-#' @param .limit Number of elements to process simulateneously.
+#' @param .limit Number of elements to process simultaneously.
 #' @return Deferred value that is resolved after all deferred values
 #'   from the application of `.f` are resolved.
 #'
@@ -2331,7 +2331,7 @@ async_retry <- function(task, times, ...) {
 
 async_retry <- mark_as_async(async_retry)
 
-#' Make an asynchronous funcion retryable
+#' Make an asynchronous function retryable
 #'
 #' @param task An asynchronous function.
 #' @param times Number of tries.
@@ -2364,7 +2364,7 @@ async_retryable <- function(task, times) {
 #' it is easier to use programmatically.
 #'
 #' @param ... Asynchronous functions to compose.
-#' @param .list Mose asynchronous functions to compose.
+#' @param .list More asynchronous functions to compose.
 #' @return Asynchronous function, the composition of all input functions.
 #'   They are performed left to right, the ones in `.list` are the last
 #'   ones.
@@ -2428,7 +2428,7 @@ async_some <- mark_as_async(async_some)
 #' If an error is not handled in the async phase, `synchronise()` will
 #' re-throw that error.
 #'
-#' `synchronise()` cancels all async processes on interrupt or extrenal
+#' `synchronise()` cancels all async processes on interrupt or external
 #' error.
 #' 
 #' @param expr Async function call expression. If it does not evaluate
@@ -2595,8 +2595,8 @@ async_timeout <- mark_as_async(async_timeout)
 #' @param .list More deferred values to run, `.list` is easier to use
 #'   programmatically.
 #' @return Resolves to the result of the first successful deferred.
-#'   Otherwise throws an error. The error objects of all failed deferreds
-#'   will be in the `errors` member of the error object.
+#'   Otherwise throws an error. The error objects of all failed deferred
+#'   values will be in the `errors` member of the error object.
 #'
 #' @family async control flow
 #' @keywords internal

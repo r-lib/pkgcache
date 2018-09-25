@@ -87,7 +87,7 @@ error, the parent_reject` function is called.
 \code{parent_resolve} is a function with (up to) three arguments:
 \code{value}, \code{resolve} and \code{id}. It will be called with the value of the
 parent, the \code{resolve} callback of the deferred, and the id of the parent.
-\code{parent_resolve} can resolve the dereffed by calling the supplied \code{resolve}
+\code{parent_resolve} can resolve the deferred by calling the supplied \code{resolve}
 callback, or it can keep waiting on other parents and/or external
 computation. It may throw an error to fail the deferred.
 
@@ -191,7 +191,7 @@ result. (The result is omitted if it has no arguments).
 \code{$then()} creates another deferred value, that will resolve to the
 result of the \code{on_fulfilled} callback. Should this callback return
 with a deferred value, then \code{$then()} the deferred value will be a
-child of this newly creted deferred, and only resolve after that.
+child of this newly created deferred, and only resolve after that.
 
 See also \code{\link[=when_all]{when_all()}}, \code{\link[=when_some]{when_some()}} and \code{\link[=when_any]{when_any()}}, which can combine
 multiple deferred values into one.
@@ -268,7 +268,7 @@ the deferred values in this particular async phase.
 Async phases can be embedded into each other. I.e. a program may call
 \code{\link[=synchronise]{synchronise()}} while in the async phase. The outer async phase's event
 loop then stops until the inner async phase terminates. Deferred values
-cannot be passed through a \code{synchronise()} barrier, to anoter (sync or
+cannot be passed through a \code{synchronise()} barrier, to another (sync or
 async phase). Should this happen, an error is reported on the first
 operation on the leaked deferred value.
 
@@ -287,7 +287,7 @@ three HTTP requests in parallel:\preformatted{http_status3 <- function() {
 synchronise(http_status3())
 }
 
-This async function can also be used asychronously, as a parent of
+This async function can also be used asynchronously, as a parent of
 another deferred value, in an async phase.
 }
 
@@ -320,7 +320,7 @@ any more:\preformatted{dx$cancel(reason = "Cancelled")
 
 This will \emph{fail} the children of the deferred, unless they have been
 completed already. It will also auto-cancel the parent DAG of the
-deferred, unless they are shared deferreds, see the next Section.
+deferred, unless they are shared, see the next Section.
 }
 
 \section{Auto-cancellation}{
@@ -353,7 +353,7 @@ case all processes and resources that were created in the event loop,
 are cancelled and freed.
 
 Shared deferred values (see \code{$share()}) are not auto-cancelled when their
-children are resolved or errored, but they are always cancelled at the
+children are resolved or rejected, but they are always cancelled at the
 end of the async phase.
 }
 
@@ -401,7 +401,7 @@ want to stop at the first error.
 is equivalent calling '$then()` on them, but \code{\link[=async_sequence]{async_sequence()}} is
 easier to use programmatically.
 \item \code{\link[=async_until]{async_until()}} and \code{\link[=async_whilst]{async_whilst()}} let you call an async function
-repeatedly, until or while a (syncronous) condition holds.
+repeatedly, until or while a (synchronous) condition holds.
 \item \code{\link[=async_timeout]{async_timeout()}} runs an async function with a timeout.
 }
 }

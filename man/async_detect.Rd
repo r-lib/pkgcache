@@ -13,7 +13,7 @@ async_detect(.x, .p, ..., .limit = Inf)
 
 \item{...}{Additional arguments to the predicate function.}
 
-\item{.limit}{Number of elements to process simulateneously.
+\item{.limit}{Number of elements to process simultaneously.
 If it is 1, then the predicate is applied sequentially.}
 }
 \value{

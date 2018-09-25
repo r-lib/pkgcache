@@ -2,7 +2,7 @@
 % Please edit documentation in R/async.R
 \name{async_retryable}
 \alias{async_retryable}
-\title{Make an asynchronous funcion retryable}
+\title{Make an asynchronous function retryable}
 \usage{
 async_retryable(task, times)
 }
@@ -15,7 +15,7 @@ async_retryable(task, times)
 Asynchronous retryable function.
 }
 \description{
-Make an asynchronous funcion retryable
+Make an asynchronous function retryable
 }
 \section{Examples}{
 \preformatted{## Create a downloader that retries five times

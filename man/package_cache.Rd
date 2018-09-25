@@ -18,7 +18,7 @@ By default these fields are included for every package:
 \item \code{path} Package path, within the repository.
 \item \code{package} Package name.
 \item \code{url} URL it was downloaded from.
-\item \code{etag} ETag for the last dowload, from the given URL.
+\item \code{etag} ETag for the last download, from the given URL.
 \item \code{md5} MD5 of the file, to make sure if it has not changed.
 }
 
@@ -54,7 +54,7 @@ pc$delete(..., .list = NULL)
 \item \code{path}: For \code{package_cache$new()} the location of the cache. For other
 functions the location of the file inside the cache.
 \item \code{...}: Extra attributes to search for. They have to be named.
-\item \code{.list}: Extra attibutes to saerch for, they have to in a named list.
+\item \code{.list}: Extra attributes to search for, they have to in a named list.
 \item \code{file}:  Path to the file to add.
 \item \code{url}: URL attribute. This is used to update the file, if requested.
 \item \code{md5}: MD5 hash of the file.
@@ -94,10 +94,10 @@ the cache, it tries to download it from one of the specified URLs first.
 \code{pc$async_copy_or_add()} is the same, but asynchronous.
 
 \code{pc$update_or_add()} is like \code{pc$copy_to_add()}, but if the file is in
-the cache it tries to update it from the urls, using the stored etag to
-avoid unneccesary downloads.
+the cache it tries to update it from the urls, using the stored ETag to
+avoid unnecessary downloads.
 
-\code{pc$async_update_or_add()} is the same, but it is asychronous.
+\code{pc$async_update_or_add()} is the same, but it is asynchronous.
 
 \code{pc$delete()} deletes the file(s) from the cache.
 }

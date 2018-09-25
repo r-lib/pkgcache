@@ -15,7 +15,7 @@ cmc__data <- new.env(parent = emptyenv())
 #'   `cranlike_metadata_cache` object.
 #' * It is stored in an RDS file in the user's cache directory.
 #' * The downloaded raw `PACKAGES*` files are cached, together with HTTP
-#'   etags, to minimize downloads.
+#'   ETags, to minimize downloads.
 #'
 #' It has a synchronous and an asynchronous API.
 #'
@@ -82,7 +82,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' `cmd$async_deps()` is the same, but it is asynchronous, it
 #' returns a [deferred] object.
 #'
-#' `cmd$revdeps()` returns a tibble, with the (potentically recursive)
+#' `cmd$revdeps()` returns a tibble, with the (potentially recursive)
 #' reverse dependencies of `packages`.
 #'
 #' `cmd$async_revdeps()` does the same, asynchronously, it returns an
@@ -541,7 +541,7 @@ cmc__update_replica_rds <- function(self, private) {
 #' @param self self
 #' @param private private self
 #' @param rds Whether to update the RDS file.
-#' @param packages Wheren  to update the PACKAGES files (+ Etag files).
+#' @param packages Whether to update the PACKAGES files (+ ETag files).
 #' @return Nothing.
 #'
 #' @keywords internal

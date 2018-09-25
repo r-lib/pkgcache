@@ -76,8 +76,8 @@ extra commands to help async debugging. The extra commands:
 
 \code{async_debug_shortcuts()} adds handy shortcuts to most of the helper
 functions. E.g. \code{async_next()} can be invoked as \code{.an} (without the
-parens). You only need to run it once per R session. Note that it adds
-the shortcuts to the global environment.
+parentheses). You only need to run it once per R session. Note that it
+adds the shortcuts to the global environment.
 
 \code{.an} (or \code{async_next()}) runs the next iteration of the event loop.
 Note that it does not return until \emph{something} happens in the event loop:
@@ -92,7 +92,7 @@ called at the beginning of \emph{all} callbacks in the next iteration of the
 event loop.
 
 \code{.asb} (or \code{async_step_back()}) stops the debugging of the callbacks.
-It does not actually exdecutes anything from the event loop, so to go
+It does not actually execute anything from the event loop, so to go
 back to the main async browser, you also need to execute \code{c} (continue).
 
 \code{.al} (or \code{async_list()}) lists all deferred values in the current async
@@ -123,7 +123,7 @@ string. Only present if this code was parsed with source references
 enabled.
 }
 
-\code{.at} (or \code{async_tree()}) printf the DAG of the deferred values.
+\code{.at} (or \code{async_tree()}) print the DAG of the deferred values.
 
 \code{async_debug()} can be used to debug the action and/or parent callbacks
 of the specified deferred value.

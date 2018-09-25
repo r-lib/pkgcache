@@ -13,7 +13,7 @@ cmc__update_primary(self, private, rds, packages)
 
 \item{rds}{Whether to update the RDS file.}
 
-\item{packages}{Wheren  to update the PACKAGES files (+ Etag files).}
+\item{packages}{Whether to update the PACKAGES files (+ ETag files).}
 }
 \value{
 Nothing.

@@ -15,7 +15,7 @@ async_map(.x, .f, ..., .args = list(), .limit = Inf)
 
 \item{.args}{More additional arguments to \code{.f}.}
 
-\item{.limit}{Number of elements to process simulateneously.}
+\item{.limit}{Number of elements to process simultaneously.}
 }
 \value{
 Deferred value that is resolved after all deferred values

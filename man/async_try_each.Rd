@@ -18,8 +18,8 @@ programmatically.}
 }
 \value{
 Resolves to the result of the first successful deferred.
-Otherwise throws an error. The error objects of all failed deferreds
-will be in the \code{errors} member of the error object.
+Otherwise throws an error. The error objects of all failed deferred
+values will be in the \code{errors} member of the error object.
 }
 \description{
 It runs each task in series but stops whenever any of the functions were

@@ -13,11 +13,11 @@ download_one_of(urls, destfile, etag_file = NULL,
 \item{destfile}{Destination file.}
 
 \item{etag_file}{If not \code{NULL} then the path to a file that may contain
-the Etag of a previous request to this URL. If \code{destfile} exists, and
+the ETag of a previous request to this URL. If \code{destfile} exists, and
 \code{etag_file} exists and it is not empty, then the \code{If-None-Match} HTTP
-header is used with this Etag to avoid downloading the file if it has
+header is used with this ETag to avoid downloading the file if it has
 not changed. If the file at \code{url} has changed, then it is downloaded,
-and the the new Etag is stored in \code{etag_file}.}
+and the the new ETag is stored in \code{etag_file}.}
 
 \item{...}{Additional arguments are passed to \code{\link[=http_get]{http_get()}}.}
 }
@@ -27,8 +27,8 @@ A \link{deferred} object. It resolves to a list with entries:
 \item \code{url}: The URL in the request.
 \item \code{destfile}: The destination file.
 \item \code{response}: The response object from the curl package.
-\item \code{etag}: The Etag of the response, of \code{NULL} if missing.
-\item \code{etag_file}: The file the Etag was written to, or \code{NULL} otherwise
+\item \code{etag}: The ETag of the response, of \code{NULL} if missing.
+\item \code{etag_file}: The file the ETag was written to, or \code{NULL} otherwise
 }
 }
 \description{
@@ -38,7 +38,7 @@ Download errors are ignored, as long as at least one download completes
 successfully.
 }
 \details{
-It also uses Etags, so if the destination file already exists, and one
+It also uses ETags, so if the destination file already exists, and one
 of the URLs contain the same file (and this request completes first),
 the file is not downloaded again.
 

@@ -3,7 +3,7 @@
 \name{async_filter}
 \alias{async_filter}
 \alias{async_reject}
-\title{Keep or drop elements using an asyncronous predicate function}
+\title{Keep or drop elements using an asynchronous predicate function}
 \usage{
 async_filter(.x, .p, ...)
 

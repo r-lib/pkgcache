@@ -88,6 +88,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom filelock lock unlock
 #' @importFrom tools md5sum
+#' @importFrom async async_constant
 #'
 #' @export
 

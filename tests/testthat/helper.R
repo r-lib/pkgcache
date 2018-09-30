@@ -1,36 +1,14 @@
 
-offline_check_url <- function() {
-  "cran.rstudio.com"
-}
-
-is_offline <- (function() {
-  offline <- NULL
-  function() {
-    if (is.null(offline)) {
-      offline <<- tryCatch(
-        is.na(pingr::ping_port(offline_check_url(), port = 80, count = 1L)),
-        error = function(e) TRUE
-      )
-      if (offline) cat("We are offline!\n", file = stderr())
-    }
-    offline
-  }
-})()
-
-skip_if_offline <- function() {
-  if (is_offline()) skip("Offline")
-}
-
 httpbin <- (function() {
   url <- NULL
 
   update <- function(x) {
-    chk_url <- async(function(url, ...) {
-      http_head(url, ...)$
-        then(http_stop_for_status)$
+    chk_url <- function(url, ...) {
+      async::http_head(url, ...)$
+        then(async::http_stop_for_status)$
         then(function(r) r$url)
-    })
-    synchronise(when_any(
+    }
+    async::synchronise(async::when_any(
       chk_url("https://httpbin.org"),
       chk_url("https://eu.httpbin.org")
     ))

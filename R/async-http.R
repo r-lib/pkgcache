@@ -28,6 +28,7 @@
 #'
 #' @family async HTTP tools
 #' @importFrom curl parse_headers_list
+#' @importFrom async synchronise http_get http_stop_for_status when_all
 #' @keywords internal
 #' @section Examples:
 #' ```
@@ -237,6 +238,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #'
 #' @family async HTTP tools
 #' @keywords internal
+#' @importFrom async when_any
 #' @section Examples:
 #' ```
 #' dest <- tempfile()

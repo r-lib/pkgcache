@@ -10,3 +10,14 @@ global_metadata_cache <- NULL
 }
 
 ## nocov end
+
+#' The R6 object that implements the global metadata cache
+#'
+#' This is used by the [meta_cache_deps()], [meta_cache_list()], etc.
+#' functions.
+#'
+#' @export
+
+get_cranlike_metadata_cache <- function() {
+  global_metadata_cache
+}

@@ -111,6 +111,8 @@ test_that("load_primary_rds", {
   )
 
   file_set_time(pri_files$rds, Sys.time() - 1/2  * oneday())
+  for (f in pri_files$pkgs$path) { mkdirp(dirname(f)); cat("x", file = f) }
+  file_set_time(pri_files$pkgs$path, Sys.time() - 2  * oneday())
   expect_equal(
     get_private(cmc)$load_primary_rds(oneday()),
     "This is it")

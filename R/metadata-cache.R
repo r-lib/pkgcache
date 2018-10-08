@@ -432,6 +432,12 @@ cmc__load_primary_rds <- function(self, private, max_age) {
   time <- file_get_time(pri_files$rds)
   if (Sys.time() - time > max_age) stop("Primary RDS cache file outdated")
 
+  pkgs_times <- file_get_time(pri_files$pkgs$path)
+  if (any(is.na(pkgs_times)) || any(pkgs_times >= time)) {
+    unlink(pri_files$rds)
+    stop("Primary PACKAGES missing or newer than replica RDS, removing")
+  }
+
   file_copy_with_time(pri_files$rds, rep_files$rds)
   unlock(l)
 

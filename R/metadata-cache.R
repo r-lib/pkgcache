@@ -128,6 +128,15 @@ cmc__data <- new.env(parent = emptyenv())
 #' use only.
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' dir.create(cache_path <- tempfile())
+#' cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
+#' cmc$list()
+#' cmc$list("pkgconfig")
+#' cmc$deps("pkgconfig")
+#' cmc$revdeps("pkgconfig", recursive = FALSE)
+#' }
 
 cranlike_metadata_cache <- R6Class(
   "cranlike_metadata_cache",
@@ -726,6 +735,12 @@ type_bioc_matching_bioc_version <- function(r_version) {
 #' ```
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' meta_cache_list("pkgdown")
+#' meta_cache_deps("pkgdown", recursive = FALSE)
+#' meta_cache_revdeps("pkgdown", recursive = FALSE)
+#' }
 
 meta_cache_deps <- function(packages, dependencies = NA,
                             recursive = TRUE) {

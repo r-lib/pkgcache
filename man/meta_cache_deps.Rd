@@ -49,3 +49,10 @@ meta_cache_update()
 }
 }
 
+\examples{
+\donttest{
+meta_cache_list("pkgdown")
+meta_cache_deps("pkgdown", recursive = FALSE)
+meta_cache_revdeps("pkgdown", recursive = FALSE)
+}
+}

@@ -145,4 +145,14 @@ The tibble contains some extra columns as well, these are for internal
 use only.
 }
 
+\examples{
+\donttest{
+dir.create(cache_path <- tempfile())
+cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
+cmc$list()
+cmc$list("pkgconfig")
+cmc$deps("pkgconfig")
+cmc$revdeps("pkgconfig", recursive = FALSE)
+}
+}
 \keyword{datasets}

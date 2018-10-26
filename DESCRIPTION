@@ -18,6 +18,7 @@ Imports:
     assertthat,
     async,
     backports,
+    cliapp,
     curl (>= 3.2),
     digest,
     filelock,

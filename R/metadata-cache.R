@@ -213,11 +213,14 @@ cranlike_metadata_cache <- R6Class(
     repos = NULL,
     update_after = NULL,
     dirs = NULL,
-    lock_timeout = 10000
+    lock_timeout = 10000,
+
+    cliapp = NULL
   )
 )
 
 #' @importFrom filelock lock unlock
+#' @importFrom cliapp default_app start_app
 
 cmc_init <- function(self, private, primary_path, replica_path, platforms,
                      r_version, bioc, cran_mirror, repos, update_after) {
@@ -231,6 +234,7 @@ cmc_init <- function(self, private, primary_path, replica_path, platforms,
   private$repos <- cmc__get_repos(repos, bioc, cran_mirror, r_version)
   private$update_after <- update_after
   private$dirs <- get_all_package_dirs(platforms, r_version)
+  private$cliapp <- default_app() %||% start_app()
   invisible(self)
 }
 
@@ -363,8 +367,9 @@ cmc__get_current_data <- function(self, private, max_age) {
       Sys.time() - private$data_time > max_age) {
     stop("Loaded data outdated")
   }
-  "!!DEBUG Got current data!"
 
+  "!!DEBUG Got current data!"
+  private$cliapp$alert_success("Using cached package metadata")
   private$data
 }
 
@@ -379,6 +384,7 @@ cmc__get_memory_cache  <- function(self, private, max_age) {
   private$data <- hit$data
   private$data_time <- hit$data_time
 
+  private$cliapp$alert_success("Using session cached package metadata")
   private$data
 }
 
@@ -402,6 +408,7 @@ cmc__load_replica_rds <- function(self, private, max_age) {
   time <- file_get_time(rds)
   if (Sys.time() - time > max_age) stop("Replica RDS cache file outdated")
 
+  private$cliapp$alert_info("Loading session disk cached package metadata")
   private$data <- readRDS(rds)
   private$data_time <- time
   "!!DEBUG Loaded replica RDS!"
@@ -438,6 +445,7 @@ cmc__load_primary_rds <- function(self, private, max_age) {
     stop("Primary PACKAGES missing or newer than replica RDS, removing")
   }
 
+  private$cliapp$alert_info("Loading global cached package metadata")
   file_copy_with_time(pri_files$rds, rep_files$rds)
   unlock(l)
 
@@ -482,6 +490,7 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   }
 
   ## Copy to replica, if we cannot copy the etags, that's ok
+  private$cliapp$alert_info("Loading raw global disk cached package metadata")
   file_copy_with_time(pri_files$pkgs$path, rep_files$pkgs$path)
   tryCatch(
     file_copy_with_time(pri_files$pkgs$etag, rep_files$pkgs$etag),
@@ -510,6 +519,7 @@ cmc__update_replica_pkgs <- function(self, private) {
   "!!DEBUG Update replica PACKAGES"
   pkgs <- private$get_cache_files("replica")$pkgs
 
+  private$cliapp$alert_info("Checking for package metadata updates")
   dls <- lapply_rows(pkgs, function(pkg) {
     download_if_newer(pkg$url, pkg$path, pkg$etag)
   })

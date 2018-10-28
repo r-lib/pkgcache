@@ -90,7 +90,8 @@ It returns a tibble, see the list of columns below.
 \code{cmc$async_list()} is similar, but it is asynchronous, it returns a
 \link{deferred} object.
 
-\code{cmd$deps() returns a tibble, with the (potentially recursive) dependencies of}packages`.
+\code{cmd$deps()} returns a tibble, with the (potentially recursive)
+dependencies of \code{packages}.
 
 \code{cmd$async_deps()} is the same, but it is asynchronous, it
 returns a \link{deferred} object.
@@ -123,7 +124,7 @@ or \code{NA_character_}.
 \item \code{imports}: \code{Imports} field from \code{DESCRIPTION}, or \code{NA_character_}.
 \item \code{archs}: \code{Archs} entries from \code{PACKAGES} files. Might be missing.
 \item \code{repodir}: The directory of the file, inside the repository.
-\item \code{platform}: Possible values: \code{macos}, \code{windows,}source`.
+\item \code{platform}: Possible values: \code{macos}, \code{windows}, \code{source}.
 \item \code{needscompilation}: Whether the package needs compilation.
 \item \code{type}: \code{bioc} or \code{cran}  currently.
 \item \code{target}: The path of the package file inside the repository.

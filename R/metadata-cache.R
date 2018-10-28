@@ -76,7 +76,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' `cmc$async_list()` is similar, but it is asynchronous, it returns a
 #' [deferred] object.
 #'
-#' `cmd$deps() returns a tibble, with the (potentially recursive)
+#' `cmd$deps()` returns a tibble, with the (potentially recursive)
 #' dependencies of `packages`.
 #'
 #' `cmd$async_deps()` is the same, but it is asynchronous, it
@@ -107,7 +107,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `imports`: `Imports` field from `DESCRIPTION`, or `NA_character_`.
 #' * `archs`: `Archs` entries from `PACKAGES` files. Might be missing.
 #' * `repodir`: The directory of the file, inside the repository.
-#' * `platform`: Possible values: `macos`, `windows, `source`.
+#' * `platform`: Possible values: `macos`, `windows`, `source`.
 #' * `needscompilation`: Whether the package needs compilation.
 #' * `type`: `bioc` or `cran`  currently.
 #' * `target`: The path of the package file inside the repository.

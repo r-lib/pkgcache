@@ -79,4 +79,3 @@ Other async HTTP tools: \code{\link{download_if_newer}},
   \code{\link{download_one_of}}
 }
 \concept{async HTTP tools}
-\keyword{internal}

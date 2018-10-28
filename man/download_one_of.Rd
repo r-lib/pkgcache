@@ -88,4 +88,3 @@ Other async HTTP tools: \code{\link{download_file}},
   \code{\link{download_if_newer}}
 }
 \concept{async HTTP tools}
-\keyword{internal}

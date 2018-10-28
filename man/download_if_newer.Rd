@@ -80,4 +80,3 @@ Other async HTTP tools: \code{\link{download_file}},
   \code{\link{download_one_of}}
 }
 \concept{async HTTP tools}
-\keyword{internal}

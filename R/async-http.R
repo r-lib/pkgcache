@@ -29,7 +29,7 @@
 #' @family async HTTP tools
 #' @importFrom curl parse_headers_list
 #' @importFrom async synchronise http_get http_stop_for_status when_all
-#' @keywords internal
+#' @export
 #' @section Examples:
 #' ```
 #' dest1 <- tempfile(fileext = ".jpeg")
@@ -125,7 +125,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #' @inherit download_file return
 #'
 #' @family async HTTP tools
-#' @keywords internal
+#' @export
 #' @section Examples:
 #' ```
 #' dest <- tempfile(fileext = ".jpeg")
@@ -239,7 +239,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #' @inherit download_if_newer return
 #'
 #' @family async HTTP tools
-#' @keywords internal
+#' @export
 #' @importFrom async when_any
 #' @section Examples:
 #' ```

@@ -42,7 +42,8 @@ Suggests:
     testthat,
     withr
 Remotes:
-    r-lib/async
+    r-lib/async,
+    r-lib/cliapp
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE)

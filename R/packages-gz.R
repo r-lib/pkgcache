@@ -3,7 +3,7 @@ packages_gz_cols <- function()  {
   list(
     pkgs = c("ref", "type", "direct", "status", "package", "version",
              "platform", "rversion", "repodir", "sources", "target",
-             "needscompilation"),
+             "needscompilation", "priority"),
     deps = c("upstream", "idx", "ref", "type", "package", "op", "version")
 
   )

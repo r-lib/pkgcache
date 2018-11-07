@@ -138,7 +138,8 @@ archived since the metadata was cached.
 \item \code{linkingto}: \code{LinkingTo} field from \code{DESCRIPTION}, or \code{NA_character_}.
 \item \code{enhances}: \code{Enhances} field from \code{DESCRIPTION}, or \code{NA_character_}.
 \item \code{os_type}: \code{unix} or \code{windows} for OS specific packages. Usually \code{NA}.
-\item \code{priority}:
+\item \code{priority}: "optional", "recommended" or \code{NA}. (Base packages are
+normalliy not included in the list, so "base" should not appear here.)
 \item \code{md5sum}: MD5 sum, if available, may be \code{NA}.
 }
 

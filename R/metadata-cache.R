@@ -121,7 +121,8 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `linkingto`: `LinkingTo` field from `DESCRIPTION`, or `NA_character_`.
 #' * `enhances`: `Enhances` field from `DESCRIPTION`, or `NA_character_`.
 #' * `os_type`: `unix` or `windows` for OS specific packages. Usually `NA`.
-#' * `priority`:
+#' * `priority`: "optional", "recommended" or `NA`. (Base packages are
+#'   normalliy not included in the list, so "base" should not appear here.)
 #' * `md5sum`: MD5 sum, if available, may be `NA`.
 #'
 #' The tibble contains some extra columns as well, these are for internal

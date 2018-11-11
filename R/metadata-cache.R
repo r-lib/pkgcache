@@ -455,6 +455,7 @@ cmc__load_primary_rds <- function(self, private, max_age) {
   time <- file_get_time(pri_files$rds)
   if (Sys.time() - time > max_age) stop("Primary RDS cache file outdated")
 
+  ## Metadata files might be missing or outdated, that's ok (?)
   pkgs_times <- file_get_time(pri_files$pkgs$path)
   if (any(is.na(pkgs_times)) || any(pkgs_times >= time)) {
     unlink(pri_files$rds)
@@ -496,11 +497,12 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   if (is.null(l)) stop("Cannot acquire lock to copy PACKAGES files")
   on.exit(unlock(l), add = TRUE)
 
-  ## Check if PACKAGES exist and current
-  if (!all(file.exists(pri_files$pkgs$path))) {
+  ## Check if PACKAGES exist and current. It is OK if metadata is missing
+  pkg_files <- pri_files$pkgs$path
+  if (!all(file.exists(pkg_files))) {
     stop("Some primary PACKAGES files don't exist")
   }
-  time <- file_get_time(pri_files$pkgs$path)
+  time <- file_get_time(pkg_files)
   if (any(Sys.time() - time > max_age)) {
     stop("Some primary PACKAGES files are outdated")
   }
@@ -510,6 +512,16 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   file_copy_with_time(pri_files$pkgs$path, rep_files$pkgs$path)
   tryCatch(
     file_copy_with_time(pri_files$pkgs$etag, rep_files$pkgs$etag),
+    error = function(e) e
+  )
+  tryCatch(
+    file_copy_with_time(na.omit(pri_files$pkgs$meta_path),
+                        na.omit(rep_files$pkgs$meta_path)),
+    error = function(e) e
+  )
+  tryCatch(
+    file_copy_with_time(na.omit(pri_files$pkgs$meta_etag),
+                        na.omit(rep_files$pkgs$meta_etag)),
     error = function(e) e
   )
   unlock(l)
@@ -614,6 +626,10 @@ cmc__update_primary <- function(self, private, rds, packages) {
   if (packages) {
     file_copy_with_time(rep_files$pkgs$path, pri_files$pkgs$path)
     file_copy_with_time(rep_files$pkgs$etag, pri_files$pkgs$etag)
+    file_copy_with_time(na.omit(rep_files$pkgs$meta_path),
+                        na.omit(pri_files$pkgs$meta_path))
+    file_copy_with_time(na.omit(rep_files$pkgs$meta_etag),
+                        na.omit(pri_files$pkgs$meta_etag))
   }
   unlock(l)
 

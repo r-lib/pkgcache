@@ -19,6 +19,9 @@ header is used with this ETag to avoid downloading the file if it has
 not changed. If the file at \code{url} has changed, then it is downloaded,
 and the the new ETag is stored in \code{etag_file}.}
 
+\item{headers}{HTTP headers to add to the request, a named character
+vector.}
+
 \item{tmp_destfile}{Where to store the temporary destination file.}
 
 \item{...}{Additional arguments are passed to \code{\link[=http_get]{http_get()}}.}

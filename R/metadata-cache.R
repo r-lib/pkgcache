@@ -116,6 +116,8 @@ cmc__data <- new.env(parent = emptyenv())
 #'   of the package file. For source CRAN packages, it contains URLs to
 #'   the `Archive` directory as well, in case the package has been
 #'   archived since the metadata was cached.
+#' * `filesize`: Size of the file, if known, in bytes, or `NA_integer_`.
+#' * `sha256`: The SHA256 hash of the file, if known, or `NA_character_`.
 #' * `deps`: All package dependencies, in a tibble.
 #' * `license`: Package license, might be `NA` for binary packages.
 #' * `linkingto`: `LinkingTo` field from `DESCRIPTION`, or `NA_character_`.
@@ -309,13 +311,25 @@ cmc__get_cache_files <- function(self, private, which) {
   type <- rep(private$repos$type, each = nrow(private$dirs))
   bioc_version <- rep(private$repos$bioc_version, each = nrow(private$dirs))
 
+  pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
+  meta_path <- ifelse(
+    type == "cran",
+    file.path(root, "_metadata", repo_enc, pkgs_dirs, "METADATA.gz"),
+    NA_character_)
+  meta_etag <- ifelse(
+    !is.na(meta_path), paste0(meta_path, ".etag"), NA_character_)
+  meta_url <- ifelse(
+    !is.na(meta_path),
+    paste0("https://cran.r-pkg.org/metadata/", pkgs_dirs, "/METADATA.gz"),
+    NA_character_)
+
   list(
     root = root,
     meta = file.path(root, "_metadata"),
     lock = file.path(root, "_metadata.lock"),
     rds  = file.path(root, "_metadata", rds_file),
     pkgs = tibble::tibble(
-      path = file.path(root, "_metadata", repo_enc, pkgs_files),
+      path = pkg_path,
       etag = file.path(root, "_metadata", repo_enc, paste0(pkgs_files, ".etag")),
       basedir = pkgs_dirs,
       base = pkgs_files,
@@ -323,7 +337,10 @@ cmc__get_cache_files <- function(self, private, which) {
       url = paste0(mirror, "/", pkgs_files),
       platform = rep(private$dirs$platform, nrow(private$repos)),
       type = type,
-      bioc_version = bioc_version
+      bioc_version = bioc_version,
+      meta_path = meta_path,
+      meta_etag = meta_etag,
+      meta_url = meta_url
     )
   )
 }
@@ -440,6 +457,7 @@ cmc__load_primary_rds <- function(self, private, max_age) {
   time <- file_get_time(pri_files$rds)
   if (Sys.time() - time > max_age) stop("Primary RDS cache file outdated")
 
+  ## Metadata files might be missing or outdated, that's ok (?)
   pkgs_times <- file_get_time(pri_files$pkgs$path)
   if (any(is.na(pkgs_times)) || any(pkgs_times >= time)) {
     unlink(pri_files$rds)
@@ -481,11 +499,12 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   if (is.null(l)) stop("Cannot acquire lock to copy PACKAGES files")
   on.exit(unlock(l), add = TRUE)
 
-  ## Check if PACKAGES exist and current
-  if (!all(file.exists(pri_files$pkgs$path))) {
+  ## Check if PACKAGES exist and current. It is OK if metadata is missing
+  pkg_files <- pri_files$pkgs$path
+  if (!all(file.exists(pkg_files))) {
     stop("Some primary PACKAGES files don't exist")
   }
-  time <- file_get_time(pri_files$pkgs$path)
+  time <- file_get_time(pkg_files)
   if (any(Sys.time() - time > max_age)) {
     stop("Some primary PACKAGES files are outdated")
   }
@@ -495,6 +514,16 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   file_copy_with_time(pri_files$pkgs$path, rep_files$pkgs$path)
   tryCatch(
     file_copy_with_time(pri_files$pkgs$etag, rep_files$pkgs$etag),
+    error = function(e) e
+  )
+  tryCatch(
+    file_copy_with_time(na_omit(pri_files$pkgs$meta_path),
+                        na_omit(rep_files$pkgs$meta_path)),
+    error = function(e) e
+  )
+  tryCatch(
+    file_copy_with_time(na_omit(pri_files$pkgs$meta_etag),
+                        na_omit(rep_files$pkgs$meta_etag)),
     error = function(e) e
   )
   unlock(l)
@@ -525,7 +554,13 @@ cmc__update_replica_pkgs <- function(self, private) {
     download_if_newer(pkg$url, pkg$path, pkg$etag)
   })
 
-  when_all(.list = dls)
+  metadls <- drop_nulls(lapply_rows(pkgs, function(pkg) {
+    if (!is.na(pkg$meta_url)) {
+      download_if_newer(pkg$meta_url, pkg$meta_path, pkg$meta_etag)
+    }
+  }))
+
+  when_all(.list = c(dls, metadls))
 }
 
 #' Update the replica RDS from the PACKAGES files
@@ -546,7 +581,8 @@ cmc__update_replica_rds <- function(self, private) {
       tryCatch(
         read_packages_file(r$path, mirror = r$mirror,
                            repodir = r$basedir, platform = r$platform,
-                           rversion = private$r_version, type = r$type),
+                           rversion = private$r_version, type = r$type,
+                           meta_path = r$meta_path),
         ## TODO: warn?
         error = function(x) NULL
       )
@@ -592,6 +628,10 @@ cmc__update_primary <- function(self, private, rds, packages) {
   if (packages) {
     file_copy_with_time(rep_files$pkgs$path, pri_files$pkgs$path)
     file_copy_with_time(rep_files$pkgs$etag, pri_files$pkgs$etag)
+    file_copy_with_time(na_omit(rep_files$pkgs$meta_path),
+                        na_omit(pri_files$pkgs$meta_path))
+    file_copy_with_time(na_omit(rep_files$pkgs$meta_etag),
+                        na_omit(pri_files$pkgs$meta_etag))
   }
   unlock(l)
 

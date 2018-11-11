@@ -19,7 +19,7 @@ By default these fields are included for every package:
 \item \code{package} Package name.
 \item \code{url} URL it was downloaded from.
 \item \code{etag} ETag for the last download, from the given URL.
-\item \code{md5} MD5 of the file, to make sure if it has not changed.
+\item \code{sha256} SHA256 hash of the file.
 }
 
 Additional fields can be added as needed.
@@ -33,12 +33,12 @@ For a simple API to a session-wide instance of this class, see
 pc$list()
 pc$find(..., .list = NULL)
 pc$copy_to(..., .list = NULL)
-pc$add(file, path, md5 = tools::md5sum(file)[[1]], ..., .list = NULL)
+pc$add(file, path, sha256 = sha256(file), ..., .list = NULL)
 pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
 pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
-pc$copy_or_add(target, urls, path, md5 = NULL, ..., .list = NULL,
+pc$copy_or_add(target, urls, path, sha256 = NULL, ..., .list = NULL,
                on_progress = NULL)
-pc$async_copy_or_add(target, urls, path, ..., md5 = NULL, ...,
+pc$async_copy_or_add(target, urls, path, ..., sha256 = NULL, ...,
                .list = NULL, on_progress = NULL)
 pc$update_or_add(target, urls, path, ..., .list = NULL,
                on_progress = NULL)
@@ -57,7 +57,7 @@ functions the location of the file inside the cache.
 \item \code{.list}: Extra attributes to search for, they have to in a named list.
 \item \code{file}:  Path to the file to add.
 \item \code{url}: URL attribute. This is used to update the file, if requested.
-\item \code{md5}: MD5 hash of the file.
+\item \code{sha256}: SHA256 hash of the file.
 \item \code{on_progress}: Callback to create progress bard. Passed to
 \code{\link[=http_get]{http_get()}}.
 \item \code{target}: Path to copy the (first) to hit to.

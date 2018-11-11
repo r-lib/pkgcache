@@ -133,6 +133,8 @@ or \code{NA_character_}.
 of the package file. For source CRAN packages, it contains URLs to
 the \code{Archive} directory as well, in case the package has been
 archived since the metadata was cached.
+\item \code{filesize}: Size of the file, if known, in bytes, or \code{NA_integer_}.
+\item \code{sha256}: The SHA256 hash of the file, if known, or \code{NA_character_}.
 \item \code{deps}: All package dependencies, in a tibble.
 \item \code{license}: Package license, might be \code{NA} for binary packages.
 \item \code{linkingto}: \code{LinkingTo} field from \code{DESCRIPTION}, or \code{NA_character_}.

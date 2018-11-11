@@ -1,50 +1,8 @@
 
 fixtures <- list(
-
-  "resolution-simple.rds" = function() {
-    r <- remotes$new("pkgconfig", lib = tempfile())
-    r$resolve()
-  },
-
-  "resolution-progress.rds" = function() {
-    r <- remotes$new("progress", lib = tempfile())
-    r$resolve()
-  },
-
-  "resolution-installed.rds" = function() {
-    dir.create(tmp <- tempfile())
-    on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
-    install.packages("pkgconfig", lib = tmp)
-    r <- remotes$new("pkgconfig", lib = tmp)
-    r$resolve()
-  },
-
-  "resolution-gh-vs-cran.rds" = function() {
-    dir.create(tmp <- tempfile())
-    on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
-    r <- remotes$new(
-      c("cran::pkgconfig", "github::r-lib/pkgconfig"),
-      lib = tmp)
-    r$resolve()
-  },
-
-  "solution-crayon.rds" = function() {
-    dir.create(tmp <- tempfile())
-    on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
-    r <- remotes$new("crayon", lib = tempfile())
-    r$resolve()
-    r$solve()
-  },
-
-  "solution-igraph.rds" = function() {
-    dir.create(tmp <- tempfile())
-    on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
-    r <- remotes$new("igraph", lib = tempfile())
-    r$resolve()
-    r$solve()
-  }
+  ## Maybe later
 )
-
+  
 fixture_dir <- function() {
   ## If run from R CMD check, it might give an error,
   ## so fall back to the current directory being tests/testthat

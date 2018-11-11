@@ -12,14 +12,14 @@ test_that("add / list / find / delete", {
   on.exit(unlink(tmp, recursive = TRUE))
   cat("f1\n", file = f1 <- tempfile())
 
-  md5 <- unname(tools::md5sum(f1))
+  sha256 <- shasum256(f1)
   new <- pc$add(f1, path = "f/b", package = "p", url = "u",
-                etag = "e", md5 = md5)
+                etag = "e", sha256 = sha256)
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
   exp <- list(fullpath = fullpath, path = path, package = "p", url = "u",
-              etag = "e", md5 = md5)
+              etag = "e", sha256 = sha256)
 
   expect_equal(as.list(new), exp)
 
@@ -29,14 +29,14 @@ test_that("add / list / find / delete", {
 
   pc$copy_to(f2 <- tempfile(), package = "p")
   expect_true(file.exists(f2))
-  expect_equal(unname(tools::md5sum(f2)), md5)
+  expect_equal(shasum256(f2), sha256)
 
   pc$delete(package = "p")
 
   empty <- data.frame(
     stringsAsFactors = FALSE,
     fullpath = character(),  path = character(), package = character(),
-    url = character(), etag = character(), md5 = character()
+    url = character(), etag = character(), sha256 = character()
   )
 
   expect_equal(pc$list(), empty)
@@ -58,7 +58,7 @@ test_that("add_url", {
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
   exp <- list(fullpath = fullpath, path = path, package = "p", url = url,
-              etag = "foobar", md5 = md5sum(fullpath)[[1]])
+              etag = "foobar", sha256 = shasum256(fullpath))
   expect_equal(as.list(new), exp)
 })
 
@@ -68,9 +68,9 @@ test_that("copy_or_add, positive", {
 
   cat("f1\n", file = f1 <- tempfile())
 
-  md5 <- unname(tools::md5sum(f1))
+  sha256 <- shasum256(f1)
   new <- pc$add(f1, path = "f/b", package = "p", url = "u",
-                etag = "e", md5 = md5)
+                etag = "e", sha256 = sha256)
   attr(new, "action") <- "Had"
 
   hit <- pc$copy_or_add(f1 <- tempfile(), url = "u", path = "f/b",
@@ -89,9 +89,9 @@ test_that("copy_or_add, negative", {
 
   cat("f1\n", file = f1 <- tempfile())
 
-  md5 <- unname(tools::md5sum(f1))
+  sha256 <- shasum256(f1)
   new <- pc$add(f1, path = "f/b", package = "p", url = "u",
-                etag = "e", md5 = md5)
+                etag = "e", sha256 = sha256)
 
   url <- httpbin("/etag/foobar")
   hit <- pc$copy_or_add(url = url, f1 <- tempfile(), path = "f/b",
@@ -100,7 +100,7 @@ test_that("copy_or_add, negative", {
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
   exp <- list(fullpath = fullpath, path = path, package = "p2", url = url,
-              etag = "foobar", md5 = md5sum(fullpath)[[1]])
+              etag = "foobar", sha256 = shasum256(fullpath))
   attr(exp, "action") <- "Got"
   expect_equal(as.list(hit), exp)
   expect_true(file.exists(f1))
@@ -126,7 +126,7 @@ test_that("update_or_add, not in cache", {
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
   exp <- list(fullpath = fullpath, path = path, package = "p", url = url,
-              etag = "foobar", md5 = md5sum(fullpath)[[1]])
+              etag = "foobar", sha256 = shasum256(fullpath))
   attr(exp, "action") <- "Got"
   expect_equal(as.list(hit), exp)
 
@@ -148,8 +148,8 @@ test_that("update_or_add, cache is too old", {
   cat("f1\n", file = f1 <- tempfile())
 
   url <- httpbin("/etag/foobar")
-  md5 <- unname(tools::md5sum(f1))
-  pc$add(f1, path = "f/b", package = "p", url = url, etag = "e", md5 = md5)
+  sha256 <- shasum256(f1)
+  pc$add(f1, path = "f/b", package = "p", url = url, etag = "e", sha256 = sha256)
 
   hit <- pc$update_or_add(url = url, f1 <- tempfile(), path = "f/b",
                           package = "p")
@@ -157,7 +157,7 @@ test_that("update_or_add, cache is too old", {
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
   exp <- list(fullpath = fullpath, path = path, package = "p", url = url,
-              etag = "foobar", md5 = md5sum(fullpath)[[1]])
+              etag = "foobar", sha256 = shasum256(fullpath))
   attr(exp, "action") <- "Got"
   expect_equal(as.list(hit), exp)
 
@@ -179,9 +179,9 @@ test_that("update_or_add, cache is current", {
   cat("f1\n", file = f1 <- tempfile())
 
   url <- httpbin("/etag/foobar")
-  md5 <- unname(tools::md5sum(f1))
+  sha256 <- shasum256(f1)
   pc$add(f1, path = "f/b", package = "p", url = url, etag = "foobar",
-         md5 = md5)
+         sha256 = sha256)
 
   hit <- pc$update_or_add(url = url, f1 <- tempfile(), path = "f/b",
                           package = "p")
@@ -189,7 +189,7 @@ test_that("update_or_add, cache is current", {
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
   exp <- list(fullpath = fullpath, path = path, package = "p", url = url,
-              etag = "foobar", md5 = md5)
+              etag = "foobar", sha256 = sha256)
   attr(exp, "action") <- "Current"
   expect_equal(as.list(hit), exp)
 

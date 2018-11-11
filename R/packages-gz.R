@@ -31,6 +31,10 @@ read_packages_file <- function(path, mirror, repodir, platform, ...,
     }
   }
 
+  if (! "priority" %in% names(pkgs)) {
+    pkgs$priority <- rep(NA_character_, nrow(pkgs))
+  }
+
   if (!nrow(pkgs)) {
     pkgs$package <- character()
     pkgs$version <- character()

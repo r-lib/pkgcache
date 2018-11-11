@@ -122,6 +122,8 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #'   header is used with this ETag to avoid downloading the file if it has
 #'   not changed. If the file at `url` has changed, then it is downloaded,
 #'   and the the new ETag is stored in `etag_file`.
+#' @param headers HTTP headers to add to the request, a named character
+#'   vector.
 #' @inherit download_file return
 #'
 #' @family async HTTP tools

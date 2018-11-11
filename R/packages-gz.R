@@ -3,7 +3,7 @@ packages_gz_cols <- function()  {
   list(
     pkgs = c("ref", "type", "direct", "status", "package", "version",
              "platform", "rversion", "repodir", "sources", "target",
-             "needscompilation", "priority"),
+             "needscompilation", "priority", "filesize", "sha256"),
     deps = c("upstream", "idx", "ref", "type", "package", "op", "version")
 
   )
@@ -14,9 +14,10 @@ packages_gz_cols <- function()  {
 #' @importFrom assertthat assert_that
 
 read_packages_file <- function(path, mirror, repodir, platform,
-                               type = "standard", meta_path = NULL,
+                               type = "standard", meta_path = NA_character_,
                                ..., .list = list()) {
   pkgs <- as_tibble(read.dcf.gz(path))
+  meta <- read_metadata_file(meta_path)
   extra <- c(
     list(repodir = repodir, platform = platform),
     list(...), .list)
@@ -50,11 +51,34 @@ read_packages_file <- function(path, mirror, repodir, platform,
   pkgs$sources <- packages_make_sources(
     mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version, type)
 
+  if (!is.null(meta)) {
+    map <- match(pkgs$target, paste0(repodir, "/", meta$filename))
+    pkgs$filesize <- meta$filesize[map]
+    pkgs$sha256 <- meta$sha256[map]
+  } else {
+    pkgs$filesize <- rep(NA_integer_, nrow(pkgs))
+    pkgs$sha256 <- rep(NA_character_, nrow(pkgs))
+  }
+
   deps <- packages_parse_deps(pkgs)
   pkgs_deps <- split(
     deps[,-(1:2)], factor(deps$idx, levels = seq_len(nrow(pkgs))))
   pkgs$deps <- unname(pkgs_deps)
   list(pkgs = pkgs, deps = deps)
+}
+
+#' @importFrom utils read.csv
+
+read_metadata_file <- function(path) {
+  if (is.na(path)) return(NULL)
+  on.exit(tryCatch(close(con), error = function(x) NULL), add = TRUE)
+  tryCatch(suppressWarnings({
+    tab <- read.csv(con <- gzfile(path, open = "r"),
+                    header = FALSE, stringsAsFactors = FALSE)
+    close(con)
+    names(tab)[1:3] <- c("filename", "filesize", "sha256")
+    tab
+  }), error = function(e) NULL)
 }
 
 #' @importFrom tibble tibble

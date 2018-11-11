@@ -13,8 +13,9 @@ packages_gz_cols <- function()  {
 #' @importFrom tibble as_tibble
 #' @importFrom assertthat assert_that
 
-read_packages_file <- function(path, mirror, repodir, platform, ...,
-                               type = "standard", .list = list()) {
+read_packages_file <- function(path, mirror, repodir, platform,
+                               type = "standard", meta_path = NULL,
+                               ..., .list = list()) {
   pkgs <- as_tibble(read.dcf.gz(path))
   extra <- c(
     list(repodir = repodir, platform = platform),

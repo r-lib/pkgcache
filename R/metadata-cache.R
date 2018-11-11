@@ -540,7 +540,13 @@ cmc__update_replica_pkgs <- function(self, private) {
     download_if_newer(pkg$url, pkg$path, pkg$etag)
   })
 
-  when_all(.list = dls)
+  metadls <- drop_nulls(lapply_rows(pkgs, function(pkg) {
+    if (!is.na(pkg$meta_url)) {
+      download_if_newer(pkg$meta_url, pkg$meta_path, pkg$meta_etag)
+    }
+  }))
+
+  when_all(.list = c(dls, metadls))
 }
 
 #' Update the replica RDS from the PACKAGES files
@@ -561,7 +567,8 @@ cmc__update_replica_rds <- function(self, private) {
       tryCatch(
         read_packages_file(r$path, mirror = r$mirror,
                            repodir = r$basedir, platform = r$platform,
-                           rversion = private$r_version, type = r$type),
+                           rversion = private$r_version, type = r$type,
+                           meta_path = r$meta_path),
         ## TODO: warn?
         error = function(x) NULL
       )

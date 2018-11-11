@@ -116,6 +116,8 @@ cmc__data <- new.env(parent = emptyenv())
 #'   of the package file. For source CRAN packages, it contains URLs to
 #'   the `Archive` directory as well, in case the package has been
 #'   archived since the metadata was cached.
+#' * `filesize`: Size of the file, if known, in bytes, or `NA_integer_`.
+#' * `sha256`: The SHA256 hash of the file, if known, or `NA_character_`.
 #' * `deps`: All package dependencies, in a tibble.
 #' * `license`: Package license, might be `NA` for binary packages.
 #' * `linkingto`: `LinkingTo` field from `DESCRIPTION`, or `NA_character_`.

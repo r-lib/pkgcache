@@ -309,13 +309,25 @@ cmc__get_cache_files <- function(self, private, which) {
   type <- rep(private$repos$type, each = nrow(private$dirs))
   bioc_version <- rep(private$repos$bioc_version, each = nrow(private$dirs))
 
+  pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
+  meta_path <- ifelse(
+    type == "cran",
+    file.path(root, "_metadata", repo_enc, pkgs_dirs, "METADATA.gz"),
+    NA_character_)
+  meta_etag <- ifelse(
+    !is.na(meta_path), paste0(meta_path, ".etag"), NA_character_)
+  meta_url <- ifelse(
+    !is.na(meta_path),
+    paste0("https://cran.r-pkg.org/metadata/", pkgs_dirs, "/METADATA.gz"),
+    NA_character_)
+
   list(
     root = root,
     meta = file.path(root, "_metadata"),
     lock = file.path(root, "_metadata.lock"),
     rds  = file.path(root, "_metadata", rds_file),
     pkgs = tibble::tibble(
-      path = file.path(root, "_metadata", repo_enc, pkgs_files),
+      path = pkg_path,
       etag = file.path(root, "_metadata", repo_enc, paste0(pkgs_files, ".etag")),
       basedir = pkgs_dirs,
       base = pkgs_files,
@@ -323,7 +335,10 @@ cmc__get_cache_files <- function(self, private, which) {
       url = paste0(mirror, "/", pkgs_files),
       platform = rep(private$dirs$platform, nrow(private$repos)),
       type = type,
-      bioc_version = bioc_version
+      bioc_version = bioc_version,
+      meta_path = meta_path,
+      meta_etag = meta_etag,
+      meta_url = meta_url
     )
   )
 }

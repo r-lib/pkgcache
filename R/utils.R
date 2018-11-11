@@ -184,3 +184,9 @@ null2na <- function(x) {
 na_omit <- function(x) {
   x[!is.na(x)]
 }
+
+#' @importFrom digest digest
+
+shasum256 <- function(x) {
+  digest(algo = "sha256", file = x)
+}

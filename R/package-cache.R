@@ -9,7 +9,7 @@
 #' * `package` Package name.
 #' * `url` URL it was downloaded from.
 #' * `etag` ETag for the last download, from the given URL.
-#' * `md5` MD5 of the file, to make sure if it has not changed.
+#' * `sha256` SHA256 hash of the file.
 #'
 #' Additional fields can be added as needed.
 #'
@@ -23,12 +23,12 @@
 #' pc$list()
 #' pc$find(..., .list = NULL)
 #' pc$copy_to(..., .list = NULL)
-#' pc$add(file, path, md5 = tools::md5sum(file)[[1]], ..., .list = NULL)
+#' pc$add(file, path, sha256 = shasum256(file), ..., .list = NULL)
 #' pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
 #' pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
-#' pc$copy_or_add(target, urls, path, md5 = NULL, ..., .list = NULL,
+#' pc$copy_or_add(target, urls, path, sha256 = NULL, ..., .list = NULL,
 #'                on_progress = NULL)
-#' pc$async_copy_or_add(target, urls, path, ..., md5 = NULL, ...,
+#' pc$async_copy_or_add(target, urls, path, ..., sha256 = NULL, ...,
 #'                .list = NULL, on_progress = NULL)
 #' pc$update_or_add(target, urls, path, ..., .list = NULL,
 #'                on_progress = NULL)
@@ -44,7 +44,7 @@
 #' * `.list`: Extra attributes to search for, they have to in a named list.
 #' * `file`:  Path to the file to add.
 #' * `url`: URL attribute. This is used to update the file, if requested.
-#' * `md5`: MD5 hash of the file.
+#' * `sha256`: SHA256 hash of the file.
 #' * `on_progress`: Callback to create progress bard. Passed to
 #'   [http_get()].
 #' * `target`: Path to copy the (first) to hit to.
@@ -87,7 +87,6 @@
 #'
 #' @importFrom R6 R6Class
 #' @importFrom filelock lock unlock
-#' @importFrom tools md5sum
 #' @importFrom async async_constant
 #'
 #' @export
@@ -140,9 +139,7 @@ package_cache <- R6Class(
       res
     },
 
-    add = function(file, path, md5 = tools::md5sum(file)[[1]], ...,
-                   .list = NULL) {
-
+    add = function(file, path, sha256 = shasum256(file), ..., .list = NULL) {
       assert_that(is_existing_file(file))
 
       l <- private$lock(exclusive = TRUE)
@@ -151,13 +148,13 @@ package_cache <- R6Class(
       db <- readRDS(dbfile)
 
       idx <- find_in_data_frame(
-        db, path = path, md5 = md5, ..., .list = .list)
+        db, path = path, sha256 = sha256, ..., .list = .list)
 
       target <- file.path(private$path, path)
       mkdirp(dirname(target))
       file.copy(file, target, overwrite = TRUE)
       db <- append_to_data_frame(
-        db, fullpath = target, path = path, ..., md5 = null2na(md5),
+        db, fullpath = target, path = path, ..., sha256 = null2na(sha256),
         .list = .list)
       saveRDS(db, dbfile)
       db[nrow(db), ]
@@ -172,7 +169,7 @@ package_cache <- R6Class(
       download_file(url, target, on_progress = on_progress)$
         then(function(res) {
           self$add(target, path, url = url, etag = res$etag, ...,
-                   md5 = md5sum(target)[[1]], .list = .list)
+                   sha256 = shasum256(target), .list = .list)
         })$
         finally(function(x) unlink(target, recursive = TRUE))
     },
@@ -183,9 +180,9 @@ package_cache <- R6Class(
     },
 
     ## If the file is not in the cache, then download it and add it.
-    async_copy_or_add = function(target, urls, path, md5 = NULL, ...,
+    async_copy_or_add = function(target, urls, path, sha256 = NULL, ...,
                                  .list = NULL, on_progress = NULL) {
-      self; private; target; urls; path; md5; list(...); .list; on_progress
+      self; private; target; urls; path; sha256; list(...); .list; on_progress
       etag <- tempfile()
       async_constant()$
         then(~ self$copy_to(target, url = urls[1], ..., .list = .list))$
@@ -193,9 +190,9 @@ package_cache <- R6Class(
           if (! nrow(res)) {
             download_one_of(urls, target, on_progress = on_progress)$
               then(function(d) {
-                md5 <- md5sum(target)[[1]]
+                sha256 <- shasum256(target)
                 self$add(target, path, url = d$url, etag = d$etag,
-                         md5 = null2na(md5), ..., .list = .list)
+                         sha256 = null2na(sha256), ..., .list = .list)
               })$
               then(function(x) add_attr(x, "action", "Got"))
           } else {
@@ -205,19 +202,19 @@ package_cache <- R6Class(
         finally(function(x) unlink(etag, recursive = TRUE))
     },
 
-    copy_or_add = function(target, urls, path, md5 = NULL, ...,
+    copy_or_add = function(target, urls, path, sha256 = NULL, ...,
                            .list = NULL, on_progress = NULL) {
       synchronise(self$async_copy_or_add(
-                         target, urls, path, md5, ...,
+                         target, urls, path, sha256, ...,
                          .list = .list, on_progress = on_progress))
     },
 
     ## Like copy_to_add, but we always try to update the file, from
     ## the URL, and if the update was successful, we update the file
     ## in the cache as well
-    async_update_or_add = function(target, urls, path, md5 = NULL, ...,
+    async_update_or_add = function(target, urls, path, sha256 = NULL, ...,
                                    .list = NULL, on_progress = NULL) {
-      self; private; target; urls; path; md5; list(...); .list; on_progress
+      self; private; target; urls; path; sha256; list(...); .list; on_progress
       async_constant()$
         then(~ self$copy_to(target, url = urls[1], path = path, ...,
                             .list = .list))$
@@ -226,9 +223,9 @@ package_cache <- R6Class(
             ## Not in the cache, download and add it
             download_one_of(urls, target, on_progress = on_progress)$
               then(function(d) {
-                md5 <- md5sum(target)[[1]]
+                sha256 <- shasum256(target)
                 self$add(target, path, url = d$url, etag = d$etag,
-                         md5 = null2na(md5), ..., .list = .list)
+                         sha256 = null2na(sha256), ..., .list = .list)
               })$
               then(function(x) add_attr(x, "action", "Got"))
           } else {
@@ -239,9 +236,9 @@ package_cache <- R6Class(
               then(function(d) {
                 if (d$response$status_code != 304) {
                   ## No current, update it
-                  md5 <- md5sum(target)[[1]]
+                  sha256 <- shasum256(target)
                   x <- self$add(target, path, url = d$url,
-                                etag = d$etag, md5 = null2na(md5), ...,
+                                etag = d$etag, sha256 = null2na(sha256), ...,
                                 .list = .list)
                   add_attr(x, "action", "Got")
                 } else {
@@ -326,6 +323,6 @@ make_empty_db_data_frame <- function() {
     package  = character(),
     url      = character(),
     etag     = character(),
-    md5      = character()
+    sha256   = character()
   )
 }

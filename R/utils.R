@@ -180,3 +180,7 @@ drop_nulls <- function(x)  {
 null2na <- function(x) {
   x %||% NA_character_
 }
+
+na_omit <- function(x) {
+  x[!is.na(x)]
+}

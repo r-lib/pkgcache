@@ -517,13 +517,13 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
     error = function(e) e
   )
   tryCatch(
-    file_copy_with_time(na.omit(pri_files$pkgs$meta_path),
-                        na.omit(rep_files$pkgs$meta_path)),
+    file_copy_with_time(na_omit(pri_files$pkgs$meta_path),
+                        na_omit(rep_files$pkgs$meta_path)),
     error = function(e) e
   )
   tryCatch(
-    file_copy_with_time(na.omit(pri_files$pkgs$meta_etag),
-                        na.omit(rep_files$pkgs$meta_etag)),
+    file_copy_with_time(na_omit(pri_files$pkgs$meta_etag),
+                        na_omit(rep_files$pkgs$meta_etag)),
     error = function(e) e
   )
   unlock(l)
@@ -628,10 +628,10 @@ cmc__update_primary <- function(self, private, rds, packages) {
   if (packages) {
     file_copy_with_time(rep_files$pkgs$path, pri_files$pkgs$path)
     file_copy_with_time(rep_files$pkgs$etag, pri_files$pkgs$etag)
-    file_copy_with_time(na.omit(rep_files$pkgs$meta_path),
-                        na.omit(pri_files$pkgs$meta_path))
-    file_copy_with_time(na.omit(rep_files$pkgs$meta_etag),
-                        na.omit(pri_files$pkgs$meta_etag))
+    file_copy_with_time(na_omit(rep_files$pkgs$meta_path),
+                        na_omit(pri_files$pkgs$meta_path))
+    file_copy_with_time(na_omit(rep_files$pkgs$meta_etag),
+                        na_omit(pri_files$pkgs$meta_etag))
   }
   unlock(l)
 

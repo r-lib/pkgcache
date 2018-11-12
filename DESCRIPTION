@@ -19,7 +19,7 @@ Imports:
     async,
     backports,
     cliapp,
-    curl (>= 3.2),
+    curl (>= 3.2.9000),
     digest,
     filelock,
     glue,
@@ -43,7 +43,8 @@ Suggests:
     withr
 Remotes:
     r-lib/async,
-    r-lib/cliapp
+    r-lib/cliapp,
+    r-lib/curl
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE)

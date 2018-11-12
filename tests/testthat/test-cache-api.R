@@ -22,7 +22,7 @@ test_that("cache api", {
   bar <- file.path(tmp2, "bar")
   cat("bar-contents\n", file = bar)
 
-  pc$add(foo, "dir/foo", package = "pkg1", version = "1.0.0")
+  pkg_cache_add_file(tmp, foo, "dir/foo", package = "pkg1", version = "1.0.0")
   l <- pkg_cache_list(tmp)
   expect_equal(pkg_cache_summary(tmp)$files, 1)
   expect_equal(nrow(l), 1)

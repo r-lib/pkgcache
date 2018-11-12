@@ -264,10 +264,11 @@ package_cache <- R6Class(
       dbfile <- get_db_file(private$path)
 
       ex <- private$find_locked(..., .list = .list)
-      if (nrow(ex) == 0) stop("Package does not exist in cache")
-      unlink(file.path(private$path, ex$path))
-      db <- delete_from_data_frame(readRDS(dbfile), ..., .list = .list)
-      saveRDS(db, dbfile)
+      if (nrow(ex) != 0) {
+        unlink(file.path(private$path, ex$path))
+        db <- delete_from_data_frame(readRDS(dbfile), ..., .list = .list)
+        saveRDS(db, dbfile)
+      }
     }
   ),
 

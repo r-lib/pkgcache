@@ -1,0 +1,20 @@
+
+if (file.exists("async")) {
+  library(testthat)
+  library(pkgcache)
+  test <- function() {
+    package <- "pkgcache"
+    env_test <- asNamespace("testthat")$env_test
+    env_test$in_test <- TRUE
+    env_test$package <- package
+    on.exit({
+      env_test$in_test <- FALSE
+      env_test$package <- NULL
+    })
+    test_path <- "testthat"
+    asNamespace("testthat")$test_package_dir(
+      package = package, test_path = test_path,
+      filter = NULL, reporter = "check")
+  }
+  test()
+}

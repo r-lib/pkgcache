@@ -16,7 +16,6 @@ URL: https://github.com/r-lib/pkgcache#readme
 BugReports: https://github.com/r-lib/pkgcache/issues
 Imports:
     assertthat,
-    async,
     cliapp,
     curl (>= 3.2.9000),
     digest,
@@ -25,9 +24,11 @@ Imports:
     R6,
     rappdirs,
     rematch2,
+    rlang,
     tibble,
     tools,
-    utils
+    utils,
+    uuid
 Suggests:
     cli,
     covr,
@@ -47,4 +48,4 @@ Remotes:
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

@@ -3,10 +3,18 @@
 
 global_metadata_cache <- NULL
 
-.onLoad <- function(libname, pkgname) {
-  backports::import(pkgname, "strrep")
-  if (requireNamespace("debugme", quietly = TRUE)) debugme::debugme()
+onload_pkgcache <- function(libname, pkgname) {
   global_metadata_cache <<- cranlike_metadata_cache$new()
+}
+
+if (exists(".onLoad", inherits = FALSE)) {
+  onload_old <- .onLoad
+  .onLoad <- function(libname, pkgname) {
+    onload_old(libname, pkgname)
+    onload_pkgcache(libname, pkgname)
+  }
+} else {
+  .onLoad <- onload_pkgcache
 }
 
 ## nocov end

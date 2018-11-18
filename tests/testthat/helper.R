@@ -4,11 +4,11 @@ httpbin <- (function() {
 
   update <- function(x) {
     chk_url <- function(url, ...) {
-      async::http_head(url, ...)$
-        then(async::http_stop_for_status)$
+      http_head(url, ...)$
+        then(http_stop_for_status)$
         then(function(r) r$url)
     }
-    async::synchronise(async::when_any(
+    synchronise(when_any(
       chk_url("https://httpbin.org"),
       chk_url("https://eu.httpbin.org")
     ))

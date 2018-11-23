@@ -127,6 +127,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #'
 #' @family async HTTP tools
 #' @export
+#' @importFrom cliapp cli_alert_info
 #' @section Examples:
 #' ```
 #' dest <- tempfile(fileext = ".jpeg")
@@ -185,8 +186,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
   mkdirp(dirname(tmp_destfile))
 
-  app <- cliapp::default_app() %||% cliapp::start_app()
-  app$alert_info(paste("Getting", url))
+  cli_alert_info(paste("Getting", url))
   http_get(url, file = tmp_destfile, headers = headers, ...)$
     then(http_stop_for_status)$
     then(function(resp) {

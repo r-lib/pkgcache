@@ -42,7 +42,6 @@ Suggests:
     testthat,
     withr
 Remotes:
-    r-lib/async,
     r-lib/cliapp,
     jeroen/curl
 Depends: 

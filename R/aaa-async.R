@@ -1371,6 +1371,7 @@ is_deferred <- function(x) {
 #'
 #' @export
 #' @examples
+#' \donttest{
 #' ## Two HEAD requests with 1/2 sec delay between them
 #' resp <- list()
 #' afun <- async(function() {
@@ -1382,6 +1383,7 @@ is_deferred <- function(x) {
 #' })
 #' synchronise(afun())
 #' resp
+#' }
 
 delay <- function(delay) {
   force(delay)
@@ -1420,11 +1422,13 @@ delay <- mark_as_async(delay)
 #' @family async iterators
 #' @export
 #' @examples
+#' \donttest{
 #' synchronise(async_detect(
 #'   c("https://eu.httpbin.org/status/404", "https://eu.httpbin.org",
 #'     "https://eu.httpbin.org/status/403"),
 #'   async_sequence(http_head, function(x) x$status_code == 200)
 #' ))
+#' }
 
 async_detect <- function(.x, .p, ..., .limit = Inf) {
   if (.limit < length(.x)) {
@@ -2028,6 +2032,7 @@ async_every <- mark_as_async(async_every)
 #' @family async iterators
 #' @export
 #' @examples
+#' \donttest{
 #' ## Filter out non-working URLs
 #' afun <- async(function(urls) {
 #'   test_url <- async_sequence(
@@ -2037,6 +2042,7 @@ async_every <- mark_as_async(async_every)
 #' urls <- c("https://eu.httpbin.org/get",
 #'           "https://eu.httpbin.org/status/404")
 #' synchronise(afun(urls))
+#' }
 
 async_filter <- function(.x, .p, ...) {
   when_all(.list = lapply(.x, async(.p), ...))$
@@ -2087,11 +2093,13 @@ async_reject <- mark_as_async(async_reject)
 #' @export
 #' @importFrom curl new_handle handle_setheaders
 #' @examples
+#' \donttest{
 #' afun <- async(function() {
 #'   http_get("https://eu.httpbin.org/status/200")$
 #'     then(function(x) x$status_code)
 #' })
 #' synchronise(afun())
+#' }
 
 http_get <- function(url, headers = character(), file = NULL,
                      options = list(timeout = 600), on_progress = NULL) {
@@ -2137,6 +2145,7 @@ http_get <- mark_as_async(http_get)
 #' @export
 #' @importFrom curl handle_setopt
 #' @examples
+#' \donttest{
 #' afun <- async(function() {
 #'   dx <- http_head("https://eu.httpbin.org/status/200")$
 #'     then(function(x) x$status_code)
@@ -2150,6 +2159,7 @@ http_get <- mark_as_async(http_get)
 #' }
 #' urls <- c("https://google.com", "https://eu.httpbin.org")
 #' synchronise(afun(urls))
+#' }
 
 http_head <- function(url, headers = character(), file = NULL,
                       options = list(timeout = 600), on_progress = NULL) {
@@ -2219,12 +2229,14 @@ make_deferred_http <- function(cb, file, on_progress) {
 #'
 #' @export
 #' @examples
+#' \donttest{
 #' afun <- async(function() {
 #'   http_get("https://eu.httpbin.org/status/404")$
 #'     then(http_stop_for_status)
 #' })
 #'
 #' tryCatch(synchronise(afun()), error = function(e) e)
+#' }
 
 http_stop_for_status <- function(resp) {
   if (!is.integer(resp$status_code)) stop("Not an HTTP response")
@@ -2464,12 +2476,14 @@ async_reflect <- mark_as_async(async_reflect)
 #'
 #' @export
 #' @examples
+#' \donttest{
 #' ## perform an HTTP request three times, and list the reponse times
 #' do <- function() {
 #'   async_replicate(3,
 #'     function() http_get("https://eu.httpbin.org")$then(function(x) x$times))
 #' }
 #' synchronise(do())
+#' }
 
 async_replicate <- function(n, task, ...,  .limit = Inf) {
   assert_that(
@@ -2534,6 +2548,7 @@ async_replicate_limit  <- function(n, task, ..., .limit = .limit) {
 #' @family async control flow
 #' @export
 #' @examples
+#' \donttest{
 #' ## Try a download at most 5 times
 #' afun <- async(function() {
 #'   async_retry(
@@ -2543,6 +2558,7 @@ async_replicate_limit  <- function(n, task, ..., .limit = .limit) {
 #' })
 #'
 #' synchronise(afun())
+#' }
 
 async_retry <- function(task, times, ...) {
   task <- async(task)
@@ -2574,6 +2590,7 @@ async_retry <- mark_as_async(async_retry)
 #' @family async control flow
 #' @export
 #' @examples
+#' \donttest{
 #' ## Create a downloader that retries five times
 #' http_get_5 <- async_retryable(http_get, times = 5)
 #' ret <- synchronise(
@@ -2581,6 +2598,7 @@ async_retry <- mark_as_async(async_retry)
 #'     then(function(x) rawToChar(x$content))
 #' )
 #' cat(ret)
+#' }
 
 async_retryable <- function(task, times) {
   task <- async(task)
@@ -2604,10 +2622,12 @@ async_retryable <- function(task, times) {
 #' @family async control flow
 #' @export
 #' @examples
+#' \donttest{
 #' check_url <- async_sequence(
 #'   http_head, function(x) identical(x$status_code, 200L))
 #' synchronise(check_url("https://eu.httpbin.org/status/404"))
 #' synchronise(check_url("https://eu.httpbin.org/status/200"))
+#' }
 
 async_sequence <- function(..., .list = NULL) {
   funcs <- c(list(...), .list)
@@ -2666,12 +2686,14 @@ async_some <- mark_as_async(async_some)
 #'
 #' @export
 #' @examples
+#' \donttest{
 #' http_status <- function(url, ...) {
 #'   http_get(url, ...)$
 #'     then(function(x) x$status_code)
 #' }
 #'
 #' synchronise(http_status("https://eu.httpbin.org/status/418"))
+#' }
 
 synchronise <- function(expr) {
   new_el <- push_event_loop()
@@ -3223,6 +3245,7 @@ get_source_position <- function(call) {
 #' @seealso [when_any()], [when_some()]
 #' @export
 #' @examples
+#' \donttest{
 #' ## Check that the contents of two URLs are the same
 #' afun <- async(function() {
 #'   u1 <- http_get("https://eu.httpbin.org")
@@ -3231,6 +3254,7 @@ get_source_position <- function(call) {
 #'     then(function(x) identical(x[[1]]$content, x[[2]]$content))
 #' })
 #' synchronise(afun())
+#' }
 
 when_all <- function(..., .list = list()) {
 
@@ -3282,6 +3306,7 @@ get_value_x <- function(x) {
 #' @seealso [when_all()]
 #' @export
 #' @examples
+#' \donttest{
 #' ## Use the URL that returns first
 #' afun <- function() {
 #'   u1 <- http_get("https://eu.httpbin.org")
@@ -3289,6 +3314,7 @@ get_value_x <- function(x) {
 #'   when_any(u1, u2)$then(function(x) x$url)
 #' }
 #' synchronise(afun())
+#' }
 
 when_some <- function(count, ..., .list = list()) {
   force(count)

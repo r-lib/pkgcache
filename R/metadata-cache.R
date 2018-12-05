@@ -446,6 +446,7 @@ cmc__load_primary_rds <- function(self, private, max_age) {
   pri_files <- private$get_cache_files("primary")
   rep_files <- private$get_cache_files("replica")
 
+  mkdirp(dirname(pri_files$lock))
   l <- lock(pri_files$lock, exclusive = FALSE, private$lock_timeout)
   if (is.null(l)) stop("Cannot acquire lock to copy RDS")
   on.exit(unlock(l), add = TRUE)
@@ -492,6 +493,7 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   rep_files <- private$get_cache_files("replica")
 
   ## Lock
+  mkdirp(dirname(pri_files$lock))
   l <- lock(pri_files$lock, exclusive = FALSE, private$lock_timeout)
   if (is.null(l)) stop("Cannot acquire lock to copy PACKAGES files")
   on.exit(unlock(l), add = TRUE)

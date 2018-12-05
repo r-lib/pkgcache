@@ -548,17 +548,14 @@ cmc__update_replica_pkgs <- function(self, private) {
   "!!DEBUG Update replica PACKAGES"
   pkgs <- private$get_cache_files("replica")$pkgs
 
-  bar <- create_progress_bar()
   cli_alert_info("Checking for package metadata updates")
   dls <- lapply_rows(pkgs, function(pkg) {
-    download_if_newer(pkg$url, pkg$path, pkg$etag,
-                      on_progress = update_progress_bar)
+    download_if_newer(pkg$url, pkg$path, pkg$etag)
   })
 
   metadls <- drop_nulls(lapply_rows(pkgs, function(pkg) {
     if (!is.na(pkg$meta_url)) {
-      download_if_newer(pkg$meta_url, pkg$meta_path, pkg$meta_etag,
-                        on_progress = update_progress_bar)
+      download_if_newer(pkg$meta_url, pkg$meta_path, pkg$meta_etag)
     }
   }))
 

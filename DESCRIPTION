@@ -17,7 +17,7 @@ BugReports: https://github.com/r-lib/pkgcache/issues
 Imports:
     assertthat,
     cliapp,
-    curl (>= 3.2.9000),
+    curl (>= 3.2),
     digest,
     filelock,
     glue,
@@ -42,8 +42,7 @@ Suggests:
     testthat,
     withr
 Remotes:
-    r-lib/cliapp,
-    jeroen/curl
+    r-lib/cliapp
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE)

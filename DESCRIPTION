@@ -16,11 +16,13 @@ URL: https://github.com/r-lib/pkgcache#readme
 BugReports: https://github.com/r-lib/pkgcache/issues
 Imports:
     assertthat,
+    cli,
     cliapp,
     curl (>= 3.2),
     digest,
     filelock,
     glue,
+    prettyunits,
     R6,
     rappdirs,
     rematch2,

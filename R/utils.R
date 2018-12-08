@@ -190,3 +190,7 @@ na_omit <- function(x) {
 shasum256 <- function(x) {
   digest(algo = "sha256", file = x)
 }
+
+file.size <- function (...) {
+  file.info(...)$size
+}

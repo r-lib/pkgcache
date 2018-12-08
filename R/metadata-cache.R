@@ -198,10 +198,13 @@ cranlike_metadata_cache <- R6Class(
       cmc__update_replica_pkgs(self, private),
     update_replica_rds = function()
       cmc__update_replica_rds(self, private),
-    update_primary = function(rds = TRUE, packages = TRUE)
-      cmc__update_primary(self, private, rds, packages),
+    update_primary = function(rds = TRUE, packages = TRUE, lock = TRUE)
+      cmc__update_primary(self, private, rds, packages, lock),
     update_memory_cache = function()
       cmc__update_memory_cache(self, private),
+
+    copy_to_replica = function(rds = TRUE, pkgs = FALSE, etags = FALSE)
+      cmc__copy_to_replica(self, private, rds, pkgs, etags),
 
     data = NULL,
     data_time = NULL,
@@ -274,7 +277,7 @@ cmc_async_list <- function(self, private, packages) {
 cmc_async_update <- function(self, private) {
   if (!is.null(private$update_deferred)) return(private$update_deferred)
 
-  private$update_deferred <- private$update_replica_pkgs()$
+  private$update_deferred <- async(private$update_replica_pkgs)()$
     then(~ private$update_replica_rds())$
     then(~ private$update_primary())$
     then(~ private$data)$
@@ -510,28 +513,13 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
 
   ## Copy to replica, if we cannot copy the etags, that's ok
   cli_alert_info("Loading raw global disk cached package metadata")
-  file_copy_with_time(pri_files$pkgs$path, rep_files$pkgs$path)
-  tryCatch(
-    file_copy_with_time(pri_files$pkgs$etag, rep_files$pkgs$etag),
-    error = function(e) e
-  )
-  tryCatch(
-    file_copy_with_time(na_omit(pri_files$pkgs$meta_path),
-                        na_omit(rep_files$pkgs$meta_path)),
-    error = function(e) e
-  )
-  tryCatch(
-    file_copy_with_time(na_omit(pri_files$pkgs$meta_etag),
-                        na_omit(rep_files$pkgs$meta_etag)),
-    error = function(e) e
-  )
-  unlock(l)
+  private$copy_to_replica(rds = FALSE, pkgs = TRUE, etags = TRUE)
 
   ## Update RDS in replica, this also loads it
   private$update_replica_rds()
 
   ## Update primary, but not the PACKAGES
-  private$update_primary(rds = TRUE, packages = FALSE)
+  private$update_primary(rds = TRUE, packages = FALSE, lock = FALSE)
 
   private$data
 }
@@ -546,20 +534,22 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
 
 cmc__update_replica_pkgs <- function(self, private) {
   "!!DEBUG Update replica PACKAGES"
-  pkgs <- private$get_cache_files("replica")$pkgs
-
   cli_alert_info("Checking for package metadata updates")
-  dls <- lapply_rows(pkgs, function(pkg) {
-    download_if_newer(pkg$url, pkg$path, pkg$etag)
-  })
+  tryCatch(
+    private$copy_to_replica(rds = FALSE, pkgs = TRUE, etags = TRUE),
+    error = function(e) e)
 
-  metadls <- drop_nulls(lapply_rows(pkgs, function(pkg) {
-    if (!is.na(pkg$meta_url)) {
-      download_if_newer(pkg$meta_url, pkg$meta_path, pkg$meta_etag)
-    }
-  }))
+  rep_files <- private$get_cache_files("replica")
+  pkgs <- rep_files$pkgs
 
-  when_all(.list = c(dls, metadls))
+  meta <- !is.na(pkgs$meta_url)
+  dls <- data.frame(
+    stringsAsFactors = FALSE,
+    url = c(pkgs$url, pkgs$meta_url[meta]),
+    path = c(pkgs$path, pkgs$meta_path[meta]),
+    etag = c(pkgs$etag, pkgs$meta_etag[meta]))
+
+  download_files(dls)
 }
 
 #' Update the replica RDS from the PACKAGES files
@@ -608,7 +598,7 @@ cmc__update_replica_rds <- function(self, private) {
 #'
 #' @keywords internal
 
-cmc__update_primary <- function(self, private, rds, packages) {
+cmc__update_primary <- function(self, private, rds, packages, lock) {
 
   "!!DEBUG Updata primary cache"
   if (!rds && !packages) return()
@@ -616,10 +606,12 @@ cmc__update_primary <- function(self, private, rds, packages) {
   pri_files <- private$get_cache_files("primary")
   rep_files <- private$get_cache_files("replica")
 
-  mkdirp(dirname(pri_files$lock))
-  l <- lock(pri_files$lock, exclusive = TRUE, private$lock_timeout)
-  if (is.null(l)) stop("Cannot acquire lock to update primary cache")
-  on.exit(unlock(l), add = TRUE)
+  if (lock) {
+    mkdirp(dirname(pri_files$lock))
+    l <- lock(pri_files$lock, exclusive = TRUE, private$lock_timeout)
+    if (is.null(l)) stop("Cannot acquire lock to update primary cache")
+    on.exit(unlock(l), add = TRUE)
+  }
 
   if (rds) {
     file_copy_with_time(rep_files$rds, pri_files$rds)
@@ -632,14 +624,37 @@ cmc__update_primary <- function(self, private, rds, packages) {
     file_copy_with_time(na_omit(rep_files$pkgs$meta_etag),
                         na_omit(pri_files$pkgs$meta_etag))
   }
-  unlock(l)
-
   invisible()
 }
 
 cmc__update_memory_cache <- function(self, private) {
   rds <- private$get_cache_files("primary")$rds
   cmc__data[[rds]] <- list(data = private$data, data_time = private$data_time)
+}
+
+cmc__copy_to_replica <- function(self, private, rds, pkgs, etags) {
+  pri_files <- private$get_cache_files("primary")
+  rep_files <- private$get_cache_files("replica")
+
+  mkdirp(dirname(pri_files$lock))
+  l <- lock(pri_files$lock, exclusive = FALSE, private$lock_timeout)
+  if (is.null(l)) stop("Cannot acquire lock to copy primary cache")
+  on.exit(unlock(l), add = TRUE)
+
+  if (rds) {
+    file_copy_with_time(pri_files$rds, rep_files$rds)
+  }
+
+  if (pkgs) {
+    file_copy_with_time(pri_files$pkgs$path, rep_files$pkgs$path)
+    file_copy_with_time(na_omit(pri_files$pkgs$meta_path),
+                        na_omit(rep_files$pkgs$meta_path))
+  }
+  if (etags) {
+    file_copy_with_time(pri_files$pkgs$etag, rep_files$pkgs$etag)
+    file_copy_with_time(na_omit(pri_files$pkgs$meta_etag),
+                        na_omit(rep_files$pkgs$meta_etag))
+  }
 }
 
 extract_deps <- function(pkgs, packages, dependencies, recursive) {

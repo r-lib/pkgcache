@@ -186,7 +186,6 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
   mkdirp(dirname(tmp_destfile))
 
-  cli_alert_info(paste("Getting", url))
   http_get(url, file = tmp_destfile, headers = headers, ...)$
     then(http_stop_for_status)$
     then(function(resp) {
@@ -300,4 +299,26 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
       class(err) <- c("download_one_of_error", class(err))
       stop(err)
     })
+}
+
+download_files <- function(data) {
+  bar <- create_progress_bar(data)
+  prog_cb <- function(upd) update_progress_bar_progress(bar, upd)
+
+  dls <- lapply(seq_len(nrow(data)), function(idx) {
+    row <- data[idx, ]
+    download_if_newer(row$url, row$path, row$etag, on_progress = prog_cb)$
+      then(function(result) {
+        status_code <- result$response$status_code
+        if (status_code == 304) {
+          update_progress_bar_uptodate(bar, row$url)
+        } else if (status_code == 200) {
+          update_progress_bar_done(bar, row$url)
+        }
+        result
+      })
+  })
+
+  when_all(.list = dls)$
+    finally(function() finish_progress_bar(bar))
 }

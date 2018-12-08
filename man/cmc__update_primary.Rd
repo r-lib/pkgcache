@@ -4,7 +4,7 @@
 \alias{cmc__update_primary}
 \title{Update the primary cache from the replica cache}
 \usage{
-cmc__update_primary(self, private, rds, packages)
+cmc__update_primary(self, private, rds, packages, lock)
 }
 \arguments{
 \item{self}{self}

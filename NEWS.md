@@ -1,4 +1,4 @@
 
-# pkgcache 1.0.0
+# pkgcache 1.0.1
 
 * First public release

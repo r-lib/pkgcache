@@ -47,6 +47,10 @@ cmc$async_revdeps(packages, dependencies = NA, recursive = TRUE)
 
 cmc$update()
 cmc$async_update()
+cmc$check_update()
+cmc$asnyc_check_update()
+
+cmc$cleanup(force = FALSE)
 }
 }
 
@@ -70,6 +74,7 @@ to seven days.
 \item \code{dependencies}: Which kind of dependencies to include. Works the same
 way as the \code{dependencies} argument of \code{\link[utils:install.packages]{utils::install.packages()}}.
 \item \code{recursive}: Whether to include recursive dependencies.
+\item \code{force}: Whether to force cleanup without asking the user.
 }
 }
 
@@ -106,6 +111,14 @@ reverse dependencies of \code{packages}.
 and then returns a tibble with all packages, invisibly.
 
 \code{cmd$async_update()} is similar, but it is asynchronous.
+
+\code{cmd$check_update()} checks if the metadata is current, and if it is
+not, it updates it.
+
+\code{cmd$async_check_update()} is similar, but it is asynchronous.
+
+\code{cmd$cleanup()} deletes the cache files from the disk, and also from
+memory.
 }
 
 \section{Columns}{

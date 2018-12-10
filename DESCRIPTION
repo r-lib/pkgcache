@@ -32,7 +32,6 @@ Imports:
     utils,
     uuid
 Suggests:
-    cli,
     covr,
     debugme,
     desc,

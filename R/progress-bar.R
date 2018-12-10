@@ -74,12 +74,14 @@ show_progress_bar <- function(bar) {
 }
 
 finish_progress_bar <- function(bar) {
-  files <- nrow(bar$data)
   if (FALSE %in% bar$data$uptodate) {
-    bytes <- pretty_bytes(sum(bar$data$size, na.rm = TRUE))
+    dl <- vlapply(bar$data$uptodate, identical, FALSE)
+    files <- sum(dl)
+    bytes <- pretty_bytes(sum(bar$data$size[dl], na.rm = TRUE))
     cli_alert_success(
       "Metadata updated, downloaded {bytes} in {files} files.")
   } else {
+    files <- nrow(bar$data)
     cli_alert_success("All {files} metadata files are current.")
   }
   bar$bar$terminate()

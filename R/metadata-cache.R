@@ -39,6 +39,10 @@ cmc__data <- new.env(parent = emptyenv())
 #'
 #' cmc$update()
 #' cmc$async_update()
+#' cmc$check_update()
+#' cmc$asnyc_check_update()
+#'
+#' cmc$cleanup(force = FALSE)
 #' ```
 #'
 #' @section Arguments:
@@ -59,6 +63,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `dependencies`: Which kind of dependencies to include. Works the same
 #'   way as the `dependencies` argument of [utils::install.packages()].
 #' * `recursive`: Whether to include recursive dependencies.
+#' * `force`: Whether to force cleanup without asking the user.
 #'
 #' @section Details:
 #'
@@ -92,6 +97,14 @@ cmc__data <- new.env(parent = emptyenv())
 #' and then returns a tibble with all packages, invisibly.
 #'
 #' `cmd$async_update()` is similar, but it is asynchronous.
+#'
+#' `cmd$check_update()` checks if the metadata is current, and if it is
+#' not, it updates it.
+#'
+#' `cmd$async_check_update()` is similar, but it is asynchronous.
+#'
+#' `cmd$cleanup()` deletes the cache files from the disk, and also from
+#' memory.
 #'
 #' @section Columns:
 #' The metadata tibble contains all available versions (i.e. sources and
@@ -173,14 +186,22 @@ cranlike_metadata_cache <- R6Class(
     update = function()
       synchronise(self$async_update()),
     async_update = function()
-      cmc_async_update(self, private)
+      cmc_async_update(self, private),
+
+    check_update = function()
+      synchronise(self$async_check_update()),
+    async_check_update = function()
+      cmc_async_check_update(self, private),
+
+    cleanup = function(force = FALSE)
+      cmc_cleanup(self, private, force)
   ),
 
   private = list(
     get_cache_files = function(which = c("primary", "replica"))
       cmc__get_cache_files(self, private, match.arg(which)),
 
-    async_ensure_cache = function(max_age)
+    async_ensure_cache = function(max_age = private$update_after)
       cmc__async_ensure_cache(self, private, max_age),
 
     get_current_data = function(max_age)
@@ -248,7 +269,7 @@ cmc_async_deps <- function(self, private, packages, dependencies,
     is_flag(recursive))
 
   "!!DEBUG Getting deps"
-  private$async_ensure_cache(private$update_after)$
+  private$async_ensure_cache()$
     then(~ extract_deps(., packages, dependencies, recursive))
 }
 
@@ -260,7 +281,7 @@ cmc_async_revdeps <- function(self, private, packages, dependencies,
     is_flag(recursive))
 
   "!!DEBUG Getting revdeps"
-  private$async_ensure_cache(private$update_after)$
+  private$async_ensure_cache()$
     then(~ extract_revdeps(., packages, dependencies, recursive))
 }
 
@@ -268,7 +289,7 @@ cmc_async_list <- function(self, private, packages) {
   assert_that(is.null(packages) || is_character(packages))
 
   "!!DEBUG Listing packages"
-  private$async_ensure_cache(private$update_after)$
+  private$async_ensure_cache()$
     then(function(x) {
       if (is.null(packages)) x$pkgs else x$pkgs[x$pkgs$package %in% packages,]
     })
@@ -283,6 +304,45 @@ cmc_async_update <- function(self, private) {
     then(~ private$data)$
     finally(function() private$update_deferred <- NULL)$
     share()
+}
+
+cmc_async_check_update <- function(self, private) {
+  self; private
+  async(private$update_replica_pkgs)()$
+    then(function(ret) {
+      stat <- viapply(ret, function(x) x$response$status_code)
+      rep_files <- private$get_cache_files("replica")
+      pkg_times <- file_get_time(rep_files$pkgs$path)
+      if (! file.exists(rep_files$rds) ||
+          any(file_get_time(rep_files$rds) < pkg_times) ||
+          any(stat != 304)) {
+        private$update_replica_rds()
+        private$update_primary()
+        private$data
+
+      } else {
+        private$async_ensure_cache()
+      }
+    })
+}
+
+cmc_cleanup <- function(self, private, force) {
+  if (!force && !interactive()) {
+    stop("Not cleaning up cache, please specify `force = TRUE`")
+  }
+  cache_dir <- private$get_cache_files("primary")$meta
+  if (!force) {
+    msg <- glue::glue(
+      "Are you sure you want to clean up the cache in `{cache_dir}` (y/N)? ")
+    ans <- readline(msg)
+    if (! ans %in% c("y", "Y")) stop("Aborted")
+  }
+
+  local_cache_dir <- private$get_cache_files("replica")
+  unlink(local_cache_dir, recursive = TRUE, force = TRUE)
+  private$data <- NULL
+  cli_alert_info("Cleaning up cache directory `{cache_dir}`")
+  unlink(cache_dir, recursive = TRUE, force = TRUE)
 }
 
 #' @importFrom digest digest
@@ -371,7 +431,10 @@ cmc__async_ensure_cache <- function(self, private, max_age) {
     self$async_update()
 
   )$catch(error = function(err) {
-    err$message <- "Could not load or update metadata cache"
+    err$message <- paste(
+      "Could not load or update metadata cache. If you think your local",
+      "cache is broken, try deleting it with `meta_cache_cleanup()`, or",
+      "the `$cleanup()` method.")
     stop(err)
   })
 }
@@ -536,7 +599,7 @@ cmc__update_replica_pkgs <- function(self, private) {
   "!!DEBUG Update replica PACKAGES"
   cli_alert_info("Checking for package metadata updates")
   tryCatch(
-    private$copy_to_replica(rds = FALSE, pkgs = TRUE, etags = TRUE),
+    private$copy_to_replica(rds = TRUE, pkgs = TRUE, etags = TRUE),
     error = function(e) e)
 
   rep_files <- private$get_cache_files("replica")
@@ -562,6 +625,7 @@ cmc__update_replica_pkgs <- function(self, private) {
 
 cmc__update_replica_rds <- function(self, private) {
   "!!DEBUG Update replica RDS"
+  cli_alert_info("Updating metadata database")
   rep_files <- private$get_cache_files("replica")
 
   data_list <- lapply_rows(
@@ -790,10 +854,13 @@ type_bioc_matching_bioc_version <- function(r_version) {
 #'
 #' `meta_cache_revdeps()` queries reverse package dependencies.
 #'
+#' `meta_cache_cleanup()` deletes the cache files from the disk.
+#'
 #' @param packages Packages to query.
 #' @param dependencies Dependency types to query. See the `dependencies`
 #'   parameter of [utils::install.packages()].
 #' @param recursive Whether to query recursive dependencies.
+#' @param force Whether to force cleanup without asking the user.
 #' @return A data frame (tibble) of the dependencies. For
 #'   `meta_cache_deps()` and `meta_cache_revdeps()` it includes the
 #'   queried `packages` as well.
@@ -838,4 +905,11 @@ meta_cache_update <- function() {
 
 meta_cache_list <- function(packages = NULL) {
   global_metadata_cache$list(packages)
+}
+
+#' @export
+#' @rdname meta_cache_deps
+
+meta_cache_cleanup <- function(force = FALSE) {
+  global_metadata_cache$cleanup(force = force)
 }

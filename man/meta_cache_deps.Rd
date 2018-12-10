@@ -5,6 +5,7 @@
 \alias{meta_cache_revdeps}
 \alias{meta_cache_update}
 \alias{meta_cache_list}
+\alias{meta_cache_cleanup}
 \title{Query CRAN(like) package data}
 \usage{
 meta_cache_deps(packages, dependencies = NA, recursive = TRUE)
@@ -14,6 +15,8 @@ meta_cache_revdeps(packages, dependencies = NA, recursive = TRUE)
 meta_cache_update()
 
 meta_cache_list(packages = NULL)
+
+meta_cache_cleanup(force = FALSE)
 }
 \arguments{
 \item{packages}{Packages to query.}
@@ -22,6 +25,8 @@ meta_cache_list(packages = NULL)
 parameter of \code{\link[utils:install.packages]{utils::install.packages()}}.}
 
 \item{recursive}{Whether to query recursive dependencies.}
+
+\item{force}{Whether to force cleanup without asking the user.}
 }
 \value{
 A data frame (tibble) of the dependencies. For
@@ -41,6 +46,8 @@ automatically updated if it is older than seven days.
 \code{meta_cache_deps()} queries packages dependencies.
 
 \code{meta_cache_revdeps()} queries reverse package dependencies.
+
+\code{meta_cache_cleanup()} deletes the cache files from the disk.
 }
 \section{Examples}{
 \preformatted{meta_cache_deps("dplyr")

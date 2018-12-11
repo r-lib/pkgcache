@@ -319,6 +319,8 @@ download_files <- function(data) {
       })
   })
 
+  ok <- FALSE
   when_all(.list = dls)$
-    finally(function() finish_progress_bar(bar))
+    then(function(result) { ok <<- TRUE; result })$
+    finally(function() finish_progress_bar(ok, bar))
 }

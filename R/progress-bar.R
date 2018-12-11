@@ -73,16 +73,23 @@ show_progress_bar <- function(bar) {
   bar$bar$tick(0, tokens = tokens)
 }
 
-finish_progress_bar <- function(bar) {
-  if (FALSE %in% bar$data$uptodate) {
+#' @importFrom cliapp cli_alert_danger
+
+finish_progress_bar <- function(ok, bar) {
+  if (!ok) {
+    cli_alert_danger("Metadata download failed")
+
+  } else if (FALSE %in% bar$data$uptodate) {
     dl <- vlapply(bar$data$uptodate, identical, FALSE)
     files <- sum(dl)
     bytes <- pretty_bytes(sum(bar$data$size[dl], na.rm = TRUE))
     cli_alert_success(
       "Metadata updated, downloaded {bytes} in {files} files.")
+
   } else {
     files <- nrow(bar$data)
     cli_alert_success("All {files} metadata files are current.")
   }
+
   bar$bar$terminate()
 }

@@ -432,3 +432,22 @@ test_that("cmc__get_repos", {
   expect_equal(res$type, c("cran", "bioc", "bioc", "bioc"))
   expect_equal(res$bioc_version, c(NA_character_, "3.7", "3.7", "3.7"))
 })
+
+test_that("download failures", {
+
+  skip_if_offline()
+
+  dir.create(pri <- fs::path_norm(tempfile()))
+  on.exit(unlink(pri, recursive = TRUE), add = TRUE)
+  dir.create(rep <- fs::path_norm(tempfile()))
+  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
+
+  cmc <- cranlike_metadata_cache$new(
+    pri, rep, "source", bioc = FALSE,
+    cran_mirror = "http://127.0.0.1:23424/")
+
+  expect_error(
+    expect_message(cmc$update(), "Metadata download failed"))
+  expect_error(cmc$get_update())
+  expect_error(cmc$list())
+})

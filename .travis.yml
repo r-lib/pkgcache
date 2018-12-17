@@ -14,3 +14,8 @@ r:
 
 after_success:
   - Rscript -e 'covr::codecov()'
+
+env:
+  global:
+  - NOT_CRAN=true
+  - R_REMOTES_STANDALONE=true

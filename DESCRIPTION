@@ -19,6 +19,7 @@ Imports:
     cli,
     cliapp,
     curl (>= 3.2),
+    crayon,
     digest,
     filelock,
     glue,

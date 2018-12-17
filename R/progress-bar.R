@@ -24,6 +24,7 @@ create_progress_bar <- function(data) {
 }
 
 update_progress_bar_progress <- function(bar, data) {
+  if (!is_verbose()) return()
   wh <- match(data$url, bar$data$url)
   ## If TRUE, then it stays TRUE, status 304 might report progress, we
   ## want to ignore that
@@ -35,6 +36,7 @@ update_progress_bar_progress <- function(bar, data) {
 }
 
 update_progress_bar_uptodate <- function(bar, url) {
+  if (!is_verbose()) return()
   wh <- match(url, bar$data$url)
   bar$data$uptodate[[wh]] <- TRUE
   bar$data$current[[wh]] <- NA_integer_
@@ -42,6 +44,7 @@ update_progress_bar_uptodate <- function(bar, url) {
 }
 
 update_progress_bar_done  <- function(bar, url) {
+  if (!is_verbose()) return()
   wh <- match(url, bar$data$url)
   bar$data$uptodate[[wh]] <- FALSE
   bar$data$current[[wh]] <- bar$data$size[[wh]] <-
@@ -51,6 +54,7 @@ update_progress_bar_done  <- function(bar, url) {
 #' @importFrom prettyunits pretty_bytes
 
 show_progress_bar <- function(bar) {
+  if (!is_verbose()) return()
   data <- bar$data
   uptodate <- sum(data$uptodate, na.rm = TRUE)
   numfiles <- nrow(data)
@@ -77,6 +81,7 @@ show_progress_bar <- function(bar) {
 #' @importFrom cliapp cli_alert_danger
 
 finish_progress_bar <- function(ok, bar) {
+  if (!is_verbose()) return()
   if (!ok) {
     cli_alert_danger("Metadata download failed")
 

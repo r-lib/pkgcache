@@ -30,7 +30,8 @@ Imports:
     tibble,
     tools,
     utils,
-    uuid
+    uuid,
+    withr
 Suggests:
     covr,
     debugme,
@@ -41,7 +42,6 @@ Suggests:
     pingr,
     rprojroot,
     testthat,
-    withr
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE)

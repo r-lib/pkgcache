@@ -194,3 +194,17 @@ shasum256 <- function(x) {
 file.size <- function (...) {
   file.info(...)$size
 }
+
+is_verbose <- function() {
+  env <- Sys.getenv("R_PKG_SHOW_PROGRESS", "")
+  if (env != "") {
+    tolower(env) == "true"
+  } else {
+    opt <- getOption("pkg.show_progress")
+    if (!is.null(opt)) {
+      return(isTRUE(opt))
+    } else {
+      interactive()
+    }
+  }
+}

@@ -4,7 +4,6 @@ find_in_data_frame <- function(df, ..., .list = NULL) {
   idx <- seq_len(nrow(df))
   for (i in seq_along(cols)) {
     if (length(idx) == 0) break
-    if (is.null(cols[[i]])) next
     n <- names(cols)[i]
     idx <- idx[df[[n]][idx] %in% cols[[i]]]
   }

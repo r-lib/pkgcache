@@ -628,7 +628,7 @@ cmc__update_replica_pkgs <- function(self, private) {
 
 cmc__update_replica_rds <- function(self, private) {
   "!!DEBUG Update replica RDS"
-  cli_alert_info("Updating metadata database")
+  bar <- cli_start_process("Updating metadata database")
   rep_files <- private$get_cache_files("replica")
 
   data_list <- lapply_rows(
@@ -652,6 +652,7 @@ cmc__update_replica_rds <- function(self, private) {
 
   private$update_memory_cache()
 
+  bar$done()
   private$data
 }
 

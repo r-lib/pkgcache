@@ -90,7 +90,7 @@ finish_progress_bar <- function(ok, bar) {
     files <- sum(dl)
     bytes <- pretty_bytes(sum(bar$data$size[dl], na.rm = TRUE))
     cli_alert_success(
-      "Metadata updated, downloaded {bytes} in {files} files.")
+      "Downloaded metadata files, {bytes} in {files} files.")
 
   } else {
     files <- nrow(bar$data)

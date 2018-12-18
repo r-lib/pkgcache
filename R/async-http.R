@@ -203,7 +203,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
       } else {
         err <- structure(
           list(response = resp, message = "Unknown HTTP response"),
-          class = "error")
+          class = c("error", "condition"))
         stop(err)
       }
       list(url = url, destfile = destfile, response = resp, etag = etag,

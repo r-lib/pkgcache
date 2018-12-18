@@ -115,6 +115,7 @@ test_that("download_if_newer, error", {
   skip_if_offline()
 
   cat("dummy\n", file = target <- tempfile())
+  on.exit(unlink(target), add = TRUE)
 
   expect_error(
     synchronise(download_if_newer(
@@ -131,6 +132,15 @@ test_that("download_if_newer, error", {
     )),
     class = c("async_rejected", "async_http_404", "async_http_error")
   )
+
+  err <- tryCatch(
+    synchronise(download_if_newer(
+      "https://httpbin.org/status/201",
+      destfile = target
+    )),
+    error = function(e) e)
+  expect_s3_class(err, "async_rejected")
+  expect_match(conditionMessage(err), "Unknown HTTP response")
 })
 
 test_that("download_one_of", {
@@ -210,4 +220,40 @@ test_that("download_one_of, errors", {
   expect_match(conditionMessage(err), "All URLs failed")
   expect_true("download_one_of_error" %in% class(err))
   expect_false(file.exists(tmp))
+})
+
+test_that("download_files", {
+
+  skip_if_offline()
+
+  dir <- test_temp_dir()
+  downloads <- data.frame(
+    stringsAsFactors = FALSE,
+    url  = paste0("https://httpbin.org/etag/foobar", 1:3),
+    path = file.path(dir, paste0("file", 1:3)),
+    etag = file.path(dir, paste0("etag", 1:3))
+  )
+
+  ## First file has no etag file
+  unlink(downloads$etag[1], recursive = TRUE)
+  ## Second has a different etag, so response must be 200
+  cat("eeeetag\n", file = downloads$etag[2])
+  ## Third has the same
+  cat("foobar3\n", file = downloads$etag[3])
+  cat("dummy\n", file = downloads$path[3])
+
+  ret <- synchronise(download_files(downloads))
+
+  expect_equal(file.exists(downloads$path), rep(TRUE, 3))
+  expect_equal(file.exists(downloads$etag), rep(TRUE, 3))
+  for (i in 1:2) {
+    expect_equal(jsonlite::fromJSON(downloads$path[i])$url,
+                 downloads$url[i])
+    expect_equal(read_lines(downloads$etag[i]), paste0("foobar", i))
+  }
+  expect_equal(read_lines(downloads$path[3]), "dummy")
+
+  expect_equal(ret[[1]]$response$status_code, 200)
+  expect_equal(ret[[2]]$response$status_code, 200)
+  expect_equal(ret[[3]]$response$status_code, 304)
 })

@@ -1,4 +1,3 @@
-
 context("packages-gz")
 
 test_that("packages_make_target", {
@@ -118,4 +117,13 @@ test_that("rbind_expand", {
   expect_identical(m$b, c("a", "b", NA, NA))
   expect_identical(m$c, c(NA, NA, "c", "d"))
   expect_identical(m$d, c(NA, NA, 1L, 2L))
+})
+
+test_that("empty PACKAGES file", {
+  pkgs <- test_temp_file()
+  data <- read_packages_file(pkgs, mirror = "mirror", repodir = "dir",
+                             platform = "source", rversion = "rversion")
+  check_packages_data(data)
+  expect_equal(nrow(data$pkgs), 0)
+  expect_equal(nrow(data$deps), 0)
 })

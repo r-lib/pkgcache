@@ -229,6 +229,7 @@ cranlike_metadata_cache <- R6Class(
 
     data = NULL,
     data_time = NULL,
+    data_messaged = NULL,
 
     update_deferred = NULL,
 
@@ -341,6 +342,7 @@ cmc_cleanup <- function(self, private, force) {
   local_cache_dir <- private$get_cache_files("replica")
   unlink(local_cache_dir, recursive = TRUE, force = TRUE)
   private$data <- NULL
+  private$data_messaged <- NULL
   cli_alert_info("Cleaning up cache directory `{cache_dir}`")
   unlink(cache_dir, recursive = TRUE, force = TRUE)
 }
@@ -450,8 +452,8 @@ cmc__get_current_data <- function(self, private, max_age) {
   }
 
   "!!DEBUG Got current data!"
-  if (is.null(attr(private$data, "messaged"))) {
-    attr(private$data, "messaged") <- TRUE
+  if (! isTRUE(private$data_messaged)) {
+    private$data_messaged <- TRUE
     cli_alert_success("Using cached package metadata")
   }
   private$data
@@ -467,6 +469,7 @@ cmc__get_memory_cache  <- function(self, private, max_age) {
   }
   private$data <- hit$data
   private$data_time <- hit$data_time
+  private$data_messaged <- NULL
 
   cli_alert_success("Using session cached package metadata")
   private$data
@@ -495,6 +498,7 @@ cmc__load_replica_rds <- function(self, private, max_age) {
   bar <- cli_start_process("Loading session disk cached package metadata")
   private$data <- readRDS(rds)
   private$data_time <- time
+  private$data_messaged <- NULL
   "!!DEBUG Loaded replica RDS!"
   private$update_memory_cache()
   bar$done()
@@ -538,6 +542,7 @@ cmc__load_primary_rds <- function(self, private, max_age) {
 
   private$data <- readRDS(rep_files$rds)
   private$data_time <- time
+  private$data_messaged <- NULL
 
   private$update_memory_cache()
   bar$done()
@@ -652,6 +657,7 @@ cmc__update_replica_rds <- function(self, private) {
   private$data <- merge_packages_data(.list = data_list)
   saveRDS(private$data, file = rep_files$rds)
   private$data_time <- file_get_time(rep_files$rds)
+  private$data_messaged <- NULL
 
   private$update_memory_cache()
 

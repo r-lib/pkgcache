@@ -22,7 +22,8 @@ read_packages_file <- function(path, mirror, repodir, platform,
     list(repodir = repodir, platform = platform),
     list(...), .list)
   assert_that(all_named(extra))
-  if (nrow(pkgs)) pkgs[names(extra)] <- extra
+  pkgs[names(extra)] <-
+    if (nrow(pkgs)) extra else replicate(length(extra), character())
   names(pkgs) <- tolower(names(pkgs))
 
   if (! "needscompilation" %in% names(pkgs)) {
@@ -47,7 +48,7 @@ read_packages_file <- function(path, mirror, repodir, platform,
   pkgs$status <- if (nrow(pkgs)) "OK" else character()
   pkgs$target <- packages_make_target(
     platform, repodir, pkgs$package, pkgs$version, pkgs[["file"]], pkgs[["path"]])
-  pkgs$mirror <- mirror
+  pkgs$mirror <- if (nrow(pkgs)) mirror else character()
   pkgs$sources <- packages_make_sources(
     mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version, type)
 

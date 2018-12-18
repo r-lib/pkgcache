@@ -108,23 +108,25 @@ cli_start_process <- function(msg, envir = parent.frame()) {
   }
 
   bar <- cliapp::cli_progress_bar(
-    format = paste(":xsym", msg), total = 1, force = TRUE,
+    format = ":xsym :xmsg", total = 1, force = TRUE,
     show_after = 0, clear = FALSE)
 
   ## This should come from the theme....
-  bar$tick(0, tokens = list(xsym = crayon::cyan(cli::symbol$info)))
+  xsym <- crayon::cyan(cli::symbol$info)
+  bar$tick(0, tokens = list(xsym = xsym, xmsg = msg))
 
   ## This needs to be called for a clean exit
   bar$done <- function() {
     xsym <- crayon::green(cli::symbol$tick)
-    bar$tick(0, tokens = list(xsym = xsym))
+    bar$tick(0, tokens = list(xsym = xsym, xmsg = crayon::reset(msg)))
     bar$terminate()
   }
 
   ## This will be called automatically, but if called after done(),
   ## it does not print anything
   defer({
-    bar$tick(0, tokens = list(xsym = crayon::red(cli::symbol$cross)))
+    xsym <- crayon::red(cli::symbol$cross)
+    bar$tick(0, tokens = list(xsym = xsym, xmsg = crayon::reset(msg)))
     bar$terminate()
   }, envir = envir)
 

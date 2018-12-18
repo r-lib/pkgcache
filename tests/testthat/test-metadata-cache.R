@@ -126,6 +126,36 @@ test_that("load_primary_rds", {
     "This is it")
 })
 
+test_that("locking failures", {
+  pri <- test_temp_dir()
+  rep <- test_temp_dir()
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
+
+  mockery::stub(cmc__load_primary_rds, "lock", function(...) NULL)
+  expect_error(
+    cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
+    "Cannot acquire lock to copy RDS")
+
+  mockery::stub(cmc__load_primary_pkgs, "lock", function(...) NULL)
+  expect_error(
+    cmc__load_primary_pkgs(cmc, get_private(cmc), oneday()),
+    "Cannot acquire lock to copy PACKAGES")
+})
+
+test_that("load_primary_rds 3", {
+  pri <- test_temp_dir()
+  rep <- test_temp_dir()
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
+
+  pri_files <- get_private(cmc)$get_cache_files("primary")
+  touch(pri_files$rds)
+  expect_error(
+    cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
+    "Primary PACKAGES missing")
+})
+
 test_that("load_primary_pkgs", {
 
   withr::local_options(list(repos = NULL))
@@ -248,6 +278,22 @@ test_that("update_primary", {
   })
 })
 
+test_that("update_primary 2", {
+
+  expect_null(cmc__update_primary(NULL, NULL, FALSE, FALSE, FALSE))
+
+  pri <- test_temp_dir()
+  rep <- test_temp_dir()
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
+                                     bioc = FALSE)
+
+  mockery::stub(cmc__update_primary, "lock", function(...) NULL)
+  expect_error(
+    cmc__update_primary(cmc, get_private(cmc), TRUE, TRUE, TRUE),
+    "Cannot acquire lock to update primary cache")
+})
+
 test_that("update", {
 
   skip_if_offline()
@@ -282,6 +328,72 @@ test_that("update", {
   ## There are primary PACKAGES, with Etag files
   expect_true(all(file.exists(pri_files$pkgs$path)))
   expect_true(all(file.exists(pri_files$pkgs$etag)))
+
+  ## List
+  expect_equal(data$pkgs, cmc$list())
+  lst <- cmc$list(c("igraph", "MASS"))
+  expect_equal(sort(c("igraph", "MASS")), sort(unique(lst$package)))
+
+  ## Revdeps
+  rdeps <- cmc$revdeps("MASS")
+  expect_true("abc" %in% rdeps$package)
+  expect_true("abd" %in% rdeps$package)
+
+  rdeps <- cmc$revdeps("MASS", recursive = FALSE)
+  expect_true("abc" %in% rdeps$package)
+  expect_false("abd" %in% rdeps$package)
+})
+
+test_that("check_update", {
+
+  skip_if_offline()
+
+  dir.create(pri <- fs::path_norm(tempfile()))
+  on.exit(unlink(pri, recursive = TRUE), add = TRUE)
+  dir.create(rep <- fs::path_norm(tempfile()))
+  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
+  data <- cmc$check_update()
+  check_packages_data(data)
+
+  ## Data is loaded
+  expect_identical(get_private(cmc)$data, data)
+  expect_true(Sys.time() - get_private(cmc)$data_time < oneminute())
+
+  ## There is a replica RDS
+  rep_files <- get_private(cmc)$get_cache_files("replica")
+  expect_true(file.exists(rep_files$rds))
+  expect_true(Sys.time() - file_get_time(rep_files$rds) < oneminute())
+
+  ## There is a primary RDS
+  pri_files <- get_private(cmc)$get_cache_files("primary")
+  expect_true(file.exists(pri_files$rds))
+  expect_true(Sys.time() - file_get_time(pri_files$rds) < oneminute())
+
+  ## There are replicate PACKAGES, with Etag files
+  expect_true(all(file.exists(rep_files$pkgs$path)))
+  expect_true(all(file.exists(rep_files$pkgs$etag)))
+
+  ## There are primary PACKAGES, with Etag files
+  expect_true(all(file.exists(pri_files$pkgs$path)))
+  expect_true(all(file.exists(pri_files$pkgs$etag)))
+
+  ## We don't download it again, if the Etag files are current
+  cat("foobar\n", file = rep_files$pkgs$path[1])
+  cat("foobar2\n", file = rep_files$rds)
+  cat("foobar\n", file = pri_files$pkgs$path[1])
+  cat("foobar2\n", file = pri_files$rds)
+  data2 <- cmc$check_update()
+  expect_identical(data, data2)
+  expect_equal(read_lines(rep_files$pkgs$path[1]), "foobar")
+
+  ## Cleanup
+  cmc$cleanup(force = TRUE)
+  expect_false(file.exists(pri_files$rds))
+  expect_false(any(file.exists(pri_files$pkgs$path)))
+  expect_false(file.exists(rep_files$rds))
+  expect_false(any(file.exists(rep_files$pkgs$path)))
 })
 
 test_that("deps will auto-update as needed", {
@@ -450,4 +562,59 @@ test_that("download failures", {
     expect_message(cmc$update(), "Metadata download failed"))
   expect_error(cmc$get_update())
   expect_error(cmc$list())
+})
+
+test_that("cleanup", {
+  mockery::stub(cmc_cleanup, "interactive", FALSE)
+  expect_error(cmc_cleanup(NULL, NULL, FALSE), "Not cleaning up cache")
+})
+
+test_that("cleanup", {
+  dir.create(pri <- fs::path_norm(tempfile()))
+  on.exit(unlink(pri, recursive = TRUE), add = TRUE)
+  dir.create(rep <- fs::path_norm(tempfile()))
+  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
+
+  mockery::stub(cmc_cleanup, "interactive", TRUE)
+  mockery::stub(cmc_cleanup, "readline", "")
+  expect_error(cmc_cleanup(cmc, get_private(cmc), FALSE), "Aborted")
+})
+
+test_that("memory cache", {
+
+  skip_if_offline()
+
+  pri <- test_temp_dir()
+  rep <- test_temp_dir()
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
+  data <- cmc$list()
+
+  rep2 <- test_temp_dir()
+  cmc2 <- cranlike_metadata_cache$new(pri, rep2, "source", bioc = FALSE)
+  week <- as.difftime(7, units = "days")
+  expect_message(
+    data2 <- get_private(cmc2)$get_memory_cache(week),
+    "Using session cached package metadata")
+  expect_identical(data, data2$pkgs)
+
+  rep3 <- test_temp_dir()
+  cmc3 <- cranlike_metadata_cache$new(pri, rep3, "source", bioc = FALSE)
+  instance <- as.difftime(1/100000, units = "secs")
+  expect_error(data3 <- get_private(cmc3)$get_memory_cache(instance),
+               "Memory cache outdated")
+})
+
+test_that("update_memory_cache", {
+  pri <- test_temp_dir()
+  rep <- test_temp_dir()
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
+                                     bioc = FALSE)
+
+  mockery::stub(cmc__copy_to_replica, "lock", function(...) NULL)
+  expect_error(
+    cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE),
+    "Cannot acquire lock to copy primary cache")
 })

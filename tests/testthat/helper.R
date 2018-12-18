@@ -71,3 +71,8 @@ test_temp_dir <- function(pattern = "test-dir-", envir = parent.frame()) {
   dir.create(tmp, recursive = TRUE, showWarnings = FALSE)
   normalizePath(tmp)
 }
+
+touch <- function(path) {
+  mkdirp(dirname(path))
+  cat("", file = path)
+}

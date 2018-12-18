@@ -450,7 +450,10 @@ cmc__get_current_data <- function(self, private, max_age) {
   }
 
   "!!DEBUG Got current data!"
-  cli_alert_success("Using cached package metadata")
+  if (is.null(attr(private$data, "messaged"))) {
+    attr(private$data, "messaged") <- TRUE
+    cli_alert_success("Using cached package metadata")
+  }
   private$data
 }
 

@@ -203,10 +203,11 @@ test_that("update_or_add, cache is current", {
 
 test_that("cache dirs, on errors #1", {
   mockery::stub(
-    detect_package_cache_dir,
-    "get_user_cache_dir",
+    get_user_cache_dir,
+    "user_cache_dir",
     function(...) stop("not available"))
-  expect_warning(dir <- detect_package_cache_dir())
-  expect_true(file.exists(dir))
-  unlink(dir, recursive = TRUE)
+  expect_warning(dir <- get_user_cache_dir())
+  expect_true(file.exists(dir$root))
+  expect_true(file.exists(dir$meta))
+  unlink(dir$root, recursive = TRUE)
 })

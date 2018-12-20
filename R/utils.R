@@ -208,3 +208,9 @@ is_verbose <- function() {
     }
   }
 }
+
+msg_wrap <- function(..., .space = TRUE) {
+  ret <- paste(strwrap(paste0(...)), collapse = "\n")
+  if (.space) ret <- paste0("\n", ret, "\n")
+  ret
+}

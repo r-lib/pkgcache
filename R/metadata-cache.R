@@ -433,9 +433,10 @@ cmc__async_ensure_cache <- function(self, private, max_age) {
     self$async_update()
 
   )$catch(error = function(err) {
-    err$message <- paste(
-      "Could not load or update metadata cache. If you think your local",
-      "cache is broken, try deleting it with `meta_cache_cleanup()`, or",
+    err$message <- msg_wrap(
+      conditionMessage(tail(err$errors, 1)[[1]]), "\n\n",
+      "Could not load or update metadata cache. If you think your local ",
+      "cache is broken, try deleting it with `meta_cache_cleanup()`, or ",
       "the `$cleanup()` method.")
     stop(err)
   })

@@ -822,6 +822,9 @@ cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
     res$bioc_version[res$name %in% names(bioc_repos)] <- bioc_version
   }
 
+  res <- res[!duplicated(res$url), ]
+  res <- res[!duplicated(res$name), ]
+
   res
 }
 

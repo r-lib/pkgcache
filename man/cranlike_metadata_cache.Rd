@@ -30,7 +30,7 @@ It has a synchronous and an asynchronous API.
 }
 \section{Usage}{
 \preformatted{cmc <- cranlike_metadata_cache$new(
-  primary_path = user_cache_dir("R-pkg"), replica_path = tempfile(),
+  primary_path = NULL, replica_path = tempfile(),
   platforms = default_platforms(), r_version = current_r_version(),
   bioc = TRUE, cran_mirror = default_cran_mirror(),
   repos = getOption("repos"),

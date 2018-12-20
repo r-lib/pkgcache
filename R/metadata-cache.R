@@ -22,7 +22,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' @section Usage:
 #' ```
 #' cmc <- cranlike_metadata_cache$new(
-#'   primary_path = user_cache_dir("R-pkg"), replica_path = tempfile(),
+#'   primary_path = NULL, replica_path = tempfile(),
 #'   platforms = default_platforms(), r_version = current_r_version(),
 #'   bioc = TRUE, cran_mirror = default_cran_mirror(),
 #'   repos = getOption("repos"),
@@ -158,7 +158,7 @@ cranlike_metadata_cache <- R6Class(
   "cranlike_metadata_cache",
 
   public = list(
-    initialize = function(primary_path = user_cache_dir("R-pkg"),
+    initialize = function(primary_path = NULL,
                           replica_path = tempfile(),
                           platforms = default_platforms(),
                           r_version = current_r_version(), bioc = TRUE,
@@ -251,7 +251,7 @@ cmc_init <- function(self, private, primary_path, replica_path, platforms,
                      r_version, bioc, cran_mirror, repos, update_after) {
 
   "!!DEBUG Init metadata cache in '`replica_path`'"
-  private$primary_path <- primary_path
+  private$primary_path <- primary_path %||% get_user_cache_dir()$root
   private$replica_path <- replica_path
   private$platforms <- platforms
   private$r_version <- get_minor_r_version(r_version)

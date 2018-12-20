@@ -206,7 +206,9 @@ test_that("cache dirs, on errors #1", {
     get_user_cache_dir,
     "user_cache_dir",
     function(...) stop("not available"))
-  expect_warning(dir <- get_user_cache_dir())
+  withr::with_envvar(
+    c(R_PKG_CACHE_DIR = NA_character_),
+    expect_warning(dir <- get_user_cache_dir()))
   expect_true(file.exists(dir$root))
   expect_true(file.exists(dir$meta))
   unlink(dir$root, recursive = TRUE)

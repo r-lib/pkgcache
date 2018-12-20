@@ -302,6 +302,11 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
 }
 
 download_files <- function(data) {
+  if (any(dup <- duplicated(data$path))) {
+    stop("Duplicate target paths in download_files: ",
+         paste0("`", unique(data$path[dup]), "`", collapse = ", "), ".")
+  }
+
   bar <- create_progress_bar(data)
   prog_cb <- function(upd) update_progress_bar_progress(bar, upd)
 

@@ -257,3 +257,18 @@ test_that("download_files", {
   expect_equal(ret[[2]]$response$status_code, 200)
   expect_equal(ret[[3]]$response$status_code, 304)
 })
+
+test_that("download_files errors", {
+
+  dir <- test_temp_dir()
+  downloads <- data.frame(
+    stringsAsFactors = FALSE,
+    url  = paste0("https://httpbin.org/etag/foobar", 1:3),
+    path = "thesamepath",
+    etag = file.path(dir, paste0("etag", 1:3))
+  )
+
+  expect_error(
+    synchronise(download_files(downloads)),
+    "Duplicate target paths")
+})

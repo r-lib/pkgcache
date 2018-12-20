@@ -179,7 +179,7 @@ test_that("load_primary_pkgs", {
     synchronise(get_private(cmc)$load_primary_pkgs(oneday())),
     "Some primary PACKAGES files don't exist")
 
-  for (i in tail(seq_len(nrow(pri_files$pkgs)), -1)) {
+  for (i in utils::tail(seq_len(nrow(pri_files$pkgs)), -1)) {
     fs::file_copy(get_fixture("PACKAGES-src.gz"), pri_files$pkgs$path[i])
   }
   file_set_time(pri_files$pkgs$path, Sys.time() - 2 * oneday())
@@ -234,7 +234,7 @@ test_that("update_replica_rds", {
   rep_files <- get_private(cmc)$get_cache_files("replica")
   mkdirp(dirname(rep_files$pkgs$path))
   fs::file_copy(get_fixture("PACKAGES-mac.gz"), rep_files$pkgs$path[1])
-  for (i in tail(seq_len(nrow(rep_files$pkgs)), -1)) {
+  for (i in utils::tail(seq_len(nrow(rep_files$pkgs)), -1)) {
     fs::file_copy(get_fixture("PACKAGES-src.gz"), rep_files$pkgs$path[i])
   }
 

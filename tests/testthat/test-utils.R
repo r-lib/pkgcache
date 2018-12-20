@@ -106,7 +106,7 @@ test_that("file.size", {
   tmp <- test_temp_file()
   expect_equal(file.size(tmp), 0L)
   cat("1234567890\n", file = tmp)
-  expect_equal(file.size(tmp), 11L)
+  expect_true(file.size(tmp) %in% 11:12)
 })
 
 test_that("interpret_dependencies", {

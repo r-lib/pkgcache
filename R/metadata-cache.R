@@ -648,12 +648,21 @@ cmc__update_replica_rds <- function(self, private) {
                            repodir = r$basedir, platform = r$platform,
                            rversion = private$r_version, type = r$type,
                            meta_path = r$meta_path),
-        ## TODO: warn?
-        error = function(x) NULL
+        error = function(x) {
+          message()
+          warning(msg_wrap(
+            "Cannot read metadata information from `", r$path, "`. ",
+            "The file is corrupt. Try deleting the metadata cache with ",
+            "`pkgcache::meta_cache_cleanup()` or the `$cleanup()` method"),
+            immediate. = TRUE)
+          NULL
+        }
       )
     })
 
   data_list <- data_list[!vlapply(data_list, is.null)]
+
+  if (length(data_list) == 0) stop("No metadata available")
 
   private$data <- merge_packages_data(.list = data_list)
   saveRDS(private$data, file = rep_files$rds)

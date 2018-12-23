@@ -232,6 +232,7 @@ cranlike_metadata_cache <- R6Class(
     data_messaged = NULL,
 
     update_deferred = NULL,
+    chk_update_deferred = NULL,
 
     primary_path = NULL,
     replica_path = NULL,
@@ -297,6 +298,7 @@ cmc_async_list <- function(self, private, packages) {
 }
 
 cmc_async_update <- function(self, private) {
+  self; private
   if (!is.null(private$update_deferred)) return(private$update_deferred)
 
   private$update_deferred <- async(private$update_replica_pkgs)()$
@@ -309,7 +311,11 @@ cmc_async_update <- function(self, private) {
 
 cmc_async_check_update <- function(self, private) {
   self; private
-  async(private$update_replica_pkgs)()$
+
+  if (!is.null(private$update_deferred)) return(private$update_deferred)
+  if (!is.null(private$chk_update_deferred)) return(private$chk_update_deferred)
+
+  private$chk_update_deferred <- async(private$update_replica_pkgs)()$
     then(function(ret) {
       stat <- viapply(ret, function(x) x$response$status_code)
       rep_files <- private$get_cache_files("replica")
@@ -324,7 +330,9 @@ cmc_async_check_update <- function(self, private) {
       } else {
         private$async_ensure_cache()
       }
-    })
+    })$
+    finally(function() private$chk_update_deferred <- NULL)$
+    share()
 }
 
 cmc_cleanup <- function(self, private, force) {
@@ -424,22 +432,25 @@ cmc__get_cache_files <- function(self, private, which) {
 cmc__async_ensure_cache <- function(self, private, max_age) {
   max_age
 
-  async_try_each(
-    async(private$get_current_data)(max_age),
-    async(private$get_memory_cache)(max_age),
-    async(private$load_replica_rds)(max_age),
-    async(private$load_primary_rds)(max_age),
-    async(private$load_primary_pkgs)(max_age),
-    self$async_update()
+  r <- try_catch_null(private$get_current_data(max_age)) %||%
+    try_catch_null(private$get_memory_cache(max_age)) %||%
+    try_catch_null(private$load_replica_rds(max_age)) %||%
+    try_catch_null(private$load_primary_rds(max_age)) %||%
+    try_catch_null(private$load_primary_pkgs(max_age))
 
-  )$catch(error = function(err) {
-    err$message <- msg_wrap(
-      conditionMessage(utils::tail(err$errors, 1)[[1]]), "\n\n",
-      "Could not load or update metadata cache. If you think your local ",
-      "cache is broken, try deleting it with `meta_cache_cleanup()`, or ",
-      "the `$cleanup()` method.")
-    stop(err)
-  })
+  if (is.null(r)) {
+    self$async_update()$
+      catch(error = function(err) {
+        err$message <- msg_wrap(
+          conditionMessage(err), "\n\n",
+          "Could not load or update metadata cache. If you think your local ",
+          "cache is broken, try deleting it with `meta_cache_cleanup()`, or ",
+          "the `$cleanup()` method.")
+        stop(err)
+      })
+  } else {
+    async_constant(r)
+  }
 }
 
 #' @importFrom cliapp cli_alert_success

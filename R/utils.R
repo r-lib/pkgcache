@@ -214,3 +214,7 @@ msg_wrap <- function(..., .space = TRUE) {
   if (.space) ret <- paste0("\n", ret, "\n")
   ret
 }
+
+try_catch_null <- function(expr) {
+  tryCatch(expr, error = function(e) NULL)
+}

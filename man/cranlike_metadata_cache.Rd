@@ -50,6 +50,8 @@ cmc$async_update()
 cmc$check_update()
 cmc$asnyc_check_update()
 
+cmc$summary()
+
 cmc$cleanup(force = FALSE)
 }
 }
@@ -95,29 +97,32 @@ It returns a tibble, see the list of columns below.
 \code{cmc$async_list()} is similar, but it is asynchronous, it returns a
 \link{deferred} object.
 
-\code{cmd$deps()} returns a tibble, with the (potentially recursive)
+\code{cmc$deps()} returns a tibble, with the (potentially recursive)
 dependencies of \code{packages}.
 
-\code{cmd$async_deps()} is the same, but it is asynchronous, it
+\code{cmc$async_deps()} is the same, but it is asynchronous, it
 returns a \link{deferred} object.
 
-\code{cmd$revdeps()} returns a tibble, with the (potentially recursive)
+\code{cmc$revdeps()} returns a tibble, with the (potentially recursive)
 reverse dependencies of \code{packages}.
 
-\code{cmd$async_revdeps()} does the same, asynchronously, it returns an
+\code{cmc$async_revdeps()} does the same, asynchronously, it returns an
 \link{deferred} object.
 
-\code{cmd$update()} updates the the metadata (as needed) in the cache,
+\code{cmc$update()} updates the the metadata (as needed) in the cache,
 and then returns a tibble with all packages, invisibly.
 
-\code{cmd$async_update()} is similar, but it is asynchronous.
+\code{cmc$async_update()} is similar, but it is asynchronous.
 
-\code{cmd$check_update()} checks if the metadata is current, and if it is
+\code{cmc$check_update()} checks if the metadata is current, and if it is
 not, it updates it.
 
-\code{cmd$async_check_update()} is similar, but it is asynchronous.
+\code{cmc$async_check_update()} is similar, but it is asynchronous.
 
-\code{cmd$cleanup()} deletes the cache files from the disk, and also from
+\code{cmc$summary()} lists metadata about the cache, including its
+location and size.
+
+\code{cmc$cleanup()} deletes the cache files from the disk, and also from
 memory.
 }
 

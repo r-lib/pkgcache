@@ -42,6 +42,8 @@ cmc__data <- new.env(parent = emptyenv())
 #' cmc$check_update()
 #' cmc$asnyc_check_update()
 #'
+#' cmc$summary()
+#'
 #' cmc$cleanup(force = FALSE)
 #' ```
 #'
@@ -81,29 +83,32 @@ cmc__data <- new.env(parent = emptyenv())
 #' `cmc$async_list()` is similar, but it is asynchronous, it returns a
 #' [deferred] object.
 #'
-#' `cmd$deps()` returns a tibble, with the (potentially recursive)
+#' `cmc$deps()` returns a tibble, with the (potentially recursive)
 #' dependencies of `packages`.
 #'
-#' `cmd$async_deps()` is the same, but it is asynchronous, it
+#' `cmc$async_deps()` is the same, but it is asynchronous, it
 #' returns a [deferred] object.
 #'
-#' `cmd$revdeps()` returns a tibble, with the (potentially recursive)
+#' `cmc$revdeps()` returns a tibble, with the (potentially recursive)
 #' reverse dependencies of `packages`.
 #'
-#' `cmd$async_revdeps()` does the same, asynchronously, it returns an
+#' `cmc$async_revdeps()` does the same, asynchronously, it returns an
 #' [deferred] object.
 #'
-#' `cmd$update()` updates the the metadata (as needed) in the cache,
+#' `cmc$update()` updates the the metadata (as needed) in the cache,
 #' and then returns a tibble with all packages, invisibly.
 #'
-#' `cmd$async_update()` is similar, but it is asynchronous.
+#' `cmc$async_update()` is similar, but it is asynchronous.
 #'
-#' `cmd$check_update()` checks if the metadata is current, and if it is
+#' `cmc$check_update()` checks if the metadata is current, and if it is
 #' not, it updates it.
 #'
-#' `cmd$async_check_update()` is similar, but it is asynchronous.
+#' `cmc$async_check_update()` is similar, but it is asynchronous.
 #'
-#' `cmd$cleanup()` deletes the cache files from the disk, and also from
+#' `cmc$summary()` lists metadata about the cache, including its
+#' location and size.
+#' 
+#' `cmc$cleanup()` deletes the cache files from the disk, and also from
 #' memory.
 #'
 #' @section Columns:
@@ -192,6 +197,9 @@ cranlike_metadata_cache <- R6Class(
       synchronise(self$async_check_update()),
     async_check_update = function()
       cmc_async_check_update(self, private),
+
+    summary = function()
+      cmc_summary(self, private),
 
     cleanup = function(force = FALSE)
       cmc_cleanup(self, private, force)
@@ -333,6 +341,21 @@ cmc_async_check_update <- function(self, private) {
     })$
     finally(function() private$chk_update_deferred <- NULL)$
     share()
+}
+
+cmc_summary <- function(self, private) {
+  dirs <- private$get_cache_files("primary")
+  pgz <- dir(dirs$meta, recursive = TRUE, pattern = "^PACKAGES\\.gz$",
+             full.names = TRUE)
+  all <- dir(dirs$meta, recursive = TRUE, full.names = TRUE)
+  list(
+    cachpath = dirs$meta,
+    lockfile = dirs$lock,
+    current_rds = dirs$rds,
+    raw_files = pgz,
+    rds_files = dir(dirs$meta, pattern = "\\.rds$", full.names = TRUE),
+    size = sum(file.size(all))
+  )
 }
 
 cmc_cleanup <- function(self, private, force) {
@@ -891,6 +914,9 @@ type_bioc_matching_bioc_version <- function(r_version) {
 #'
 #' `meta_cache_revdeps()` queries reverse package dependencies.
 #'
+#' `meta_cache_summary()` lists data about the cache, including its location
+#' and size.
+#' 
 #' `meta_cache_cleanup()` deletes the cache files from the disk.
 #'
 #' @param packages Packages to query.
@@ -949,4 +975,11 @@ meta_cache_list <- function(packages = NULL) {
 
 meta_cache_cleanup <- function(force = FALSE) {
   global_metadata_cache$cleanup(force = force)
+}
+
+#' @export
+#' @rdname meta_cache_deps
+
+meta_cache_summary <- function() {
+  global_metadata_cache$summary()
 }

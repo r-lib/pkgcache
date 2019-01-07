@@ -6,6 +6,7 @@
 \alias{meta_cache_update}
 \alias{meta_cache_list}
 \alias{meta_cache_cleanup}
+\alias{meta_cache_summary}
 \title{Query CRAN(like) package data}
 \usage{
 meta_cache_deps(packages, dependencies = NA, recursive = TRUE)
@@ -17,6 +18,8 @@ meta_cache_update()
 meta_cache_list(packages = NULL)
 
 meta_cache_cleanup(force = FALSE)
+
+meta_cache_summary()
 }
 \arguments{
 \item{packages}{Packages to query.}
@@ -46,6 +49,9 @@ automatically updated if it is older than seven days.
 \code{meta_cache_deps()} queries packages dependencies.
 
 \code{meta_cache_revdeps()} queries reverse package dependencies.
+
+\code{meta_cache_summary()} lists data about the cache, including its location
+and size.
 
 \code{meta_cache_cleanup()} deletes the cache files from the disk.
 }

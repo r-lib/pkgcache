@@ -35,7 +35,7 @@ async <- function(fun) {
       )
     }
 
-    deferred$new(
+    asNamespace("pkgcache")$deferred$new(
       type = "async",
       action = function(resolve) resolve(fun2())
     )

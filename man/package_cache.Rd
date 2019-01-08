@@ -58,8 +58,8 @@ functions the location of the file inside the cache.
 \item \code{file}:  Path to the file to add.
 \item \code{url}: URL attribute. This is used to update the file, if requested.
 \item \code{sha256}: SHA256 hash of the file.
-\item \code{on_progress}: Callback to create progress bard. Passed to
-\code{\link[=http_get]{http_get()}}.
+\item \code{on_progress}: Callback to create progress bar. Passed to internal
+function \code{http_get()}.
 \item \code{target}: Path to copy the (first) to hit to.
 \item \code{urls}: Character vector or URLs to try to download the file from.
 }

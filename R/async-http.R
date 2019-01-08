@@ -28,7 +28,7 @@
 #'
 #' @family async HTTP tools
 #' @importFrom curl parse_headers_list
-#' @export
+#' @noRd
 #' @section Examples:
 #' ```
 #' dest1 <- tempfile(fileext = ".jpeg")
@@ -126,7 +126,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #' @inherit download_file return
 #'
 #' @family async HTTP tools
-#' @export
+#' @noRd
 #' @importFrom cliapp cli_alert_info
 #' @section Examples:
 #' ```
@@ -239,7 +239,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #' @inherit download_if_newer return
 #'
 #' @family async HTTP tools
-#' @export
+#' @noRd
 #' @section Examples:
 #' ```
 #' dest <- tempfile()

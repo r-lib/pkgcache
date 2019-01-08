@@ -11,7 +11,7 @@
 #' @param fun Original function.
 #' @return Async version of the original function.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' f <- function(x) 42
 #' af <- async(f)
@@ -64,7 +64,7 @@ mark_as_async <- function(fun) {
 #' @param fun Function.
 #' @return Logical scalar, whether `fun` is async.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' f <- function(x) 42
 #' af <- async(f)
@@ -133,7 +133,7 @@ on_failure(is_flag) <- function(call, env) {
 #' @param value The value to resolve to.
 #' @return A deferred value.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' afun <- async(function() {
 #'   async_constant(1/100)$
@@ -269,10 +269,11 @@ pop_event_loop <- function() {
 #' @param frm The async frame to mark. Defaults to the most recent async
 #'   frame in the stack.
 #'
+#' @noRd
 #' @name async_debug
 NULL
 
-#' @export
+#' @noRd
 #' @aliases .an
 #' @rdname async_debug
 
@@ -285,7 +286,7 @@ async_next <- function(el = NULL) {
 
 # nocov start
 
-#' @export
+#' @noRd
 #' @aliases .as
 #' @rdname async_debug
 
@@ -300,7 +301,7 @@ async_step <- function() {
   }
 }
 
-#' @export
+#' @noRd
 #' @aliases .asb
 #' @rdname async_debug
 
@@ -311,7 +312,7 @@ async_step_back <- function() {
 
 # nocov end
 
-#' @export
+#' @noRd
 #' @aliases .al
 #' @rdname async_debug
 
@@ -329,7 +330,7 @@ async_list <- function(def = NULL) {
   do.call(rbind, info)
 }
 
-#' @export
+#' @noRd
 #' @aliases .at
 #' @rdname async_debug
 
@@ -340,7 +341,7 @@ async_tree <- function(def = NULL) {
   cli::tree(data, root = root)
 }
 
-#' @export
+#' @noRd
 #' @rdname async_debug
 
 async_debug <- function(id, action = TRUE, parent = TRUE) {
@@ -383,7 +384,7 @@ async_debug <- function(id, action = TRUE, parent = TRUE) {
   invisible(def)
 }
 
-#' @export
+#' @noRd
 #' @rdname async_debug
 
 async_wait_for <- function(id) {
@@ -396,7 +397,7 @@ async_wait_for <- function(id) {
   message("[ASYNC] ", id, "  resolved")
 }
 
-#' @export
+#' @noRd
 #' @aliases .aw
 #' @rdname async_debug
 
@@ -435,7 +436,7 @@ async_where <- function(calls = sys.calls(), parents = sys.parents(),
 
 # nocov start
 
-#' @export
+#' @noRd
 
 print.async_where <- function(x, ...) {
   cat(format(x, ...))
@@ -444,7 +445,7 @@ print.async_where <- function(x, ...) {
 
 # nocov end
 
-#' @export
+#' @noRd
 
 format.async_where <- function(x, ...) {
   paste0(paste(
@@ -503,7 +504,7 @@ debug1 <- function(fun) {
   debugonce(fun)
 }
 
-#' @export
+#' @noRd
 #' @rdname async_debug
 
 async_debug_shortcuts <- function() {
@@ -518,7 +519,7 @@ async_debug_shortcuts <- function() {
   as(".aw", async_where)
 }
 
-#' @export
+#' @noRd
 #' @rdname async_debug
 
 async_debug_remove_shortcuts <- function() {
@@ -920,10 +921,11 @@ debug_all <- function(fun) {
 #' @section Examples:
 #' Please see the README and the vignettes for examples.
 #' @name deferred
+#' @noRd
 NULL
 
 #' @importFrom R6 R6Class
-#' @export
+#' @noRd
 
 deferred <- R6Class(
   "deferred",
@@ -1347,7 +1349,7 @@ def__get_info <- function(self, private) {
 #' @param x object
 #' @return Whether it is a deferred value.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' is_deferred(1:10)
 #' afun <- function() {
@@ -1369,7 +1371,7 @@ is_deferred <- function(x) {
 #'   to delay the execution. It can be a fraction of a second.
 #' @return A deferred object.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## Two HEAD requests with 1/2 sec delay between them
@@ -1420,7 +1422,7 @@ delay <- mark_as_async(delay)
 #' @return A deferred value for the result.
 #'
 #' @family async iterators
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' synchronise(async_detect(
@@ -1843,7 +1845,7 @@ el__update_time <- function(self, private) {
 #' want to wrap the body of the error listeners in a `tryCatch()` call,
 #' if you want to avoid this.
 #'
-#' @export
+#' @noRd
 #' @importFrom R6 R6Class
 
 event_emitter <- R6Class(
@@ -1987,7 +1989,7 @@ ee__error_callback <- function(self, private, err, res) {
 #' @return A deferred value for the result.
 #'
 #' @family async iterators
-#' @export
+#' @noRd
 #' @examples
 #' # Check if all numbers are odd
 #' # Note the use of force() here. Otherwise x will be evaluated later,
@@ -2033,7 +2035,7 @@ async_every <- mark_as_async(async_every)
 #' @return A deferred value for the result.
 #'
 #' @family async iterators
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## Filter out non-working URLs
@@ -2055,7 +2057,7 @@ async_filter <- function(.x, .p, ...) {
 async_filter <- mark_as_async(async_filter)
 
 #' @rdname async_filter
-#' @export
+#' @noRd
 
 async_reject <- function(.x, .p, ...) {
   when_all(.list = lapply(.x, async(.p), ...))$
@@ -2093,7 +2095,7 @@ async_reject <- mark_as_async(async_reject)
 #' * `current`: already received bytes of the response.
 #'
 #' @family asyncronous HTTP calls
-#' @export
+#' @noRd
 #' @importFrom curl new_handle handle_setheaders
 #' @examples
 #' \donttest{
@@ -2144,7 +2146,7 @@ http_get <- mark_as_async(http_get)
 #' @return Deferred object.
 #'
 #' @family asyncronous HTTP calls
-#' @export
+#' @noRd
 #' @importFrom curl handle_setopt
 #' @examples
 #' \donttest{
@@ -2218,7 +2220,7 @@ make_deferred_http <- function(cb, file) {
 #' @return The HTTP response invisibly, if it is considered successful.
 #'   Otherwise an error is thrown.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' afun <- async(function() {
@@ -2358,7 +2360,7 @@ http_statuses <- c(
 #'   from the application of `.f` are resolved.
 #'
 #' @family async iterators
-#' @export
+#' @noRd
 #' @examples
 #' synchronise(async_map(
 #'   seq(10, 100, by = 10) / 100,
@@ -2436,7 +2438,7 @@ NULL
 #'   `NULL`.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #'  badfun <- async(function() stop("oh no!"))
 #'  safefun <- async_reflect(badfun)
@@ -2465,7 +2467,7 @@ async_reflect <- mark_as_async(async_reflect)
 #' @param .limit Number of concurrent async processes to create.
 #' @return Resolves to a list of the results of the `n` `task` calls.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## perform an HTTP request three times, and list the reponse times
@@ -2537,7 +2539,7 @@ async_replicate_limit  <- function(n, task, ..., .limit = .limit) {
 #' @return Deferred value for the operation with retries.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## Try a download at most 5 times
@@ -2579,7 +2581,7 @@ async_retry <- mark_as_async(async_retry)
 #' @return Asynchronous retryable function.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## Create a downloader that retries five times
@@ -2611,7 +2613,7 @@ async_retryable <- function(task, times) {
 #'   ones.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' check_url <- async_sequence(
@@ -2633,7 +2635,7 @@ async_sequence <- function(..., .list = NULL) {
 
 async_sequence <- mark_as_async(async_sequence)
 
-#' @export
+#' @noRd
 #' @rdname async_every
 
 async_some <- function(.x, .p, ...) {
@@ -2675,7 +2677,7 @@ async_some <- mark_as_async(async_some)
 #' @param expr Async function call expression. If it does not evaluate
 #' to a deferred value, then it is just returned.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' http_status <- function(url, ...) {
@@ -2748,7 +2750,7 @@ start_browser <- function() {
 #' @return `NULL`, always. If the event loop is to return some value,
 #' you can use lexical scoping, see the example below.
 #'
-#' @export
+#' @noRd
 #' @examples
 #' counter <- 0L
 #' do <- function() {
@@ -2786,7 +2788,7 @@ distill_error <- function(err) {
 }
 
 # nocov start
-#' @export
+#' @noRd
 
 print.async_rejected <- function(x, ...) {
   cat(format(x, ...))
@@ -2795,7 +2797,7 @@ print.async_rejected <- function(x, ...) {
 
 # nocov end
 
-#' @export
+#' @noRd
 
 format.async_rejected <- function(x, ...) {
   x <- distill_error(x)
@@ -2808,7 +2810,7 @@ format.async_rejected <- function(x, ...) {
   )
 }
 
-#' @export
+#' @noRd
 
 summary.async_rejected <- function(object, ...) {
   x <- distill_error(object)
@@ -2823,7 +2825,7 @@ summary.async_rejected <- function(object, ...) {
 
 # nocov start
 
-#' @export
+#' @noRd
 
 print.async_rejected_summary <- function(x, ...) {
   cat(x)
@@ -2844,7 +2846,7 @@ print.async_rejected_summary <- function(x, ...) {
 #'   not resolved within the specified timeout.
 #'
 #' @family async utilities
-#' @export
+#' @noRd
 #' @examples
 #' ## You can catch the error, asynchronously
 #' synchronise(
@@ -2930,7 +2932,7 @@ async_timeout <- mark_as_async(async_timeout)
 #' the timing of the timer events.
 #'
 #' @importFrom R6 R6Class
-#' @export
+#' @noRd
 #' @examples
 #' ## Call 10 times a second, cancel with 1/10 probability
 #' counter <- 0L
@@ -3036,7 +3038,7 @@ async_timer_cancel  <- function(self, private) {
 #'   will be in the `errors` member of the error object.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #' do <- function() {
 #'   async_try_each(
@@ -3091,7 +3093,7 @@ async_try_each <- mark_as_async(async_try_each)
 #' @return Deferred value, that is resolved when the iteration is done.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #' ## Keep calling until it "returns" a number less than < 0.1
 #' calls <- 0
@@ -3234,7 +3236,7 @@ get_source_position <- function(call) {
 #'   in `...` and `.list`.
 #'
 #' @seealso [when_any()], [when_some()]
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## Check that the contents of two URLs are the same
@@ -3295,7 +3297,7 @@ get_value_x <- function(x) {
 #'   in `...` and `.list`.
 #'
 #' @seealso [when_all()]
-#' @export
+#' @noRd
 #' @examples
 #' \donttest{
 #' ## Use the URL that returns first
@@ -3349,7 +3351,7 @@ when_some <- function(count, ..., .list = list()) {
 
 when_some <- mark_as_async(when_some)
 
-#' @export
+#' @noRd
 #' @rdname when_some
 
 when_any <- function(..., .list = list()) {
@@ -3366,7 +3368,7 @@ when_any <- mark_as_async(when_any)
 #' @return Deferred value, that is resolved when the iteration is done.
 #'
 #' @family async control flow
-#' @export
+#' @noRd
 #' @examples
 #' ## Keep calling while result is bigger than 0.1
 #' calls <- 0

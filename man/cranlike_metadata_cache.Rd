@@ -95,19 +95,19 @@ can refer to the common cache object.
 It returns a tibble, see the list of columns below.
 
 \code{cmc$async_list()} is similar, but it is asynchronous, it returns a
-\link{deferred} object.
+\code{deferred} object.
 
 \code{cmc$deps()} returns a tibble, with the (potentially recursive)
 dependencies of \code{packages}.
 
 \code{cmc$async_deps()} is the same, but it is asynchronous, it
-returns a \link{deferred} object.
+returns a \code{deferred} object.
 
 \code{cmc$revdeps()} returns a tibble, with the (potentially recursive)
 reverse dependencies of \code{packages}.
 
 \code{cmc$async_revdeps()} does the same, asynchronously, it returns an
-\link{deferred} object.
+\code{deferred} object.
 
 \code{cmc$update()} updates the the metadata (as needed) in the cache,
 and then returns a tibble with all packages, invisibly.

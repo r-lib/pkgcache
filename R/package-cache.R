@@ -45,8 +45,8 @@
 #' * `file`:  Path to the file to add.
 #' * `url`: URL attribute. This is used to update the file, if requested.
 #' * `sha256`: SHA256 hash of the file.
-#' * `on_progress`: Callback to create progress bard. Passed to
-#'   [http_get()].
+#' * `on_progress`: Callback to create progress bar. Passed to internal
+#'   function `http_get()`.
 #' * `target`: Path to copy the (first) to hit to.
 #' * `urls`: Character vector or URLs to try to download the file from.
 #'

@@ -945,7 +945,7 @@ type_bioc_matching_bioc_version <- function(r_version) {
 
 meta_cache_deps <- function(packages, dependencies = NA,
                             recursive = TRUE) {
-  global_metadata_cache$deps(packages, dependencies, recursive)
+  get_cranlike_metadata_cache()$deps(packages, dependencies, recursive)
 }
 
 #' @export
@@ -953,33 +953,33 @@ meta_cache_deps <- function(packages, dependencies = NA,
 
 meta_cache_revdeps <- function(packages, dependencies = NA,
                                recursive = TRUE) {
-  global_metadata_cache$revdeps(packages, dependencies, recursive)
+  get_cranlike_metadata_cache()$revdeps(packages, dependencies, recursive)
 }
 
 #' @export
 #' @rdname meta_cache_deps
 
 meta_cache_update <- function() {
-  invisible(global_metadata_cache$update()$pkgs)
+  invisible(get_cranlike_metadata_cache()$update()$pkgs)
 }
 
 #' @export
 #' @rdname meta_cache_deps
 
 meta_cache_list <- function(packages = NULL) {
-  global_metadata_cache$list(packages)
+  get_cranlike_metadata_cache()$list(packages)
 }
 
 #' @export
 #' @rdname meta_cache_deps
 
 meta_cache_cleanup <- function(force = FALSE) {
-  global_metadata_cache$cleanup(force = force)
+  get_cranlike_metadata_cache()$cleanup(force = force)
 }
 
 #' @export
 #' @rdname meta_cache_deps
 
 meta_cache_summary <- function() {
-  global_metadata_cache$summary()
+  get_cranlike_metadata_cache()$summary()
 }

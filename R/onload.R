@@ -1,11 +1,9 @@
 
 ## nocov start
 
-global_metadata_cache <- NULL
+pkgenv <- new.env(parent = emptyenv())
 
-onload_pkgcache <- function(libname, pkgname) {
-  global_metadata_cache <<- cranlike_metadata_cache$new()
-}
+onload_pkgcache <- function(libname, pkgname) { }
 
 if (exists(".onLoad", inherits = FALSE)) {
   onload_old <- .onLoad
@@ -27,5 +25,8 @@ if (exists(".onLoad", inherits = FALSE)) {
 #' @export
 
 get_cranlike_metadata_cache <- function() {
-  global_metadata_cache
+  if (is.null(pkgenv$global_metadata_cache)) {
+    pkgenv$global_metadata_cache <- cranlike_metadata_cache$new()
+  }
+  pkgenv$global_metadata_cache
 }

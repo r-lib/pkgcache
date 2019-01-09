@@ -349,7 +349,7 @@ cmc_summary <- function(self, private) {
              full.names = TRUE)
   all <- dir(dirs$meta, recursive = TRUE, full.names = TRUE)
   list(
-    cachpath = dirs$meta,
+    cachepath = dirs$meta,
     lockfile = dirs$lock,
     current_rds = dirs$rds,
     raw_files = pgz,

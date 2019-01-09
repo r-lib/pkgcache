@@ -13,7 +13,7 @@
 #' @export
 
 pkg_cache_summary <- function(cachepath = NULL) {
-  cachepath <- cachepath %||% get_user_cache_dir()$root
+  cachepath <- cachepath %||% get_user_cache_dir()$pkg
   l <- pkg_cache_list(cachepath)
   size <- sum(file.info(l$fullpath)$size)
   list(
@@ -29,7 +29,7 @@ pkg_cache_summary <- function(cachepath = NULL) {
 #' @export
 
 pkg_cache_list <- function(cachepath = NULL) {
-  cachepath <- cachepath %||% get_user_cache_dir()$root
+  cachepath <- cachepath %||% get_user_cache_dir()$pkg
   as_tibble(package_cache$new(cachepath)$list())
 }
 
@@ -55,7 +55,7 @@ pkg_cache_find <- function(cachepath = NULL, ...) {
 #' @export
 
 pkg_cache_get_file <- function(cachepath = NULL, target, ...) {
-  cachepath <- cachepath %||% get_user_cache_dir()$root
+  cachepath <- cachepath %||% get_user_cache_dir()$pkg
   invisible(as_tibble(package_cache$new(cachepath)$copy_to(target, ...)))
 }
 
@@ -65,7 +65,7 @@ pkg_cache_get_file <- function(cachepath = NULL, target, ...) {
 #' @export
 
 pkg_cache_delete_files <- function(cachepath = NULL, ...) {
-  cachepath <- cachepath %||% get_user_cache_dir()$root
+  cachepath <- cachepath %||% get_user_cache_dir()$pkg
   package_cache$new(cachepath)$delete(...)
 }
 
@@ -77,6 +77,6 @@ pkg_cache_delete_files <- function(cachepath = NULL, ...) {
 
 pkg_cache_add_file <- function(cachepath = NULL, file,
                            relpath = dirname(file), ...) {
-  cachepath <- cachepath %||% get_user_cache_dir()$root
+  cachepath <- cachepath %||% get_user_cache_dir()$pkg
   package_cache$new(cachepath)$add(file = file, path = relpath, ...)
 }

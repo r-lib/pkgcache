@@ -109,7 +109,7 @@ package_cache <- R6Class(
   "package_cache",
   public = list(
     initialize = function(path = NULL) {
-      path <- path %||% get_user_cache_dir()$root
+      path <- path %||% get_user_cache_dir()$pkg
       assert_that(is_path(path))
       private$path <- path
       create_empty_db_file_if_needed(path)

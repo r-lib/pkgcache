@@ -5,7 +5,7 @@ get_user_cache_dir <- function() {
   cdir <- Sys.getenv("R_PKG_CACHE_DIR", "")
   if (cdir == "")  {
     cdir <- tryCatch(
-      user_cache_dir("R-pkg"),
+      file.path(user_cache_dir("R-pkg"), "pkg"),
       error = function(e) {
         warning(
           "Cannot set package cache directory, using temporary directory. (",

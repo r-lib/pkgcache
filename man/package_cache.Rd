@@ -34,16 +34,18 @@ pc$list()
 pc$find(..., .list = NULL)
 pc$copy_to(..., .list = NULL)
 pc$add(file, path, sha256 = shasum256(file), ..., .list = NULL)
-pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
-pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
+pc$add_url(url, path, ..., .list = NULL, on_progress = NULL,
+  http_headers = NULL)
+pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL,
+  http_headers = NULL)
 pc$copy_or_add(target, urls, path, sha256 = NULL, ..., .list = NULL,
-               on_progress = NULL)
+               on_progress = NULL, http_headers = NULL)
 pc$async_copy_or_add(target, urls, path, ..., sha256 = NULL, ...,
-               .list = NULL, on_progress = NULL)
+               .list = NULL, on_progress = NULL, http_headers = NULL)
 pc$update_or_add(target, urls, path, ..., .list = NULL,
-               on_progress = NULL)
+               on_progress = NULL, http_headers = NULL)
 pc$async_update_or_add(target, urls, path, ..., .list = NULL,
-               on_progress = NULL)
+               on_progress = NULL, http_headers = NULL)
 pc$delete(..., .list = NULL)
 }
 }
@@ -62,6 +64,7 @@ functions the location of the file inside the cache.
 function \code{http_get()}.
 \item \code{target}: Path to copy the (first) to hit to.
 \item \code{urls}: Character vector or URLs to try to download the file from.
+\item \code{http_headers}: HTTP headers to add to all HTTP queries.
 }
 }
 

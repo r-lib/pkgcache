@@ -26,13 +26,14 @@ test_that("download_file", {
 
   dir.create(dir <- tempfile())
   dx <- synchronise(download_file(
-    url    <- "https://httpbin.org/etag/foobar",
+    url    <- "https://httpbin.org/response-headers?etag=foobar",
     target <- file.path(dir, "file1"),
-    etag   <- file.path(dir, "etag")
+    etag   <- file.path(dir, "etag"),
+    headers = c("accept-encoding" = "")
   ))
 
   expect_true(file.exists(target))
-  expect_equal(jsonlite::fromJSON(target)$url, url)
+  expect_equal(jsonlite::fromJSON(target)$etag, "foobar")
   expect_true(file.exists(etag))
   expect_equal(read_lines(etag), "foobar")
 })
@@ -61,7 +62,8 @@ test_that("download_if_newer, no etag file", {
   dx <- synchronise(download_if_newer(
     url    <- "https://httpbin.org/etag/foobar",
     target <- file.path(dir, "file1"),
-    etag   <- file.path(dir, "etag")
+    etag   <- file.path(dir, "etag"),
+    headers = c("accept-encoding" = "")
   ))
 
   expect_true(file.exists(target))
@@ -80,7 +82,8 @@ test_that("download_if_newer, different etag", {
   dx <- synchronise(download_if_newer(
     url    <- "https://httpbin.org/etag/foobar",
     target <- file.path(dir, "file1"),
-    etag
+    etag,
+    headers = c("accept-encoding" = "")
   ))
 
   expect_true(file.exists(target))
@@ -170,7 +173,8 @@ test_that("download_one_of, etag", {
       "https://httpbin.org/status/403",
       url <- "https://httpbin.org/etag/foobar"),
     target <- file.path(dir, "file1"),
-    etag_file = etag
+    etag_file = etag,
+    headers = c("accept-encoding" = "")
   ))
 
   expect_true(file.exists(target))
@@ -242,7 +246,10 @@ test_that("download_files", {
   cat("foobar3\n", file = downloads$etag[3])
   cat("dummy\n", file = downloads$path[3])
 
-  ret <- synchronise(download_files(downloads))
+  ret <- synchronise(download_files(
+    downloads,
+    headers = c("accept-encoding" = "")
+  ))
 
   expect_equal(file.exists(downloads$path), rep(TRUE, 3))
   expect_equal(file.exists(downloads$etag), rep(TRUE, 3))

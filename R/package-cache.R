@@ -24,16 +24,18 @@
 #' pc$find(..., .list = NULL)
 #' pc$copy_to(..., .list = NULL)
 #' pc$add(file, path, sha256 = shasum256(file), ..., .list = NULL)
-#' pc$add_url(url, path, ..., .list = NULL, on_progress = NULL)
-#' pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL)
+#' pc$add_url(url, path, ..., .list = NULL, on_progress = NULL,
+#'   http_headers = NULL)
+#' pc$async_add_url(url, path, ..., .list = NULL, on_progress = NULL,
+#'   http_headers = NULL)
 #' pc$copy_or_add(target, urls, path, sha256 = NULL, ..., .list = NULL,
-#'                on_progress = NULL)
+#'                on_progress = NULL, http_headers = NULL)
 #' pc$async_copy_or_add(target, urls, path, ..., sha256 = NULL, ...,
-#'                .list = NULL, on_progress = NULL)
+#'                .list = NULL, on_progress = NULL, http_headers = NULL)
 #' pc$update_or_add(target, urls, path, ..., .list = NULL,
-#'                on_progress = NULL)
+#'                on_progress = NULL, http_headers = NULL)
 #' pc$async_update_or_add(target, urls, path, ..., .list = NULL,
-#'                on_progress = NULL)
+#'                on_progress = NULL, http_headers = NULL)
 #' pc$delete(..., .list = NULL)
 #' ```
 #'
@@ -49,6 +51,7 @@
 #'   function `http_get()`.
 #' * `target`: Path to copy the (first) to hit to.
 #' * `urls`: Character vector or URLs to try to download the file from.
+#' * `http_headers`: HTTP headers to add to all HTTP queries.
 #'
 #' @section Details:
 #'
@@ -162,10 +165,11 @@ package_cache <- R6Class(
     ## Just download a file from an url and add it
     ## Returns a deferred value
     async_add_url = function(url, path, ..., .list = NULL,
-                             on_progress = NULL) {
-      self; private; url; path; list(...); .list; on_progress
+                             on_progress = NULL, http_headers = NULL) {
+      self; private; url; path; list(...); .list; on_progress; http_headers
       target <- tempfile()
-      download_file(url, target, on_progress = on_progress)$
+      download_file(url, target, on_progress = on_progress,
+                    headers = http_headers)$
         then(function(res) {
           self$add(target, path, url = url, etag = res$etag, ...,
                    sha256 = shasum256(target), .list = .list)
@@ -173,21 +177,25 @@ package_cache <- R6Class(
         finally(function(x) unlink(target, recursive = TRUE))
     },
 
-    add_url = function(url, path, ..., .list = NULL, on_progress = NULL) {
+    add_url = function(url, path, ..., .list = NULL, on_progress = NULL,
+                       http_headers = NULL) {
       synchronise(self$async_add_url(url, path, ..., .list = .list,
-                                     on_progress = on_progress))
+        on_progress = on_progress, http_headers = http_headers))
     },
 
     ## If the file is not in the cache, then download it and add it.
     async_copy_or_add = function(target, urls, path, sha256 = NULL, ...,
-                                 .list = NULL, on_progress = NULL) {
-      self; private; target; urls; path; sha256; list(...); .list; on_progress
+                                 .list = NULL, on_progress = NULL,
+                                 http_headers = NULL) {
+      self; private; target; urls; path; sha256; list(...); .list
+      on_progress; http_headers
       etag <- tempfile()
       async_constant()$
         then(~ self$copy_to(target, url = urls[1], ..., .list = .list))$
         then(function(res) {
           if (! nrow(res)) {
-            download_one_of(urls, target, on_progress = on_progress)$
+            download_one_of(urls, target, on_progress = on_progress,
+                            headers = http_headers)$
               then(function(d) {
                 sha256 <- shasum256(target)
                 self$add(target, path, url = d$url, etag = d$etag,
@@ -202,25 +210,30 @@ package_cache <- R6Class(
     },
 
     copy_or_add = function(target, urls, path, sha256 = NULL, ...,
-                           .list = NULL, on_progress = NULL) {
+                           .list = NULL, on_progress = NULL,
+                           http_headers = NULL) {
       synchronise(self$async_copy_or_add(
                          target, urls, path, sha256, ...,
-                         .list = .list, on_progress = on_progress))
+                         .list = .list, on_progress = on_progress,
+                         http_headers = http_headers))
     },
 
     ## Like copy_to_add, but we always try to update the file, from
     ## the URL, and if the update was successful, we update the file
     ## in the cache as well
     async_update_or_add = function(target, urls, path, sha256 = NULL, ...,
-                                   .list = NULL, on_progress = NULL) {
-      self; private; target; urls; path; sha256; list(...); .list; on_progress
+                                   .list = NULL, on_progress = NULL,
+                                   http_headers = NULL) {
+      self; private; target; urls; path; sha256; list(...); .list;
+      on_progress; http_headers
       async_constant()$
         then(~ self$copy_to(target, url = urls[1], path = path, ...,
                             .list = .list))$
         then(function(res) {
           if (! nrow(res)) {
             ## Not in the cache, download and add it
-            download_one_of(urls, target, on_progress = on_progress)$
+            download_one_of(urls, target, on_progress = on_progress,
+                            headers = http_headers)$
               then(function(d) {
                 sha256 <- shasum256(target)
                 self$add(target, path, url = d$url, etag = d$etag,
@@ -231,7 +244,8 @@ package_cache <- R6Class(
             ## In the cache, check if it is current
             cat(res$etag, file = etag <- tempfile())
             download_one_of(urls, target, etag_file = etag,
-                            on_progress = on_progress)$
+                            on_progress = on_progress,
+                            headers = http_headers)$
               then(function(d) {
                 if (d$response$status_code != 304) {
                   ## No current, update it
@@ -251,10 +265,11 @@ package_cache <- R6Class(
     },
 
     update_or_add = function(target, urls, path, ..., .list = NULL,
-                             on_progress = NULL) {
+                             on_progress = NULL, http_headers = NULL) {
       synchronise(self$async_update_or_add(
                          target, urls, path, ...,
-                         .list = .list, on_progress = on_progress))
+                         .list = .list, on_progress = on_progress,
+                         http_headers = http_headers))
     },
 
     delete = function(..., .list = NULL) {

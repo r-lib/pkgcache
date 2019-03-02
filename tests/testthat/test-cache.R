@@ -53,7 +53,8 @@ test_that("add_url", {
   on.exit(unlink(tmp, recursive = TRUE))
 
   url <- httpbin("/etag/foobar")
-  new <- pc$add_url(url, "f/b", package = "p")
+  new <- pc$add_url(url, "f/b", package = "p",
+                    http_headers = c("accept-encoding" = ""))
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
@@ -95,7 +96,7 @@ test_that("copy_or_add, negative", {
 
   url <- httpbin("/etag/foobar")
   hit <- pc$copy_or_add(url = url, f1 <- tempfile(), path = "f/b",
-                        package = "p2")
+    package = "p2", http_headers = c("accept-encoding" = ""))
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
@@ -121,7 +122,7 @@ test_that("update_or_add, not in cache", {
 
   url <- httpbin("/etag/foobar")
   hit <- pc$update_or_add(url = url, f1 <- tempfile(), path = "f/b",
-                          package = "p")
+    package = "p", http_headers = c("accept-encoding" = ""))
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
@@ -152,7 +153,7 @@ test_that("update_or_add, cache is too old", {
   pc$add(f1, path = "f/b", package = "p", url = url, etag = "e", sha256 = sha256)
 
   hit <- pc$update_or_add(url = url, f1 <- tempfile(), path = "f/b",
-                          package = "p")
+    package = "p", http_headers = c("accept-encoding" = ""))
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)
@@ -184,7 +185,7 @@ test_that("update_or_add, cache is current", {
          sha256 = sha256)
 
   hit <- pc$update_or_add(url = url, f1 <- tempfile(), path = "f/b",
-                          package = "p")
+    package = "p", http_headers = c("accept-encoding" = ""))
 
   path <- file.path("f", "b")
   fullpath <- file.path(tmp, path)

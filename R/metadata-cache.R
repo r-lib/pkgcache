@@ -388,6 +388,12 @@ repo_encode <- function(repos) {
   )
 }
 
+cran_metadata_url <- function() {
+  Sys.getenv(
+    "R_PKG_CRAN_METADATA_URL",
+    "https://cran.r-pkg.org/metadata/")
+}
+
 cmc__get_cache_files <- function(self, private, which) {
   root <- private[[paste0(which, "_path")]]
 
@@ -412,7 +418,7 @@ cmc__get_cache_files <- function(self, private, which) {
     !is.na(meta_path), paste0(meta_path, ".etag"), NA_character_)
   meta_url <- ifelse(
     !is.na(meta_path),
-    paste0("https://cran.r-pkg.org/metadata/", pkgs_dirs, "/METADATA.gz"),
+    paste0(cran_metadata_url(), pkgs_dirs, "/METADATA.gz"),
     NA_character_)
 
   list(

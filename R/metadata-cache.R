@@ -107,7 +107,7 @@ cmc__data <- new.env(parent = emptyenv())
 #'
 #' `cmc$summary()` lists metadata about the cache, including its
 #' location and size.
-#' 
+#'
 #' `cmc$cleanup()` deletes the cache files from the disk, and also from
 #' memory.
 #'
@@ -662,7 +662,9 @@ cmc__update_replica_pkgs <- function(self, private) {
     stringsAsFactors = FALSE,
     url = c(pkgs$url, pkgs$meta_url[meta]),
     path = c(pkgs$path, pkgs$meta_path[meta]),
-    etag = c(pkgs$etag, pkgs$meta_etag[meta]))
+    etag = c(pkgs$etag, pkgs$meta_etag[meta]),
+    timeout = rep(c(10, 2), c(nrow(pkgs), sum(meta))),
+    mayfail = rep(c(FALSE, TRUE), c(nrow(pkgs), sum(meta))))
 
   download_files(dls)
 }
@@ -922,7 +924,7 @@ type_bioc_matching_bioc_version <- function(r_version) {
 #'
 #' `meta_cache_summary()` lists data about the cache, including its location
 #' and size.
-#' 
+#'
 #' `meta_cache_cleanup()` deletes the cache files from the disk.
 #'
 #' @param packages Packages to query.

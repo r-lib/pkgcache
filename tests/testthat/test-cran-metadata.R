@@ -14,6 +14,6 @@ test_that("what if cran.r-pkg.org is down?", {
     expect_error(cmc$update(), NA)
     toc <- Sys.time()
 
-    expect_true(toc - tic < as.difftime(5, units = "secs"))
+    expect_true(toc - tic < as.difftime(10, units = "secs"))
   })
 })

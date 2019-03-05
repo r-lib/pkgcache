@@ -1,14 +1,10 @@
 
-httpbin_url <- function() {
-  "eu.httpbin.org"
-}
-
 is_offline <- (function() {
   offline <- NULL
   function() {
     if (is.null(offline)) {
       offline <<- tryCatch(
-        is.na(pingr::ping_port(httpbin_url(), port = 443, count = 1L)),
+        is.na(pingr::ping_port("google.com", port = 443, count = 1L)),
         error = function(e) TRUE
       )
     }

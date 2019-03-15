@@ -3,7 +3,8 @@ packages_gz_cols <- function()  {
   list(
     pkgs = c("ref", "type", "direct", "status", "package", "version",
              "platform", "rversion", "repodir", "sources", "target",
-             "needscompilation", "priority", "filesize", "sha256"),
+             "needscompilation", "priority", "filesize", "sha256",
+             "sysreqs", "built", "published"),
     deps = c("upstream", "idx", "ref", "type", "package", "op", "version")
 
   )
@@ -53,12 +54,18 @@ read_packages_file <- function(path, mirror, repodir, platform,
     mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version, type)
 
   if (!is.null(meta)) {
-    map <- match(pkgs$target, paste0(repodir, "/", meta$filename))
-    pkgs$filesize <- meta$filesize[map]
-    pkgs$sha256 <- meta$sha256[map]
+    map <- match(pkgs$target, paste0(repodir, "/", meta$file))
+    pkgs$filesize  <- meta$size[map]
+    pkgs$sha256    <- meta$sha[map]
+    pkgs$sysreqs   <- meta$sysreqs[map]
+    pkgs$built     <- meta$built[map]
+    pkgs$published <- meta$published[map]
+    pkgs$published[pkgs$published == ""] <- NA_character_
+    pkgs$published <- as.POSIXct(pkgs$published, tz = "GMT")
   } else {
     pkgs$filesize <- rep(NA_integer_, nrow(pkgs))
-    pkgs$sha256 <- rep(NA_character_, nrow(pkgs))
+    pkgs$sha256 <- pkgs$sysreqs <- pkgs$built <- pkgs$published <-
+        rep(NA_character_, nrow(pkgs))
   }
 
   deps <- packages_parse_deps(pkgs)
@@ -74,11 +81,7 @@ read_metadata_file <- function(path) {
   if (is.na(path)) return(NULL)
   on.exit(tryCatch(close(con), error = function(x) NULL), add = TRUE)
   tryCatch(suppressWarnings({
-    tab <- read.csv(con <- gzfile(path, open = "r"),
-                    header = FALSE, stringsAsFactors = FALSE)
-    close(con)
-    names(tab)[1:3] <- c("filename", "filesize", "sha256")
-    tab
+    read.csv(con <- gzfile(path, open = "r"), stringsAsFactors = FALSE)
   }), error = function(e) NULL)
 }
 

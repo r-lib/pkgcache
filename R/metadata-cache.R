@@ -240,6 +240,11 @@ cranlike_metadata_cache <- R6Class(
     copy_to_replica = function(rds = TRUE, pkgs = FALSE, etags = FALSE)
       cmc__copy_to_replica(self, private, rds, pkgs, etags),
 
+    ## We use this to make sure that different versions of pkgcache can
+    ## share the same metadata cache directory. It is used to calculate
+    ## the hash of the cached RDS file.
+    cache_version = "2",
+
     data = NULL,
     data_time = NULL,
     data_messaged = NULL,
@@ -402,7 +407,8 @@ cran_metadata_url <- function() {
 cmc__get_cache_files <- function(self, private, which) {
   root <- private[[paste0(which, "_path")]]
 
-  repo_hash <- digest(list(repos = private$repos, dirs = private$dirs))
+  repo_hash <- digest(list(repos = private$repos, dirs = private$dirs,
+                           version = private$cache_version))
 
   str_platforms <- paste(private$platforms, collapse = "+")
   rds_file <- paste0("pkgs-", substr(repo_hash, 1, 10), ".rds")

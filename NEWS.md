@@ -1,6 +1,9 @@
 
 # dev
 
+* Now different versions of pkgcache, that potentially have different
+  metadata format, can share the same metadata cache directory.
+
 # pkgcache 1.0.3
 
 * Fix concurrency issues when the async API is used multiple times in the

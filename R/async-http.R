@@ -337,7 +337,6 @@ download_files <- function(data, ...) {
         result
       })
 
-
     if (isTRUE(row$mayfail)) {
       dx$catch(error = function(err) {
         cat("", file = row$path, append = TRUE)

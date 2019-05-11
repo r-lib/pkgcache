@@ -863,9 +863,8 @@ cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
     bioc_version = NA_character_)
 
   if (bioc) {
-    bioc_repos <- type_bioc_get_bioc_repos(r_version)
-    bioc_version <- bioc_repos$version
-    bioc_repos <- bioc_repos$repos
+    bioc_version <- as.character(bioconductor$get_bioc_version(r_version))
+    bioc_repos <- bioconductor$get_repos(bioc_version)
 
     miss <- setdiff(names(bioc_repos), res$name)
     bioc_res <- tibble(

@@ -4,7 +4,7 @@ context("metadata-api")
 test_that("metadata api", {
 
   skip_if_offline()
-  if (packageVersion("callr") < "3.1.0.9000") skip("New newer callr")
+  if (packageVersion("callr") < "3.1.0.9000") skip("Need newer callr")
 
   tmp <- test_temp_dir()
   withr::local_envvar(c(R_PKG_CACHE_DIR = tmp))

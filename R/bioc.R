@@ -126,7 +126,17 @@ bioconductor <- local({
     minor <- get_minor_r_version(r_version)
     if (minor %in% names(builtin_map)) return(builtin_map[[minor]])
 
-    # If we are not in the map, then we need to look this up in
+    # If it is not in the map, and we are at the R minor version that
+    # comes right after the last one in the map, then we just guess
+    # that BioC haven't released before its usual release month.
+    # We only do this if the YAML is not available, because if we already
+    # have the YAML, then we can do the proper mapping.
+
+    if (minor == "3.6" &&
+        Sys.time() < "2019-10-01" &&
+        is.null(yaml_config)) return(package_version("3.9"))
+
+    # If we are not in the builtin map, then we need to look this up in
     # YAML data.
 
     map <- get_version_map(forget = forget)

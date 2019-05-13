@@ -6,3 +6,4 @@
 ^README\.html$
 ^LICENSE\.md$
 ^tools$
+^revdep$

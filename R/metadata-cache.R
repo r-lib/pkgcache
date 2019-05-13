@@ -335,7 +335,11 @@ cmc_async_check_update <- function(self, private) {
 
   private$chk_update_deferred <- async(private$update_replica_pkgs)()$
     then(function(ret) {
-      stat <- viapply(ret, function(x) x$response$status_code)
+      ## Some might be NULL, if failure was allowed and indeed it happened.
+      ## For these we just pretend that they did not change, so they do
+      ## not trigger an update. The metadata RDS builder is robust for
+      ## these files to be empty or non-existing.
+      stat <- viapply(ret, function(x) x$response$status_code %||% 304L)
       rep_files <- private$get_cache_files("replica")
       pkg_times <- file_get_time(rep_files$pkgs$path)
       if (! file.exists(rep_files$rds) ||

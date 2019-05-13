@@ -5,15 +5,15 @@ sudo: false
 cache: packages
 
 r:
-- 3.1
 - 3.2
 - 3.3
-- oldrel
+- 3.4
+- 3.5
 - release
 - devel
 
 after_success:
-  - Rscript -e 'covr::codecov()'
+  - test $TRAVIS_R_VERSION_STRING = "release" && Rscript -e 'covr::codecov()'
 
 env:
   global:

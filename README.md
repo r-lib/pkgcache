@@ -3,8 +3,7 @@
 
 # pkgcache
 
-> Cache CRAN-like metadata and package
-files
+> Cache CRAN-like metadata and package files
 
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN
@@ -38,7 +37,8 @@ source) of the packages for the current platform and R version.
 ``` r
 library(pkgcache)
 meta_cache_list()
-#> # A tibble: 30,246 x 29
+#> ✔ Using cached package metadata
+#> # A tibble: 32,705 x 33
 #>    package title version depends suggests built imports archs repodir
 #>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  
 #>  1 A3      "Acc… 1.0.0   R (>= … randomF… R 3.… <NA>    <NA>  bin/ma…
@@ -51,12 +51,13 @@ meta_cache_list()
 #>  8 ABCopt… Impl… 0.15.0  <NA>    testtha… R 3.… Rcpp, … ABCo… bin/ma…
 #>  9 ABCp2   Appr… 1.2     MASS    <NA>     R 3.… <NA>    <NA>  bin/ma…
 #> 10 abcrf   Appr… 1.7.1   R(>= 3… <NA>     R 3.… "readr… abcr… bin/ma…
-#> # ... with 30,236 more rows, and 20 more variables: platform <chr>,
-#> #   rversion <chr>, needscompilation <chr>, ref <chr>, type <chr>,
-#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>,
-#> #   sources <list>, deps <list>, license <chr>, linkingto <chr>,
+#> # … with 32,695 more rows, and 24 more variables: platform <chr>,
+#> #   rversion <chr>, needscompilation <chr>, priority <chr>, ref <chr>,
+#> #   type <chr>, direct <lgl>, status <chr>, target <chr>, mirror <chr>,
+#> #   sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
+#> #   published <dttm>, deps <list>, license <chr>, linkingto <chr>,
 #> #   enhances <chr>, license_restricts_use <chr>, os_type <chr>,
-#> #   priority <chr>, license_is_foss <chr>, md5sum <chr>, path <chr>
+#> #   license_is_foss <chr>, md5sum <chr>, path <chr>
 ```
 
 `meta_cache_deps()` and `meta_cache_revdeps()` can be used to look up
@@ -79,40 +80,39 @@ The `pkg_cache_*` API is high level, and uses a user level cache:
 ``` r
 pkg_cache_summary()
 #> $cachepath
-#> [1] "/Users/gaborcsardi/Library/Caches/R-pkg"
+#> [1] "/Users/gaborcsardi/Library/Caches/R-pkg/pkg"
 #> 
 #> $files
-#> [1] 40
+#> [1] 12
 #> 
 #> $size
-#> [1] 46040994
+#> [1] 553116
 ```
 
 ``` r
 pkg_cache_list()
-#> # A tibble: 40 x 8
-#>    fullpath     path     package  url       etag   md5    version platform
-#>    <chr>        <chr>    <chr>    <chr>     <chr>  <chr>  <chr>   <chr>   
-#>  1 /Users/gabo… bin/mac… pkgconf… https://… "\"44… 32266… 2.0.2   macos   
-#>  2 /Users/gabo… src/con… pkgconf… https://… "\"17… 65742… 2.0.2   source  
-#>  3 /Users/gabo… bin/mac… bindr    https://… "\"3b… e7704… 0.1.1   macos   
-#>  4 /Users/gabo… bin/mac… assertt… https://… "\"cc… d8cc7… 0.2.0   macos   
-#>  5 /Users/gabo… bin/mac… bindrcpp https://… "\"5c… 0a457… 0.2.2   macos   
-#>  6 /Users/gabo… bin/mac… cli      https://… "\"4d… 8591a… 1.0.0   macos   
-#>  7 /Users/gabo… bin/mac… crayon   https://… "\"b7… aea16… 1.3.4   macos   
-#>  8 /Users/gabo… bin/mac… pillar   https://… "\"24… 90119… 1.3.0   macos   
-#>  9 /Users/gabo… bin/mac… glue     https://… "\"16… ba05c… 1.3.0   macos   
-#> 10 /Users/gabo… bin/mac… magrittr https://… "\"25… 97f02… 1.5     macos   
-#> # ... with 30 more rows
+#> # A tibble: 12 x 8
+#>    fullpath       path        package   url  etag sha256    built vignettes
+#>    <chr>          <glue>      <chr>   <int> <int> <chr>     <lgl> <chr>    
+#>  1 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… FALSE <NA>     
+#>  2 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… TRUE  FALSE    
+#>  3 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… FALSE <NA>     
+#>  4 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… TRUE  FALSE    
+#>  5 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… FALSE <NA>     
+#>  6 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… TRUE  FALSE    
+#>  7 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… FALSE <NA>     
+#>  8 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… TRUE  FALSE    
+#>  9 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… FALSE <NA>     
+#> 10 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… TRUE  FALSE    
+#> 11 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… FALSE <NA>     
+#> 12 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… TRUE  FALSE
 ```
 
 ``` r
 pkg_cache_find(package = "dplyr")
-#> # A tibble: 2 x 8
-#>   fullpath      path     package url        etag   md5    version platform
-#> * <chr>         <chr>    <chr>   <chr>      <chr>  <chr>  <chr>   <chr>   
-#> 1 /Users/gabor… bin/mac… dplyr   https://c… "\"56… 004df… 0.7.6   macos   
-#> 2 /Users/gabor… src/con… dplyr   https://c… "\"ad… cc51d… 0.7.6   source
+#> # A tibble: 0 x 8
+#> # … with 8 variables: fullpath <chr>, path <glue>, package <chr>,
+#> #   url <int>, etag <int>, sha256 <chr>, built <lgl>, vignettes <chr>
 ```
 
 `pkg_cache_add_file()` can be used to add a file,
@@ -120,6 +120,28 @@ pkg_cache_find(package = "dplyr")
 copy files out of the cache.
 
 The `package_cache` class provides a finer API.
+
+## Bioconductor support
+
+Both the metadata cache and the package cache support Bioconductor by
+default, automatically. The following options and environment variables
+can be used to configure pkgcache’s Bioconductor support:
+
+Options:
+
+  - The `BioC_mirror` option can be used to select a Bioconductor
+    mirror. This takes priority over the `R_BIOC_MIRROR` environment
+    variable.
+
+Environment variables:
+
+  - The `R_BIOC_VERSION` environment variable can be used to override
+    the default Bioconductor version detection and force a given
+    version. E.g. this can be used to force the development version of
+    Bioconductor.
+  - The `R_BIOC_MIRROR` environment variable can be used to select a
+    Bioconductor mirror. The `BioC_mirror` option takes priority over
+    this, if set.
 
 ## Code of Conduct
 

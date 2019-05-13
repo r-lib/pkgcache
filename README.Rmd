@@ -81,6 +81,26 @@ copy files out of the cache.
 
 The `package_cache` class provides a finer API.
 
+## Bioconductor support
+
+Both the metadata cache and the package cache support Bioconductor by
+default, automatically. The following options and environment variables
+can be used to configure pkgcache's Bioconductor support:
+
+Options:
+
+- The `BioC_mirror` option can be used to select a Bioconductor mirror.
+  This takes priority over the `R_BIOC_MIRROR` environment variable.
+
+Environment variables:
+
+- The `R_BIOC_VERSION` environment variable can be used to override the
+  default Bioconductor version detection and force a given version. E.g.
+  this can be used to force the development version of Bioconductor.
+- The `R_BIOC_MIRROR` environment variable can be used to select a
+  Bioconductor mirror. The `BioC_mirror` option takes priority over this,
+  if set.
+
 ## Code of Conduct
 
 Please note that the 'pkgcache' project is released with a

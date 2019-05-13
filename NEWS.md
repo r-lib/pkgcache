@@ -1,6 +1,9 @@
 
 # dev
 
+* Fix handling of Bioconducor versions and repositories, see
+  README for the details.
+
 * Now different versions of pkgcache, that potentially have different
   metadata format, can share the same metadata cache directory.
 

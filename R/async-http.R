@@ -167,10 +167,11 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #' ```
 
 download_if_newer <- function(url, destfile, etag_file = NULL,
-                              headers = character(),
+                              headers = NULL,
                               tmp_destfile = paste0(destfile, ".tmp"),
                               ...) {
   "!DEBUG download if newer `url`"
+  headers <- headers %||% structure(character(), names = character())
   assert_that(
     is_string(url),
     is_path(destfile),
@@ -277,8 +278,9 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #' ```
 
 download_one_of <- function(urls, destfile, etag_file = NULL,
-                            headers = character(), ...) {
+                            headers = NULL, ...) {
   "!DEBUG trying multiple URLs"
+  headers <- headers %||% structure(character(), names = character())
   assert_that(
     is_character(urls),  length(urls) >= 1,
     is_path(destfile),

@@ -230,8 +230,8 @@ cranlike_metadata_cache <- R6Class(
 
     update_replica_pkgs = function()
       cmc__update_replica_pkgs(self, private),
-    update_replica_rds = function()
-      cmc__update_replica_rds(self, private),
+    update_replica_rds = function(alert = TRUE)
+      cmc__update_replica_rds(self, private, alert),
     update_primary = function(rds = TRUE, packages = TRUE, lock = TRUE)
       cmc__update_primary(self, private, rds, packages, lock),
     update_memory_cache = function()
@@ -345,7 +345,7 @@ cmc_async_check_update <- function(self, private) {
       if (! file.exists(rep_files$rds) ||
           any(file_get_time(rep_files$rds) < pkg_times) ||
           any(stat != 304)) {
-        private$update_replica_rds()
+        private$update_replica_rds(alert = FALSE)
         private$update_primary()
         private$data
 
@@ -510,7 +510,6 @@ cmc__get_current_data <- function(self, private, max_age) {
   "!!DEBUG Got current data!"
   if (! isTRUE(private$data_messaged)) {
     private$data_messaged <- TRUE
-    cli_alert_success("Using cached package metadata")
   }
   private$data
 }
@@ -527,7 +526,6 @@ cmc__get_memory_cache  <- function(self, private, max_age) {
   private$data_time <- hit$data_time
   private$data_messaged <- NULL
 
-  cli_alert_success("Using session cached package metadata")
   private$data
 }
 
@@ -645,7 +643,7 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   private$copy_to_replica(rds = FALSE, pkgs = TRUE, etags = TRUE)
 
   ## Update RDS in replica, this also loads it
-  private$update_replica_rds()
+  private$update_replica_rds(alert = FALSE)
 
   ## Update primary, but not the PACKAGES
   private$update_primary(rds = TRUE, packages = FALSE, lock = FALSE)
@@ -664,7 +662,6 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
 
 cmc__update_replica_pkgs <- function(self, private) {
   "!!DEBUG Update replica PACKAGES"
-  cli_alert_info("Checking for package metadata updates")
   tryCatch(
     private$copy_to_replica(rds = TRUE, pkgs = TRUE, etags = TRUE),
     error = function(e) e)
@@ -692,9 +689,9 @@ cmc__update_replica_pkgs <- function(self, private) {
 #' @param private private self
 #' @keywords internal
 
-cmc__update_replica_rds <- function(self, private) {
+cmc__update_replica_rds <- function(self, private, alert) {
   "!!DEBUG Update replica RDS"
-  bar <- cli_start_process("Updating metadata database")
+  if (alert) bar <- cli_start_process("Updating metadata database")
   rep_files <- private$get_cache_files("replica")
 
   data_list <- lapply_rows(
@@ -728,7 +725,7 @@ cmc__update_replica_rds <- function(self, private) {
 
   private$update_memory_cache()
 
-  bar$done()
+  if (alert) bar$done()
   private$data
 }
 

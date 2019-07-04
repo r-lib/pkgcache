@@ -602,9 +602,7 @@ test_that("memory cache", {
   rep2 <- test_temp_dir()
   cmc2 <- cranlike_metadata_cache$new(pri, rep2, "source", bioc = FALSE)
   week <- as.difftime(7, units = "days")
-  expect_message(
-    data2 <- get_private(cmc2)$get_memory_cache(week),
-    "Using session cached package metadata")
+  data2 <- get_private(cmc2)$get_memory_cache(week)
   expect_identical(data, data2$pkgs)
 
   rep3 <- test_temp_dir()

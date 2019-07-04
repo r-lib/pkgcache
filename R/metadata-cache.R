@@ -687,6 +687,7 @@ cmc__update_replica_pkgs <- function(self, private) {
 #'
 #' @param self self
 #' @param private private self
+#' @param alert whether to show message about the update
 #' @keywords internal
 
 cmc__update_replica_rds <- function(self, private, alert) {

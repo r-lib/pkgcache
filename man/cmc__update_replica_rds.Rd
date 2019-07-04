@@ -4,12 +4,14 @@
 \alias{cmc__update_replica_rds}
 \title{Update the replica RDS from the PACKAGES files}
 \usage{
-cmc__update_replica_rds(self, private)
+cmc__update_replica_rds(self, private, alert)
 }
 \arguments{
 \item{self}{self}
 
 \item{private}{private self}
+
+\item{alert}{whether to show message about the update}
 }
 \description{
 Also loads it afterwards.

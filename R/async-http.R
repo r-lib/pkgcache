@@ -315,7 +315,7 @@ download_files <- function(data, ...) {
   dls <- lapply(seq_len(nrow(data)), function(idx) {
     row <- data[idx, ]
     dx <- download_if_newer(row$url, row$path, row$etag,
-      on_progress = prog_cb, options = list(timeout = row$timeout %||% 10),
+      on_progress = prog_cb, options = list(timeout = row$timeout %||% 100),
       ...)$
       then(function(result) {
         status_code <- result$response$status_code

@@ -675,7 +675,7 @@ cmc__update_replica_pkgs <- function(self, private) {
     url = c(pkgs$url, pkgs$meta_url[meta]),
     path = c(pkgs$path, pkgs$meta_path[meta]),
     etag = c(pkgs$etag, pkgs$meta_etag[meta]),
-    timeout = rep(c(20, 10), c(nrow(pkgs), sum(meta))),
+    timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta))),
     mayfail = rep(c(FALSE, TRUE), c(nrow(pkgs), sum(meta))))
 
   download_files(dls)

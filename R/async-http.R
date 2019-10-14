@@ -316,7 +316,17 @@ download_files <- function(data, ...) {
     row <- data[idx, ]
     dx <- download_if_newer(row$url, row$path, row$etag,
       on_progress = prog_cb, options = list(timeout = row$timeout %||% 100),
-      ...)$
+      ...)
+
+    if ("fallback_url" %in% names(row) && !is.na(row$fallback_url)) {
+      dx <- dx$catch(error = function(err) {
+        download_if_newer(row$fallback_url, row$path, row$etag,
+                          options = list(timeout = row$timeout %||% 10),
+                          ...)
+      })
+    }
+
+    dx <- dx$
       then(function(result) {
         status_code <- result$response$status_code
         if (status_code == 304) {
@@ -327,24 +337,6 @@ download_files <- function(data, ...) {
         result
       })
 
-    if (!isTRUE(row$mayfail) && grepl("\\.gz$", row$url)) {
-      dx <- dx$catch(error = function(err) {
-        nogzip_url <- gsub("\\.gz$", "", row$url)
-        download_if_newer(nogzip_url, row$path, row$etag,
-                          options = list(timeout = row$timeout %||% 10),
-                          ...
-        )$
-          then(function(result) {
-            status_code <- result$response$status_code
-            if (status_code == 304) {
-              update_progress_bar_uptodate(bar, row$url)
-            } else {
-              update_progress_bar_done(bar, row$url)
-            }
-            result
-          })
-      })
-    }
 
     if (isTRUE(row$mayfail)) {
       dx$catch(error = function(err) {

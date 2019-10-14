@@ -420,6 +420,7 @@ cmc__get_cache_files <- function(self, private, which) {
   repo_enc <- rep(repo_encode(private$repos), each = nrow(private$dirs))
   pkgs_dirs <- rep(private$dirs$contriburl, nrow(private$repos))
   pkgs_files <- file.path(pkgs_dirs, "PACKAGES.gz")
+  pkgs_files2 <- file.path(pkgs_dirs, "PACKAGES")
   mirror <- rep(private$repos$url, each = nrow(private$dirs))
   type <- rep(private$repos$type, each = nrow(private$dirs))
   bioc_version <- rep(private$repos$bioc_version, each = nrow(private$dirs))
@@ -448,6 +449,7 @@ cmc__get_cache_files <- function(self, private, which) {
       base = pkgs_files,
       mirror = mirror,
       url = paste0(mirror, "/", pkgs_files),
+      fallback_url = paste0(mirror, "/", pkgs_files2),
       platform = rep(private$dirs$platform, nrow(private$repos)),
       type = type,
       bioc_version = bioc_version,
@@ -673,6 +675,7 @@ cmc__update_replica_pkgs <- function(self, private) {
   dls <- data.frame(
     stringsAsFactors = FALSE,
     url = c(pkgs$url, pkgs$meta_url[meta]),
+    fallback_url = c(pkgs$fallback_url, rep(NA_character_, sum(meta))),
     path = c(pkgs$path, pkgs$meta_path[meta]),
     etag = c(pkgs$etag, pkgs$meta_etag[meta]),
     timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta))),

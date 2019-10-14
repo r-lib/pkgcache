@@ -21,7 +21,9 @@ test_that("auto-cancellation", {
         catch(~ setNames(Inf, url))
     })
 
-    urls <- httpbin(c("delay/5", "get"))
+    urls <- c(paste0(httpbin_url(), "/delay/5"),
+              paste0(httpbin_url(), "/get"))
+
     reqs <- lapply(urls, response_time)
     when_any(.list = reqs)
   })

@@ -9,6 +9,15 @@ unlink("R/aaa-async.R")
 files <- list.files("../async/R", full.names = TRUE)
 for (f in files) file.append("R/aaa-async.R", f)
 
+## Do not export anything
+
+l <- readLines("R/aaa-async.R")
+l <- gsub("@export", "@noRd", l)
+l <- gsub("@name async_debug", "@name async_debug\n#' @noRd", l)
+l <- gsub("@name deferred", "@name deferred\n#' @noRd", l)
+l <- gsub("@name worker_pool", "@name worker_pool\n#' @noRd", l)
+writeLines(l, "R/aaa-async.R")
+
 ## test files
 
 unlink("tests/async", recursive = TRUE)

@@ -30,12 +30,12 @@ async <- function(fun) {
     mget(ls(environment(), all.names = TRUE), environment())
     fun2 <- function() {
       evalq(
-      { !!! body(fun) },
+      { !! body(fun) },
       envir = parent.env(environment())
       )
     }
 
-    asNamespace("pkgcache")$deferred$new(
+    deferred$new(
       type = "async",
       action = function(resolve) resolve(fun2())
     )
@@ -90,6 +90,14 @@ on_failure(is_string) <- function(call, env) {
   paste0(deparse(call$x), " is not a string (length 1 character)")
 }
 
+is_flag <- function(x) {
+  is.logical(x) && length(x) == 1 && !is.na(x)
+}
+
+on_failure(is_flag) <- function(call, env) {
+  paste0(deparse(call$x), " is not a flag (length 1 logical)")
+}
+
 is_action_function <- function(x) {
   is.function(x) && length(formals(x)) %in% 1:2
 }
@@ -122,6 +130,42 @@ is_flag <- function(x) {
 on_failure(is_flag) <- function(call, env) {
   paste0(deparse(call$x), " must be a flag (length 1 logical)")
 }
+
+#' Asynchronous function call, in a worker pool
+#'
+#' The function will be called on another process, very much like
+#' [callr::r()].
+#'
+#' @param func Function to call. See also the notes at [callr::r()].
+#' @param args Arguments to pass to the function. They will be copied
+#'   to the worker process.
+#' @return Deferred object.
+#'
+#' @noRd
+
+call_function <- function(func, args = list()) {
+  func; args
+
+  id <- NULL
+
+  deferred$new(
+    type = "pool-task", call = sys.call(),
+    action = function(resolve) {
+      resolve
+      reject <- environment(resolve)$private$reject
+      id <<- get_default_event_loop()$add_pool_task(
+        function(err, res) if (is.null(err)) resolve(res) else reject(err),
+        list(func = func, args = args))
+    },
+    on_cancel = function(reason) {
+      if (!is.null(id)) {
+        get_default_event_loop()$cancel(id)
+      }
+    }
+  )
+}
+
+call_function <- mark_as_async(call_function)
 
 #' Make a minimal deferred that resolves to the specified value
 #'
@@ -168,13 +212,17 @@ get_default_event_loop <- function() {
 }
 
 push_event_loop <- function() {
+  num_loops <- length(async_env$loops)
+  if (num_loops > 0) async_env$loops[[num_loops]]$suspend()
   new_el <- event_loop$new()
   async_env$loops <- c(async_env$loops, list(new_el))
   new_el
 }
 
 pop_event_loop <- function() {
-  async_env$loops[[length(async_env$loops)]] <- NULL
+  num_loops <- length(async_env$loops)
+  async_env$loops[[num_loops]] <- NULL
+  if (num_loops > 1) async_env$loops[[num_loops - 1]]$wakeup()
 }
 
 #' Async debugging utilities
@@ -269,8 +317,8 @@ pop_event_loop <- function() {
 #' @param frm The async frame to mark. Defaults to the most recent async
 #'   frame in the stack.
 #'
-#' @noRd
 #' @name async_debug
+#' @noRd
 NULL
 
 #' @noRd
@@ -1514,6 +1562,12 @@ event_loop <- R6Class(
     add_http = function(handle, callback, file = NULL, progress = NULL,
                         data = NULL)
       el_add_http(self, private, handle, callback, file, progress, data),
+    add_process = function(conns, callback, data)
+      el_add_process(self, private, conns, callback, data),
+    add_r_process = function(conns, callback, data)
+      el_add_r_process(self, private, conns, callback, data),
+    add_pool_task = function(callback, data)
+      el_add_pool_task(self, private, callback, data),
     add_delayed = function(delay, func, callback, rep = FALSE)
       el_add_delayed(self, private, delay, func, callback, rep),
     add_next_tick = function(func, callback, data = NULL)
@@ -1525,7 +1579,12 @@ event_loop <- R6Class(
       el_cancel_all(self, private),
 
     run = function(mode = c("default", "nowait", "once"))
-      el_run(self, private, mode = match.arg(mode))
+      el_run(self, private, mode = match.arg(mode)),
+
+    suspend = function()
+      el_suspend(self, private),
+    wakeup = function()
+      el_wakeup(self, private)
   ),
 
   private = list(
@@ -1543,17 +1602,27 @@ event_loop <- R6Class(
       el__is_alive(self, private),
     update_time = function()
       el__update_time(self, private),
+    io_poll = function(timeout)
+      el__io_poll(self, private, timeout),
+    update_curl_data = function()
+      el__update_curl_data(self, private),
 
+    id = NULL,
     time = Sys.time(),
     stop_flag = FALSE,
     tasks = list(),
     timers = Sys.time()[numeric()],
     pool = NULL,
-    next_ticks = character()
+    curl_fdset = NULL,                 # return value of multi_fdset()
+    curl_poll = TRUE,                  # should we poll for curl sockets?
+    curl_timer = NULL,                 # call multi_run() before this
+    next_ticks = character(),
+    worker_pool = NULL
   )
 )
 
 el_init <- function(self, private) {
+  private$id <- new_event_loop_id()
   invisible(self)
 }
 
@@ -1609,6 +1678,28 @@ el_add_http <- function(self, private, handle, callback, progress, file,
   id
 }
 
+el_add_process <- function(self, private, conns, callback, data) {
+  self; private; conns; callback; data
+  data$conns <- conns
+  private$create_task(callback, data, type = "process")
+}
+
+el_add_r_process <- function(self, private, conns, callback, data) {
+  self; private; conns; callback; data
+  data$conns <- conns
+  private$create_task(callback, data, type = "r-process")
+}
+
+el_add_pool_task <- function(self, private, callback, data) {
+  self; private; callback; data
+  id <- private$create_task(callback, data, type = "pool-task")
+  if (is.null(async_env$worker_pool)) {
+    async_env$worker_pool <- worker_pool$new()
+  }
+  async_env$worker_pool$add_task(data$func, data$args, id, private$id)
+  id
+}
+
 el_add_delayed <- function(self, private, delay, func, callback, rep) {
   force(self); force(private); force(delay); force(func); force(callback)
   force(rep)
@@ -1635,6 +1726,12 @@ el_cancel <- function(self, private, id) {
   private$timers  <- private$timers[setdiff(names(private$timers), id)]
   if (id %in% names(private$tasks) && private$tasks[[id]]$type == "http") {
     multi_cancel(private$tasks[[id]]$data$handle)
+  } else if (id %in% names(private$tasks) &&
+             private$tasks[[id]]$type %in% c("process", "r-process")) {
+    private$tasks[[id]]$data$process$kill()
+  } else if (id %in% names(private$tasks) &&
+             private$tasks[[id]]$type == "pool-task") {
+    async_env$worker_pool$cancel_task(id)
   }
   private$tasks[[id]] <- NULL
   invisible(self)
@@ -1647,41 +1744,47 @@ el_cancel_all <- function(self, private) {
   lapply(http, multi_cancel)
   private$next_ticks <- character()
   private$timers <- Sys.time()[numeric()]
+
+  ## Need to cancel pool tasks, these are interrupts for the workers
+  types <- vcapply(private$tasks, "[[", "type")
+  ids <- vcapply(private$tasks, "[[", "id")
+  for (id in ids[types == "pool-task"]) {
+    self$cancel(id)
+  }
+
   private$tasks <-  list()
   invisible(self)
 }
-
-#' @importFrom curl multi_run multi_list
 
 el_run <- function(self, private, mode) {
 
   ## This is closely modeled after the libuv event loop, on purpose,
   ## because some time we might switch to that.
+
   alive <- private$is_alive()
   if (! alive) private$update_time()
 
-  while (alive && ! private$stop_flag) {
+  while (alive && !private$stop_flag) {
+    private$update_curl_data()
     private$update_time()
     private$run_timers()
     ran_pending <- private$run_pending()
     ## private$run_idle()
     ## private$run_prepare()
 
-    num_poll <- length(multi_list(pool = private$pool))
     timeout <- 0
-    if (mode == "once" && !ran_pending || mode == "default") {
+    if ((mode == "once" && !ran_pending) || mode == "default") {
       timeout <- private$get_poll_timeout()
     }
-    if (num_poll) {
-      multi_run(timeout = timeout, poll = TRUE, pool = private$pool)
-    } else if (length(private$timers)) {
-      Sys.sleep(timeout)
-    }
 
+    private$io_poll(timeout)
     ## private$run_check()
     ## private$run_closing_handles()
 
     if (mode == "once") {
+      ## If io_poll returned without doing anything, that means that
+      ## we have some timers that are due, so run those.
+      ## At this point we have surely made progress
       private$update_time()
       private$run_timers()
     }
@@ -1695,6 +1798,14 @@ el_run <- function(self, private, mode) {
   alive
 }
 
+el_suspend <- function(self, private) {
+  ## TODO
+}
+
+el_wakeup <- function(self, private) {
+  ## TODO
+}
+
 el__run_pending <- function(self, private) {
   next_ticks <- private$next_ticks
   private$next_ticks <- character()
@@ -1705,7 +1816,146 @@ el__run_pending <- function(self, private) {
                        info = task$data$error_info)
   }
 
-  length(next_ticks) > 0
+  ## Check for workers from the pool finished before, while another
+  ## event loop was active
+  finished_pool <- FALSE
+  pool <- async_env$worker_pool
+  if (!is.null(pool)) {
+    done_pool <- pool$list_tasks(event_loop = private$id, status = "done")
+    finished_pool <- nrow(done_pool) > 0
+    for (tid in done_pool$id) {
+      task <- private$tasks[[tid]]
+      private$tasks[[tid]] <- NULL
+      res <- pool$get_result(tid)
+      err <- res$error
+      res <- res[c("result", "stdout", "stderr")]
+      task$callback(err, res)
+    }
+  }
+
+  length(next_ticks) > 0 || finished_pool
+}
+
+#' @importFrom curl multi_run multi_fdset
+
+el__io_poll <- function(self, private, timeout) {
+
+  types <- vcapply(private$tasks, "[[", "type")
+
+  ## The things we need to poll, and their types
+  ## We put the result here as well
+  pollables <- data.frame(
+    stringsAsFactors = FALSE,
+    id = character(),
+    pollable = I(list()),
+    type = character(),
+    ready = character()
+  )
+
+  ## HTTP.
+  if (private$curl_poll) {
+    curl_pollables <- data.frame(
+      stringsAsFactors = FALSE,
+      id = "curl",
+      pollable = I(list(processx::curl_fds(private$curl_fdset))),
+      type = "curl",
+      ready = "silent")
+    pollables <- rbind(pollables, curl_pollables)
+  }
+
+  ## Processes
+  proc <- types %in% c("process", "r-process")
+  if (sum(proc)) {
+    conns <- unlist(lapply(
+      private$tasks[proc], function(t) t$data$conns),
+      recursive = FALSE)
+    proc_pollables <- data.frame(
+      stringsAsFactors = FALSE,
+      id = names(private$tasks)[proc],
+      pollable = I(conns),
+      type = types[proc],
+      ready = rep("silent", sum(proc)))
+    pollables <- rbind(pollables, proc_pollables)
+  }
+
+  ## Pool
+  px_pool <- if (!is.null(async_env$worker_pool)) {
+    async_env$worker_pool$get_poll_connections()
+  }
+  if (length(px_pool)) {
+    pool_pollables <- data.frame(
+      stringsAsFactors = FALSE,
+      id = names(px_pool),
+      pollable = I(px_pool),
+      type = rep("pool", length(px_pool)),
+      ready = rep("silent", length(px_pool)))
+    pollables <- rbind(pollables, pool_pollables)
+  }
+
+  if (nrow(pollables)) {
+
+    ## OK, ready to poll
+    pollables$ready <- unlist(processx::poll(pollables$pollable, timeout))
+
+    ## Any HTTP?
+    if (private$curl_poll &&
+        pollables$ready[match("curl", pollables$type)] == "event") {
+      multi_run(timeout = 0L, poll = TRUE, pool = private$pool)
+      private$curl_timer <- NULL
+    }
+
+    ## Any processes
+    proc_ready <- pollables$type %in% c("process", "r-process") &
+      pollables$ready == "ready"
+    for (id in pollables$id[proc_ready]) {
+      p <- private$tasks[[id]]
+      private$tasks[[id]] <- NULL
+      ## TODO: this should be async
+      p$data$process$wait(1000)
+      p$data$process$kill()
+      res <- list(
+        status = p$data$process$get_exit_status(),
+        stdout = read_all(p$data$stdout, p$data$encoding),
+        stderr = read_all(p$data$stderr, p$data$encoding),
+        timeout = FALSE
+      )
+
+      if (p$type == "r-process") {
+        res$result = p$data$process$get_result()
+      }
+
+      unlink(c(p$data$stdout, p$data$stderr))
+
+      if (p$data$error_on_status && res$status != 0) {
+        err <- make_error("process exited with non-zero status")
+        err$data <- res
+        res <- NULL
+      } else {
+        err <- NULL
+      }
+      p$callback(err, res)
+    }
+
+    ## Worker pool
+    pool_ready <- pollables$type == "pool" & pollables$ready == "ready"
+    if (sum(pool_ready)) {
+      pool <- async_env$worker_pool
+      done <- pool$notify_event(as.integer(pollables$id[pool_ready]),
+                                event_loop = private$id)
+      mine <- intersect(done, names(private$tasks))
+      for (tid in mine) {
+        task <- private$tasks[[tid]]
+        private$tasks[[tid]] <- NULL
+        res <- pool$get_result(tid)
+        err <- res$error
+        res <- res[c("result", "stdout", "stderr")]
+        task$callback(err, res)
+      }
+    }
+
+  } else if (length(private$timers) || !is.null(private$curl_timer)) {
+    Sys.sleep(timeout / 1000)
+  }
 }
 
 #' @importFrom uuid UUIDgenerate
@@ -1730,15 +1980,27 @@ el__ensure_pool <- function(self, private, ...) {
 }
 
 el__get_poll_timeout <- function(self, private) {
-  if (length(private$next_ticks)) {
+  t <- if (length(private$next_ticks)) {
     ## TODO: can this happen at all? Probably not, but it does not hurt...
     0 # nocov
   } else {
     max(0, min(Inf, private$timers - private$time))
   }
+
+  if (!is.null(private$curl_timer)) {
+    t <- min(t, private$curl_timer - private$time)
+  }
+
+  if (is.finite(t)) as.integer(t * 1000) else -1L
 }
 
 el__run_timers <- function(self, private) {
+
+  if (!is.null(private$curl_timer) && private$curl_timer < private$time) {
+    multi_run(timeout = 0L, poll = TRUE, pool = private$pool)
+    private$curl_timer <- NULL
+  }
+
   expired <- names(private$timers)[private$timers <= private$time]
   expired <- expired[order(private$timers[expired])]
   for (id in expired) {
@@ -1764,6 +2026,17 @@ el__is_alive <- function(self, private) {
 
 el__update_time <- function(self, private) {
   private$time <- Sys.time()
+}
+
+#' @importFrom curl multi_fdset
+#'
+el__update_curl_data <- function(self, private) {
+  private$curl_fdset <- multi_fdset(private$pool)
+  num_fds <- length(unique(unlist(private$curl_fdset[1:3])))
+  private$curl_poll <- num_fds > 0
+  private$curl_timer <- if ((t <- private$curl_fdset$timeout) != -1) {
+    Sys.time() + as.difftime(t / 1000.0, units = "secs")
+  }
 }
 
 #' Generic Event Emitter
@@ -2119,7 +2392,7 @@ http_get <- function(url, headers = character(), file = NULL,
 
       if (!is.null(on_progress)) {
         options$noprogress <- FALSE
-        options$progressfunction <- function(down, up) {
+        fun <- options$progressfunction <- function(down, up) {
           on_progress(list(
             url = url,
             handle = handle,
@@ -2129,6 +2402,9 @@ http_get <- function(url, headers = character(), file = NULL,
           ))
           TRUE
         }
+        ## This is a workaround for curl not PROTECT-ing the progress
+        ## callback function
+        reg.finalizer(handle, function(...) fun, onexit = TRUE)
       }
 
       handle_setopt(handle, .list = options)
@@ -2184,6 +2460,52 @@ http_head <- function(url, headers = character(), file = NULL,
 }
 
 http_head <- mark_as_async(http_head)
+
+#' Asynchronous HTTP POST request
+#'
+#' Start an HTTP POST requrest in the background, and report its completion
+#' via a deferred value.
+#'
+#' @inheritParams http_get
+#' @param on_progress: Progress handler function. It is only used if the
+#'   response body is written to a file. See details at [http_get()].
+#'
+#' @noRd
+#' @examples
+#' json <- jsonlite::toJSON(list(baz = 100, foo = "bar"))
+#'
+#' do <- function() {
+#'   headers <- c("content-type" = "application/json")
+#'   http_post("https://eu.httpbin.org/post", data = json, headers = headers)$
+#'     then(http_stop_for_status)$
+#'     then(function(x) {
+#'       jsonlite::fromJSON(rawToChar(x$content))$json
+#'     })
+#' }
+#'
+#' synchronise(do())
+
+http_post <- function(url, data, headers = character(), file = NULL,
+                      options = list(timeout = 600), on_progress = NULL) {
+
+  url; data; headers; file; options; on_progress
+  if (!is.raw(data)) data <- charToRaw(data)
+
+  make_deferred_http(
+    function() {
+      assert_that(is_string(url))
+      handle <- new_handle(url = url)
+      handle_setheaders(handle, .list = headers)
+      handle_setopt(handle, customrequest = "POST",
+                    postfieldsize = length(data), postfields = data,
+                    .list = options)
+      list(handle = handle, options = options)
+    },
+    file
+  )
+}
+
+http_post <- mark_as_async(http_post)
 
 make_deferred_http <- function(cb, file) {
   cb; file
@@ -2424,6 +2746,117 @@ async_map_limit <- function(.x, .f, ..., .args = list(), .limit = Inf) {
 
 #' @import rlang
 NULL
+
+#' Asynchronous external process execution
+#'
+#' Start an external process in the background, and report its completion
+#' via a deferred.
+#'
+#' @inheritParams processx::run
+#' @param error_on_status Whether to reject the referred value if the
+#'    program exits with a non-zero status.
+#' @return Deferred object.
+#'
+#' @family asynchronous external processes
+#' @noRd
+#' @importFrom processx process
+#' @examples
+#' \dontrun{
+#' afun <- function() {
+#'   run_process("ls", "-l")$
+#'     then(function(x) strsplit(x$stdout, "\r?\n")[[1]])
+#' }
+#' synchronise(afun())
+#' }
+
+run_process <- function(command = NULL, args = character(),
+  error_on_status = TRUE, wd = NULL, env = NULL,
+  windows_verbatim_args = FALSE, windows_hide_window = FALSE,
+  encoding = "") {
+
+  command; args; error_on_status; wd; env; windows_verbatim_args;
+  windows_hide_window; encoding
+
+  id <- NULL
+
+  deferred$new(
+    type = "process", call = sys.call(),
+    action = function(resolve) {
+      resolve
+      reject <- environment(resolve)$private$reject
+      stdout <- tempfile()
+      stderr <- tempfile()
+      px <- process$new(command, args = args,
+        stdout = stdout, stderr = stderr, poll_connection = TRUE,
+        env = env, cleanup = TRUE, wd = wd, encoding = encoding)
+      pipe <- px$get_poll_connection()
+      id <<- get_default_event_loop()$add_process(
+        list(pipe),
+        function(err, res) if (is.null(err)) resolve(res) else reject(err),
+        list(process = px, stdout = stdout, stderr = stderr,
+             error_on_status = error_on_status, encoding = encoding))
+    },
+    on_cancel = function(reason) {
+      if (!is.null(id)) get_default_event_loop()$cancel(id)
+    }
+  )
+}
+
+run_process <- mark_as_async(run_process)
+
+#' Asynchronous call to an R function, in a background R process
+#'
+#' Start a background R process and evaluate a function call in it.
+#' It uses [callr::r_process] internally.
+#'
+#' @inheritParams callr::r_bg
+#' @noRd
+#' @importFrom callr r_process_options r_process rcmd_safe_env
+#'
+#' @examples
+#' \dontrun{
+#' afun <- function() {
+#'   run_r_process(function() Sys.getpid())
+#' }
+#' synchronise(afun())
+#' }
+
+run_r_process <- function(func, args = list(), libpath = .libPaths(),
+  repos = c(getOption("repos"), c(CRAN = "https://cloud.r-project.org")),
+  cmdargs = c("--no-site-file", "--slave", "--no-save", "--no-restore"),
+  system_profile = FALSE, user_profile = FALSE, env = rcmd_safe_env()) {
+
+  func; args; libpath; repos; cmdargs; system_profile; user_profile; env
+
+  id <- NULL
+
+  deferred$new(
+    type = "r-process", call = sys.calls(),
+    action = function(resolve) {
+      resolve
+      reject <- environment(resolve)$private$reject
+      stdout <- tempfile()
+      stderr <- tempfile()
+      opts <- r_process_options(
+        func = func, args = args, libpath = libpath, repos = repos,
+        cmdargs = cmdargs, system_profile = system_profile,
+        user_profile = user_profile, env = env, stdout = stdout,
+        stderr = stderr)
+      rx <- r_process$new(opts)
+      pipe <- rx$get_poll_connection()
+      id <<- get_default_event_loop()$add_r_process(
+        list(pipe),
+        function(err, res) if (is.null(err)) resolve(res) else reject(err),
+        list(process = rx, stdout = stdout, stderr = stderr,
+             error_on_status = TRUE, encoding = ""))
+    },
+    on_cancel = function(reason) {
+      if (!is.null(id)) get_default_event_loop()$cancel(id)
+    }
+  )
+}
+
+run_r_process <- mark_as_async(run_r_process)
 
 #' Make an asynchronous function that always succeeds
 #'
@@ -2671,7 +3104,7 @@ async_some <- mark_as_async(async_some)
 #' If an error is not handled in the async phase, `synchronise()` will
 #' re-throw that error.
 #'
-#' `synchronise()` cancels all async processes on interrupt or extrenal
+#' `synchronise()` cancels all async processes on interrupt or external
 #' error.
 #'
 #' @param expr Async function call expression. If it does not evaluate
@@ -3200,6 +3633,14 @@ get_id <- local({
   }
 })
 
+new_event_loop_id <- local({
+  id <- 0L
+  function() {
+    id <<- id + 1L
+    id
+  }
+})
+
 lapply_args <- function(X, FUN, ..., .args = list()) {
   do.call("lapply", c(list(X = X, FUN = FUN), list(...), .args))
 }
@@ -3219,6 +3660,25 @@ get_source_position <- function(call) {
       getSrcLocation(call, "line", TRUE) %||% "?", ":",
       getSrcLocation(call, "column", TRUE) %||% "?")
   )
+}
+
+file_size <- function(...) {
+  file.info(..., extra_cols = FALSE)$size
+}
+
+read_all <- function(filename, encoding) {
+  r <- readBin(filename, what = raw(0), n = file_size(filename))
+  s <- rawToChar(r)
+  Encoding(s) <- encoding
+  s
+}
+
+crash <- function () {
+  get("attach")(structure(list(), class = "UserDefinedDatabase"))
+}
+
+str_trim <- function(x) {
+  sub("\\s+$", "", sub("^\\s+", "", x))
 }
 
 #' Deferred value for a set of deferred values
@@ -3408,3 +3868,288 @@ async_whilst <- function(test, task, ...) {
 }
 
 async_whilst <- mark_as_async(async_whilst)
+
+#' Worker pool
+#'
+#' The worker pool functions are independent of the event loop, to allow
+#' independent testing.
+#'
+#' @family worker pool functions
+#' @name worker_pool
+#' @noRd
+#' @keywords internal
+#' @importFrom R6 R6Class
+NULL
+
+worker_pool <- R6Class(
+  public = list(
+    initialize = function()
+      wp_init(self, private),
+    add_task = function(func, args, id, event_loop)
+      wp_add_task(self, private, func, args, id, event_loop),
+    get_fds = function()
+      wp_get_fds(self, private),
+    get_pids = function()
+      wp_get_pids(self, private),
+    get_poll_connections = function()
+      wp_get_poll_connections(self, private),
+    notify_event = function(pids, event_loop)
+      wp_notify_event(self, private, pids, event_loop),
+    start_workers = function()
+      wp_start_workers(self, private),
+    kill_workers = function()
+      wp_kill_workers(self, private),
+    cancel_task = function(id)
+      wp_cancel_task(self, private, id),
+    cancel_all_tasks = function()
+      wp_cancel_all_tasks(self, private),
+    get_result = function(id)
+      wp_get_result(self, private, id),
+    list_workers = function()
+      wp_list_workers(self, private),
+    list_tasks = function(event_loop = NULL, status = NULL)
+      wp_list_tasks(self, private, event_loop, status),
+    finalize = function() self$kill_workers()
+  ),
+
+  private = list(
+    workers = list(),
+    tasks = list(),
+
+    try_start = function()
+      wp__try_start(self, private),
+    interrupt_worker = function(pid)
+      wp__interrupt_worker(self, private, pid)
+  )
+)
+
+wp_init <- function(self, private) {
+  self$start_workers()
+  invisible(self)
+}
+
+#' @importFrom callr r_session
+#' @importFrom processx conn_get_fileno
+
+wp_start_workers <- function(self, private) {
+  num <- worker_pool_size()
+
+  ## See if we need to start more
+  if (NROW(private$workers) >= num) return(invisible())
+
+  ## Yeah, start some more
+  to_start <- num - NROW(private$workers)
+  sess <- lapply(1:to_start, function(x) r_session$new(wait = FALSE))
+  fd <- viapply(sess, function(x) conn_get_fileno(x$get_poll_connection()))
+  new_workers <- data.frame(
+    stringsAsFactors = FALSE,
+    session = I(sess),
+    task = NA_character_,
+    pid = viapply(sess, function(x) x$get_pid()),
+    fd = fd,
+    event_loop = NA_integer_
+  )
+
+  private$workers <- rbind(private$workers, new_workers)
+  invisible()
+}
+
+wp_add_task <- function(self, private, func, args, id, event_loop) {
+  private$tasks <- rbind(
+    private$tasks,
+    data.frame(
+      stringsAsFactors = FALSE,
+      event_loop = event_loop, id = id, func = I(list(func)),
+      args = I(list(args)), status = "waiting", result = I(list(NULL)))
+  )
+
+  private$try_start()
+  invisible()
+}
+
+## We only need to poll the sessions that actually do something...
+
+wp_get_fds <- function(self, private) {
+  sts <- vcapply(private$workers$session, function(x) x$get_state())
+  private$workers$fd[sts %in% c("starting", "busy")]
+}
+
+wp_get_pids <- function(self, private) {
+  sts <- vcapply(private$workers$session, function(x) x$get_state())
+  private$workers$pid[sts %in% c("starting", "busy")]
+}
+
+wp_get_poll_connections <- function(self, private) {
+  sts <- vcapply(private$workers$session, function(x) x$get_state())
+  busy <- sts %in% c("starting", "busy")
+  structure(
+    lapply(private$workers$session[busy],
+           function(x) x$get_poll_connection()),
+    names = private$workers$pid[busy])
+}
+
+wp_notify_event <- function(self, private, pids, event_loop) {
+  done <- NULL
+  dead <- integer()
+  which <- match(pids, private$workers$pid)
+  for (w in which) {
+    msg <- private$workers$session[[w]]$read()
+    if (is.null(msg)) next
+    if (msg$code == 200 || (msg$code >= 500 && msg$code < 600)) {
+      if (msg$code >= 500 && msg$code < 600) dead <- c(dead, w)
+      wt <- match(private$workers$task[[w]], private$tasks$id)
+      if (is.na(wt)) stop("Internal error, no such task")
+      private$tasks$result[[wt]] <- msg
+      private$tasks$status[[wt]] <- "done"
+      private$workers$task[[w]] <- NA_character_
+      done <- c(done, private$tasks$id[[wt]])
+    }
+  }
+  if (length(dead)) {
+    private$workers <- private$workers[-dead,]
+    self$start_workers()
+  }
+
+  private$try_start()
+
+  done
+}
+
+worker_pool_size <- function() {
+  getOption("async.worker_pool_size") %||%
+    as.integer(Sys.getenv("ASYNC_WORKER_POOL_SIZE", 4))
+}
+
+wp_kill_workers <- function(self, private) {
+  lapply(private$workers$session, function(x) x$kill())
+  private$workers <- NULL
+  invisible()
+}
+
+wp_cancel_task <- function(self, private, id) {
+  wt <- match(id, private$tasks$id)
+  if (is.na(wt)) stop("Unknown task")
+
+  if (private$tasks$status[[wt]] == "running") {
+    wk <- match(id, private$workers$task)
+    if (!is.na(wk)) private$interrupt_worker(private$workers$pid[wk])
+  }
+  private$tasks <- private$tasks[-wt, ]
+  invisible()
+}
+
+wp_cancel_all_tasks <- function(self, private) {
+  stop("`cancel_all_tasks` method is not implemented yet")
+}
+
+wp_get_result <- function(self, private, id) {
+  wt <- match(id, private$tasks$id)
+  if (is.na(wt)) stop("Unknown task")
+
+  if (private$tasks$status[[wt]] != "done") stop("Task not done yet")
+  result <- private$tasks$result[[wt]]
+  private$tasks <- private$tasks[-wt, ]
+  result
+}
+
+wp_list_workers <- function(self, private) {
+  private$workers[, setdiff(colnames(private$workers), "session")]
+}
+
+wp_list_tasks <- function(self, private, event_loop, status) {
+  dont_show <- c("func", "args", "result")
+  ret <- private$tasks
+  if (!is.null(event_loop)) ret <- ret[ret$event_loop %in% event_loop, ]
+  if (!is.null(status)) ret <- ret[ret$status %in% status, ]
+  ret[, setdiff(colnames(private$tasks), dont_show)]
+}
+
+## Internals -------------------------------------------------------------
+
+#' @importFrom utils head
+
+wp__try_start <- function(self, private) {
+  sts <- vcapply(private$workers$session, function(x) x$get_state())
+  if (all(sts != "idle")) return()
+  can_work <- sts == "idle"
+
+  can_run <- private$tasks$status == "waiting"
+  num_start <- min(sum(can_work), sum(can_run))
+  will_run <- head(which(can_run), num_start)
+  will_work <- head(which(can_work), num_start)
+
+  for (i in seq_along(will_run)) {
+    wt <- will_run[[i]]
+    ww <- will_work[[i]]
+    func <- private$tasks$func[[wt]]
+    args <- private$tasks$args[[wt]]
+    private$workers$session[[ww]]$call(func, args)
+    private$tasks$status[[wt]] <- "running"
+    private$workers$task[[ww]] <- private$tasks$id[[wt]]
+  }
+
+  invisible()
+}
+
+#' Interrupt a worker process
+#'
+#' We need to make sure that the worker is in a usable state after this.
+#'
+#' For speed, we try to interrupt with a SIGINT first, and if that does
+#' not work, then we kill the worker and start a new one.
+#'
+#' When we interrupt with a SIGINT a number of things can happen:
+#' 1. we successfully interrupted a computation, then
+#'    we'll just poll_io(), and read() and we'll get back an
+#'    interrupt error.
+#' 2. The compuration has finished, so we did not interrupt it.
+#'    In this case the background R process will apply the interrupt
+#'    to the next compuration (at least on Unix) so the bg process
+#'    needs to run a quick harmless call to absorb the interrupt.
+#'    We can use `Sys.sleep()` for this, and `write_input()` directly
+#'    for speed and simplicity.
+#' 3. The process has crashed already, in this case `interrupt()` will
+#'    return `FALSE`. `poll_io()` will return with "ready" immediately,
+#'    `read()` will return with an error, and `write_input()` throws
+#'    an error.
+#' 4. We could not interrupt the process, because it was in a
+#'    non-interruptable state. In this case we kill it, and start a
+#'    new process. `poll_io()` will not return with "ready" in this case.
+#'
+#' @param self self
+#' @param private private self
+#' @param pid pid of process
+#' @noRd
+
+wp__interrupt_worker <- function(self, private, pid) {
+  ww <- match(pid, private$workers$pid)
+  if (is.na(ww)) stop("Unknown task in interrupt_worker() method")
+
+  kill <- FALSE
+  sess <- private$workers$session[[ww]]
+  int <- sess$interrupt()
+  pr <- sess$poll_io(100)["process"]
+
+  if (pr == "ready") {
+    msg <- sess$read()
+    if (! inherits(msg, "interrupt")) {
+      tryCatch({
+        sess$write_input("base::Sys.sleep(0)\n")
+        sess$read_output()
+        sess$read_error()
+      }, error = function(e) kill <<- TRUE)
+    }
+    private$workers$task[[ww]] <- NA_character_
+  } else {
+    kill <- TRUE
+  }
+
+  if (kill) {
+    sess$close()
+    private$workers <- private$workers[-ww, ]
+    ## Make sure that we have enough workers running
+    self$start_workers()
+  }
+
+  invisible()
+}

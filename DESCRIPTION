@@ -36,7 +36,6 @@ Imports:
     uuid,
     withr
 Suggests:
-    callr,
     covr,
     debugme,
     desc,

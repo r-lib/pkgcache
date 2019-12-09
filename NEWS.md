@@ -1,6 +1,11 @@
 
 # pkgcache dev
 
+* pkgcache now tries to download metadata from the `PACKAGES` file, if it
+  cannot find `PACKAGES.gz` (@timmsm, #27).
+
+* pkgcache is now less verbose when updating or loading metadata.
+
 # pkgcache 1.0.5
 
 * Fix a bug in the download functions, that broke pak downloads.

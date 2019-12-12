@@ -28,8 +28,8 @@ includes Bioconductor package, and all versions (i.e. both binary and
 source) of the packages for the current platform and R version.\if{html}{\out{<div class="r">}}\preformatted{library(pkgcache)
 meta_cache_list()
 #> 
-ℹ Loading global cached package metadata
-✔ Loading global cached package metadata
+i Loading global cached package metadata
+v Loading global cached package metadata
 #> # A tibble: 35,272 x 33
 #>    package title version depends suggests built imports archs repodir
 #>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  

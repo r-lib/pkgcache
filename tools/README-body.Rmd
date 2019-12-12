@@ -5,6 +5,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   cache = TRUE
 )
+options(cli.unicode = FALSE)
 ```
 
 Metadata and package cache for CRAN-like repositories. This is a utility

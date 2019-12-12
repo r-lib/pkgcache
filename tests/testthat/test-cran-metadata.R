@@ -22,6 +22,9 @@ test_that("what if cran.r-pkg.org is down?", {
 
     ## This is slow on older R versions
     limit <- if (getRversion() < "3.4") 30 else 20
-    expect_true(toc - tic < as.difftime(limit, units = "secs"))
+    expect_true(
+      toc - tic < as.difftime(limit, units = "secs"),
+      info = toc - tic
+    )
   })
 })

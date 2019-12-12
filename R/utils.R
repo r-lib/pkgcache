@@ -219,3 +219,16 @@ msg_wrap <- function(..., .space = TRUE) {
 try_catch_null <- function(expr) {
   tryCatch(expr, error = function(e) NULL)
 }
+
+is_rcmd_check <- function() {
+  if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+    FALSE
+  } else {
+    Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") != ""
+  }
+}
+
+is_online <- function() {
+  if (is_rcmd_check()) return(FALSE)
+  curl::has_internet()
+}

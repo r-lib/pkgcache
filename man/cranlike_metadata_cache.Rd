@@ -168,12 +168,12 @@ use only.
 }
 
 \examples{
-\donttest{
+\dontshow{if (asNamespace("pkgcache")$is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()
 cmc$list("pkgconfig")
 cmc$deps("pkgconfig")
 cmc$revdeps("pkgconfig", recursive = FALSE)
-}
+\dontshow{\}) # examplesIf}
 }

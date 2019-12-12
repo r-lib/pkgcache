@@ -38,6 +38,16 @@ See \code{\link[rappdirs:user_cache_dir]{rappdirs::user_cache_dir()}}.}
 \code{pkg_cache_summary()} returns a short summary of the state of the cache,
 e.g. the number of files and their total size. It returns a named list.
 }
+\examples{
+\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+pkg_cache_summary()
+pkg_cache_list()
+pkg_cache_find(package = "forecast")
+tmp <- tempfile()
+pkg_cache_get_file(target = tmp, package = "forecast", version = "8.10")
+pkg_cache_delete_files(package = "forecast")
+\dontshow{\}) # examplesIf}
+}
 \seealso{
 The \link{package_cache} R6 class for a more flexible API.
 }

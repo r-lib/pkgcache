@@ -154,15 +154,13 @@ cmc__data <- new.env(parent = emptyenv())
 #' use only.
 #'
 #' @export
-#' @examples
-#' \donttest{
+#' @examplesIf asNamespace("pkgcache")$is_online()
 #' dir.create(cache_path <- tempfile())
 #' cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 #' cmc$list()
 #' cmc$list("pkgconfig")
 #' cmc$deps("pkgconfig")
 #' cmc$revdeps("pkgconfig", recursive = FALSE)
-#' }
 
 cranlike_metadata_cache <- R6Class(
   "cranlike_metadata_cache",
@@ -913,20 +911,11 @@ cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
 #'   `meta_cache_deps()` and `meta_cache_revdeps()` it includes the
 #'   queried `packages` as well.
 #'
-#' @section Examples:
-#' ```
-#' meta_cache_deps("dplyr")
-#' meta_cache_list(c("MASS", dplyr"))
-#' meta_cache_update()
-#' ```
-#'
 #' @export
-#' @examples
-#' \donttest{
+#' @examplesIf asNamespace("pkgcache")$is_online()
 #' meta_cache_list("pkgdown")
 #' meta_cache_deps("pkgdown", recursive = FALSE)
 #' meta_cache_revdeps("pkgdown", recursive = FALSE)
-#' }
 
 meta_cache_deps <- function(packages, dependencies = NA,
                             recursive = TRUE) {

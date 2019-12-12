@@ -55,17 +55,10 @@ and size.
 
 \code{meta_cache_cleanup()} deletes the cache files from the disk.
 }
-\section{Examples}{
-\preformatted{meta_cache_deps("dplyr")
-meta_cache_list(c("MASS", dplyr"))
-meta_cache_update()
-}
-}
-
 \examples{
-\donttest{
+\dontshow{if (asNamespace("pkgcache")$is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 meta_cache_list("pkgdown")
 meta_cache_deps("pkgdown", recursive = FALSE)
 meta_cache_revdeps("pkgdown", recursive = FALSE)
-}
+\dontshow{\}) # examplesIf}
 }

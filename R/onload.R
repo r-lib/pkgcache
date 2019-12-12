@@ -23,6 +23,9 @@ if (exists(".onLoad", inherits = FALSE)) {
 #' functions.
 #'
 #' @export
+#' @examplesIf FALSE
+#' get_cranlike_metadata_cache()
+#' get_cranlike_metadata_cache()$list("cli")
 
 get_cranlike_metadata_cache <- function() {
   if (is.null(pkgenv$global_metadata_cache)) {

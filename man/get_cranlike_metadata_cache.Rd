@@ -10,3 +10,9 @@ get_cranlike_metadata_cache()
 This is used by the \code{\link[=meta_cache_deps]{meta_cache_deps()}}, \code{\link[=meta_cache_list]{meta_cache_list()}}, etc.
 functions.
 }
+\examples{
+\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+get_cranlike_metadata_cache()
+get_cranlike_metadata_cache()$list("cli")
+\dontshow{\}) # examplesIf}
+}

@@ -11,6 +11,13 @@
 #' @seealso The [package_cache] R6 class for a more flexible API.
 #' @rdname pkg_cache_api
 #' @export
+#' @examplesIf FALSE
+#' pkg_cache_summary()
+#' pkg_cache_list()
+#' pkg_cache_find(package = "forecast")
+#' tmp <- tempfile()
+#' pkg_cache_get_file(target = tmp, package = "forecast", version = "8.10")
+#' pkg_cache_delete_files(package = "forecast")
 
 pkg_cache_summary <- function(cachepath = NULL) {
   cachepath <- cachepath %||% get_user_cache_dir()$pkg

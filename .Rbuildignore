@@ -7,3 +7,5 @@
 ^LICENSE\.md$
 ^tools$
 ^revdep$
+^\.Rprofile$
+^r-packages$

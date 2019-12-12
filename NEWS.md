@@ -1,6 +1,9 @@
 
 # pkgcache dev
 
+* HTTP timeouts are now much better, and by default they are defined
+  in terms of download speed, instead of total download time (#29).
+
 * pkgcache now tries to download metadata from the `PACKAGES` file, if it
   cannot find `PACKAGES.gz` (@timmsm, #27).
 

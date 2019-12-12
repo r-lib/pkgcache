@@ -19,8 +19,7 @@ pkg_cache_get_file(cachepath = NULL, target, ...)
 
 pkg_cache_delete_files(cachepath = NULL, ...)
 
-pkg_cache_add_file(cachepath = NULL, file, relpath = dirname(file),
-  ...)
+pkg_cache_add_file(cachepath = NULL, file, relpath = dirname(file), ...)
 }
 \arguments{
 \item{cachepath}{Path of the cache. By default the cache directory is in

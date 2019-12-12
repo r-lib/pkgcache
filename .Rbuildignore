@@ -9,3 +9,4 @@
 ^revdep$
 ^\.Rprofile$
 ^r-packages$
+^.*_cache$

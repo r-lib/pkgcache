@@ -6,8 +6,8 @@ test_that("what if cran.r-pkg.org is down?", {
 
   env <- c(
     "R_PKG_CRAN_METADATA_URL" = "http://192.0.2.0/",
-    "ASYNC_HTTP_TIMEOUT" = "1",
-    "ASYNC_HTTP_CONNECTTIMEOUT" = "1"
+    "PKGCACHE_TIMEOUT" = "1",
+    "PKGCACHE_CONNECTTIMEOUT" = "1"
   )
 
   withr::with_envvar(env, {

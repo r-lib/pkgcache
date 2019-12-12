@@ -1,4 +1,21 @@
 
+#' @importFrom utils modifyList
+
+get_async_timeouts <- function(options) {
+  getopt <- function(nm) {
+    if (!is.null(v <- options[[nm]])) return(v)
+    anm <- paste0("pkgcache_", nm)
+    if (!is.null(v <- getOption(anm))) return(v)
+    if (!is.na(v <- Sys.getenv(toupper(anm), NA_character_))) return (v)
+  }
+  list(
+    timeout = as.integer(getopt("timeout") %||% 3600),
+    connecttimeout = as.integer(getopt("connecttimeout") %||% 30),
+    low_speed_time = as.integer(getopt("low_speed_time") %||% 30),
+    low_speed_limit = as.integer(getopt("low_speed_limit") %||% 100)
+  )
+}
+
 #' Download a file, asynchronously
 #'
 #' This is the asynchronous version of [utils::download.file()].
@@ -18,6 +35,7 @@
 #'   It can be used to cache the file, with the [download_if_newer()] or
 #'   the [download_one_of()] functions.
 #' @param tmp_destfile Where to store the temporary destination file.
+#' @param options Curl options.
 #' @param ... Additional arguments are passed to [http_get()].
 #' @return A [deferred] object. It resolves to a list with entries:
 #'   * `url`: The URL in the request.
@@ -59,20 +77,23 @@
 #' ```
 
 download_file <- function(url, destfile, etag_file = NULL,
-                          tmp_destfile = paste0(destfile, ".tmp"), ...) {
+                          tmp_destfile = paste0(destfile, ".tmp"),
+                          options = list(), ...) {
   "!DEBUG downloading `url`"
   assert_that(
     is_string(url),
     is_path(destfile),
     is_path(tmp_destfile),
-    is_path_or_null(etag_file))
+    is_path_or_null(etag_file),
+    is.list(options))
   force(list(...))
 
+  options <- get_async_timeouts(options)
   destfile <- normalizePath(destfile, mustWork = FALSE)
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
   mkdirp(dirname(tmp_destfile))
 
-  http_get(url, file = tmp_destfile, ...)$
+  http_get(url, file = tmp_destfile, options = options, ...)$
     then(http_stop_for_status)$
     then(function(resp) {
       "!DEBUG downloaded `url`"
@@ -169,7 +190,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 download_if_newer <- function(url, destfile, etag_file = NULL,
                               headers = NULL,
                               tmp_destfile = paste0(destfile, ".tmp"),
-                              ...) {
+                              options = list(), ...) {
   "!DEBUG download if newer `url`"
   headers <- headers %||% structure(character(), names = character())
   assert_that(
@@ -177,9 +198,11 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
     is_path(destfile),
     is_path(tmp_destfile),
     is_path_or_null(etag_file),
-    is.character(headers), all_named(headers))
+    is.character(headers), all_named(headers),
+    is.list(options))
   force(list(...))
 
+  options <- get_async_timeouts(options)
   etag_old <- get_etag_header_from_file(destfile, etag_file)
   headers <- c(headers, etag_old)
 
@@ -187,7 +210,8 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
   mkdirp(dirname(tmp_destfile))
 
-  http_get(url, file = tmp_destfile, headers = headers, ...)$
+  http_get(url, file = tmp_destfile, headers = headers,
+           options = options, ...)$
     then(http_stop_for_status)$
     then(function(resp) {
       if (resp$status_code == 304) {
@@ -278,21 +302,23 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #' ```
 
 download_one_of <- function(urls, destfile, etag_file = NULL,
-                            headers = NULL, ...) {
+                            headers = NULL, options = list(), ...) {
   "!DEBUG trying multiple URLs"
   headers <- headers %||% structure(character(), names = character())
   assert_that(
     is_character(urls),  length(urls) >= 1,
     is_path(destfile),
     is_path_or_null(etag_file),
-    is.character(headers), all_named(headers))
+    is.character(headers), all_named(headers),
+    is.list(options))
   force(list(...))
 
+  options <- get_async_timeouts(options)
   tmps <- paste0(destfile, ".tmp.", seq_along(urls))
   dls <- mapply(
     download_if_newer, url = urls, tmp_destfile = tmps,
     MoreArgs = list(destfile = destfile, etag_file = etag_file,
-                    headers = headers, ...),
+                    headers = headers, options = options, ...),
     SIMPLIFY = FALSE)
 
   when_any(.list = dls)$
@@ -303,26 +329,25 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
     })
 }
 
-download_files <- function(data, ...) {
+download_files <- function(data, options = list(), ...) {
   if (any(dup <- duplicated(data$path))) {
     stop("Duplicate target paths in download_files: ",
          paste0("`", unique(data$path[dup]), "`", collapse = ", "), ".")
   }
 
+  options <- get_async_timeouts(options)
   bar <- create_progress_bar(data)
   prog_cb <- function(upd) update_progress_bar_progress(bar, upd)
 
   dls <- lapply(seq_len(nrow(data)), function(idx) {
     row <- data[idx, ]
     dx <- download_if_newer(row$url, row$path, row$etag,
-      on_progress = prog_cb, options = list(timeout = row$timeout %||% 100),
-      ...)
+      on_progress = prog_cb, options = options, ...)
 
     if ("fallback_url" %in% names(row) && !is.na(row$fallback_url)) {
       dx <- dx$catch(error = function(err) {
         download_if_newer(row$fallback_url, row$path, row$etag,
-                          options = list(timeout = row$timeout %||% 10),
-                          ...)
+                          options = options, ...)
       })
     }
 

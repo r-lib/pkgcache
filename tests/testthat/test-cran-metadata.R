@@ -4,7 +4,13 @@ context("CRAN metadata")
 test_that("what if cran.r-pkg.org is down?", {
   skip_if_offline()
 
-  withr::with_envvar(c("R_PKG_CRAN_METADATA_URL" = "http://192.0.2.0/"), {
+  env <- c(
+    "R_PKG_CRAN_METADATA_URL" = "http://192.0.2.0/",
+    "PKGCACHE_TIMEOUT" = "1",
+    "PKGCACHE_CONNECTTIMEOUT" = "1"
+  )
+
+  withr::with_envvar(env, {
     dir.create(pri <- fs::path_norm(tempfile()))
     on.exit(unlink(pri, recursive = TRUE), add = TRUE)
     dir.create(rep <- fs::path_norm(tempfile()))

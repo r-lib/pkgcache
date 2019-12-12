@@ -37,27 +37,26 @@ source) of the packages for the current platform and R version.
 ``` r
 library(pkgcache)
 meta_cache_list()
-#> ✔ Using cached package metadata
-#> # A tibble: 32,705 x 33
+#> # A tibble: 35,272 x 33
 #>    package title version depends suggests built imports archs repodir
 #>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  
 #>  1 A3      "Acc… 1.0.0   R (>= … randomF… R 3.… <NA>    <NA>  bin/ma…
-#>  2 abbyyR  Acce… 0.5.4   R (>= … testtha… R 3.… httr, … <NA>  bin/ma…
-#>  3 abc.da… Data… 1.0     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
-#>  4 ABC.RAP Arra… 0.9.0   R (>= … knitr, … R 3.… graphi… <NA>  bin/ma…
-#>  5 abc     Tool… 2.1     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
-#>  6 ABCana… Comp… 1.2.1   R (>= … <NA>     R 3.… plotrix <NA>  bin/ma…
-#>  7 abcdeF… "ABC… 0.4     Rglpk,… LIM,syb… R 3.… <NA>    <NA>  bin/ma…
-#>  8 ABCopt… Impl… 0.15.0  <NA>    testtha… R 3.… Rcpp, … ABCo… bin/ma…
-#>  9 ABCp2   Appr… 1.2     MASS    <NA>     R 3.… <NA>    <NA>  bin/ma…
-#> 10 abcrf   Appr… 1.7.1   R(>= 3… <NA>     R 3.… "readr… abcr… bin/ma…
-#> # … with 32,695 more rows, and 24 more variables: platform <chr>,
+#>  2 aaSEA   Amin… 1.1.0   R(>= 3… knitr, … R 3.… "DT(>=… <NA>  bin/ma…
+#>  3 ABACUS  "App… 1.0.0   R (>= … rmarkdo… R 3.… ggplot… <NA>  bin/ma…
+#>  4 abbyyR  Acce… 0.5.5   R (>= … testtha… R 3.… httr, … <NA>  bin/ma…
+#>  5 abc.da… Data… 1.0     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
+#>  6 ABC.RAP Arra… 0.9.0   R (>= … knitr, … R 3.… graphi… <NA>  bin/ma…
+#>  7 abc     Tool… 2.1     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
+#>  8 abcADM  Fit … 1.0     <NA>    <NA>     R 3.… Rcpp (… abcA… bin/ma…
+#>  9 ABCana… Comp… 1.2.1   R (>= … <NA>     R 3.… plotrix <NA>  bin/ma…
+#> 10 abcdeF… "ABC… 0.4     Rglpk,… LIM,syb… R 3.… <NA>    <NA>  bin/ma…
+#> # … with 35,262 more rows, and 24 more variables: platform <chr>,
 #> #   rversion <chr>, needscompilation <chr>, priority <chr>, ref <chr>,
 #> #   type <chr>, direct <lgl>, status <chr>, target <chr>, mirror <chr>,
 #> #   sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
-#> #   published <dttm>, deps <list>, license <chr>, linkingto <chr>,
-#> #   enhances <chr>, license_restricts_use <chr>, os_type <chr>,
-#> #   license_is_foss <chr>, md5sum <chr>, path <chr>
+#> #   published <dttm>, deps <list>, license <chr>, md5sum <chr>,
+#> #   linkingto <chr>, enhances <chr>, license_restricts_use <chr>,
+#> #   os_type <chr>, license_is_foss <chr>, path <chr>
 ```
 
 `meta_cache_deps()` and `meta_cache_revdeps()` can be used to look up
@@ -83,36 +82,40 @@ pkg_cache_summary()
 #> [1] "/Users/gaborcsardi/Library/Caches/R-pkg/pkg"
 #> 
 #> $files
-#> [1] 12
+#> [1] 677
 #> 
 #> $size
-#> [1] 553116
+#> [1] 608180353
 ```
 
 ``` r
 pkg_cache_list()
-#> # A tibble: 12 x 8
-#>    fullpath       path        package   url  etag sha256    built vignettes
-#>    <chr>          <glue>      <chr>   <int> <int> <chr>     <lgl> <chr>    
-#>  1 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… FALSE <NA>     
-#>  2 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… TRUE  FALSE    
-#>  3 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… FALSE <NA>     
-#>  4 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… TRUE  FALSE    
-#>  5 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… FALSE <NA>     
-#>  6 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… TRUE  FALSE    
-#>  7 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… FALSE <NA>     
-#>  8 /Users/gaborc… src/contri… cranca…    NA    NA 936fa23d… TRUE  FALSE    
-#>  9 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… FALSE <NA>     
-#> 10 /Users/gaborc… src/contri… revdep…    NA    NA e204aede… TRUE  FALSE    
-#> 11 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… FALSE <NA>     
-#> 12 /Users/gaborc… src/contri… rcmdch…    NA    NA 6332ddc2… TRUE  FALSE
+#> # A tibble: 677 x 10
+#>    fullpath path  package url   etag  sha256 built version platform
+#>    <chr>    <chr> <chr>   <chr> <chr> <chr>  <int> <chr>   <chr>   
+#>  1 /Users/… src/… crayon  <NA>  <NA>  84be6…     0 <NA>    <NA>    
+#>  2 /Users/… bin/… proces… http… "\"3… ce84a…    NA 3.4.1   macos   
+#>  3 /Users/… bin/… R6      http… "\"d… 4cfe3…    NA 2.4.0   macos   
+#>  4 /Users/… bin/… ps      http… "\"3… 63add…    NA 1.3.0   macos   
+#>  5 /Users/… src/… callr   <NA>  <NA>  df85a…     0 <NA>    <NA>    
+#>  6 /Users/… bin/… callr   http… "\"5… 1a5e3…    NA 3.3.1   macos   
+#>  7 /Users/… bin/… assert… http… "\"d… 103f9…    NA 0.2.1   macos   
+#>  8 /Users/… bin/… backpo… http… "\"d… 344bb…    NA 1.1.4   macos   
+#>  9 /Users/… bin/… crayon  http… "\"b… 2ac4f…    NA 1.3.4   macos   
+#> 10 /Users/… bin/… desc    http… "\"4… 196ce…    NA 1.2.0   macos   
+#> # … with 667 more rows, and 1 more variable: vignettes <chr>
 ```
 
 ``` r
 pkg_cache_find(package = "dplyr")
-#> # A tibble: 0 x 8
-#> # … with 8 variables: fullpath <chr>, path <glue>, package <chr>,
-#> #   url <int>, etag <int>, sha256 <chr>, built <lgl>, vignettes <chr>
+#> # A tibble: 4 x 10
+#>   fullpath path  package url   etag  sha256 built version platform
+#>   <chr>    <chr> <chr>   <chr> <chr> <chr>  <int> <chr>   <chr>   
+#> 1 /Users/… bin/… dplyr   http… "\"6… e2594…    NA 0.8.3   macos   
+#> 2 /Users/… src/… dplyr   <NA>  <NA>  134b1…     0 <NA>    <NA>    
+#> 3 /Users/… src/… dplyr   <NA>  <NA>  b357f…     0 <NA>    <NA>    
+#> 4 /Users/… src/… dplyr   <NA>  <NA>  81767…     0 <NA>    <NA>    
+#> # … with 1 more variable: vignettes <chr>
 ```
 
 `pkg_cache_add_file()` can be used to add a file,
@@ -124,16 +127,34 @@ The `package_cache` class provides a finer API.
 ## Bioconductor support
 
 Both the metadata cache and the package cache support Bioconductor by
-default, automatically. The following options and environment variables
-can be used to configure pkgcache’s Bioconductor support:
+default, automatically. See the `BioC_mirror` option and the
+`R_BIOC_MIRROR` and `R_BIOC_VERSION` environment variables below to
+configure pkgcache’s Bioconductor support.
 
-Options:
+## Package Options
 
   - The `BioC_mirror` option can be used to select a Bioconductor
     mirror. This takes priority over the `R_BIOC_MIRROR` environment
     variable.
+  - `pkgcache_timeout` is the HTTP timeout for all downloads. It is in
+    seconds, and the limit for downloading the whole file. Defaults to
+    3600, one hour. It corresponds to the [`TIMEOUT` libcurl
+    option](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html).
+  - `pkgcache_connecttimeout` is the HTTP timeout for the connection
+    phase. It is in seconds and defaults to 30 seconds. It corresponds
+    to the [`CONNECTTIMEOUT` libcurl
+    option](https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
+  - `pkgcache_low_speed_limit` and `pkgcache_low_speed_time` are used
+    for a more sensible HTTP timeout. If the download speed is less than
+    `pkgcache_low_speed_limit` bytes per second for at least
+    `pkgcache_low_speed_time` seconds, the download errors. They
+    correspond to the
+    [`LOW_SPEED_LIMIT`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+    and
+    [`LOW_SPEED_TIME`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+    curl options.
 
-Environment variables:
+## Package environment variables
 
   - The `R_BIOC_VERSION` environment variable can be used to override
     the default Bioconductor version detection and force a given
@@ -142,11 +163,34 @@ Environment variables:
   - The `R_BIOC_MIRROR` environment variable can be used to select a
     Bioconductor mirror. The `BioC_mirror` option takes priority over
     this, if set.
+  - `PKGCACHE_TIMEOUT` is the HTTP timeout for all downloads. It is in
+    seconds, and the limit for downloading the whole file. Defaults to
+    3600, one hour. It corresponds to the [`TIMEOUT` libcurl
+    option](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html). The
+    `pkgcache_timeout` option has priority over this, if set.
+  - `PKGCACHE_CONNECTTIMEOUT` is the HTTP timeout for the connection
+    phase. It is in seconds and defaults to 30 seconds. It corresponds
+    to the [`CONNECTTIMEOUT` libcurl
+    option](https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
+    The `pkgcache_connecttimeout` option takes precedence over this, if
+    set.
+  - `PKGCACHE_LOW_SPEED_LIMIT` and `PKGCACHE_LOW_SPEED_TIME` are used
+    for a more sensible HTTP timeout. If the download speed is less than
+    `PKGCACHE_LOW_SPEED_LIMIT` bytes per second for at least
+    `PKGCACHE_LOW_SPEED_TIME` seconds, the download errors. They
+    correspond to the
+    [`LOW_SPEED_LIMIT`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+    and
+    [`LOW_SPEED_TIME`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+    curl options. The `pkgcache_low_speed_time` and
+    `pkgcache_low_speed_limit` options have priority over these
+    environment variables, if they are set.
 
 ## Code of Conduct
 
-Please note that the 'pkgcache' project is released with a
-[Contributor Code of Conduct](https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md).
+Please note that the ‘pkgcache’ project is released with a [Contributor
+Code of
+Conduct](https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
 
 ## License

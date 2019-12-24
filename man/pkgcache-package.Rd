@@ -30,20 +30,20 @@ meta_cache_list()
 #> 
 i Loading global cached package metadata
 v Loading global cached package metadata
-#> # A tibble: 35,272 x 33
+#> # A tibble: 35,372 x 33
 #>    package title version depends suggests built imports archs repodir
 #>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>  
-#>  1 A3      "Acc… 1.0.0   R (>= … randomF… R 3.… <NA>    <NA>  bin/ma…
-#>  2 aaSEA   Amin… 1.1.0   R(>= 3… knitr, … R 3.… "DT(>=… <NA>  bin/ma…
-#>  3 ABACUS  "App… 1.0.0   R (>= … rmarkdo… R 3.… ggplot… <NA>  bin/ma…
-#>  4 abbyyR  Acce… 0.5.5   R (>= … testtha… R 3.… httr, … <NA>  bin/ma…
-#>  5 abc.da… Data… 1.0     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
-#>  6 ABC.RAP Arra… 0.9.0   R (>= … knitr, … R 3.… graphi… <NA>  bin/ma…
-#>  7 abc     Tool… 2.1     R (>= … <NA>     R 3.… <NA>    <NA>  bin/ma…
-#>  8 abcADM  Fit … 1.0     <NA>    <NA>     R 3.… Rcpp (… abcA… bin/ma…
-#>  9 ABCana… Comp… 1.2.1   R (>= … <NA>     R 3.… plotrix <NA>  bin/ma…
-#> 10 abcdeF… "ABC… 0.4     Rglpk,… LIM,syb… R 3.… <NA>    <NA>  bin/ma…
-#> # … with 35,262 more rows, and 24 more variables: platform <chr>,
+#>  1 A3      "Acc~ 1.0.0   R (>= ~ randomF~ R 3.~ <NA>    <NA>  bin/ma~
+#>  2 aaSEA   Amin~ 1.1.0   R(>= 3~ knitr, ~ R 3.~ "DT(>=~ <NA>  bin/ma~
+#>  3 ABACUS  "App~ 1.0.0   R (>= ~ rmarkdo~ R 3.~ ggplot~ <NA>  bin/ma~
+#>  4 abbyyR  Acce~ 0.5.5   R (>= ~ testtha~ R 3.~ httr, ~ <NA>  bin/ma~
+#>  5 abc.da~ Data~ 1.0     R (>= ~ <NA>     R 3.~ <NA>    <NA>  bin/ma~
+#>  6 ABC.RAP Arra~ 0.9.0   R (>= ~ knitr, ~ R 3.~ graphi~ <NA>  bin/ma~
+#>  7 abc     Tool~ 2.1     R (>= ~ <NA>     R 3.~ <NA>    <NA>  bin/ma~
+#>  8 abcADM  Fit ~ 1.0     <NA>    <NA>     R 3.~ Rcpp (~ abcA~ bin/ma~
+#>  9 ABCana~ Comp~ 1.2.1   R (>= ~ <NA>     R 3.~ plotrix <NA>  bin/ma~
+#> 10 abcdeF~ "ABC~ 0.4     Rglpk,~ LIM,syb~ R 3.~ <NA>    <NA>  bin/ma~
+#> # ... with 35,362 more rows, and 24 more variables: platform <chr>,
 #> #   rversion <chr>, needscompilation <chr>, priority <chr>, ref <chr>,
 #> #   type <chr>, direct <lgl>, status <chr>, target <chr>, mirror <chr>,
 #> #   sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
@@ -73,34 +73,35 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{
 #> [1] "/Users/gaborcsardi/Library/Caches/R-pkg/pkg"
 #> 
 #> $files
-#> [1] 677
+#> [1] 783
 #> 
 #> $size
-#> [1] 608180353
+#> [1] 724791904
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_list()
-#> # A tibble: 677 x 10
+#> # A tibble: 783 x 10
 #>    fullpath path  package url   etag  sha256 built version platform
 #>    <chr>    <chr> <chr>   <chr> <chr> <chr>  <int> <chr>   <chr>   
-#>  1 /Users/… src/… crayon  <NA>  <NA>  84be6…     0 <NA>    <NA>    
-#>  2 /Users/… bin/… proces… http… "\"3… ce84a…    NA 3.4.1   macos   
-#>  3 /Users/… bin/… R6      http… "\"d… 4cfe3…    NA 2.4.0   macos   
-#>  4 /Users/… bin/… ps      http… "\"3… 63add…    NA 1.3.0   macos   
-#>  5 /Users/… src/… callr   <NA>  <NA>  df85a…     0 <NA>    <NA>    
-#>  6 /Users/… bin/… callr   http… "\"5… 1a5e3…    NA 3.3.1   macos   
-#>  7 /Users/… bin/… assert… http… "\"d… 103f9…    NA 0.2.1   macos   
-#>  8 /Users/… bin/… backpo… http… "\"d… 344bb…    NA 1.1.4   macos   
-#>  9 /Users/… bin/… crayon  http… "\"b… 2ac4f…    NA 1.3.4   macos   
-#> 10 /Users/… bin/… desc    http… "\"4… 196ce…    NA 1.2.0   macos   
-#> # … with 667 more rows, and 1 more variable: vignettes <chr>
+#>  1 /Users/~ src/~ crayon  <NA>  <NA>  84be6~     0 <NA>    <NA>    
+#>  2 /Users/~ bin/~ proces~ http~ "\"3~ ce84a~    NA 3.4.1   macos   
+#>  3 /Users/~ bin/~ R6      http~ "\"d~ 4cfe3~    NA 2.4.0   macos   
+#>  4 /Users/~ bin/~ ps      http~ "\"3~ 63add~    NA 1.3.0   macos   
+#>  5 /Users/~ src/~ callr   <NA>  <NA>  df85a~     0 <NA>    <NA>    
+#>  6 /Users/~ bin/~ callr   http~ "\"5~ 1a5e3~    NA 3.3.1   macos   
+#>  7 /Users/~ bin/~ assert~ http~ "\"d~ 103f9~    NA 0.2.1   macos   
+#>  8 /Users/~ bin/~ backpo~ http~ "\"d~ 344bb~    NA 1.1.4   macos   
+#>  9 /Users/~ bin/~ crayon  http~ "\"b~ 2ac4f~    NA 1.3.4   macos   
+#> 10 /Users/~ bin/~ desc    http~ "\"4~ 196ce~    NA 1.2.0   macos   
+#> # ... with 773 more rows, and 1 more variable: vignettes <chr>
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A tibble: 4 x 10
+#> # A tibble: 5 x 10
 #>   fullpath path  package url   etag  sha256 built version platform
 #>   <chr>    <chr> <chr>   <chr> <chr> <chr>  <int> <chr>   <chr>   
-#> 1 /Users/… bin/… dplyr   http… "\"6… e2594…    NA 0.8.3   macos   
-#> 2 /Users/… src/… dplyr   <NA>  <NA>  134b1…     0 <NA>    <NA>    
-#> 3 /Users/… src/… dplyr   <NA>  <NA>  b357f…     0 <NA>    <NA>    
-#> 4 /Users/… src/… dplyr   <NA>  <NA>  81767…     0 <NA>    <NA>    
-#> # … with 1 more variable: vignettes <chr>
+#> 1 /Users/~ bin/~ dplyr   http~ "\"6~ e2594~    NA 0.8.3   macos   
+#> 2 /Users/~ src/~ dplyr   <NA>  <NA>  134b1~     0 <NA>    <NA>    
+#> 3 /Users/~ src/~ dplyr   <NA>  <NA>  b357f~     0 <NA>    <NA>    
+#> 4 /Users/~ src/~ dplyr   <NA>  <NA>  81767~     0 <NA>    <NA>    
+#> 5 /Users/~ src/~ dplyr   <NA>  <NA>  b237c~     0 <NA>    <NA>    
+#> # ... with 1 more variable: vignettes <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,

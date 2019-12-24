@@ -17,10 +17,8 @@ BugReports: https://github.com/r-lib/pkgcache/issues
 Imports:
     assertthat,
     callr (>= 2.0.4.9000),
-    cli,
-    cliapp,
+    cli (>= 2.0.0),
     curl (>= 3.2),
-    crayon,
     digest,
     filelock,
     glue,
@@ -34,7 +32,6 @@ Imports:
     tools,
     utils,
     uuid,
-    withr
 Suggests:
     covr,
     debugme,
@@ -45,6 +42,7 @@ Suggests:
     pingr,
     rprojroot,
     testthat,
+    withr
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE, r6 = FALSE)

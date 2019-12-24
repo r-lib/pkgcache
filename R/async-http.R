@@ -148,7 +148,6 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 #'
 #' @family async HTTP tools
 #' @noRd
-#' @importFrom cliapp cli_alert_info
 #' @section Examples:
 #' ```
 #' dest <- tempfile(fileext = ".jpeg")

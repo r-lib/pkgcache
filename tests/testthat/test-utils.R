@@ -115,24 +115,6 @@ test_that("interpret_dependencies", {
   expect_equal(interpret_dependencies(dp),  dp)
 })
 
-test_that("is_verbose", {
-  withr::with_envvar(
-    c(R_PKG_SHOW_PROGRESS = "true"),
-    expect_true(is_verbose()))
-  withr::with_envvar(
-    c(R_PKG_SHOW_PROGRESS = "false"),
-    expect_false(is_verbose()))
-  withr::with_envvar(
-    c(R_PKG_SHOW_PROGRESS = NA_character_), {
-      withr::with_options(
-        list(pkg.show_progress = TRUE),
-        expect_true(is_verbose()))
-      withr::with_options(
-        list(pkg.show_progress = "nope"),
-        expect_false(is_verbose()))
-    })
-})
-
 test_that("get_all_package_dirs", {
   d <- get_all_package_dirs(c("macos", "source"), "3.5.1")
   expect_true("macos" %in% d$platform)

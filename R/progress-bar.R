@@ -1,14 +1,13 @@
 
-#' @importFrom cli get_spinner
+#' @importFrom cli get_spinner cli_status
 
 create_progress_bar <- function(data) {
-  if (!is_verbose()) return()
   bar <- new.env(parent = emptyenv())
 
-  format <- ":xspinner Metadata current [:xok/:xtotal] | Downloading :xdl"
-  bar$bar <- cliapp::cli_progress_bar(
-    format = format, total = 1000, force = TRUE)
-
+  bar$status <- cli_status(
+    "Checking {nrow(data)} metadata file{?s}",
+    .auto_close = FALSE
+  )
   bar$spinner <- get_spinner()
   bar$spinner_state <- 1L
 
@@ -24,11 +23,10 @@ create_progress_bar <- function(data) {
 }
 
 update_progress_bar_progress <- function(bar, data) {
-  if (!is_verbose()) return()
   wh <- match(data$url, bar$data$url)
   ## If TRUE, then it stays TRUE, status 304 might report progress, we
   ## want to ignore that
-  if (!isTRUE(bar$data$uptodate)) {
+  if (!isTRUE(bar$data$uptodate[[wh]])) {
     bar$data$uptodate[[wh]] <- FALSE
     bar$data$current[[wh]] <- data[["current"]]
     bar$data$size[[wh]] <- data[["total"]]
@@ -36,7 +34,6 @@ update_progress_bar_progress <- function(bar, data) {
 }
 
 update_progress_bar_uptodate <- function(bar, url) {
-  if (!is_verbose()) return()
   wh <- match(url, bar$data$url)
   bar$data$uptodate[[wh]] <- TRUE
   bar$data$current[[wh]] <- NA_integer_
@@ -44,7 +41,6 @@ update_progress_bar_uptodate <- function(bar, url) {
 }
 
 update_progress_bar_done  <- function(bar, url) {
-  if (!is_verbose()) return()
   wh <- match(url, bar$data$url)
   bar$data$uptodate[[wh]] <- FALSE
   bar$data$current[[wh]] <- bar$data$size[[wh]] <-
@@ -52,9 +48,10 @@ update_progress_bar_done  <- function(bar, url) {
 }
 
 #' @importFrom prettyunits pretty_bytes
+#' @importFrom cli cli_status_update
 
 show_progress_bar <- function(bar) {
-  if (!is_verbose()) return()
+  if (is.null(bar$status)) return()
   data <- bar$data
   uptodate <- sum(data$uptodate, na.rm = TRUE)
   numfiles <- nrow(data)
@@ -69,62 +66,36 @@ show_progress_bar <- function(bar) {
     bar$spinner_state <- 1L
   }
 
-  tokens <- list(
-    xspinner = spinner,
-    xok = uptodate,
-    xtotal = numfiles,
-    xdl = downloads
+  cli_status_update(
+    bar$status,
+    c("{spinner} Updating metadata [{uptodate}/{numfiles}] | ",
+      "Downloading {downloads}")
   )
-  bar$bar$tick(0, tokens = tokens)
 }
 
-#' @importFrom cliapp cli_alert_danger
+#' @importFrom cli cli_status_clear
 
 finish_progress_bar <- function(ok, bar) {
-  if (!is_verbose()) return()
   if (!ok) {
-    cli_alert_danger("Metadata download failed")
+    cli_status_clear(
+      bar$status,
+      result = "failed",
+      msg_failed = "{.alert-danger Metadata update failed}"
+    )
 
   } else if (FALSE %in% bar$data$uptodate) {
     dl <- vlapply(bar$data$uptodate, identical, FALSE)
     files <- sum(dl)
     bytes <- pretty_bytes(sum(bar$data$size[dl], na.rm = TRUE))
-    cli_alert_success(
-      "Downloaded metadata files, {bytes} in {files} files.")
+    cli_status_clear(
+      bar$status,
+      result = "done",
+      msg_done = "{.alert-success Updated metadata: {bytes} in {files} file{?s}.}"
+    )
+
+  } else {
+    cli_status_clear(bar$status)
   }
 
-  bar$bar$terminate()
-}
-
-#' @importFrom withr defer
-
-cli_start_process <- function(msg, envir = parent.frame()) {
-  if (!is_verbose()) {
-    return(list(done = function() {}, terminate = function() {} ))
-  }
-
-  bar <- cliapp::cli_progress_bar(
-    format = ":xsym :xmsg", total = 1, force = TRUE,
-    show_after = 0, clear = FALSE)
-
-  ## This should come from the theme....
-  xsym <- crayon::cyan(cli::symbol$info)
-  bar$tick(0, tokens = list(xsym = xsym, xmsg = msg))
-
-  ## This needs to be called for a clean exit
-  bar$done <- function() {
-    xsym <- crayon::green(cli::symbol$tick)
-    bar$tick(0, tokens = list(xsym = xsym, xmsg = crayon::reset(msg)))
-    bar$terminate()
-  }
-
-  ## This will be called automatically, but if called after done(),
-  ## it does not print anything
-  defer({
-    xsym <- crayon::red(cli::symbol$cross)
-    bar$tick(0, tokens = list(xsym = xsym, xmsg = crayon::reset(msg)))
-    bar$terminate()
-  }, envir = envir)
-
-  bar
+  bar$status <- NULL
 }

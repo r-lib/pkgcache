@@ -196,20 +196,6 @@ file.size <- function (...) {
   file.info(...)$size
 }
 
-is_verbose <- function() {
-  env <- Sys.getenv("R_PKG_SHOW_PROGRESS", "")
-  if (env != "") {
-    tolower(env) == "true"
-  } else {
-    opt <- getOption("pkg.show_progress")
-    if (!is.null(opt)) {
-      return(isTRUE(opt))
-    } else {
-      interactive()
-    }
-  }
-}
-
 msg_wrap <- function(..., .space = TRUE) {
   ret <- paste(strwrap(paste0(...)), collapse = "\n")
   if (.space) ret <- paste0("\n", ret, "\n")

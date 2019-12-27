@@ -86,7 +86,6 @@ read_metadata_file <- function(path) {
 }
 
 #' @importFrom tibble tibble
-#' @importFrom rematch2 re_match
 
 packages_parse_deps <- function(pkgs) {
   no_pkgs <- nrow(pkgs)

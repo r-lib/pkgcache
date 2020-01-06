@@ -30,7 +30,7 @@ Imports:
     tibble,
     tools,
     utils,
-    uuid,
+    uuid
 Suggests:
     covr,
     debugme,

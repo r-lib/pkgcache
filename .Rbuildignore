@@ -10,3 +10,5 @@
 ^\.Rprofile$
 ^r-packages$
 ^.*_cache$
+^.*\.Rproj$
+^\.Rproj\.user$

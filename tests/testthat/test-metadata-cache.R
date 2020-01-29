@@ -330,7 +330,7 @@ test_that("update", {
   expect_true(all(file.exists(pri_files$pkgs$etag)))
 
   ## List
-  expect_equal(data$pkgs, cmc$list())
+  expect_equal(as.list(data$pkgs), as.list(cmc$list()))
   lst <- cmc$list(c("igraph", "MASS"))
   expect_equal(sort(c("igraph", "MASS")), sort(unique(lst$package)))
 

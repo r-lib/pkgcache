@@ -1,4 +1,6 @@
 
+# pkgcache development version
+
 # pkgcache 1.0.6
 
 * HTTP timeouts are now much better, and by default they are defined

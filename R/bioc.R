@@ -1,3 +1,77 @@
+#' Tools for Bioconductor versions and repositories
+#'
+#' \section{API:}
+#'
+#' ```
+#' get_yaml_config(forget = FALSE)
+#' set_yaml_config(text)
+#'
+#' get_release_version(forget = FALSE)
+#' get_devel_version(forget = FALSE)
+#'
+#' get_version_map(forget = FALSE)
+#' get_matching_bioc_version(r_version = getRversion(), forget = FALSE)
+#' get_bioc_version(r_version = getRversion(), forget = FALSE)
+#'
+#' get_repos(bioc_version = "auto", forget = FALSE)
+#' ```
+#'
+#' * `forget`: Whether to forget the cached version of the Bioconductor
+#'   config YAML file and download it again.
+#' * `text`: character vector (linewise) or scalar, the contents of the
+#'   `config.yaml` file, if obtained externally, to be used as a cached
+#'   version in the future.
+#' * `r_version`: R version string, or `package_version` object.
+#' * `bioc_version`: Bioc version string or `package_version` object,
+#'   or the string `"auto"` to use the one matching the current R version.
+#'
+#' `get_yaml_config()` returns the raw contents of the `config.yaml` file,
+#' linewise. It is typically not needed, except if one needs information
+#' that cannot be surfaces via the other API functions.
+#'
+#' `set_yaml_config()` can be used to _set_ the contents of the
+#' `config.yaml` file. This is useful, if one has already obtained it
+#' externally, but wants to use the obtained file with the rest of the
+#' bioc standalone code.
+#'
+#' `get_release_version()` returns the version of the current Bioconductor
+#' release.
+#'
+#' `get_devel_version()` returns the version of the current development
+#' version of Bioconductor.
+#'
+#' `get_version_map()` return the mapping between R versions and
+#' Bioconductor versions. Note that this is not a one to one mapping.
+#' E.g. currently R `3.6.x` maps to both Bioc `3.9` (Bioc release) and
+#' `3.10` (Bioc devel); and also Bioc `3.10` maps to both R `3.6.x` and
+#' R `3.7.x` (current R-devel). It returns a data frame with three columns:
+#' `bioc_version`, `r_version` and `bioc_status`. The first two columns
+#' contain `package_vesion` objects, the third is a factor with levels:
+#' `out-of-date`, `release`, `devel`, `future`.
+#'
+#' `get_matching_bioc_version()` returns the matching Bioc version for an
+#' R version. If the R version matches to both a released and a devel
+#' version, then the released version is chosen.
+#'
+#' `get_bioc_version()` returns the matching Bioc version for the
+#' specified R version. It does observe the `R_BIOC_VERSION` environment
+#' variable, which can be used to force a Bioconductor version. If this is
+#' not set, it just calls `get_matching_bioc_version()`.
+#'
+#' `get_repos()` returns the Bioc repositories of the specified Bioc
+#' version. It defaults to the Bioc version that matches the calling R
+#' version. It returns a named character vector.
+#'
+#' \section{NEWS:}
+#' * 2019-05-30 First version in remotes.
+#' * 2020-03-22 get_matching_bioc_version() is now correct if the current
+#'              R version is not in the builtin mapping.
+#'
+#' @name bioconductor
+#' @keywords internal
+#' @noRd
+NULL
+
 
 bioconductor <- local({
 
@@ -27,7 +101,8 @@ bioconductor <- local({
     "3.2"  = package_version("3.2"),
     "3.3"  = package_version("3.4"),
     "3.4"  = package_version("3.6"),
-    "3.5"  = package_version("3.8")
+    "3.5"  = package_version("3.8"),
+    "3.6"  = package_version("3.10")
   )
 
   # -------------------------------------------------------------------
@@ -42,21 +117,11 @@ bioconductor <- local({
   # API
 
   get_yaml_config <- function(forget = FALSE) {
-
-    # Get the contents of https://bioconductor.org/config.yaml, as
-    # a character vector, line-wise.
-    #
-    # If https:// does not work, we re-try with http:// just in case
-    # the R build does not have https support.
-    #
-    # @param forget Whether to update the cached YAML.
-    # @return Character vector, one entry for each line in the YAML.
-
     if (forget || is.null(yaml_config)) {
-      new <- tryCatch(readLines(config_url), error = function(x) x)
+      new <- tryCatch(read_url(config_url), error = function(x) x)
       if (inherits(new, "error")) {
         http_url <- sub("^https", "http", config_url)
-        new <- tryCatch(readLines(http_url), error = function(x) x)
+        new <- tryCatch(read_url(http_url), error = function(x) x)
       }
       if (inherits(new, "error")) stop(new)
       yaml_config <<- new
@@ -66,28 +131,11 @@ bioconductor <- local({
   }
 
   set_yaml_config <- function(text) {
-
-    # Set the cached YAML config to the supplied text.
-    # This is useful if the file is obtained externally, and you want to
-    # use its contents with this API.
-    #
-    # @param text Contents of the YAML file. Either as a long character
-    #   scalar, or a vector with an entry for each line.
-
     if (length(text) == 1) text <- strsplit(text, "\n", fixed = TRUE)[[1]]
     yaml_config <<- text
   }
 
   get_release_version <- function(forget = FALSE) {
-
-    # Get the version number of the current Bioconductor release
-    #
-    # It parses the YAML file at https://bioconductor.org/config.yaml.
-    #
-    # @param forget Whether to update the cached version and the YAML.
-    # @return A [package_version] object, the current Bioconductor
-    #   release version.
-
     if (forget || is.null(release_version)) {
       yaml <- get_yaml_config(forget)
       pattern <- "^release_version: \"(.*)\""
@@ -99,16 +147,6 @@ bioconductor <- local({
   }
 
   get_devel_version <- function(forget = FALSE) {
-
-    # Get the version number of the current Bioconductor development
-    # version
-    #
-    # It parses the YAML file at https://bioconductor.org/config.yaml.
-    #
-    # @param forget Whether to update the caches version and the YAML.
-    # @return A [package_version] object, the current Bioconductor
-    #   development version.
-
     if (forget || is.null(devel_version)) {
       yaml <- get_yaml_config(forget)
       pattern <- "^devel_version: \"(.*)\""
@@ -120,20 +158,6 @@ bioconductor <- local({
   }
 
   get_version_map <- function(forget = FALSE) {
-
-    # Create a Bioconductor version -> R version map
-    #
-    # @param forget Whether to update the cahced YAML.
-    # @return A data frame with columns:
-    #  * `bioc_version`: Bioconductor version, [package_version] objects.
-    #  * `r_version`: Corresponding R version, [package_version] objects.
-    #  * `bioc_status`: Current Bioconductor version status, factor, levels:
-    #     - `out-of-date`: out of date, old version,
-    #     - `release`: current Bioconductor release version,
-    #     - `devel`: current Bioconductor devel version.
-    #     - `future`: current Bioconductor devel version, in the future
-    #       it will map to this R version.
-
     if (forget || is.null(version_map)) {
       txt <- get_yaml_config(forget)
       grps <- grep("^[^[:blank:]]", txt)
@@ -152,7 +176,6 @@ bioconductor <- local({
       # append final version for 'devel' R
       bioc <- c(
         bioc, max(bioc)
-        # package_version(paste(unlist(max(bioc)) + 0:1, collapse = "."))
       )
       r <- c(r, package_version(paste(unlist(max(r)) + 0:1, collapse = ".")))
       status <- c(status, "future")
@@ -174,35 +197,28 @@ bioconductor <- local({
   get_matching_bioc_version <- function(r_version = getRversion(),
                                         forget = FALSE) {
 
-    # Get the matching Bioconductor version for an R version
-    #
-    # This function tries to avoid making HTTP requests, so it only uses
-    # the https://bioconductor.org/config.yaml config file if necessary.
-    #
-    # @param r_version R version to map, string or [package_version]
-    #  object.
-    # @param forget Whether to update the cached YAML config. (This is only
-    #  used if the function needs the YAML config.)
-    # @return Bioconductor version number, [package_version] object.
-
-    minor <- get_minor_r_version(r_version)
+    minor <- as.character(get_minor_r_version(r_version))
     if (minor %in% names(builtin_map)) return(builtin_map[[minor]])
 
-    # If it is not in the map, and we are at the R minor version that
-    # comes right after the last one in the map, then we just guess
-    # that BioC haven't released before its usual release month.
-    # We only do this if the YAML is not available, because if we already
-    # have the YAML, then we can do the proper mapping.
-
-    if (minor == "3.6" &&
-        Sys.time() < "2019-10-01" &&
-        is.null(yaml_config)) return(package_version("3.9"))
-
-    # If we are not in the builtin map, then we need to look this up in
-    # YAML data.
+    # If we are not in the map, then we need to look this up in
+    # YAML data. It is possible that the current R version matches multiple
+    # Bioc versions. Then we choose the latest released version. If none
+    # of them were released (e.g. they are 'devel' and 'future'), then
+    # we'll use the 'devel' version.
 
     map <- get_version_map(forget = forget)
-    mine <- match(package_version(minor), map$r_version)
+    mine <- which(package_version(minor) == map$r_version)
+    if (length(mine) == 0) {
+      mine <- NA
+    } else if (length(mine) > 1) {
+      if ("release" %in% map$bioc_status[mine]) {
+        mine <- mine["release" == map$bioc_status[mine]]
+      } else if ("devel" %in% map$bioc_status[mine]) {
+        mine <- mine["devel" == map$bioc_status[mine]]
+      } else {
+        mine <- rev(mine)[1]
+      }
+    }
     if (!is.na(mine)) return(map$bioc_version[mine])
 
     # If it is not even in the YAML, then it must be some very old
@@ -216,23 +232,6 @@ bioconductor <- local({
 
   get_bioc_version <- function(r_version = getRversion(),
                                forget = FALSE) {
-
-    # Get the Bioconductor version for an R version
-    #
-    # This function is similar to [get_matching_bioc_version()],
-    # but it also observes the `R_BIOC_VERSION` environment variable,
-    # which can be set to request a specific Bioconductor version.
-    # It this is not set, then it calls [get_matching_bioc_version()].
-    #
-    # We suggest the you use this function to look up the Bioconductor
-    # version that corresponds to the calling R version.
-    #
-    # @param r_version R version to map, a string or a [package_version]
-    #  object.
-    # @param forget Whether to update the YAML config file cache.
-    #  Passed to [get_matchinf_bioc_version()].
-    # @return Bioconductor version number, [package_version] object.
-
     if (nzchar(v <- Sys.getenv("R_BIOC_VERSION", ""))) {
       return(package_version(v))
     }
@@ -240,19 +239,6 @@ bioconductor <- local({
   }
 
   get_repos <- function(bioc_version = "auto", forget = FALSE) {
-
-    # Get the URLs of the Bioconductor package repositories for the
-    # specified Bioconductor version
-    #
-    # @param bioc_version The Bioconductor version to use. If it is the
-    #   scalar string `"auto"`, then [get_bioc_version()] is used to
-    #   look up the desired Bioconductor version.
-    # @param forget Whether to update the YAML config cache.
-    # @return named character vector of the URLs. Names are
-    #   `BioCsoft`, `BioCann`, `BioCexp`, `Biocworkflows` (for newer
-    #   Bioconductor versions) and `BioCextra` (for older Bioconductor
-    #   versions).
-
     if (identical(bioc_version, "auto")) {
       bioc_version <- get_bioc_version(getRversion(), forget)
     } else {
@@ -281,6 +267,16 @@ bioconductor <- local({
   # -------------------------------------------------------------------
   # Internals
 
+  read_url <- function(url) {
+    tmp <- tempfile()
+    on.exit(unlink(tmp), add = TRUE)
+    suppressWarnings(download.file(url, tmp, quiet = TRUE))
+    if (!file.exists(tmp) || file.info(tmp)$size == 0) {
+      stop("Failed to download `", url, "`")
+    }
+    readLines(tmp, warn = FALSE)
+  }
+
   .VERSION_SENTINEL <- local({
     version <- package_version(list())
     class(version) <- c("unknown_version", class(version))
@@ -297,9 +293,7 @@ bioconductor <- local({
   )
 
   get_minor_r_version <- function (x) {
-    x <- package_version(x)
-    vapply(unclass(x), function(x) paste(x[1:2], collapse = "."),
-           character(1))
+    package_version(x)[,1:2]
   }
 
   # -------------------------------------------------------------------

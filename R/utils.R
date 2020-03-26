@@ -97,8 +97,7 @@ get_all_package_dirs <- function(platforms, rversions) {
         } else if (package_version(v) == "3.0") {
           cbind("macos", v, paste0("bin/macosx/contrib/", v))
         } else if (package_version(v) <= "3.2") {
-          cbind("macos", v, paste0(c("bin/macosx/contrib/",
-                                     "bin/macosx/mavericks/contrib/"), v))
+          cbind("macos", v, paste0("bin/macosx/mavericks/contrib/", v))
         } else if (package_version(v) == "3.3") {
           cbind("macos", v, paste0("bin/macosx/mavericks/contrib/", v))
         } else {

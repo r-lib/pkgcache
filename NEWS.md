@@ -1,6 +1,9 @@
 
 # pkgcache development version
 
+* Metadata is now cached in RDS version 2 formats, so metadata written
+  by newer R version can be used by older R versions as well (#36).
+
 # pkgcache 1.0.6
 
 * HTTP timeouts are now much better, and by default they are defined

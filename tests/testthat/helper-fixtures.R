@@ -29,6 +29,6 @@ update_fixtures <- function(files = NULL) {
   for (f in files) {
     output <- file.path(fdir, f)
     cat(output, sep = "\n")
-    saveRDS(fixtures[[f]](), file = output)
+    saveRDS(fixtures[[f]](), file = output, version = 2)
   }
 }

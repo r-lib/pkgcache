@@ -725,7 +725,7 @@ cmc__update_replica_rds <- function(self, private, alert) {
   if (length(data_list) == 0) stop("No metadata available")
 
   private$data <- merge_packages_data(.list = data_list)
-  saveRDS(private$data, file = rep_files$rds)
+  saveRDS(private$data, file = rep_files$rds, version = 2)
   private$data_time <- file_get_time(rep_files$rds)
   private$data_messaged <- NULL
 

@@ -348,6 +348,10 @@ test_that("check_update", {
 
   skip_if_offline()
 
+  withr::local_options(
+    list(repos = c(CRAN = "https://cloud.r-project.org"))
+  )
+
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
   dir.create(rep <- fs::path_norm(tempfile()))

@@ -131,7 +131,8 @@ test_that("get_all_package_dirs", {
   d <- get_all_package_dirs("macos", "3.2.0")
   expect_equal(
     sort(d$contriburl),
-    c("bin/macosx/contrib/3.2", "bin/macosx/mavericks/contrib/3.2"))
+    "bin/macosx/mavericks/contrib/3.2"
+  )
   d <- get_all_package_dirs("macos", "3.3.0")
   expect_match(d$contriburl, "bin/macosx/mavericks/contrib/3.3")
   d <- get_all_package_dirs("macos", "3.5.1")

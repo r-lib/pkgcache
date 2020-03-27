@@ -859,6 +859,7 @@ extract_revdeps <- function(pkgs, packages, dependencies, recursive) {
 
 cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
   repos[["CRAN"]] <- cran_mirror
+  repos <- unlist(repos)
   res <- tibble(
     name = names(repos),
     url = unname(repos),

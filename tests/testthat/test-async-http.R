@@ -52,6 +52,15 @@ test_that("download_file, errors", {
     synchronise(download_file("https://eu.httpbin.org/status/404", tmp)),
     class = c("async_rejected", "async_http_401", "async_http_error")
   )
+
+  ret <- synchronise(download_file(
+    "https://eu.httpbin.org/status/404",
+    tmp,
+    error_on_status = FALSE
+  ))
+  expect_s3_class(ret, "async_rejected")
+  expect_s3_class(ret, "async_http_404")
+  expect_s3_class(ret, "async_http_error")
 })
 
 test_that("download_if_newer, no etag file", {
@@ -144,6 +153,15 @@ test_that("download_if_newer, error", {
     error = function(e) e)
   expect_s3_class(err, "async_rejected")
   expect_match(conditionMessage(err), "Unknown HTTP response")
+
+  ret <- synchronise(download_if_newer(
+    "https://httpbin.org/status/404",
+    destfile = target,
+    error_on_status = FALSE
+  ))
+  expect_s3_class(ret, "async_rejected")
+  expect_s3_class(ret, "async_http_404")
+  expect_s3_class(ret, "async_http_error")
 })
 
 test_that("download_one_of", {
@@ -224,6 +242,25 @@ test_that("download_one_of, errors", {
   expect_match(conditionMessage(err), "All URLs failed")
   expect_true("download_one_of_error" %in% class(err))
   expect_false(file.exists(tmp))
+
+  afun2 <- async(function() {
+    download_one_of(
+      c("https://httpbin.org/status/404",
+        "https://httpbin.org/status/403"),
+      error_on_status = FALSE,
+      tmp
+    )
+  })
+  ret <- synchronise(afun2())
+  expect_s3_class(ret, "download_one_of_error")
+  expect_s3_class(ret, "async_rejected")
+  expect_equal(length(ret$error), 2)
+  expect_s3_class(ret$error[[1]], "async_rejected")
+  expect_s3_class(ret$error[[1]], "async_http_404")
+  expect_s3_class(ret$error[[1]], "async_http_error")
+  expect_s3_class(ret$error[[2]], "async_rejected")
+  expect_s3_class(ret$error[[2]], "async_http_403")
+  expect_s3_class(ret$error[[2]], "async_http_error")
 })
 
 test_that("download_files", {
@@ -278,4 +315,31 @@ test_that("download_files errors", {
   expect_error(
     synchronise(download_files(downloads)),
     "Duplicate target paths")
+})
+
+test_that("download_files, no errors", {
+
+  skip_if_offline()
+
+  dir <- test_temp_dir()
+  downloads <- data.frame(
+    stringsAsFactors = FALSE,
+    url  = paste0("https://httpbin.org/status/", 400 + 1:3),
+    path = file.path(dir, paste0("file", 1:3)),
+    etag = file.path(dir, paste0("etag", 1:3))
+  )
+
+  ret <- synchronise(download_files(downloads, error_on_status = FALSE))
+  expect_equal(length(ret), 3)
+  expect_s3_class(ret[[1]], "async_rejected")
+  expect_s3_class(ret[[1]], "async_http_401")
+  expect_s3_class(ret[[1]], "async_http_error")
+
+  expect_s3_class(ret[[2]], "async_rejected")
+  expect_s3_class(ret[[2]], "async_http_402")
+  expect_s3_class(ret[[2]], "async_http_error")
+
+  expect_s3_class(ret[[3]], "async_rejected")
+  expect_s3_class(ret[[3]], "async_http_403")
+  expect_s3_class(ret[[3]], "async_http_error")
 })

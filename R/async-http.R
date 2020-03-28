@@ -35,6 +35,9 @@ get_async_timeouts <- function(options) {
 #'   It can be used to cache the file, with the [download_if_newer()] or
 #'   the [download_one_of()] functions.
 #' @param tmp_destfile Where to store the temporary destination file.
+#' @param error_on_status Whether to error for an HTTP status larger
+#'   than or equal to 400. If this is `FALSE`, then an error object is
+#'   returned for these status codes.
 #' @param options Curl options.
 #' @param ... Additional arguments are passed to [http_get()].
 #' @return A [deferred] object. It resolves to a list with entries:
@@ -78,6 +81,7 @@ get_async_timeouts <- function(options) {
 
 download_file <- function(url, destfile, etag_file = NULL,
                           tmp_destfile = paste0(destfile, ".tmp"),
+                          error_on_status = TRUE,
                           options = list(), ...) {
   "!DEBUG downloading `url`"
   assert_that(
@@ -85,6 +89,7 @@ download_file <- function(url, destfile, etag_file = NULL,
     is_path(destfile),
     is_path(tmp_destfile),
     is_path_or_null(etag_file),
+    is_flag(error_on_status),
     is.list(options))
   force(list(...))
 
@@ -110,7 +115,7 @@ download_file <- function(url, destfile, etag_file = NULL,
       "!DEBUG downloading `url` failed"
       err$destfile <- destfile
       err$url <- url
-      stop(err)
+      if (error_on_status) stop(err) else err
     })
 }
 
@@ -189,6 +194,7 @@ get_etag_header_from_file <- function(destfile, etag_file) {
 download_if_newer <- function(url, destfile, etag_file = NULL,
                               headers = NULL,
                               tmp_destfile = paste0(destfile, ".tmp"),
+                              error_on_status = TRUE,
                               options = list(), ...) {
   "!DEBUG download if newer `url`"
   headers <- headers %||% structure(character(), names = character())
@@ -198,6 +204,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
     is_path(tmp_destfile),
     is_path_or_null(etag_file),
     is.character(headers), all_named(headers),
+    is_flag(error_on_status),
     is.list(options))
   force(list(...))
 
@@ -237,7 +244,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
       "!DEBUG downloading `url` failed"
       err$destfile <- destfile
       err$url <- url
-      stop(err)
+      if (error_on_status) stop(err) else err
     })
 
 }
@@ -301,7 +308,8 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 #' ```
 
 download_one_of <- function(urls, destfile, etag_file = NULL,
-                            headers = NULL, options = list(), ...) {
+                            headers = NULL, error_on_status = TRUE,
+                            options = list(), ...) {
   "!DEBUG trying multiple URLs"
   headers <- headers %||% structure(character(), names = character())
   assert_that(
@@ -309,6 +317,7 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
     is_path(destfile),
     is_path_or_null(etag_file),
     is.character(headers), all_named(headers),
+    is_flag(error_on_status),
     is.list(options))
   force(list(...))
 
@@ -324,11 +333,13 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
     catch(error = function(err) {
       err$message <- "All URLs failed"
       class(err) <- c("download_one_of_error", class(err))
-      stop(err)
+      if (error_on_status) stop(err) else err
     })
 }
 
-download_files <- function(data, options = list(), ...) {
+download_files <- function(data, error_on_status = TRUE,
+                           options = list(), ...) {
+
   if (any(dup <- duplicated(data$path))) {
     stop("Duplicate target paths in download_files: ",
          paste0("`", unique(data$path[dup]), "`", collapse = ", "), ".")
@@ -340,13 +351,20 @@ download_files <- function(data, options = list(), ...) {
 
   dls <- lapply(seq_len(nrow(data)), function(idx) {
     row <- data[idx, ]
-    dx <- download_if_newer(row$url, row$path, row$etag,
-      on_progress = prog_cb, options = options, ...)
+    dx <- download_if_newer(
+      row$url, row$path, row$etag,
+      on_progress = prog_cb,
+      error_on_status = error_on_status,
+      options = options, ...
+    )
 
     if ("fallback_url" %in% names(row) && !is.na(row$fallback_url)) {
       dx <- dx$catch(error = function(err) {
-        download_if_newer(row$fallback_url, row$path, row$etag,
-                          options = options, ...)
+        download_if_newer(
+          row$fallback_url, row$path, row$etag,
+          error_on_status = error_on_status,
+          options = options, ...
+        )
       })
     }
 

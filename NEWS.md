@@ -1,5 +1,5 @@
 
-# pkgcache development version
+# pkgcache 1.0.7
 
 * Metadata is now cached in RDS version 2 formats, so metadata written
   by newer R version can be used by older R versions as well (#36).

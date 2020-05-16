@@ -120,14 +120,15 @@ test_that("get_all_package_dirs", {
   expect_true("macos" %in% d$platform)
   expect_true("source" %in% d$platform)
 
-  d <- get_all_package_dirs("windows", "2.15.0")
-  expect_equal(nrow(d), 1)
-  expect_true(d$platform == "windows")
+  expect_error(
+    get_all_package_dirs("windows", "2.15.0"),
+    "does not support packages for R versions before"
+  )
+  expect_error(
+    get_all_package_dirs("macos", "3.1.3"),
+    "does not support packages for R versions before"
+  )
 
-  d <- get_all_package_dirs("macos", "2.15.0")
-  expect_match(d$contriburl, "bin/macosx/leopard")
-  d <- get_all_package_dirs("macos", "3.0.0")
-  expect_match(d$contriburl, "bin/macosx/contrib/3.0")
   d <- get_all_package_dirs("macos", "3.2.0")
   expect_equal(
     sort(d$contriburl),
@@ -135,6 +136,9 @@ test_that("get_all_package_dirs", {
   )
   d <- get_all_package_dirs("macos", "3.3.0")
   expect_match(d$contriburl, "bin/macosx/mavericks/contrib/3.3")
-  d <- get_all_package_dirs("macos", "3.5.1")
-  expect_match(d$contriburl, "bin/macosx/el-capitan/contrib/3.5")
+  d <- get_all_package_dirs("macos", "3.6.3")
+  expect_match(d$contriburl, "bin/macosx/el-capitan/contrib/3.6")
+
+  d <- get_all_package_dirs("macos", "4.0.0")
+  expect_match(d$contriburl, "bin/macosx/contrib/4.0")
 })

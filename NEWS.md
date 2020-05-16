@@ -1,6 +1,8 @@
 
 # development version
 
+* pkgcache now works for R 4.0.x macOS binaries.
+
 # pkgcache 1.0.7
 
 * Metadata is now cached in RDS version 2 formats, so metadata written

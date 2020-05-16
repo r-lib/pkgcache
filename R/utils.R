@@ -83,6 +83,9 @@ get_minor_r_version <- function(x) {
 
 get_all_package_dirs <- function(platforms, rversions) {
   minors <- unique(get_minor_r_version(rversions))
+  if (any(package_version(minors) < "3.2")) {
+    stop("pkgcache does not support packages for R versions before R 3.2")
+  }
   res <- lapply(platforms, function(pl) {
     if (pl == "source") {
       cbind("source", "*", "src/contrib")
@@ -92,13 +95,10 @@ get_all_package_dirs <- function(platforms, rversions) {
 
     } else if (pl == "macos") {
       res1 <- lapply(minors, function(v) {
-        if (package_version(v) <= "2.15") {
-          cbind("macos", v, paste0("bin/macosx/leopard/contrib/", v))
-        } else if (package_version(v) == "3.0") {
+        pv <- package_version(v)
+        if (pv >= "4.0") {
           cbind("macos", v, paste0("bin/macosx/contrib/", v))
-        } else if (package_version(v) <= "3.2") {
-          cbind("macos", v, paste0("bin/macosx/mavericks/contrib/", v))
-        } else if (package_version(v) == "3.3") {
+        } else if (package_version(v) <= "3.3") {
           cbind("macos", v, paste0("bin/macosx/mavericks/contrib/", v))
         } else {
           cbind("macos", v, paste0("bin/macosx/el-capitan/contrib/", v))

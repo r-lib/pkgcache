@@ -39,10 +39,12 @@ Suggests:
     jsonlite,
     mockery,
     pingr,
+    presser,
     rprojroot,
     testthat,
     withr
 Depends: 
     R (>= 3.1)
+Remotes: r-lib/presser
 Roxygen: { library(roxygenlabs); list(markdown = TRUE, r6 = FALSE) }
 RoxygenNote: 7.1.0

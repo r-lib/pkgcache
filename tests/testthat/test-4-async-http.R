@@ -22,8 +22,6 @@ test_that("read_etag", {
 
 test_that("download_file", {
 
-  skip("no presser support yet")
-
   dir.create(dir <- tempfile())
   dx <- synchronise(download_file(
     url    <- http$url("/response-headers?etag=foobar"),

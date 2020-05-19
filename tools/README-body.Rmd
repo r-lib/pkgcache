@@ -6,6 +6,9 @@ knitr::opts_chunk$set(
   cache = TRUE
 )
 options(cli.unicode = FALSE)
+options(cli.dynamic = FALSE)
+options(crayon.enabled = FALSE)
+crayon::num_colors(forget=TRUE)
 ```
 
 Metadata and package cache for CRAN-like repositories. This is a utility

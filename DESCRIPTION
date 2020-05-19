@@ -45,4 +45,4 @@ Suggests:
 Depends: 
     R (>= 3.1)
 Roxygen: { library(roxygenlabs); list(markdown = TRUE, r6 = FALSE) }
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0

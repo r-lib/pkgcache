@@ -22,11 +22,11 @@ test_that("read_etag", {
 
 test_that("download_file", {
 
-  skip_if_offline()
+  skip("no presser support yet")
 
   dir.create(dir <- tempfile())
   dx <- synchronise(download_file(
-    url    <- "https://httpbin.org/response-headers?etag=foobar",
+    url    <- http$url("/response-headers?etag=foobar"),
     target <- file.path(dir, "file1"),
     etag   <- file.path(dir, "etag"),
     headers = c("accept-encoding" = "")
@@ -40,8 +40,6 @@ test_that("download_file", {
 
 test_that("download_file, errors", {
 
-  skip_if_offline()
-
   tmp <- tempfile()
   expect_error(
     synchronise(download_file("http://0.42.42.42", tmp)),
@@ -49,7 +47,7 @@ test_that("download_file, errors", {
   )
 
   expect_error(
-    synchronise(download_file("https://eu.httpbin.org/status/404", tmp)),
+    synchronise(download_file(http$url("/status/404"), tmp)),
     class = c("async_rejected", "async_http_401", "async_http_error")
   )
 
@@ -65,11 +63,9 @@ test_that("download_file, errors", {
 
 test_that("download_if_newer, no etag file", {
 
-  skip_if_offline()
-
   dir.create(dir <- tempfile())
   dx <- synchronise(download_if_newer(
-    url    <- "https://httpbin.org/etag/foobar",
+    url    <- http$url("/etag/foobar"),
     target <- file.path(dir, "file1"),
     etag   <- file.path(dir, "etag"),
     headers = c("accept-encoding" = "")
@@ -83,13 +79,11 @@ test_that("download_if_newer, no etag file", {
 
 test_that("download_if_newer, different etag", {
 
-  skip_if_offline()
-
   dir.create(dir <- tempfile())
 
   cat("eeeetag\n", file = etag <- file.path(dir, "etag"))
   dx <- synchronise(download_if_newer(
-    url    <- "https://httpbin.org/etag/foobar",
+    url    <- http$url("/etag/foobar"),
     target <- file.path(dir, "file1"),
     etag,
     headers = c("accept-encoding" = "")
@@ -103,14 +97,12 @@ test_that("download_if_newer, different etag", {
 
 test_that("download_if_newer, matching etag", {
 
-  skip_if_offline()
-
   dir.create(dir <- tempfile())
 
   cat("foobar\n", file = etag <- file.path(dir, "etag"))
   cat("dummy\n", file = target <- file.path(dir, "file1"))
   dx <- synchronise(download_if_newer(
-    url    <- "https://httpbin.org/etag/foobar",
+    url    <- http$url("/etag/foobar"),
     target,
     etag
   ))
@@ -123,8 +115,6 @@ test_that("download_if_newer, matching etag", {
 })
 
 test_that("download_if_newer, error", {
-
-  skip_if_offline()
 
   cat("dummy\n", file = target <- tempfile())
   on.exit(unlink(target), add = TRUE)
@@ -139,7 +129,7 @@ test_that("download_if_newer, error", {
 
   expect_error(
     synchronise(download_if_newer(
-      url <- "https://httpbin.org/status/404",
+      url <- http$url("/status/404"),
       destfile = target
     )),
     class = c("async_rejected", "async_http_404", "async_http_error")
@@ -147,7 +137,7 @@ test_that("download_if_newer, error", {
 
   err <- tryCatch(
     synchronise(download_if_newer(
-      "https://httpbin.org/status/201",
+      http$url("/status/201"),
       destfile = target
     )),
     error = function(e) e)
@@ -155,7 +145,7 @@ test_that("download_if_newer, error", {
   expect_match(conditionMessage(err), "Unknown HTTP response")
 
   ret <- synchronise(download_if_newer(
-    "https://httpbin.org/status/404",
+    http$url("/status/404"),
     destfile = target,
     error_on_status = FALSE
   ))
@@ -166,30 +156,27 @@ test_that("download_if_newer, error", {
 
 test_that("download_one_of", {
 
-  skip_if_offline()
-
   dx <- synchronise(download_one_of(
-    c("https://httpbin.org/status/404",
-      "https://httpbin.org/status/403",
-      "https://httpbin.org/get?q=1"),
+    http$url(c("/status/404", "/status/403", "/get?q=1")),
     tmp <- tempfile()
   ))
 
-  res <- jsonlite::fromJSON(read_lines(tmp), simplifyVector = FALSE)
+  res <- jsonlite::fromJSON(
+    read_lines(tmp, warn = FALSE),
+    simplifyVector = FALSE
+  )
   expect_equal(res$args$q, "1")
 })
 
 test_that("download_one_of, etag", {
 
-  skip_if_offline()
-
   dir.create(dir <- tempfile())
 
   cat("eeeetag\n", file = etag <- file.path(dir, "etag"))
   dx <- synchronise(download_one_of(
-    c("https://httpbin.org/status/404",
-      "https://httpbin.org/status/403",
-      url <- "https://httpbin.org/etag/foobar"),
+    c(http$url("/status/404"),
+      http$url("/status/403"),
+      url <- http$url("/etag/foobar")),
     target <- file.path(dir, "file1"),
     etag_file = etag,
     headers = c("accept-encoding" = "")
@@ -203,16 +190,12 @@ test_that("download_one_of, etag", {
 
 test_that("download_one_of, matching etag", {
 
-  skip_if_offline()
-
   dir.create(dir <- tempfile())
 
   cat("foobar\n", file = etag <- file.path(dir, "etag"))
   cat("dummy\n", file = target <- file.path(dir, "file1"))
   dx <- synchronise(download_one_of(
-    c("https://httpbin.org/status/404",
-      "https://httpbin.org/status/403",
-      url <- "https://httpbin.org/etag/foobar"),
+    http$url(c("/status/404", "/status/403", "/etag/foobar")),
     target,
     etag_file = etag
   ))
@@ -225,15 +208,11 @@ test_that("download_one_of, matching etag", {
 
 test_that("download_one_of, errors", {
 
-  skip_if_offline()
-
   tmp <- tempfile()
 
   afun <- async(function() {
     download_one_of(
-      c("https://httpbin.org/status/404",
-        "https://httpbin.org/status/403",
-        "https://httpbin.org/status/404"),
+      http$url(c("/status/404", "/status/403", "/status/404")),
       tmp
     )
   })
@@ -245,8 +224,7 @@ test_that("download_one_of, errors", {
 
   afun2 <- async(function() {
     download_one_of(
-      c("https://httpbin.org/status/404",
-        "https://httpbin.org/status/403"),
+      http$url(c("/status/404", "/status/403")),
       error_on_status = FALSE,
       tmp
     )
@@ -256,21 +234,20 @@ test_that("download_one_of, errors", {
   expect_s3_class(ret, "async_rejected")
   expect_equal(length(ret$error), 2)
   expect_s3_class(ret$error[[1]], "async_rejected")
-  expect_s3_class(ret$error[[1]], "async_http_404")
   expect_s3_class(ret$error[[1]], "async_http_error")
   expect_s3_class(ret$error[[2]], "async_rejected")
-  expect_s3_class(ret$error[[2]], "async_http_403")
   expect_s3_class(ret$error[[2]], "async_http_error")
+  cl <- c(class(ret$error[[1]]), class(ret$error[[2]]))
+  expect_true("async_http_404" %in% cl)
+  expect_true("async_http_403" %in% cl)
 })
 
 test_that("download_files", {
 
-  skip_if_offline()
-
   dir <- test_temp_dir()
   downloads <- data.frame(
     stringsAsFactors = FALSE,
-    url  = paste0("https://httpbin.org/etag/foobar", 1:3),
+    url  = http$url(paste0("/etag/foobar", 1:3)),
     path = file.path(dir, paste0("file", 1:3)),
     etag = file.path(dir, paste0("etag", 1:3))
   )
@@ -307,7 +284,7 @@ test_that("download_files errors", {
   dir <- test_temp_dir()
   downloads <- data.frame(
     stringsAsFactors = FALSE,
-    url  = paste0("https://httpbin.org/etag/foobar", 1:3),
+    url  = http$url(paste0("/etag/foobar", 1:3)),
     path = "thesamepath",
     etag = file.path(dir, paste0("etag", 1:3))
   )
@@ -319,12 +296,10 @@ test_that("download_files errors", {
 
 test_that("download_files, no errors", {
 
-  skip_if_offline()
-
   dir <- test_temp_dir()
   downloads <- data.frame(
     stringsAsFactors = FALSE,
-    url  = paste0("https://httpbin.org/status/", 400 + 1:3),
+    url  = http$url(paste0("/status/", 400 + 1:3)),
     path = file.path(dir, paste0("file", 1:3)),
     etag = file.path(dir, paste0("etag", 1:3))
   )

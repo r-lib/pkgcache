@@ -81,7 +81,14 @@ read_metadata_file <- function(path) {
   if (is.na(path)) return(NULL)
   on.exit(tryCatch(close(con), error = function(x) NULL), add = TRUE)
   tryCatch(suppressWarnings({
-    read.csv(con <- gzfile(path, open = "r"), stringsAsFactors = FALSE)
+    md <- read.csv(
+      con <- gzfile(path, open = "r"),
+      stringsAsFactors = FALSE
+    )
+    if ("filesize" %in% names(md)) {
+      md$filesize <- as.integer(md$filesize)
+    }
+    md
   }), error = function(e) NULL)
 }
 

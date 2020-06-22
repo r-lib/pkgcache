@@ -22,7 +22,9 @@ test_that("read_etag", {
 
 test_that("download_file", {
 
-  if (packageVersion("presser") <= "1.0.0") skip("Needs newer presser package")
+  if (packageVersion("presser") <= "1.0.0") {
+    skip("Needs newer presser package")
+  }
 
   dir.create(dir <- tempfile())
   dx <- synchronise(download_file(

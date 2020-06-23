@@ -45,5 +45,5 @@ Suggests:
     withr
 Depends: 
     R (>= 3.1)
-Roxygen: { library(roxygenlabs); list(markdown = TRUE, r6 = FALSE) }
+Roxygen: list(packages = "roxygenlabs", markdown = TRUE, r6 = FALSE)
 RoxygenNote: 7.1.0

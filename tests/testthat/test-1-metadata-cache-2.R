@@ -4,6 +4,7 @@ context("metadata cache 2/3")
 test_that("check_update", {
 
   skip_if_offline()
+  skip_on_cran()
 
   withr::local_options(
     list(repos = c(CRAN = "https://cloud.r-project.org"))
@@ -60,6 +61,7 @@ test_that("check_update", {
 test_that("deps will auto-update as needed", {
 
   skip_if_offline()
+  skip_on_cran()
 
   withr::local_options(list(repos = NULL))
 
@@ -101,6 +103,7 @@ test_that("deps will auto-update as needed", {
 test_that("deps, extract_deps", {
 
   skip_if_offline()
+  skip_on_cran()
 
   withr::local_options(list(repos = NULL))
 

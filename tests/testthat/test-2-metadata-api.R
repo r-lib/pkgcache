@@ -4,6 +4,7 @@ context("metadata-api")
 test_that("metadata api", {
 
   skip_if_offline()
+  skip_on_cran()
   if (packageVersion("callr") < "3.1.0.9000") skip("Need newer callr")
 
   tmp <- test_temp_dir()

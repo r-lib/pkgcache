@@ -3,6 +3,7 @@ context("metadata cache 3/3")
 
 test_that("concurrency in update", {
   skip_if_offline()
+  skip_on_cran()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -65,6 +66,7 @@ test_that("cmc__get_repos", {
 test_that("download failures", {
 
   skip_if_offline()
+  skip_on_cran()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -102,6 +104,7 @@ test_that("cleanup", {
 test_that("memory cache", {
 
   skip_if_offline()
+  skip_on_cran()
 
   pri <- test_temp_dir()
   rep <- test_temp_dir()

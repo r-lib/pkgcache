@@ -3,6 +3,7 @@ context("CRAN metadata")
 
 test_that("what if cran.r-pkg.org is down?", {
   skip_if_offline()
+  skip_on_cran()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)

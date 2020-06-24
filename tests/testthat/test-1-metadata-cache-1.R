@@ -204,6 +204,7 @@ test_that("load_primary_pkgs", {
 test_that("update_replica_pkgs", {
 
   skip_if_offline()
+  skip_on_cran()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -297,6 +298,7 @@ test_that("update_primary 2", {
 test_that("update", {
 
   skip_if_offline()
+  skip_on_cran()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)

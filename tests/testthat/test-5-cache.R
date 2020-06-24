@@ -48,6 +48,7 @@ test_that("add / list / find / delete", {
 test_that("add_url", {
 
   skip_if_offline()
+  skip_on_cran()
 
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
@@ -84,6 +85,7 @@ test_that("copy_or_add, positive", {
 test_that("copy_or_add, negative", {
 
   skip_if_offline()
+  skip_on_cran()
 
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
@@ -116,6 +118,7 @@ test_that("copy_or_add, negative", {
 test_that("update_or_add, not in cache", {
 
   skip_if_offline()
+  skip_on_cran()
 
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
@@ -142,6 +145,7 @@ test_that("update_or_add, not in cache", {
 
 test_that("update_or_add, cache is too old", {
   skip_if_offline()
+  skip_on_cran()
 
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))
@@ -173,6 +177,7 @@ test_that("update_or_add, cache is too old", {
 
 test_that("update_or_add, cache is current", {
   skip_if_offline()
+  skip_on_cran()
 
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))

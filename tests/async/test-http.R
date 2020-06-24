@@ -164,6 +164,11 @@ test_that("error, invalid arg", {
 })
 
 test_that("automatic cancellation", {
+
+  if (packageVersion("presser") <= "1.0.0") {
+    skip("Needs newer presser package")
+  }
+
   called <- 0L
   do <- function() {
     r1 <- http_get(http$url("/delay/5"))$

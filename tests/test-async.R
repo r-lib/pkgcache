@@ -14,7 +14,7 @@ if (file.exists("async")) {
     test_path <- "async"
     asNamespace("testthat")$test_package_dir(
       package = package, test_path = test_path,
-      filter = NULL, reporter = "check")
+      filter = NULL, reporter = "summary")
   }
   test()
 }

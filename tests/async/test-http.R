@@ -224,6 +224,11 @@ test_that("timeout, failed request", {
 })
 
 test_that("more sophisticated timeouts", {
+
+  if (packageVersion("presser") <= "1.0.0") {
+    skip("Needs newer presser")
+  }
+
   do <- function() {
     withr::local_options(list(
       async_http_timeout = 6,

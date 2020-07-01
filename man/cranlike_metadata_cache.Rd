@@ -26,7 +26,7 @@ It has a synchronous and an asynchronous API.
 \section{Usage}{
 \preformatted{cmc <- cranlike_metadata_cache$new(
   primary_path = NULL, replica_path = tempfile(),
-  platforms = default_platforms(), r_version = current_r_version(),
+  platforms = default_platforms(), r_version = getRversion(),
   bioc = TRUE, cran_mirror = default_cran_mirror(),
   repos = getOption("repos"),
   update_after = as.difftime(7, units = "days"))

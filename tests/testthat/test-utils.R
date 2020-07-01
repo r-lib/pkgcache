@@ -56,12 +56,6 @@ test_that("default_cran_mirror", {
   expect_identical(m4, c(CRAN = "mymirror"))
 })
 
-test_that("current_r_version", {
-  ver <- current_r_version()
-  expect_true(is.character(ver))
-  expect_true(length(ver) == 1)
-})
-
 test_that("vlapply", {
   l <- list(NULL, "", character(), 1)
   expect_identical(
@@ -86,7 +80,7 @@ test_that("is_na_scalar", {
 
 test_that("get_all_package_dirs", {
   res <- get_all_package_dirs(
-    unique(c(current_r_platform(), "source")), current_r_version())
+    unique(c(current_r_platform(), "source")), getRversion())
 
   expect_s3_class(res, "tbl_df")
   expect_equal(

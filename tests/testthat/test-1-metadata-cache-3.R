@@ -35,7 +35,7 @@ test_that("cmc__get_repos", {
   expect_equal(
     cmc__get_repos(repos, FALSE, cran_mirror = "good", r_version = "3.5"),
     tibble(name = "CRAN", url = "good", type = "cran",
-           bioc_version = NA_character_)
+           r_version = "*", bioc_version = NA_character_)
   )
 
   ## BioC, all new
@@ -54,13 +54,13 @@ test_that("cmc__get_repos", {
   res <- cmc__get_repos(repos, TRUE, "good", r_version = "3.5")
   expect_equal(
     res$name,
-    c("CRAN", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
+    c("CRAN", "BioCsoft", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
   expect_equal(res$url[1], "good")
   expect_equal(res$url[2], "ok")
-  expect_equal(res$type, c("cran", "bioc", "bioc", "bioc", "bioc"))
+  expect_equal(res$type, c("cran", "cranlike", "bioc", "bioc", "bioc", "bioc"))
   expect_equal(
     res$bioc_version,
-    c(NA_character_, "3.8", "3.8", "3.8", "3.8"))
+    c(NA_character_, NA_character_, "3.8", "3.8", "3.8", "3.8"))
 })
 
 test_that("download failures", {

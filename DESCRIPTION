@@ -27,6 +27,7 @@ Imports:
     processx (>= 3.3.0.9001),
     rappdirs,
     rlang,
+    stats,
     tibble,
     tools,
     utils,
@@ -46,4 +47,4 @@ Suggests:
 Depends: 
     R (>= 3.1)
 Roxygen: list(packages = "roxygenlabs", markdown = TRUE, r6 = FALSE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

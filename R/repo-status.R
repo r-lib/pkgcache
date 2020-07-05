@@ -65,10 +65,8 @@ async_repo_status <- function(platforms = default_platforms(),
                               cran_mirror = default_cran_mirror()) {
   r_version <- get_minor_r_version(r_version)
   repos <- cmc__get_repos(getOption("repos"), bioc, cran_mirror, r_version)
-  dirs <- subset(
-    get_all_package_dirs(platforms, r_version),
-    select = c(platform, rversion, contriburl)
-  )
+  dirs <- get_all_package_dirs(platforms, r_version)
+  dirs <- dirs[, c("platform", "rversion", "contriburl")]
   names(dirs) <- sub("rversion", "r_version", names(dirs))
   names(dirs) <- sub("contriburl", "path", names(dirs))
 

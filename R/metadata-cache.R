@@ -23,7 +23,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' ```
 #' cmc <- cranlike_metadata_cache$new(
 #'   primary_path = NULL, replica_path = tempfile(),
-#'   platforms = default_platforms(), r_version = current_r_version(),
+#'   platforms = default_platforms(), r_version = getRversion(),
 #'   bioc = TRUE, cran_mirror = default_cran_mirror(),
 #'   repos = getOption("repos"),
 #'   update_after = as.difftime(7, units = "days"))
@@ -169,7 +169,7 @@ cranlike_metadata_cache <- R6Class(
     initialize = function(primary_path = NULL,
                           replica_path = tempfile(),
                           platforms = default_platforms(),
-                          r_version = current_r_version(), bioc = TRUE,
+                          r_version = getRversion(), bioc = TRUE,
                           cran_mirror = default_cran_mirror(),
                           repos = getOption("repos"),
                           update_after = as.difftime(7, units = "days"))
@@ -268,6 +268,7 @@ cmc_init <- function(self, private, primary_path, replica_path, platforms,
                      r_version, bioc, cran_mirror, repos, update_after) {
 
   "!!DEBUG Init metadata cache in '`replica_path`'"
+  r_version <- as.character(r_version)
   private$primary_path <- primary_path %||% get_user_cache_dir()$root
   private$replica_path <- replica_path
   private$platforms <- platforms
@@ -431,6 +432,7 @@ cmc__get_cache_files <- function(self, private, which) {
   pkgs_files2 <- file.path(pkgs_dirs, "PACKAGES")
   mirror <- rep(private$repos$url, each = nrow(private$dirs))
   type <- rep(private$repos$type, each = nrow(private$dirs))
+  r_version <- rep(private$dirs$rversion, nrow(private$repos))
   bioc_version <- rep(private$repos$bioc_version, each = nrow(private$dirs))
 
   pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
@@ -460,6 +462,7 @@ cmc__get_cache_files <- function(self, private, which) {
       fallback_url = paste0(mirror, "/", pkgs_files2),
       platform = rep(private$dirs$platform, nrow(private$repos)),
       type = type,
+      r_version = r_version,
       bioc_version = bioc_version,
       meta_path = meta_path,
       meta_etag = meta_etag,
@@ -680,9 +683,44 @@ cmc__update_replica_pkgs <- function(self, private) {
     path = c(pkgs$path, pkgs$meta_path[meta]),
     etag = c(pkgs$etag, pkgs$meta_etag[meta]),
     timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta))),
-    mayfail = rep(c(FALSE, TRUE), c(nrow(pkgs), sum(meta))))
+    mayfail = TRUE
+  )
 
-  download_files(dls)
+  download_files(dls)$
+    then(function(result) {
+      missing_pkgs_note(pkgs, result)
+      result
+    })
+}
+
+# E.g. "R 4.1 macos packages are missing from CRAN and Bioconductor"
+
+missing_pkgs_note <- function(pkgs, result) {
+  bad <- vlapply(result[seq_len(nrow(pkgs))], inherits, "error")
+  if (!any(bad)) return()
+
+  repo_name <- function(type, url) {
+    if (type == "cran") return("CRAN")
+    if (type == "bioc") return("Bioconductor")
+    sub("^https?://([^/]*).*$", "\\1", url)
+  }
+
+  msgs <- lapply(which(bad), function(i) {
+    list(
+      paste0(
+        if (pkgs$r_version[i] != "*") paste0("R ", pkgs$r_version[i], " "),
+        pkgs$platform[i]
+      ),
+      repo_name(pkgs$type[i], pkgs$mirror[i])
+    )
+  })
+
+  what <- vcapply(msgs, "[[", 1)
+  where <- vcapply(msgs, "[[", 2)
+  for (wt in unique(what)) {
+    wh <- unique(where[what == wt])
+    cli_alert_info("{wt} package are missing from {wh}")
+  }
 }
 
 #' Update the replica RDS from the PACKAGES files
@@ -864,26 +902,27 @@ cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
     name = names(repos),
     url = unname(repos),
     type = ifelse(names(repos) == "CRAN", "cran", "cranlike"),
-    bioc_version = NA_character_)
+    r_version = "*",
+    bioc_version = NA_character_
+  )
 
   if (bioc) {
-    bioc_version <- as.character(bioconductor$get_bioc_version(r_version))
-    bioc_repos <- bioconductor$get_repos(bioc_version)
+    for (rver in r_version) {
+      bioc_version <- as.character(bioconductor$get_bioc_version(rver))
+      bioc_repos <- bioconductor$get_repos(bioc_version)
 
-    miss <- setdiff(names(bioc_repos), res$name)
-    bioc_res <- tibble(
-      name = miss,
-      url = unname(bioc_repos[miss]),
-      type = "bioc",
-      bioc_version = bioc_version
-    )
-    res <- rbind(res, bioc_res)
-    res$type[res$name %in% names(bioc_repos)] <- "bioc"
-    res$bioc_version[res$name %in% names(bioc_repos)] <- bioc_version
+      bioc_res <- tibble(
+        name = names(bioc_repos),
+        url = unname(bioc_repos),
+        type = "bioc",
+        r_version = rver,
+        bioc_version = bioc_version
+      )
+      res <- rbind(res, bioc_res)
+    }
   }
 
   res <- res[!duplicated(res$url), ]
-  res <- res[!duplicated(res$name), ]
 
   res
 }

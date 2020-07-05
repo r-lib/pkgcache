@@ -1,6 +1,18 @@
 
 # development version
 
+* New `repo_status()` function to query the status and response time
+  of CRAN-like repositories.
+
+* New `bioc_version()` and `bioc_version_map()` functions to query
+  Bioconductor repositories.
+
+* pkgcache now does not fail if some repositories do not provide
+  some package types.
+
+* New `current_r_platform()`, `default_cran_mirror()` and
+  `default_platforms()` functions.
+
 * pkgcache now works for R 4.0.x macOS binaries.
 
 # pkgcache 1.0.7

@@ -35,7 +35,7 @@ test_that("cmc__get_repos", {
   expect_equal(
     cmc__get_repos(repos, FALSE, cran_mirror = "good", r_version = "3.5"),
     tibble(name = "CRAN", url = "good", type = "cran",
-           bioc_version = NA_character_)
+           r_version = "*", bioc_version = NA_character_)
   )
 
   ## BioC, all new
@@ -54,33 +54,13 @@ test_that("cmc__get_repos", {
   res <- cmc__get_repos(repos, TRUE, "good", r_version = "3.5")
   expect_equal(
     res$name,
-    c("CRAN", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
+    c("CRAN", "BioCsoft", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
   expect_equal(res$url[1], "good")
   expect_equal(res$url[2], "ok")
-  expect_equal(res$type, c("cran", "bioc", "bioc", "bioc", "bioc"))
+  expect_equal(res$type, c("cran", "cranlike", "bioc", "bioc", "bioc", "bioc"))
   expect_equal(
     res$bioc_version,
-    c(NA_character_, "3.8", "3.8", "3.8", "3.8"))
-})
-
-test_that("download failures", {
-
-  skip_if_offline()
-  skip_on_cran()
-
-  dir.create(pri <- fs::path_norm(tempfile()))
-  on.exit(unlink(pri, recursive = TRUE), add = TRUE)
-  dir.create(rep <- fs::path_norm(tempfile()))
-  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
-
-  cmc <- cranlike_metadata_cache$new(
-    pri, rep, "source", bioc = FALSE,
-    cran_mirror = "http://127.0.0.1:23424/")
-
-  expect_error(
-    expect_message(cmc$update(), "Metadata download failed"))
-  expect_error(cmc$get_update())
-  expect_error(cmc$list())
+    c(NA_character_, NA_character_, "3.8", "3.8", "3.8", "3.8"))
 })
 
 test_that("cleanup", {

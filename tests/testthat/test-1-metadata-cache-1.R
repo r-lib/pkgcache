@@ -21,9 +21,11 @@ test_that("get_cache_files", {
     expect_true(tibble::is_tibble(files$pkgs))
     expect_equal(
       sort(names(files$pkgs)),
-      sort(c("path", "etag", "basedir", "base", "mirror", "url", "fallback_url",
-             "platform", "type", "bioc_version", "meta_path", "meta_etag",
-             "meta_url")))
+      sort(c("path", "etag", "basedir", "base", "mirror", "url",
+             "fallback_url", "platform", "r_version", "type",
+             "bioc_version", "meta_path", "meta_etag", "meta_url"
+      ))
+    )
     expect_equal(
       fs::path_common(c(files$pkgs$path, files$pkgs$etag, root)),
       root)

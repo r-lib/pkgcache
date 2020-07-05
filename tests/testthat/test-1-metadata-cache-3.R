@@ -63,26 +63,6 @@ test_that("cmc__get_repos", {
     c(NA_character_, NA_character_, "3.8", "3.8", "3.8", "3.8"))
 })
 
-test_that("download failures", {
-
-  skip_if_offline()
-  skip_on_cran()
-
-  dir.create(pri <- fs::path_norm(tempfile()))
-  on.exit(unlink(pri, recursive = TRUE), add = TRUE)
-  dir.create(rep <- fs::path_norm(tempfile()))
-  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
-
-  cmc <- cranlike_metadata_cache$new(
-    pri, rep, "source", bioc = FALSE,
-    cran_mirror = "http://127.0.0.1:23424/")
-
-  expect_error(
-    expect_message(cmc$update(), "Metadata download failed"))
-  expect_error(cmc$get_update())
-  expect_error(cmc$list())
-})
-
 test_that("cleanup", {
   mockery::stub(cmc_cleanup, "interactive", FALSE)
   expect_error(cmc_cleanup(NULL, NULL, FALSE), "Not cleaning up cache")

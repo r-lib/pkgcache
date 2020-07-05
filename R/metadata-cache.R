@@ -432,6 +432,7 @@ cmc__get_cache_files <- function(self, private, which) {
   pkgs_files2 <- file.path(pkgs_dirs, "PACKAGES")
   mirror <- rep(private$repos$url, each = nrow(private$dirs))
   type <- rep(private$repos$type, each = nrow(private$dirs))
+  r_version <- rep(private$dirs$rversion, nrow(private$repos))
   bioc_version <- rep(private$repos$bioc_version, each = nrow(private$dirs))
 
   pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
@@ -461,6 +462,7 @@ cmc__get_cache_files <- function(self, private, which) {
       fallback_url = paste0(mirror, "/", pkgs_files2),
       platform = rep(private$dirs$platform, nrow(private$repos)),
       type = type,
+      r_version = r_version,
       bioc_version = bioc_version,
       meta_path = meta_path,
       meta_etag = meta_etag,
@@ -681,9 +683,44 @@ cmc__update_replica_pkgs <- function(self, private) {
     path = c(pkgs$path, pkgs$meta_path[meta]),
     etag = c(pkgs$etag, pkgs$meta_etag[meta]),
     timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta))),
-    mayfail = rep(c(FALSE, TRUE), c(nrow(pkgs), sum(meta))))
+    mayfail = TRUE
+  )
 
-  download_files(dls)
+  download_files(dls)$
+    then(function(result) {
+      missing_pkgs_note(pkgs, result)
+      result
+    })
+}
+
+# E.g. "R 4.1 macos packages are missing from CRAN and Bioconductor"
+
+missing_pkgs_note <- function(pkgs, result) {
+  bad <- vlapply(result[seq_len(nrow(pkgs))], inherits, "error")
+  if (!any(bad)) return()
+
+  repo_name <- function(type, url) {
+    if (type == "cran") return("CRAN")
+    if (type == "bioc") return("Bioconductor")
+    sub("^https?://([^/]*).*$", "\\1", url)
+  }
+
+  msgs <- lapply(which(bad), function(i) {
+    list(
+      paste0(
+        if (pkgs$r_version[i] != "*") paste0("R ", pkgs$r_version[i], " "),
+        pkgs$platform[i]
+      ),
+      repo_name(pkgs$type[i], pkgs$mirror[i])
+    )
+  })
+
+  what <- vcapply(msgs, "[[", 1)
+  where <- vcapply(msgs, "[[", 2)
+  for (wt in unique(what)) {
+    wh <- unique(where[what == wt])
+    cli_alert_info("{wt} package are missing from {wh}")
+  }
 }
 
 #' Update the replica RDS from the PACKAGES files

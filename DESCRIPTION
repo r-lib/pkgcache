@@ -27,7 +27,6 @@ Imports:
     processx (>= 3.3.0.9001),
     rappdirs,
     rlang,
-    stats,
     tibble,
     tools,
     utils,

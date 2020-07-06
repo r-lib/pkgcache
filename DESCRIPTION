@@ -41,6 +41,7 @@ Suggests:
     pingr,
     presser,
     rprojroot,
+    sessioninfo,
     testthat,
     withr
 Depends: 

@@ -3117,7 +3117,7 @@ run_process <- mark_as_async(run_process)
 
 run_r_process <- function(func, args = list(), libpath = .libPaths(),
   repos = c(getOption("repos"), c(CRAN = "https://cloud.r-project.org")),
-  cmdargs = c("--no-site-file", "--slave", "--no-save", "--no-restore"),
+  cmdargs = c("--no-site-file", "-s", "--no-save", "--no-restore"),
   system_profile = FALSE, user_profile = FALSE, env = rcmd_safe_env()) {
 
   func; args; libpath; repos; cmdargs; system_profile; user_profile; env

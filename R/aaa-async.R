@@ -3904,7 +3904,7 @@ call_with_callback <- function(func, callback, info = NULL) {
       error = function(e) {
         recerror <<- e
         recerror$aframe <<- recerror$aframe %||% find_async_data_frame()
-        recerror$calls <<- recerror$calls %||% sys.calls()
+        recerror$call <<- recerror$call %||% sys.calls()
         recerror$parents <<- recerror$parents %||% sys.parents()
         recerror[names(info)] <<- info
         handler <- getOption("async.error")

@@ -1,6 +1,9 @@
 
 # Development version
 
+* `package_cache` now does not fail if the web server does not send an
+  `Etag` header when downloading packages.
+
 # 1.1.0
 
 * New `repo_status()` function to query the status and response time

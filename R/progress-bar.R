@@ -4,10 +4,15 @@
 create_progress_bar <- function(data) {
   bar <- new.env(parent = emptyenv())
 
-  bar$status <- cli_status(
-    "Checking {nrow(data)} metadata file{?s}",
-    .auto_close = FALSE
-  )
+  if (isTRUE(getOption("pkg.show_progress", FALSE))) {
+    bar$status <- cli_status(
+      "Checking {nrow(data)} metadata file{?s}",
+      .auto_close = FALSE
+    )
+  } else {
+    bar$status <- cli_status(character(), .auto_close = FALSE)
+  }
+
   bar$spinner <- get_spinner()
   bar$spinner_state <- 1L
 
@@ -51,7 +56,11 @@ update_progress_bar_done  <- function(bar, url) {
 #' @importFrom cli cli_status_update
 
 show_progress_bar <- function(bar) {
-  if (is.null(bar$status)) return()
+  if (is.null(bar$status) ||
+    !isTRUE(getOption("pkg.show_progress", FALSE))) {
+    return()
+  }
+
   data <- bar$data
   uptodate <- sum(data$uptodate, na.rm = TRUE)
   numfiles <- nrow(data)

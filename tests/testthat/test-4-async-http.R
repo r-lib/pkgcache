@@ -41,6 +41,7 @@ test_that("download_file", {
 })
 
 test_that("download_file, errors", {
+  skip_if_offline()
 
   tmp <- tempfile()
   expect_error(

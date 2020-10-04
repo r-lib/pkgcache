@@ -9,10 +9,10 @@ get_async_timeouts <- function(options) {
     if (!is.na(v <- Sys.getenv(toupper(anm), NA_character_))) return (v)
   }
   list(
-    timeout = as.integer(getopt("timeout") %||% 3600),
-    connecttimeout = as.integer(getopt("connecttimeout") %||% 30),
-    low_speed_time = as.integer(getopt("low_speed_time") %||% 30),
-    low_speed_limit = as.integer(getopt("low_speed_limit") %||% 100)
+    timeout = as.integer(getopt("timeout") %||% 0),
+    connecttimeout = as.integer(getopt("connecttimeout") %||% 300),
+    low_speed_time = as.integer(getopt("low_speed_time") %||% 0),
+    low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0)
   )
 }
 

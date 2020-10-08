@@ -4,6 +4,12 @@
 * `package_cache` now does not fail if the web server does not send an
   `Etag` header when downloading packages.
 
+* `package_cache` has now much relaxed HTTP timeouts, and handles
+  downloading many packages (slowly) much better.
+
+* The package download progress bar can now be supressed by setting
+  the `pkg.show_progress` option to `FALSE`.
+
 # 1.1.0
 
 * New `repo_status()` function to query the status and response time

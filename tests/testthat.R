@@ -3,4 +3,4 @@ library(pkgcache)
 
 sessioninfo::package_info("pkgcache", dependencies = TRUE)
 
-test_check("pkgcache", reporter = "summary")
+test_check("pkgcache")

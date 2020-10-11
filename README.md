@@ -5,15 +5,14 @@
 
 > Cache CRAN-like metadata and package files
 
+<!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.org/package=pkgcache)
-[![Travis build
-status](https://travis-ci.org/r-lib/pkgcache.svg?branch=master)](https://travis-ci.org/r-lib/pkgcache)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/r-lib/pkgcache?branch=master&svg=true)](https://ci.appveyor.com/project/r-lib/pkgcache)
+[![R build status](https://github.com/r-lib/pkgcache/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/pkgcache/actions)
 [![Coverage
 status](https://codecov.io/gh/r-lib/pkgcache/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=master)
+<!-- badges: end -->
 
 Metadata and package cache for CRAN-like repositories. This is a utility
 package to be used by package management tools that want to take

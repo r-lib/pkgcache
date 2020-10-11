@@ -188,7 +188,7 @@ configure pkgcache’s Bioconductor support.
     environment variables, if they are set.
   - `R_PKG_CACHE_DIR` is used for the cache directory, if set.
     (Otherwise `rappdirs::user_cache_dir()` is used, see also
-    `meta_cache_summary()` and `pkg_cache_summary()`.
+    `meta_cache_summary()` and `pkg_cache_summary()`).
 
 ## Code of Conduct
 

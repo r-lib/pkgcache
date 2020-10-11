@@ -164,7 +164,7 @@ curl options. The \code{pkgcache_low_speed_time} and
 environment variables, if they are set.
 \item \code{R_PKG_CACHE_DIR} is used for the cache directory, if set.
 (Otherwise \code{rappdirs::user_cache_dir()} is used, see also
-\code{meta_cache_summary()} and \code{pkg_cache_summary()}.
+\code{meta_cache_summary()} and \code{pkg_cache_summary()}).
 }
 }
 

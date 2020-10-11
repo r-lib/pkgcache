@@ -6,10 +6,12 @@
 > Cache CRAN-like metadata and package files
 
 <!-- badges: start -->
+
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.org/package=pkgcache)
-[![R build status](https://github.com/r-lib/pkgcache/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/pkgcache/actions)
+[![R build
+status](https://github.com/r-lib/pkgcache/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/pkgcache/actions)
 [![Coverage
 status](https://codecov.io/gh/r-lib/pkgcache/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=master)
 <!-- badges: end -->
@@ -184,6 +186,9 @@ configure pkgcache’s Bioconductor support.
     curl options. The `pkgcache_low_speed_time` and
     `pkgcache_low_speed_limit` options have priority over these
     environment variables, if they are set.
+  - `R_PKG_CACHE_DIR` is used for the cache directory, if set.
+    (Otherwise `rappdirs::user_cache_dir()` is used, see also
+    `meta_cache_summary()` and `pkg_cache_summary()`.
 
 ## Code of Conduct
 

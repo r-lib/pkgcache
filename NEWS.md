@@ -1,5 +1,5 @@
 
-# Development version
+# pkgcache 1.1.1
 
 * `package_cache` now does not fail if the web server does not send an
   `Etag` header when downloading packages.
@@ -10,7 +10,7 @@
 * The package download progress bar can now be supressed by setting
   the `pkg.show_progress` option to `FALSE`.
 
-# 1.1.0
+# pkgcache 1.1.0
 
 * New `repo_status()` function to query the status and response time
   of CRAN-like repositories.

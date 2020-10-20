@@ -719,7 +719,7 @@ missing_pkgs_note <- function(pkgs, result) {
   where <- vcapply(msgs, "[[", 2)
   for (wt in unique(what)) {
     wh <- unique(where[what == wt])
-    cli_alert_info("{wt} package are missing from {wh}")
+    cli_alert_info("{wt} packages are missing from {wh}")
   }
 }
 

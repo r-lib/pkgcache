@@ -1,6 +1,8 @@
 
 # pkgcache development version
 
+* Failed metadata downloads now do not trigger metadata updates (#52).
+
 # pkgcache 1.1.1
 
 * `package_cache` now does not fail if the web server does not send an

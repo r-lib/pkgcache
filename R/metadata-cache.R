@@ -351,7 +351,7 @@ cmc_async_check_update <- function(self, private) {
       pkg_times <- file_get_time(rep_files$pkgs$path)
       if (! file.exists(rep_files$rds) ||
           any(file_get_time(rep_files$rds) < pkg_times) ||
-          any(stat != 304)) {
+          any(stat < 300)) {
         private$update_replica_rds(alert = FALSE)
         private$update_primary()
         private$data

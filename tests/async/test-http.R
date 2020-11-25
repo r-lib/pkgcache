@@ -128,10 +128,6 @@ test_that("http progress bars & etags", {
 
 test_that("progress bar for in-memory data", {
 
-  if (packageVersion("presser") <= "1.0.0") {
-    skip("Needs newer presser package")
-  }
-
   u1 <- http$url("/stream-bytes/2048", c(chunk_size=1024))
 
   called <- 0L
@@ -165,10 +161,6 @@ test_that("error, invalid arg", {
 
 test_that("automatic cancellation", {
 
-  if (packageVersion("presser") <= "1.0.0") {
-    skip("Needs newer presser package")
-  }
-
   called <- 0L
   do <- function() {
     r1 <- http_get(http$url("/delay/5"))$
@@ -195,10 +187,6 @@ test_that("http_status",  {
 
 test_that("timeout, failed request", {
 
-  if (packageVersion("presser") <= "1.0.0") {
-    skip("Needs newer presser package")
-  }
-
   do <- function() {
     http_get(http$url("/delay/5"), options = list(timeout = 1))
   }
@@ -224,10 +212,6 @@ test_that("timeout, failed request", {
 })
 
 test_that("more sophisticated timeouts", {
-
-  if (packageVersion("presser") <= "1.0.0") {
-    skip("Needs newer presser")
-  }
 
   do <- function() {
     withr::local_options(list(

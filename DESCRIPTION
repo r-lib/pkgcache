@@ -39,11 +39,13 @@ Suggests:
     jsonlite,
     mockery,
     pingr,
-    presser,
+    webfakes,
     rprojroot,
     sessioninfo,
     testthat,
     withr
+Remotes:
+    r-lib/webfakes
 Depends: 
     R (>= 3.1)
 Roxygen: list(packages = "roxygenlabs", markdown = TRUE, r6 = FALSE)

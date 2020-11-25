@@ -3,10 +3,6 @@ context("early cancellation")
 
 test_that("auto-cancellation", {
 
-  if (packageVersion("presser") <= "1.0.0") {
-    skip("Needs newer presser")
-  }
-
   httpx <- NULL
   idx <- 0
 

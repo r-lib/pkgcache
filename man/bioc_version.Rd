@@ -3,16 +3,29 @@
 \name{bioc_version}
 \alias{bioc_version}
 \alias{bioc_version_map}
+\alias{bioc_devel_version}
+\alias{bioc_release_version}
+\alias{bioc_repos}
 \title{Query Bioconductor version information}
 \usage{
 bioc_version(r_version = getRversion(), forget = FALSE)
 
 bioc_version_map(forget = FALSE)
+
+bioc_devel_version(forget = FALSE)
+
+bioc_release_version(forget = FALSE)
+
+bioc_repos(bioc_version = "auto", forget = FALSE)
 }
 \arguments{
 \item{r_version}{The R version number to match.}
 
 \item{forget}{Use \code{TRUE} to avoid caching the Bioconductor mapping.}
+
+\item{bioc_version}{Bioconductor version string or \code{package_version}
+object, or the string \code{"auto"} to use the one matching the current R
+version.}
 }
 \value{
 \code{bioc_version()} returns a \link{package_version} object.
@@ -24,17 +37,37 @@ bioc_version_map(forget = FALSE)
 \item \code{bioc_status}: factor, with levels: \code{out-of-date}, \code{release},
 \code{devel}, \code{future}.
 }
+
+\code{bioc_devel_version()} returns a \link{package_version} object.
+
+\code{bioc_release_version()} returns a \link{package_version} object.
+
+\code{bioc_repos()} returns a named character vector.
 }
 \description{
-\code{bioc_version()} queries the matching Bioconductor version for
-and R version, defaulting to the current R version
+Various helper functions to deal with Bioconductor repositories.
+See https://www.bioconductor.org/ for more infornation on
+Bioconductor.
 }
-\section{Functions}{
-\itemize{
-\item \code{bioc_version_map}: \code{bioc_version_map()} returns the current mapping between R versions
-and Bioconductor versions.
-}}
+\details{
+\code{bioc_version()} queries the matching Bioconductor version for
+an R version, defaulting to the current R version
 
+\code{bioc_version_map()} returns the current mapping between R versions
+and Bioconductor versions.
+
+\code{bioc_devel_version()} returns the version number of the current
+Bioconductor devel version.
+
+\code{bioc_release_version()} returns the version number of the current
+Bioconductor release.
+
+\code{bioc_repos()} returns the Bioconductor repository URLs.
+
+See the \code{BioC_mirror} option and the \code{R_BIOC_MIRROR} and
+\code{R_BIOC_VERSION} environment variables in the \link{pkgcache} manual page.
+They can be used to customize the desired Bioconductor version.
+}
 \examples{
 \dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 bioc_version()
@@ -43,5 +76,14 @@ bioc_version("4.1")
 \dontshow{\}) # examplesIf}
 \dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 bioc_version_map()
+\dontshow{\}) # examplesIf}
+\dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+bioc_devel_version()
+\dontshow{\}) # examplesIf}
+\dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+bioc_release_version()
+\dontshow{\}) # examplesIf}
+\dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+bioc_repos()
 \dontshow{\}) # examplesIf}
 }

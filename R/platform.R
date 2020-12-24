@@ -61,8 +61,12 @@ default_cran_mirror <- function() {
 
 #' Query Bioconductor version information
 #'
+#' Various helper functions to deal with Bioconductor repositories.
+#' See https://www.bioconductor.org/ for more infornation on
+#' Bioconductor.
+#'
 #' `bioc_version()` queries the matching Bioconductor version for
-#' and R version, defaulting to the current R version
+#' an R version, defaulting to the current R version
 #'
 #' @param r_version The R version number to match.
 #' @param forget Use `TRUE` to avoid caching the Bioconductor mapping.
@@ -78,8 +82,7 @@ bioc_version <- function(r_version = getRversion(), forget = FALSE) {
   bioconductor$get_bioc_version(r_version, forget)
 }
 
-#' @describeIn bioc_version
-#'
+#' @details
 #' `bioc_version_map()` returns the current mapping between R versions
 #' and Bioconductor versions.
 #'
@@ -89,10 +92,63 @@ bioc_version <- function(r_version = getRversion(), forget = FALSE) {
 #' * `bioc_status`: factor, with levels: `out-of-date`, `release`,
 #'   `devel`, `future`.
 #'
+#' @rdname bioc_version
+#'
 #' @export
 #' @examplesIf pkgcache:::is_online()
 #' bioc_version_map()
 
 bioc_version_map <- function(forget = FALSE) {
   tibble::as_tibble(bioconductor$get_version_map(forget))
+}
+
+#' @details
+#' `bioc_devel_version()` returns the version number of the current
+#' Bioconductor devel version.
+#'
+#' @return `bioc_devel_version()` returns a [package_version] object.
+#' @rdname bioc_version
+#'
+#' @export
+#' @examplesIf pkgcache:::is_online()
+#' bioc_devel_version()
+
+bioc_devel_version <- function(forget = FALSE) {
+  bioconductor$get_devel_version(forget)
+}
+
+#' @details
+#' `bioc_release_version()` returns the version number of the current
+#' Bioconductor release.
+#'
+#' @return `bioc_release_version()` returns a [package_version] object.
+#' @rdname bioc_version
+#'
+#' @export
+#' @examplesIf pkgcache:::is_online()
+#' bioc_release_version()
+
+bioc_release_version <- function(forget = FALSE) {
+  bioconductor$get_release_version(forget)
+}
+
+#' @details
+#' `bioc_repos()` returns the Bioconductor repository URLs.
+#'
+#' See the `BioC_mirror` option and the `R_BIOC_MIRROR` and
+#' `R_BIOC_VERSION` environment variables in the [pkgcache] manual page.
+#' They can be used to customize the desired Bioconductor version.
+#'
+#' @param bioc_version Bioconductor version string or `package_version`
+#'   object, or the string `"auto"` to use the one matching the current R
+#'   version.
+#'
+#' @return `bioc_repos()` returns a named character vector.
+#' @rdname bioc_version
+#' @export
+#' @examplesIf pkgcache:::is_online()
+#' bioc_repos()
+
+bioc_repos <- function(bioc_version = "auto", forget = FALSE) {
+  bioconductor$get_repos(bioc_version, forget)
 }

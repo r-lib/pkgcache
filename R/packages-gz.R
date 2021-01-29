@@ -179,7 +179,11 @@ packages_make_sources <- function(mirror, platform, target, repodir,
 
   url <- paste0(mirror, "/", target)
 
-  if (type != "cran" || platform != "source") {
+  if (type == "cran" && platform == "macos") {
+    macurl <- paste0("https://mac.r-project.org/", target)
+    zip_vecs(url, macurl)
+
+  } else if (type != "cran" || platform != "source") {
     as.list(url)
 
   } else {

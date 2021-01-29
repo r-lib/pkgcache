@@ -41,8 +41,9 @@ test_that("packages_make_sources", {
     packages_make_sources(
       "URL", "macos", c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
       c("p1", "p2"), c("1.0", "2.0"), type = "cran"),
-    list("URL/s/c/p1_1.0.tgz", "URL/s/c/p2_2.0.tgz")
-  )
+    list(c("URL/s/c/p1_1.0.tgz", "https://mac.r-project.org/s/c/p1_1.0.tgz"),
+         c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")
+  ))
 
   expect_equal(
     packages_make_sources(

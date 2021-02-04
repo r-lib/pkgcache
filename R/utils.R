@@ -219,3 +219,13 @@ is_online <- function() {
   if (is_rcmd_check()) return(FALSE)
   curl::has_internet()
 }
+
+modify_vec <- function(old, new) {
+  old <- as.list(old)
+  new <- as.list(new)
+  unlist(utils::modifyList(old, new))
+}
+
+last <- function(x) {
+  x[[length(x)]]
+}

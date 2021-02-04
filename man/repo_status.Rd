@@ -68,3 +68,8 @@ rst <- repo_status(
 summary(rst)
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+Other repository functions: 
+\code{\link{repo_get}()}
+}
+\concept{repository functions}

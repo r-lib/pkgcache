@@ -898,10 +898,15 @@ extract_revdeps <- function(pkgs, packages, dependencies, recursive) {
 cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
   repos[["CRAN"]] <- cran_mirror
   repos <- unlist(repos)
+  bioc_names <- bioconductor$get_repos()
   res <- tibble(
     name = names(repos),
     url = unname(repos),
-    type = ifelse(names(repos) == "CRAN", "cran", "cranlike"),
+    type = ifelse(
+      names(repos) == "CRAN",
+      "cran",
+      ifelse(names(repos) %in% bioc_names, "bioc", "cranlike")
+    ),
     r_version = "*",
     bioc_version = NA_character_
   )

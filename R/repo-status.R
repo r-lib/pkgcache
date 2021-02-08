@@ -38,6 +38,7 @@
 #' * `error`: the error object if the HTTP query failed for this
 #'   repository, platform and R version.
 #'
+#' @family repository functions
 #' @export
 #' @examplesIf pkgcache:::is_online()
 #' repo_status()

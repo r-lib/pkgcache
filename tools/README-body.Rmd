@@ -30,6 +30,13 @@ install.packages("pkgcache")
 Bioconductor package, and all versions (i.e. both binary and source)
 of the packages for the current platform and R version.
 
+```{r include = FALSE}
+# If we don't do this, then Unicode characters end up in documentation
+# files.
+library(pkgcache)
+meta_cache_list()
+```
+
 ```{r}
 library(pkgcache)
 meta_cache_list()
@@ -131,4 +138,4 @@ By contributing to this project, you agree to abide by its terms.
 
 ## License
 
-MIT © [RStudio Inc](https://rstudio.com)
+MIT (c) [RStudio Inc](https://rstudio.com)

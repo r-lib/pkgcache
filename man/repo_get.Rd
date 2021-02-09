@@ -85,9 +85,10 @@ to keep.)
 evaluates \code{expr}, and then resets the configured repositories.
 }
 \section{Repository specifications}{
-The format of a repository specification is be a named or unnamed
+The format of a repository specification is a named or unnamed
 character scalar. If the name is missing, pkgcache adds a name
-automatically. The name is informational.
+automatically. The repository named \code{CRAN} is the main CRAN repository,
+but otherwise names are informational.
 
 Currently supported repository specifications:
 \itemize{
@@ -119,7 +120,7 @@ available date is used.
 will trigger an error.
 \item Dates before the first, or after the last MRAN snapshot will trigger
 an error.
-\item Unknown R versions will trigger an error.
+\item Unknown R or package versions will trigger an error.
 }
 }
 

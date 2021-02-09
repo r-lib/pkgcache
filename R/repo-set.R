@@ -332,9 +332,10 @@ next_day <- function(x) {
 #' @details
 #' # Repository specifications
 #'
-#' The format of a repository specification is be a named or unnamed
+#' The format of a repository specification is a named or unnamed
 #' character scalar. If the name is missing, pkgcache adds a name
-#' automatically. The name is informational.
+#' automatically. The repository named `CRAN` is the main CRAN repository,
+#' but otherwise names are informational.
 #'
 #' Currently supported repository specifications:
 #' - URL pointing to the root of the CRAN-like repository. Example:
@@ -366,6 +367,6 @@ next_day <- function(x) {
 #'   will trigger an error.
 #' * Dates before the first, or after the last MRAN snapshot will trigger
 #'   an error.
-#' * Unknown R versions will trigger an error.
+#' * Unknown R or package versions will trigger an error.
 #'
 NULL

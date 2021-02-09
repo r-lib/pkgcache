@@ -7,7 +7,11 @@
 \alias{with_repo}
 \title{Query and set the list of CRAN-like repositories}
 \usage{
-repo_get()
+repo_get(
+  r_version = getRversion(),
+  bioc = TRUE,
+  cran_mirror = default_cran_mirror()
+)
 
 repo_resolve(spec)
 
@@ -16,6 +20,15 @@ repo_add(..., .list = NULL)
 with_repo(repos, expr)
 }
 \arguments{
+\item{r_version}{R version(s) to use for the Bioconductor repositories,
+if \code{bioc} is \code{TRUE}.}
+
+\item{bioc}{Whether to add Bioconductor repositories, even if they
+are not configured in the \code{repos} option.}
+
+\item{cran_mirror}{The CRAN mirror to use, see
+\code{\link[=default_cran_mirror]{default_cran_mirror()}}.}
+
 \item{spec}{A single repository specification, a possibly named
 character scalar. See details below.}
 

@@ -10,6 +10,13 @@
 #' `repos` option (see [options]), and also the default Bioconductor
 #' repository.
 #'
+#' @param bioc Whether to add Bioconductor repositories, even if they
+#' are not configured in the `repos` option.
+#' @param r_version R version(s) to use for the Bioconductor repositories,
+#' if `bioc` is `TRUE`.
+#' @param cran_mirror The CRAN mirror to use, see
+#'   [default_cran_mirror()].
+#' 
 #' @return
 #' `repo_get()` returns a data frame with columns:
 #' * `name`: repository name. Names are informational only.
@@ -30,16 +37,13 @@
 #' @examples
 #' repo_get()
 
-repo_get <- function() {
-  repos <- unlist(getOption("repos"))
-  if (is.na(repos["CRAN"]) || repos["CRAN"] == "@CRAN@") {
-    repos["CRAN"] <- default_cran_mirror()
-  }
+repo_get <- function(r_version = getRversion(), bioc = TRUE,
+                     cran_mirror = default_cran_mirror()) {
   cmc__get_repos(
-    repos,
-    bioc = TRUE,
-    cran_mirror = repos["CRAN"],
-    as.character(getRversion())
+    getOption("repos"),
+    bioc = bioc,
+    cran_mirror = cran_mirror,
+    as.character(r_version)
   )
 }
 

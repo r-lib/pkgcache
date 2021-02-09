@@ -27,26 +27,25 @@ You can install the released version of pkgcache from
 includes Bioconductor package, and all versions (i.e. both binary and
 source) of the packages for the current platform and R version.\if{html}{\out{<div class="r">}}\preformatted{library(pkgcache)
 meta_cache_list()
-#> # A tibble: 36,184 x 33
-#>    package title version depends suggests built imports archs repodir platform
-#>    <chr>   <chr> <chr>   <chr>   <chr>    <chr> <chr>   <chr> <chr>   <chr>   
-#>  1 A3      "Acc~ 1.0.0   R (>= ~ randomF~ R 3.~  <NA>   <NA>  bin/ma~ macos   
-#>  2 aaSEA   "Ami~ 1.1.0   R(>= 3~ knitr, ~ R 3.~ "DT(>=~ <NA>  bin/ma~ macos   
-#>  3 ABACUS  "App~ 1.0.0   R (>= ~ rmarkdo~ R 3.~ "ggplo~ <NA>  bin/ma~ macos   
-#>  4 abbyyR  "Acc~ 0.5.5   R (>= ~ testtha~ R 3.~ "httr,~ <NA>  bin/ma~ macos   
-#>  5 abc.da~ "Dat~ 1.0     R (>= ~ <NA>     R 3.~  <NA>   <NA>  bin/ma~ macos   
-#>  6 ABC.RAP "Arr~ 0.9.0   R (>= ~ knitr, ~ R 3.~ "graph~ <NA>  bin/ma~ macos   
-#>  7 abc     "Too~ 2.1     R (>= ~ <NA>     R 3.~  <NA>   <NA>  bin/ma~ macos   
-#>  8 abcADM  "Fit~ 1.0     <NA>    <NA>     R 3.~ "Rcpp ~ abcA~ bin/ma~ macos   
-#>  9 ABCana~ "Com~ 1.2.1   R (>= ~ <NA>     R 3.~ "plotr~ <NA>  bin/ma~ macos   
-#> 10 abcdeF~ "ABC~ 0.4     Rglpk,~ LIM,syb~ R 3.~  <NA>   <NA>  bin/ma~ macos   
-#> # ... with 36,174 more rows, and 23 more variables: rversion <chr>,
-#> #   needscompilation <chr>, priority <chr>, ref <chr>, type <chr>,
-#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>, sources <list>,
-#> #   filesize <int>, sha256 <chr>, sysreqs <chr>, published <dttm>, deps <list>,
-#> #   license <chr>, md5sum <chr>, linkingto <chr>, enhances <chr>,
-#> #   license_restricts_use <chr>, os_type <chr>, license_is_foss <chr>,
-#> #   path <chr>
+#> # A tibble: 39,687 x 32
+#>    package version depends suggests license imports linkingto archs enhances
+#>    <chr>   <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
+#>  1 A3      1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
+#>  2 AATtoo~ 0.0.1   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA>  <NA>    
+#>  3 ABACUS  1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  4 ABC.RAP 0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA>  <NA>    
+#>  5 ABCana~ 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA>  <NA>    
+#>  6 ABCopt~ 0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
+#>  7 ABCp2   1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
+#>  8 ABHgen~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  9 ABPS    0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
+#> 10 ACA     1.1     R (>= ~ <NA>     GPL     graphi~ <NA>      <NA>  <NA>    
+#> # ... with 39,677 more rows, and 23 more variables: os_type <chr>,
+#> #   priority <chr>, license_restricts_use <chr>, license_is_foss <chr>,
+#> #   repodir <chr>, platform <chr>, rversion <chr>, needscompilation <chr>,
+#> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
+#> #   mirror <chr>, sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
+#> #   built <chr>, published <dttm>, deps <list>, md5sum <chr>, path <chr>
 }\if{html}{\out{</div>}}
 
 \code{meta_cache_deps()} and \code{meta_cache_revdeps()} can be used to look up
@@ -70,29 +69,30 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{
 #> [1] "/Users/gaborcsardi/Library/Caches/R-pkg/pkg"
 #> 
 #> $files
-#> [1] 45
+#> [1] 147
 #> 
 #> $size
-#> [1] 62270503
+#> [1] 135510553
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_list()
-#> # A tibble: 45 x 9
-#>    fullpath     path      package url      etag  sha256   version platform built
-#>    <chr>        <chr>     <chr>   <chr>    <chr> <chr>    <chr>   <chr>    <int>
-#>  1 /Users/gabo~ src/cont~ usethis <NA>      <NA> 1eb8efc~ <NA>    <NA>         0
-#>  2 /Users/gabo~ src/cont~ testth~ <NA>      <NA> b7e0682~ <NA>    <NA>         0
-#>  3 /Users/gabo~ src/cont~ waldo   <NA>      <NA> 8a33455~ <NA>    <NA>         0
-#>  4 /Users/gabo~ src/cont~ testth~ <NA>      <NA> 95f987c~ <NA>    <NA>         0
-#>  5 /Users/gabo~ src/cont~ testth~ <NA>      <NA> 7c068df~ <NA>    <NA>         0
-#>  6 /Users/gabo~ bin/maco~ polycl~ https:/~ "\"7~ f396afd~ 1.10-0  macos       NA
-#>  7 /Users/gabo~ bin/maco~ vpc     https:/~ "\"d~ ab43b8f~ 1.1.0   macos       NA
-#>  8 /Users/gabo~ bin/maco~ tweenr  https:/~ "\"f~ dc551dd~ 1.0.1   macos       NA
-#>  9 /Users/gabo~ bin/maco~ farver  https:/~ "\"1~ c8b5d2f~ 2.0.3   macos       NA
-#> 10 /Users/gabo~ bin/maco~ ggforce https:/~ "\"4~ d635860~ 0.3.1   macos       NA
-#> # ... with 35 more rows
+#> # A tibble: 147 x 9
+#>    fullpath     path      package  url     etag  sha256   version platform built
+#>    <chr>        <chr>     <chr>    <chr>   <chr> <chr>    <chr>   <chr>    <int>
+#>  1 /Users/gabo~ src/cont~ dplyr    https:~ "\"e~ 9bf68f7~ 1.0.4   source      NA
+#>  2 /Users/gabo~ bin/maco~ memoise  https:~ "\"b~ beb5b86~ 2.0.0   macos       NA
+#>  3 /Users/gabo~ bin/maco~ assertt~ https:~ "\"c~ 7d72986~ 0.2.1   macos       NA
+#>  4 /Users/gabo~ bin/maco~ codetoo~ https:~ "\"1~ 8ec65e6~ 0.2-18  macos       NA
+#>  5 /Users/gabo~ bin/maco~ brio     https:~ "\"8~ fc7e8ee~ 1.1.1   macos       NA
+#>  6 /Users/gabo~ src/cont~ parsermd <NA>     <NA> 8e0b20e~ <NA>    <NA>         0
+#>  7 /Users/gabo~ src/cont~ knitr    <NA>     <NA> d83e8de~ <NA>    <NA>         0
+#>  8 /Users/gabo~ src/cont~ downlit  <NA>     <NA> 47270f5~ <NA>    <NA>         0
+#>  9 /Users/gabo~ bin/maco~ RColorB~ https:~ "\"c~ a79f3a9~ 1.1-2   macos       NA
+#> 10 /Users/gabo~ bin/maco~ R6       https:~ "\"1~ a1740b3~ 2.5.0   macos       NA
+#> # ... with 137 more rows
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A tibble: 0 x 9
-#> # ... with 9 variables: fullpath <chr>, path <chr>, package <chr>, url <chr>,
-#> #   etag <chr>, sha256 <chr>, version <chr>, platform <chr>, built <int>
+#> # A tibble: 1 x 9
+#>   fullpath      path    package url      etag   sha256    version platform built
+#>   <chr>         <chr>   <chr>   <chr>    <chr>  <chr>     <chr>   <chr>    <int>
+#> 1 /Users/gabor~ src/co~ dplyr   https:/~ "\"e8~ 9bf68f71~ 1.0.4   source      NA
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,
@@ -176,7 +176,7 @@ By contributing to this project, you agree to abide by its terms.
 
 \subsection{License}{
 
-MIT © \href{https://rstudio.com}{RStudio Inc}
+MIT (c) \href{https://rstudio.com}{RStudio Inc}
 }
 }
 \seealso{

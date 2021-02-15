@@ -27,24 +27,25 @@ You can install the released version of pkgcache from
 includes Bioconductor package, and all versions (i.e. both binary and
 source) of the packages for the current platform and R version.\if{html}{\out{<div class="r">}}\preformatted{library(pkgcache)
 meta_cache_list()
-#> # A tibble: 39,687 x 32
-#>    package version depends suggests license imports linkingto archs enhances
-#>    <chr>   <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
-#>  1 A3      1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
-#>  2 AATtoo~ 0.0.1   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA>  <NA>    
-#>  3 ABACUS  1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
-#>  4 ABC.RAP 0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA>  <NA>    
-#>  5 ABCana~ 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA>  <NA>    
-#>  6 ABCopt~ 0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
-#>  7 ABCp2   1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
-#>  8 ABHgen~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
-#>  9 ABPS    0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
-#> 10 ACA     1.1     R (>= ~ <NA>     GPL     graphi~ <NA>      <NA>  <NA>    
-#> # ... with 39,677 more rows, and 23 more variables: os_type <chr>,
-#> #   priority <chr>, license_restricts_use <chr>, license_is_foss <chr>,
-#> #   repodir <chr>, platform <chr>, rversion <chr>, needscompilation <chr>,
-#> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
-#> #   mirror <chr>, sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
+#> # A tibble: 39,306 x 32
+#>    package version depends suggests license imports linkingto archs
+#>    <chr>   <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr>
+#>  1 A3      1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA> 
+#>  2 AATtoo~ 0.0.1   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA> 
+#>  3 ABACUS  1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA> 
+#>  4 ABC.RAP 0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA> 
+#>  5 ABCana~ 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA> 
+#>  6 ABCopt~ 0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      i386~
+#>  7 ABCp2   1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA> 
+#>  8 ABHgen~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA> 
+#>  9 ABPS    0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA> 
+#> 10 ACA     1.1     R (>= ~ <NA>     GPL     graphi~ <NA>      <NA> 
+#> # ... with 39,296 more rows, and 24 more variables: enhances <chr>,
+#> #   os_type <chr>, priority <chr>, license_is_foss <chr>,
+#> #   license_restricts_use <chr>, repodir <chr>, platform <chr>,
+#> #   rversion <chr>, needscompilation <chr>, ref <chr>, type <chr>,
+#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>,
+#> #   sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
 #> #   built <chr>, published <dttm>, deps <list>, md5sum <chr>, path <chr>
 }\if{html}{\out{</div>}}
 
@@ -66,33 +67,36 @@ package files.
 
 The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_summary()
 #> $cachepath
-#> [1] "/Users/gaborcsardi/Library/Caches/R-pkg/pkg"
+#> [1] "C:\\Users\\csard\\AppData\\Local\\R-pkg\\R-pkg\\Cache/pkg"
 #> 
 #> $files
-#> [1] 147
+#> [1] 945
 #> 
 #> $size
-#> [1] 135510553
+#> [1] 1687305158
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_list()
-#> # A tibble: 147 x 9
-#>    fullpath     path      package  url     etag  sha256   version platform built
-#>    <chr>        <chr>     <chr>    <chr>   <chr> <chr>    <chr>   <chr>    <int>
-#>  1 /Users/gabo~ src/cont~ dplyr    https:~ "\"e~ 9bf68f7~ 1.0.4   source      NA
-#>  2 /Users/gabo~ bin/maco~ memoise  https:~ "\"b~ beb5b86~ 2.0.0   macos       NA
-#>  3 /Users/gabo~ bin/maco~ assertt~ https:~ "\"c~ 7d72986~ 0.2.1   macos       NA
-#>  4 /Users/gabo~ bin/maco~ codetoo~ https:~ "\"1~ 8ec65e6~ 0.2-18  macos       NA
-#>  5 /Users/gabo~ bin/maco~ brio     https:~ "\"8~ fc7e8ee~ 1.1.1   macos       NA
-#>  6 /Users/gabo~ src/cont~ parsermd <NA>     <NA> 8e0b20e~ <NA>    <NA>         0
-#>  7 /Users/gabo~ src/cont~ knitr    <NA>     <NA> d83e8de~ <NA>    <NA>         0
-#>  8 /Users/gabo~ src/cont~ downlit  <NA>     <NA> 47270f5~ <NA>    <NA>         0
-#>  9 /Users/gabo~ bin/maco~ RColorB~ https:~ "\"c~ a79f3a9~ 1.1-2   macos       NA
-#> 10 /Users/gabo~ bin/maco~ R6       https:~ "\"1~ a1740b3~ 2.5.0   macos       NA
-#> # ... with 137 more rows
+#> # A tibble: 945 x 10
+#>    fullpath path  package url   etag  sha256 version platform built
+#>    <chr>    <glu> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>
+#>  1 "C:\\Us~ bin/~ assert~ http~ "\"a~ ccc34~ 0.2.1   windows     NA
+#>  2 "C:\\Us~ bin/~ callr   http~ "\"1~ fdd92~ 3.2.0   windows     NA
+#>  3 "C:\\Us~ bin/~ backpo~ http~ "\"1~ 8bf70~ 1.1.4   windows     NA
+#>  4 "C:\\Us~ bin/~ cli     http~ "\"1~ 7aac3~ 1.1.0   windows     NA
+#>  5 "C:\\Us~ bin/~ cliapp  http~ "\"2~ 65bfe~ 0.1.0   windows     NA
+#>  6 "C:\\Us~ bin/~ desc    http~ "\"2~ b69c8~ 1.2.0   windows     NA
+#>  7 "C:\\Us~ bin/~ ellips~ http~ "\"7~ ce5c4~ 0.1.0   windows     NA
+#>  8 "C:\\Us~ bin/~ crayon  http~ "\"a~ bd143~ 1.3.4   windows     NA
+#>  9 "C:\\Us~ bin/~ digest  http~ "\"2~ 72423~ 0.6.18  windows     NA
+#> 10 "C:\\Us~ bin/~ glue    http~ "\"2~ f5e83~ 1.3.1   windows     NA
+#> # ... with 935 more rows, and 1 more variable: vignettes <chr>
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A tibble: 1 x 9
-#>   fullpath      path    package url      etag   sha256    version platform built
-#>   <chr>         <chr>   <chr>   <chr>    <chr>  <chr>     <chr>   <chr>    <int>
-#> 1 /Users/gabor~ src/co~ dplyr   https:/~ "\"e8~ 9bf68f71~ 1.0.4   source      NA
+#> # A tibble: 3 x 10
+#>   fullpath path  package url   etag  sha256 version platform built
+#>   <chr>    <glu> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>
+#> 1 "C:\\Us~ bin/~ dplyr   http~ "\"1~ da597~ 1.0.1   windows     NA
+#> 2 "C:\\Us~ bin/~ dplyr   http~ "\"1~ 2940a~ 1.0.2   windows     NA
+#> 3 "C:\\Us~ bin/~ dplyr   http~ "\"1~ b32d2~ 1.0.2   windows     NA
+#> # ... with 1 more variable: vignettes <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,

@@ -1,9 +1,6 @@
 
 context("process")
 
-## We don't use this, so no need to test
-return()
-
 test_that("process", {
 
   px <- asNamespace("processx")$get_tool("px")

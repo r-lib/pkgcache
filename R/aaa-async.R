@@ -1,4 +1,26 @@
 
+#' Create an async function
+#'
+#' Create an async function, that returns a deferred value, from a
+#' regular function. If `fun` is already an async function, then it does
+#' nothing, just returns it.
+#'
+#' The result function will have the same arguments, with the same default
+#' values, and the same environment as the original input function.
+#'
+#' @param fun Original function.
+#' @return Async version of the original function.
+#'
+#' @noRd
+#' @examples
+#' f <- function(x) 42
+#' af <- async(f)
+#' is_async(f)
+#' is_async(af)
+#' f()
+#' synchronise(dx <- af())
+#' dx
+
 async <- function(fun) {
   fun <- as_function(fun)
   if (is_async(fun)) return(fun)
@@ -36,6 +58,26 @@ mark_as_async <- function(fun) {
 
   fun
 }
+
+#' Checks if a function is async
+#'
+#' If `fun` is not a function, an error is thrown.
+#'
+#' Currently, it checks for the `async` attribute, which is set by
+#' [async()].
+#'
+#' @param fun Function.
+#' @return Logical scalar, whether `fun` is async.
+#'
+#' @noRd
+#' @examples
+#' f <- function(x) 42
+#' af <- async(f)
+#' is_async(f)
+#' is_async(af)
+#' f()
+#' synchronise(dx <- af())
+#' dx
 
 is_async <- function(fun) {
   assert_that(is.function(fun))
@@ -94,6 +136,18 @@ on_failure(is_flag) <- function(call, env) {
   paste0(deparse(call$x), " must be a flag (length 1 logical)")
 }
 
+#' Asynchronous function call, in a worker pool
+#'
+#' The function will be called on another process, very much like
+#' [callr::r()].
+#'
+#' @param func Function to call. See also the notes at [callr::r()].
+#' @param args Arguments to pass to the function. They will be copied
+#'   to the worker process.
+#' @return Deferred object.
+#'
+#' @noRd
+
 call_function <- function(func, args = list()) {
   func; args
 
@@ -117,6 +171,25 @@ call_function <- function(func, args = list()) {
 }
 
 call_function <- mark_as_async(call_function)
+
+#' Make a minimal deferred that resolves to the specified value
+#'
+#' This is sometimes useful to start a deferred chain.
+#'
+#' Note that the evaluation of `value` is forced when the deferred value
+#' is created.
+#'
+#' @param value The value to resolve to.
+#' @return A deferred value.
+#'
+#' @noRd
+#' @examples
+#' afun <- async(function() {
+#'   async_constant(1/100)$
+#'     then(function(x) delay(x))$
+#'     then(function(x) print(x))
+#' })
+#' synchronise(afun())
 
 async_constant <- function(value = NULL) {
   force(value)
@@ -157,6 +230,106 @@ pop_event_loop <- function() {
   if (num_loops > 1) async_env$loops[[num_loops - 1]]$wakeup()
 }
 
+#' Async debugging utilities
+#'
+#' Helper function to help with the non-trivial debugging of async code.
+#'
+#' Async debugging can be turned on by setting the `async_debug` global
+#' option to `TRUE`:
+#' ```
+#' options(async_debug = TRUE)
+#' ```
+#' Setting this value to `FALSE` will turn off debugging.
+#'
+#' If debugging is on, a [synchronise()] call will stop at the beginning
+#' of the event loop. No deferred actions of other callbacks have run at
+#' this point. [synchronise()] stops by calling [base::browser()]. All the
+#' usual [browser()] commands (see its manual) can be used here, plus some
+#' extra commands to help async debugging. The extra commands:
+#'
+#' `async_debug_shortcuts()` adds handy shortcuts to most of the helper
+#' functions. E.g. `async_next()` can be invoked as `.an` (without the
+#' parens). You only need to run it once per R session. Note that it adds
+#' the shortcuts to the global environment.
+#'
+#' `async_debug_remove_shortcuts()` removes the shortcuts from the global
+#' environment.
+#'
+#' `.an` (or `async_next()`) runs the next iteration of the event loop.
+#' Note that it does not return until _something_ happens in the event loop:
+#' an action or a parent callback is executed, or HTTP or other I/O is
+#' performed. Also note, that a single iteration of the event loop typically
+#' runs multiple action, parent or other callbacks. Once the iteration is
+#' done, the control is returned to the browser.
+#'
+#' `.as` (or `async_step()`) is similar to `.an`, but it also starts the
+#' debugging of the action or parent callbacks. I.e. another [browser()] is
+#' called at the beginning of _all_ callbacks in the next iteration of the
+#' event loop.
+#'
+#' `.asb` (or `async_step_back()`) stops the debugging of the callbacks.
+#' It does not actually exdecutes anything from the event loop, so to go
+#' back to the main async browser, you also need to execute `c` (continue).
+#'
+#' `.al` (or `async_list()`) lists all deferred values in the current async
+#' phase. (Only the ones that already exist, some may be created in the
+#' future.) It returns a data frame with columns:
+#'
+#' * `id`: The integer id of the deferred value.
+#' * `parents`: Integer vector, the parents of the deferred value.
+#' * `label`: A character label, that is used by `async_tree()` to nicely
+#'    format information about a deferred value.
+#' * `call`: The call (language object) that created the deferred value.
+#' * `children`: The list of children, an integer vector. A deferred value
+#'    can only have one child, unless it is shared.
+#' * `type`: The type of the deferred value. This is an arbitrary label,
+#'    specified when the deferred value was created.
+#' * `running`: Whether the deferred value is already running.
+#' * `state`: The state of the deferred value, `"pending"`, `"fulfilled"` or
+#'    `"rejected"`. This is typically pending, since resolved deferred
+#'    values are removed from the async DAG (in the next event loop
+#'    iteration.)
+#' * `cancelled`: Whether the deferred value was cancelled.
+#' * `shared`: Whether the deferred value is shared.
+#' * `filename`: The file name for the source code that created the
+#'    deferred value. Only present if this code was parsed with source
+#'    references enabled.
+#' * `position`: The start file position, in line:column format, as a
+#'    string. Only present if this code was parsed with source references
+#'    enabled.
+#'
+#' `.at` (or `async_tree()`) prints the DAG of the deferred values.
+#'
+#' `async_debug()` can be used to debug the action and/or parent callbacks
+#' of the specified deferred value.
+#'
+#' `async_wait_for()` runs the event loop until the specified deferred
+#' value is resolved (i.e. fulfilled or rejected).
+#'
+#' `.aw` (or `async_where()`) prints a call stack and marks the frame the
+#' corresponds to an action or parent callback.
+#'
+#' @param el Event loop, defaults to the current event loop.
+#' @param def Deferred value that is used at the root of the DAG. Defaults
+#'   to the deferred value corresponding to the result of the async phase.
+#' @param id Integer scalar, the if of the deferred to debug or to wait for.
+#' @param action Whether to debug the action callback.
+#' @param parent Whether to debug the parent callbacks.
+#' @param calls The calls to print, result of `sys.calls()`. Defaults to
+#'   the current call stack.
+#' @param parents The parent frames in the call stack, result of
+#'   `sys.parents()`. Defaults to the current parents.
+#' @param frm The async frame to mark. Defaults to the most recent async
+#'   frame in the stack.
+#'
+#' @name async_debug
+#' @noRd
+NULL
+
+#' @noRd
+#' @aliases .an
+#' @rdname async_debug
+
 async_next <- function(el = NULL) {
   el <- el %||% find_sync_frame()$new_el
   if (is.null(el)) stop("No async context")
@@ -165,6 +338,10 @@ async_next <- function(el = NULL) {
 }
 
 # nocov start
+
+#' @noRd
+#' @aliases .as
+#' @rdname async_debug
 
 async_step <- function() {
   el <- find_sync_frame()$new_el
@@ -177,12 +354,20 @@ async_step <- function() {
   }
 }
 
+#' @noRd
+#' @aliases .asb
+#' @rdname async_debug
+
 async_step_back <- function() {
   options(async_debug_steps = FALSE)
   message("[ASYNC] step back, you still need to 'c'ontinue")
 }
 
 # nocov end
+
+#' @noRd
+#' @aliases .al
+#' @rdname async_debug
 
 async_list <- function(def = NULL) {
   def <- def %||% find_sync_frame()$res
@@ -198,12 +383,19 @@ async_list <- function(def = NULL) {
   do.call(rbind, info)
 }
 
+#' @noRd
+#' @aliases .at
+#' @rdname async_debug
+
 async_tree <- function(def = NULL) {
   def <- def %||% find_sync_frame()$res
   data <- async_list(def)
-  root <- as.character(def$get_id())
+  root <- as.character(get_private(def)$id)
   cli::tree(data, root = root)
 }
+
+#' @noRd
+#' @rdname async_debug
 
 async_debug <- function(id, action = TRUE, parent = TRUE) {
   def <- find_deferred(id)
@@ -245,6 +437,9 @@ async_debug <- function(id, action = TRUE, parent = TRUE) {
   invisible(def)
 }
 
+#' @noRd
+#' @rdname async_debug
+
 async_wait_for <- function(id) {
   el <- find_sync_frame()$new_el
   if (is.null(el)) stop("No async context")
@@ -254,6 +449,10 @@ async_wait_for <- function(id) {
   while (priv$state == "pending") el$run("once")
   message("[ASYNC] ", id, "  resolved")
 }
+
+#' @noRd
+#' @aliases .aw
+#' @rdname async_debug
 
 async_where <- function(calls = sys.calls(), parents = sys.parents(),
                         frm = get_async_frames()) {
@@ -290,12 +489,16 @@ async_where <- function(calls = sys.calls(), parents = sys.parents(),
 
 # nocov start
 
+#' @noRd
+
 print.async_where <- function(x, ...) {
   cat(format(x, ...))
   invisible(x)
 }
 
 # nocov end
+
+#' @noRd
 
 format.async_where <- function(x, ...) {
   paste0(paste(
@@ -339,7 +542,7 @@ find_deferred <- function(id, def = NULL) {
   def <- def %||% find_sync_frame()$res
   if (is.null(def)) stop("No async context")
   search_parents <- function(def) {
-    if (def$get_id() == id) return(def)
+    if (get_private(def)$id == id) return(def)
     prn <- get_private(def)$parents
     for (p in lapply(prn, search_parents)) {
       if (!is.null(p)) return(p)
@@ -354,6 +557,9 @@ debug1 <- function(fun) {
   debugonce(fun)
 }
 
+#' @noRd
+#' @rdname async_debug
+
 async_debug_shortcuts <- function() {
   as <- function(name, fun) {
     makeActiveBinding(name, fun, .GlobalEnv)
@@ -365,6 +571,9 @@ async_debug_shortcuts <- function() {
   as(".at", async_tree)
   as(".aw", async_where)
 }
+
+#' @noRd
+#' @rdname async_debug
 
 async_debug_remove_shortcuts <- function() {
   tryCatch(
@@ -379,7 +588,392 @@ debug_all <- function(fun) {
   debug(fun)
 }
 
+#' Deferred value
+#'
+#' @section Usage:
+#' ```
+#' dx <- deferred$new(action = NULL, on_progress = NULL, on_cancel = NULL,
+#'          parents = NULL, parent_resolve = NULL, parent_reject = NULL,
+#'          type = NULL)
+#' dx$then(on_fulfilled)
+#' dx$catch(...)
+#' dx$finally(on_finally)
+#' dx$cancel(reason = "Cancelled")
+#' dx$share()
+#' ```
+#'
+#' @section Arguments:
+#' * `action`: Function to call when the deferred value starts running.
+#'      it needs to have at least two arguments: `resolve` and `reject`,
+#'      and the third `progress` argument is optional. See details below.
+#' * `on_progress`: A function to call to report progress. See details
+#'      below.
+#' * `on_cancel`: A function to call when the deferred is cancelled. See
+#'      details below.
+#' * `parents`: A list of deferred values that will be the parents of the
+#'      deferred value being created. If some of them are already owned,
+#'      an error is thrown.
+#' * `parent_resolve`: A function to call when a parent is resolved.
+#'      See details below.
+#' * `parent_reject`: A function to call when a parent throws an error.
+#'      See details below.
+#' * `type`: A label that can be used to indicate the type of the deferred
+#'      value to create. This might be useful for debugging, but otherwise
+#'      it is not used.
+#' * `on_fulfilled`: Function to call when the parent deferred is resolved.
+#'      Essentially this is the `parent_resolve` function of the `then()`
+#'      deferred.
+#' * `...` Error handlers, as in `tryCatch()`, see details below.
+#' * `on_finally`: Function to call, after the deferred value is resolved
+#'      or after it has thrown an error. It will be called without arguments.
+#' * `reason` Error message or error object that will be used to cancel the
+#'      deferred.
+#'
+#' @section Deferred values:
+#'
+#' Asynchronous computation is represented by deferred values.
+#' A deferred value is an [R6](https://github.com/wch/R6) object.
+#'
+#' ```
+#' deferred$new(action = NULL, on_progress = NULL, on_cancel = NULL,
+#'    parents = NULL, parent_resolve = NULL, parent_reject = NULL,
+#'    type = NULL)
+#' ```
+#'
+#' Creates a new deferred value. `action` is a function that is called
+#' once the deferred value is _started_ (i.e. _not_ when `dx` is created).
+#' It must have one or two arguments: `resolve`, or `resolve` and `progress`
+#' It should call `resolve` when it is done, with the final value of the
+#' deferred as the argument. (See examples below.) If it has two arguments,
+#' then the second one is a callback function for creating progress bars.
+#' The deferred value may report its progress through this function.
+#' See details in the _Progress bars_ section below.
+#'
+#' `action` is called when the evaluation of the deferred value is started.
+#' Only deferred values that are needed to calculate the value of the
+#' async phase, are evaluated. (See also _Lazy Evaluation_ below.)
+#'
+#' Note that `action` is optional, for some deferred values, no action is
+#' takes when they are started. (These typically depend on their parent
+#' nodes.)
+#'
+#' `on_cancel` is a function that is called without arguments when a
+#' deferred value is cancelled. This includes explicit cancellation by
+#' calling its `$cancel()` method, or auto-cancellation (see below).
+#'
+#' `parents` is a list of deferred values that need to be computed before
+#' the current deferred value. When a parent deferred is resolved, the
+#' `parent_resolve` function is called. When a parent referred throws an
+#' error, the parent_reject` function is called.
+#'
+#' `parent_resolve` is a function with (up to) two arguments:
+#' `value` and `resolve`. It will be called with the value of the
+#' parent, the `resolve` callback of the deferred.
+#' `parent_resolve` can resolve the deferred by calling the supplied `resolve`
+#' callback, or it can keep waiting on other parents and/or external
+#' computation. It may throw an error to fail the deferred.
+#'
+#' `parent_resolve` allows some shorthands as well:
+#' * `NULL`: the deferred is resolved with the value of the parent.
+#' * A function with no arguments: this function is called, and the deferred
+#'   resolves to its return value.
+#' * A function with one argument: this function is called with the value
+#'   of the parent as the argument, and the deferred is resolved to its
+#'   return value.
+#' * A function with arguments `value` and `resolve`. This function is
+#'   called with the value of the parent, and the resolve callback of the
+#'   deferred.
+#'
+#' `parent_reject` is a function with (up to) two arguments:
+#' `value`, `resolve`. It will be called with the error object
+#' thrown by the parent.
+#'
+#' `parent_resolve` can resolve the deferred by calling the supplied
+#' `resolve` callback, or it can keep waiting on other parents and/or
+#' external computation. It may throw an error to fail the deferred. It may
+#' also re-throw the error received from the parent, if it does not wish
+#' to handle it.
+#'
+#' `parent_reject` also accepts some shorthands as well:
+#' * `NULL`: the deferred throws the same error as the parent.
+#' * A function with no arguments: this function is called, and the deferred
+#'   resolves to its return value.
+#' * A function with one argument: this function is called with the value
+#'   of the parent as the argument, and the deferred is resolved to its
+#'   return value.
+#' * A function with arguments `value` and `resolve`. This function is
+#'   called with the value of the parent, and the resolve callback of the
+#'   deferred.
+
+#' * A list of named error handlers, corresponding to the error handlers
+#'   of `$catch()` (and `tryCatch()`). If these error handlers handle the
+#'   parent's error, the deferred is resolved with the result of the
+#'   handlers. Otherwise the deferred will be failed with the parent's
+#'   error. The error handlers may also throw a new error.
+#'
+#' @section Error handling:
+#'
+#' The action function of the deferred, and also the `parent_resolve` and
+#' `parent_reject` handlers may throw errors if the deferred cannot be
+#' computed. Errors can be handled wit the `$catch()` member function:
+#'
+#' ```
+#' dx$catch(...)
+#' ```
+#'
+#' It takes the same named error handler arguments as `tryCatch()`.
+#'
+#' Technically, `$catch()` creates a new deferred value, and this new
+#' deferred value is resolved to the result of the error handlers. Of the
+#' handlers do not handle the error, then the new deferred will fail
+#' with the same error.
+#'
+#' The `$finally()` method can be used to run create finalizer code that
+#' runs when a deferred is resolved or when it fails. It can be used to
+#' close database connections or other resources:
+#'
+#' ```
+#' dx$finally(on_finally)
+#' ```
+#'
+#' Technically, `$finally()` creates a new deferred, which will resolve
+#' or fail the same way as the original one, but before doing that it will
+#' call the `on_finally` function with no arguments.
+#'
+#' @section Builtin async functions:
+#'
+#' The async package comes with some basic async functions:
+#' * [delay()] sets a timer and then resolves to `TRUE`.
+#' * [async_constant()] resolves successfully to its argument.
+#' * [http_get()] and [http_head()] make HTTP GET and HEAD requests.
+#'
+#' @section Combining async values:
+#'
+#' Async computation (just like ordinary sync computation) usually
+#' consists of several steps that needs to be performed in the specified
+#' order. The `$then()` method specifies that a step of computation needs
+#' to be performed after the deferred value is known:
+#'
+#' ```
+#' dx$then(on_fulfilled)
+#' ```
+#'
+#' `on_fulfilled` is a function with zero or one formal arguments.
+#' It will be called once the result of the deferred is known, with its
+#' result. (The result is omitted if it has no arguments).
+#'
+#' `$then()` creates another deferred value, that will resolve to the
+#' result of the `on_fulfilled` callback. Should this callback return
+#' with a deferred value, then `$then()` the deferred value will be a
+#' child of this newly creted deferred, and only resolve after that.
+#'
+#' See also [when_all()], [when_some()] and [when_any()], which can combine
+#' multiple deferred values into one.
+#'
+#' You cannot call `$then()` (or [when_any()], [when_all()], etc. on the
+#' same deferred value multiple times, unless it is a shared deferred
+#' value. See _Ownership_ below.
+#'
+#' The [async_reflect()], [async_retry()], [async_sequence()],
+#' [async_timeout()], [async_until()] and [async_whilst()] functions are
+#' helpers for more complex async control flow.
+#'
+#' @section Ownership:
+#'
+#' async follows a strong ownership model. Each deferred value must be
+#' owned by exactly one other deferred value  (unless they are shared, see
+#' below).
+#'
+#' After a `dx2 <- dx$then()` call, the `dx` deferred is _owned_ by the
+#' newly created deferred value. (The same applied to [when_any()], etc.)
+#' This means that it is not possible to call `$then()` on the same
+#' deferred value multiple times. The deferred value that is synchronized
+#' by calling [synchronise()] on it, is owned by [synchronise()], see
+#' _Synchronization_ below.
+#'
+#' The deferred values of an async phase form a directed graph, which we
+#' call the async DAG (directed, acyclic graph). Usually (when no deferred
+#' is shared, see below), this DAG is a rooted tree, the root of the tree
+#' is the synchronised deferred, the final result of the async phase.
+#'
+#' @section Shared Deferred Values:
+#'
+#' In the rare cases when the strong ownership model is too restrictive,
+#' a deferred value can be marked as _shared_:
+#'
+#' ```
+#' dx$share()
+#' ```
+#'
+#' This has the following implications:
+#' * A shared deferred value can have multiple children (owners) in the
+#'   async DAG.
+#' * A shared deferred value is started after its first child is started.
+#' * A shared deferred value is not auto-cancelled when all of its children
+#'   are finished. (Because it might have more children in the future.)
+#' * A shared deferred value is still auto-cancelled at the end of the
+#'   event loop.
+#'
+#' Use shared deferred values sparingly, only when they are really needed,
+#' as they forbid auto-cancellation, so deferred values will hold on to
+#' resources longer, until the async phase is finished.
+#'
+#' @section Synchronization:
+#'
+#' async allows embedding asynchronous computation in synchronous code.
+#' The execution of such a program has a sync phase and async phases. When the
+#' program starts, it is in the sync phase. In the sync phase you cannot
+#' create deferred values. (But you can still define (async) functions, that
+#' will create deferred values when called.)
+#'
+#' To enter into an async phase, call [synchronise()] on an expression that
+#' evaluates to a deferred value. The async phase will last until this
+#' deferred value is computed or an error is thrown (and the error reaches
+#' [synchronise()]).
+#'
+#' [synchronise()] creates an event loop, which manages the computation of
+#' the deferred values in this particular async phase.
+#'
+#' Async phases can be embedded into each other. I.e. a program may call
+#' [synchronise()] while in the async phase. The outer async phase's event
+#' loop then stops until the inner async phase terminates. Deferred values
+#' cannot be passed through a `synchronise()` barrier, to anoter (sync or
+#' async phase). Should this happen, an error is reported on the first
+#' operation on the leaked deferred value.
+#'
+#' In a typical application, a function is implemented asynchronously, and
+#' then used synchronously by the interactive user, or another piece of
+#' synchronous code, via [synchronise()] calls. The following example makes
+#' three HTTP requests in parallel:
+#'
+#' ```
+#' http_status3 <- function() {
+#'   http_status <- function(url) {
+#'     http_get(url)$then(function(response) response$status_code)
+#'   }
+#'   r1 <- http_status("https://eu.httpbin.org/status/403")
+#'   r2 <- http_status("https://eu.httpbin.org/status/404")
+#'   r3 <- http_status("https://eu.httpbin.org/status/200")
+#'   when_all(r1, r2, r3)
+#' }
+#' synchronise(http_status3())
+#' ```
+#'
+#' This async function can also be used asychronously, as a parent of
+#' another deferred value, in an async phase.
+#'
+#' @section Lazy evaluation:
+#'
+#' async does not evaluate deferred values that are not part of the async
+#' DAG of the async phase. These are clearly not needed to compute the
+#' result of the async phase, so it would be a waste of resources working on
+#' them. (It is also unclear how their errors should be handled.)
+#'
+#' In the following example, `d1` and `d2` are created, but they are not
+#' part of the async DAG, so they are never evaluated.
+#'
+#' ```
+#' do <- function() {
+#'   d1 <- delay(1/100)$then(function() print("d1"))
+#'   d2 <- d1$then(function() print("d2"))
+#'   d3 <- delay(1/100)$then(function() print("d3"))
+#'   d4 <- d3$then(function() print("d4"))
+#'   d4
+#' }
+#' invisible(synchronise(do()))
+#' ```
+#'
+#' @section Cancellation:
+#'
+#' The computation of a deferred can be cancelled when it is not needed
+#' any more:
+#'
+#' ```
+#' dx$cancel(reason = "Cancelled")
+#' ```
+#'
+#' This will _fail_ the children of the deferred, unless they have been
+#' completed already. It will also auto-cancel the parent DAG of the
+#' deferred, unless they are shared deferreds, see the next Section.
+#'
+#' @section Auto-cancellation:
+#'
+#' In an async phase, it might happen that parts of the async DAG are not
+#' needed for the final result any more. E.g. if a parent of a `when_all()`
+#' node throws an error, then the other parents don't have to be computed.
+#' In this case the event loop of the phase automatically cancels these
+#' deferred values. Similarly, if a single parent of a [when_any()] node is
+#' resolved, the other parents can be cancelled.
+#'
+#' In general, if a node of the async DAG is resolved, the whole directed
+#' DAG, rooted at that node, can be cancelled (except for nodes that were
+#' already resolved and nodes that have already failed).
+#'
+#' Auto-cancellation is very convenient, as you can be sure that resources
+#' are free as soon as they are not needed. Some practical examples:
+#'
+#' * Making HTTP requests to many mirror web sites, to check their response
+#'   time. As soon as the first reply is in, the rest of the HTTP requests
+#'   are cancelled.
+#' * In multi-process computation, as soon as one process fails, the rest are
+#'   automatically cancelled. (Unless the failure is handled, of course.)
+#'
+#' async also has another type of cancellation, when [synchronise()] is
+#' interrupted externally, either by the user or some system error. In this
+#' case all processes and resources that were created in the event loop,
+#' are cancelled and freed.
+#'
+#' Shared deferred values (see `$share()`) are not auto-cancelled when their
+#' children are resolved or errored, but they are always cancelled at the
+#' end of the async phase.
+#'
+#' @section Progress bars:
+#'
+#' A deferred value may report on its progress, if its action has a progress
+#' callback. The progress callback is called with a list that describes
+#' and event. We suggest that it always has an `event` entry, which is a
+#' simple string. The rest of the list entries can be defined as needed,
+#' but typically there will be a counter counting ticks, or a ratio
+#' describing what part of the computation is already. See [http_get()]
+#' for an async function that reports progress.
+#'
+#' @section Collections helper functions:
+#'
+#' async provides some utilities that make it easier to deal with
+#' collections of deferred values:
+#'
+#' The current iterators:
+#' * [async_map()] applies an async function to all elements of a vector or
+#'   list (collection).
+#' * [async_detect()] finds an element of a collection that passed an async
+#'   truth test.
+#' * [async_every()] checks if every element of a collection satisfies an
+#'   async predicate. [async_some()] checks if any element does that.
+#' * [async_filter()] keeps elements that pass an async truth test.
+#'
+#' @section Control flow helper functions:
+#'
+#' Control flow with deferred values can be challenging. Some helpers:
+#' * [async_reflect()] creates an async function that always succeeds.
+#'   This is useful if you want to apply it to a collection, and don't
+#'   want to stop at the first error.
+#' * [async_retry()] tries an async function a number of times.
+#'   [async_retryable()] turns a regular function into a retryable one.
+#' * [async_sequence()] chains two async functions. Calling their sequence
+#'   is equivalent calling '$then()` on them, but [async_sequence()] is
+#'   easier to use programmatically.
+#' * [async_until()] and [async_whilst()] let you call an async function
+#'   repeatedly, until or while a (syncronous) condition holds.
+#' * [async_timeout()] runs an async function with a timeout.
+#'
+#' @section Examples:
+#' Please see the README and the vignettes for examples.
+#' @name deferred
+#' @noRd
+NULL
+
 #' @importFrom R6 R6Class
+#' @noRd
 
 deferred <- R6Class(
   "deferred",
@@ -398,8 +992,7 @@ deferred <- R6Class(
       def_finally(self, private, on_finally),
     cancel = function(reason = "Cancelled")
       def_cancel(self, private, reason),
-    share = function() { private$shared <<- TRUE; invisible(self) },
-    get_id = function() private$id
+    share = function() { private$shared <<- TRUE; invisible(self) }
   ),
 
   private = list(
@@ -441,6 +1034,8 @@ deferred <- R6Class(
       def__maybe_cancel_parents(self, private, reason),
     add_as_parent = function(child)
       def__add_as_parent(self, private, child),
+    update_parent = function(old, new)
+      def__update_parent(self, private, old, new),
 
     get_info = function()
       def__get_info(self, private)
@@ -513,7 +1108,7 @@ def__run_action <- function(self, private) {
     if (prt_priv$state != "pending") {
       def__call_then(
         if (prt_priv$state == "fulfilled") "parent_resolve" else "parent_reject",
-        self, prt_priv$value, prt_priv$id)
+        self, prt_priv$value)
     }
     prt_priv$run_action()
   }
@@ -591,26 +1186,49 @@ def__resolve <- function(self, private, value) {
   if (is_deferred(value)) {
     private$parent_resolve <- def__make_parent_resolve(NULL)
     private$parent_reject <- def__make_parent_reject(NULL)
-    value$then(self)
+
+    # we need this in case self was shared and had multiple children
+    val_pvt <- get_private(value)
+    val_pvt$id <- private$id
+    val_pvt$shared <- private$shared
+    val_pvt$dead_end <- private$dead_end # This should not happen, though
+
+    for (child in private$children) {
+      ch_pvt <- get_private(child)
+      ch_pvt$update_parent(self, value)
+    }
+
+    val_pvt$run_action()
 
   } else {
     if (!private$dead_end && !length(private$children) &&
         !private$shared) {
       ## This cannot happen currently
-      "!DEBUG ??? DEAD END `self$get_id()`"   # nocov
+      "!DEBUG ??? DEAD END `private$id`"   # nocov
       warning("Computation going nowhere...")   # nocov
     }
 
-    "!DEBUG +++ RESOLVE `self$get_id()`"
+    "!DEBUG +++ RESOLVE `private$id`"
     private$state <- "fulfilled"
     private$value <- value
     for (child in private$children) {
-      def__call_then("parent_resolve", child, value, self$get_id())
+      def__call_then("parent_resolve", child, value)
     }
     private$maybe_cancel_parents(private$value)
     private$parents <- NULL
   }
 }
+
+#' Create an error object for a rejected deferred computation
+#'
+#' * Make sure that the error is an error object.
+#' * Make sure that the error has the correct classes.
+#'
+#' @param self self
+#' @param private private self
+#' @return error object
+#'
+#' @keywords internal
 
 def__make_error_object <- function(self, private, err) {
   class(err) <- unique(c("async_rejected", class(err)))
@@ -619,19 +1237,16 @@ def__make_error_object <- function(self, private, err) {
 
 def__make_parent_resolve <- function(fun) {
   if (is.null(fun)) {
-    function(value, resolve, id) resolve(value)
+    function(value, resolve) resolve(value)
   } else if (!is.function(fun)) {
     fun <- as_function(fun)
-    function(value, resolve, id) resolve(fun(value))
+    function(value, resolve) resolve(fun(value))
   } else if (num_args(fun) == 0) {
-    function(value, resolve, id) resolve(fun())
+    function(value, resolve) resolve(fun())
   } else if (num_args(fun) == 1) {
-    function(value, resolve, id) resolve(fun(value))
+    function(value, resolve) resolve(fun(value))
   } else if (identical(names(formals(fun)),
                        c("value", "resolve"))) {
-    function(value, resolve, id) fun(value, resolve)
-  } else if (identical(names(formals(fun)),
-                       c("value", "resolve", "id"))) {
     fun
   } else {
     stop("Invalid parent_resolve callback")
@@ -640,21 +1255,18 @@ def__make_parent_resolve <- function(fun) {
 
 def__make_parent_reject <- function(fun) {
   if (is.null(fun)) {
-    function(value, resolve, id) stop(value)
+    function(value, resolve) stop(value)
   } else if (is.list(fun)) {
     def__make_parent_reject_catch(fun)
   } else if (!is.function(fun)) {
     fun <- as_function(fun)
-    function(value, resolve, id) resolve(fun(value))
+    function(value, resolve) resolve(fun(value))
   } else if (num_args(fun) == 0) {
-    function(value, resolve, id) resolve(fun())
+    function(value, resolve) resolve(fun())
   } else if (num_args(fun) == 1) {
-    function(value, resolve, id) resolve(fun(value))
+    function(value, resolve) resolve(fun(value))
   } else if (identical(names(formals(fun)),
                        c("value", "resolve"))) {
-    function(value, resolve, id) fun(value, resolve)
-  } else if (identical(names(formals(fun)),
-                       c("value", "resolve", "id"))) {
     fun
   } else {
     stop("Invalid parent_reject callback")
@@ -663,7 +1275,7 @@ def__make_parent_reject <- function(fun) {
 
 def__make_parent_reject_catch <- function(handlers) {
   handlers <- lapply(handlers, as_function)
-  function(value, resolve, id) {
+  function(value, resolve) {
     ok <- FALSE
     ret <- tryCatch({
       quo <- quo(tryCatch(stop(value), !!!handlers))
@@ -682,7 +1294,7 @@ def__reject <- function(self, private, reason) {
 
   ## 'reason' cannot be a deferred here
 
-  "!DEBUG !!! REJECT `self$get_id()`"
+  "!DEBUG !!! REJECT `private$id`"
   private$state <- "rejected"
   private$value <- private$make_error_object(reason)
   if (inherits(private$value, "async_cancelled")) {
@@ -692,7 +1304,7 @@ def__reject <- function(self, private, reason) {
     private$cancel_callback(conditionMessage(private$value))
   }
   for (child in private$children) {
-    def__call_then("parent_reject", child, private$value, self$get_id())
+    def__call_then("parent_reject", child, private$value)
   }
   private$maybe_cancel_parents(private$value)
   private$parents <- NULL
@@ -709,8 +1321,8 @@ def__maybe_cancel_parents <- function(self, private, reason) {
   }
 }
 
-def__call_then <- function(which, x, value, id)  {
-  force(value); force(id)
+def__call_then <- function(which, x, value)  {
+  force(value);
   private <- get_private(x)
   if (!private$running) return()
   if (private$state != "pending") return()
@@ -722,13 +1334,13 @@ def__call_then <- function(which, x, value, id)  {
         debug1(private[[which]])        # nocov
       }
       `__async_data__` <- list(private$id, "parent", x)
-      private[[which]](value, private$resolve, id)
+      private[[which]](value, private$resolve)
     },
     function(err, res) if (!is.null(err)) private$reject(err))
 }
 
 def__add_as_parent <- function(self, private, child) {
-  "!DEBUG EDGE [`private$id` -> `child$get_id()`]"
+  "!DEBUG EDGE [`private$id` -> `get_private(child)$id`]"
 
   if (! identical(private$event_loop, get_private(child)$event_loop)) {
     err <- make_error(
@@ -747,11 +1359,22 @@ def__add_as_parent <- function(self, private, child) {
     ## Nothing to do
 
   } else if (private$state == "fulfilled") {
-    def__call_then("parent_resolve", child, private$value, self$get_id())
+    def__call_then("parent_resolve", child, private$value)
 
   } else {
-    def__call_then("parent_reject", child, private$value, self$get_id())
+    def__call_then("parent_reject", child, private$value)
   }
+}
+
+def__update_parent <- function(self, private, old, new) {
+  for (i in seq_along(private$parents)) {
+    if (identical(private$parents[[i]], old)) {
+      private$parents[[i]] <- new
+    }
+  }
+
+  new_pvt <- get_private(new)
+  new_pvt$add_as_parent(self)
 }
 
 def__progress <- function(self, private, data) {
@@ -764,10 +1387,10 @@ def__get_info <- function(self, private) {
   res <- data.frame(
     stringsAsFactors = FALSE,
     id = private$id,
-    parents = I(list(viapply(private$parents, function(x) x$get_id()))),
+    parents = I(list(viapply(private$parents, function(x) get_private(x)$id))),
     label = as.character(private$id),
     call = I(list(private$mycall)),
-    children = I(list(viapply(private$children, function(x) x$get_id()))),
+    children = I(list(viapply(private$children, function(x) get_private(x)$id))),
     type = private$type %||%  "unknown",
     running = private$running,
     state = private$state,
@@ -787,9 +1410,48 @@ def__get_info <- function(self, private) {
   res
 }
 
+#' Is object a deferred value?
+#'
+#' @param x object
+#' @return Whether it is a deferred value.
+#'
+#' @noRd
+#' @examples
+#' is_deferred(1:10)
+#' afun <- function() {
+#'   print(is_deferred(dx <- delay(1/100)))
+#'   dx
+#' }
+#' synchronise(afun())
+
 is_deferred <- function(x) {
   inherits(x, "deferred")
 }
+
+#' Delay async computation for the specified time
+#'
+#' Since R is single-threaded, the deferred value might be resolved (much)
+#' later than the specified time period.
+#'
+#' @param delay Time interval in seconds, the amount of time to delay
+#'   to delay the execution. It can be a fraction of a second.
+#' @return A deferred object.
+#'
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## Two HEAD requests with 1/2 sec delay between them
+#' resp <- list()
+#' afun <- async(function() {
+#'   http_head("https://eu.httpbin.org?q=2")$
+#'     then(function(value) resp[[1]] <<- value$status_code)$
+#'     then(function(...) delay(1/2))$
+#'     then(function(...) http_head("https://eu.httpbin.org?q=2"))$
+#'     then(function(value) resp[[2]] <<- value$status_code)
+#' })
+#' synchronise(afun())
+#' resp
+#' }
 
 delay <- function(delay) {
   force(delay)
@@ -813,6 +1475,29 @@ delay <- function(delay) {
 
 delay <- mark_as_async(delay)
 
+#' Find the value of a match, asynchronously
+#'
+#' All predicates are running in parallel, and the returned match
+#' is not guaranteed to be the first one.
+#'
+#' @param .x A list or atomic vector.
+#' @param .p An asynchronous predicate function.
+#' @param ... Additional arguments to the predicate function.
+#' @param .limit Number of elements to process simulateneously.
+#'   If it is 1, then the predicate is applied sequentially.
+#' @return A deferred value for the result.
+#'
+#' @family async iterators
+#' @noRd
+#' @examples
+#' \donttest{
+#' synchronise(async_detect(
+#'   c("https://eu.httpbin.org/status/404", "https://eu.httpbin.org",
+#'     "https://eu.httpbin.org/status/403"),
+#'   async_sequence(http_head, function(x) x$status_code == 200)
+#' ))
+#' }
+
 async_detect <- function(.x, .p, ..., .limit = Inf) {
   if (.limit < length(.x)) {
     async_detect_limit(.x, .p, ..., .limit = .limit)
@@ -827,19 +1512,19 @@ async_detect_nolimit <- function(.x, .p, ...) {
   defs <- lapply(.x, async(.p), ...)
   nx <- length(defs)
   done <- FALSE
-  ids <- NULL
 
-  deferred$new(
+  self <- deferred$new(
     type = "async_detect", call = sys.call(),
-    parents = defs,
     action = function(resolve) {
-      ids <<- viapply(defs, function(x) x$get_id())
+      lapply(seq_along(defs), function(idx) {
+        defs[[idx]]$then(function(val) if (isTRUE(val)) idx)$then(self)
+      })
       if (nx == 0) resolve(NULL)
     },
-    parent_resolve = function(value, resolve, id) {
-      if (!done && isTRUE(value)) {
+    parent_resolve = function(value, resolve) {
+      if (!done && !is.null(value)) {
         done <<- TRUE
-        resolve(.x[[match(id, ids)]])
+        resolve(.x[[value]])
       } else if (!done) {
         nx <<- nx - 1L
         if (nx == 0) resolve(NULL)
@@ -857,24 +1542,27 @@ async_detect_limit <- function(.x, .p, ..., .limit = .limit) {
   done <- FALSE
   nextone <- .limit + 1L
   firsts <- lapply(.x[seq_len(.limit)], .p, ...)
-  ids <- viapply(firsts, function(x) x$get_id())
 
   self <- deferred$new(
     type = "async_detect (limit)", call = sys.call(),
-    parents = firsts,
-    action = function(resolve) if (nx == 0) resolve(NULL),
-    parent_resolve = function(value, resolve, id) {
-      if (!done && isTRUE(value)) {
+    action = function(resolve) {
+      lapply(seq_along(firsts), function(idx) {
+        firsts[[idx]]$then(function(val) if (isTRUE(val)) idx)$then(self)
+      })
+      if (nx == 0) resolve(NULL)
+    },
+    parent_resolve = function(value, resolve) {
+      if (!done && !is.null(value)) {
         done <<- TRUE
-        resolve(.x[[match(id, ids)]])
+        resolve(.x[[value]])
       } else if (!done) {
         nx <<- nx - 1L
         if (nx == 0) {
           resolve(NULL)
         } else if (nextone <= len) {
+          idx <- nextone
           dx <- .p(.x[[nextone]], ...)
-          ids <<- c(ids, dx$get_id())
-          dx$then(self)
+          dx$then(function(val) if (isTRUE(val)) idx)$then(self)
           nextone <<- nextone + 1L
         }
       }
@@ -1259,13 +1947,16 @@ el__io_poll <- function(self, private, timeout) {
         timeout = FALSE
       )
 
+      error <- FALSE
       if (p$type == "r-process") {
-        res$result = p$data$process$get_result()
+        res$result <- tryCatch({
+          p$data$process$get_result()
+        }, error = function(e) { error <<- TRUE; e })
       }
 
       unlink(c(p$data$stdout, p$data$stderr))
 
-      if (p$data$error_on_status && res$status != 0) {
+      if (p$data$error_on_status && (error || res$status != 0)) {
         err <- make_error("process exited with non-zero status")
         err$data <- res
         res <- NULL
@@ -1365,7 +2056,7 @@ el__update_time <- function(self, private) {
 }
 
 #' @importFrom curl multi_fdset
-
+#'
 el__update_curl_data <- function(self, private) {
   private$curl_fdset <- multi_fdset(private$pool)
   num_fds <- length(unique(unlist(private$curl_fdset[1:3])))
@@ -1375,6 +2066,86 @@ el__update_curl_data <- function(self, private) {
   }
 }
 
+#' Generic Event Emitter
+#'
+#' This is a generic class that can be used to create event emitters.
+#' It is mostly modelled after the 'node.js' `EventEmitter` class
+#'
+#' @section Usage:
+#' ```
+#' ee <- event_emitter$new(async = TRUE)
+#' ee$listen_on(event, callback)
+#' ee$listen_off(event, callback)
+#' ee$listen_once(event, callback)
+#' ee$emit(event, ...)
+#' ee$get_event_names()
+#' ee$get_listener_count(event)
+#' ee$remove_all_listeners(event)
+#' ```
+#'
+#' @section Arguments:
+#' * `async`: Whether to call listeners asynchronously, i.e. in the next
+#'     tick of the event loop.
+#' * `event`: String, name of the event.
+#' * `callback`: Function, listener to call when the event is emitted.
+#'     Its arguments must match the arguments passed to the `$emit()`
+#'     method. It is possible to add the same callback function multiple
+#'     times as a listener. It will be called as many times, as many times
+#'     it was added.
+#' * `...`: Arguments to pass to the listeners. They can be named or
+#'     unnnamed.
+#'
+#' @section Details:
+#'
+#' `ee$listen_on()` adds `callback` as a new listener for `event`. It is
+#' always added to the end of the listener list. Listeners will be called in
+#' the order they were added. It returns a reference to the `event_emitter`
+#' object, so calls can be chained.
+#'
+#' `ee$listen_off()` removes the first instance of `callback` from the
+#' listener list of `event`. It uses [base::identical()] to find the
+#' listener to remove. If `callback` is not among the listeners, nothing
+#' happens. Note that if you call this method from an event handler, that
+#' does not affect the already emitted events. It returns a reference to
+#' the `event_emitter` object, so calls can be chained.
+#'
+#' `ee$listen_once` is similar to `ee$listen_on()`, but the callback will
+#' be only called for a single event, and then it will be removed.
+#' (Technically, the listener is removed before the callback is called.)
+#' It returns a reference to the `event_emitter` object, so calls can be
+#' chained.
+#'
+#' `ee$emit()` emits an event. All listeners in its listener list will be
+#' called, in the order they were added. The arguments are passed to the
+#' listeners, so they have to be compatible with them.
+#'
+#' `ee$get_event_names()` returns the names of the active events,
+#' in a character vector. An event is active if it has at least one
+#' listener.
+#'
+#' `ee$get_listener_count()` returns the number of listeners for an event.
+#'
+#' `ee$remove_all_listener()`  removes all listeners for an an event.
+#'
+#' @section Error handling:
+#' Errors are handled by special `error` events. If a listener errors,
+#' and the event emitter has an active `error` event (i.e. some listeners
+#' exist for `error`, then _all_ listeners are called, in the order they
+#' were specified. They receive the originally thrown error object as the
+#' single argument. The error object has an `event` entry, which contains
+#' the event name the failed listener was called on.
+#'
+#' If the event emitter does not have any listeners for the `error` event,
+#' then it throws an error. This error propagates to the next
+#' synchronization barrier, i.e. the last `synchronise()` or
+#' `run_event_loop()` call, which fails.
+#'
+#' In an error happen within an `error` listener, then the same happens,
+#' the last `synchronise()` or `run_event_loop()` call fails. You can
+#' want to wrap the body of the error listeners in a `tryCatch()` call,
+#' if you want to avoid this.
+#'
+#' @noRd
 #' @importFrom R6 R6Class
 
 event_emitter <- R6Class(
@@ -1510,6 +2281,26 @@ ee__error_callback <- function(self, private, err, res) {
   }
 }
 
+#' Do every or some elements of a list satisfy an asynchronous predicate?
+#'
+#' @param .x A list or atomic vector.
+#' @param .p An asynchronous predicate function.
+#' @param ... Additional arguments to the predicate function.
+#' @return A deferred value for the result.
+#'
+#' @family async iterators
+#' @noRd
+#' @examples
+#' # Check if all numbers are odd
+#' # Note the use of force() here. Otherwise x will be evaluated later,
+#' # and by then its value might change.
+#' is_odd <- async(function(x) {
+#'   force(x)
+#'   delay(1/1000)$then(function() as.logical(x %% 2))
+#' })
+#' synchronise(async_every(c(1,3,5,7,10,11), is_odd))
+#' synchronise(async_every(c(1,3,5,7,11), is_odd))
+
 async_every <- function(.x, .p, ...) {
   defs <- lapply(.x, async(.p), ...)
   nx <- length(defs)
@@ -1533,12 +2324,40 @@ async_every <- function(.x, .p, ...) {
 
 async_every <- mark_as_async(async_every)
 
+#' Keep or drop elements using an asyncronous predicate function
+#'
+#' `async_filter` keep the elements for which `.p` is true. (Tested
+#' via `isTRUE()`. `async_reject` is the opposite, it drops them.
+#'
+#' @param .x A list or atomic vector.
+#' @param .p An asynchronous predicate function.
+#' @param ... Additional arguments to the predicate function.
+#' @return A deferred value for the result.
+#'
+#' @family async iterators
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## Filter out non-working URLs
+#' afun <- async(function(urls) {
+#'   test_url <- async_sequence(
+#'      http_head, function(x) identical(x$status_code, 200L))
+#'   async_filter(urls, test_url)
+#' })
+#' urls <- c("https://eu.httpbin.org/get",
+#'           "https://eu.httpbin.org/status/404")
+#' synchronise(afun(urls))
+#' }
+
 async_filter <- function(.x, .p, ...) {
   when_all(.list = lapply(.x, async(.p), ...))$
     then(function(res) .x[vlapply(res, isTRUE)])
 }
 
 async_filter <- mark_as_async(async_filter)
+
+#' @rdname async_filter
+#' @noRd
 
 async_reject <- function(.x, .p, ...) {
   when_all(.list = lapply(.x, async(.p), ...))$
@@ -1547,7 +2366,45 @@ async_reject <- function(.x, .p, ...) {
 
 async_reject <- mark_as_async(async_reject)
 
+#' Asynchronous HTTP GET request
+#'
+#' Start an HTTP GET request in the background, and report its completion
+#' via a deferred.
+#'
+#' @param url URL to connect to.
+#' @param headers HTTP headers to send.
+#' @param file If not `NULL`, it must be a string, specifying a file.
+#'   The body of the response is written to this file.
+#' @param options Options to set on the handle. Passed to
+#'   [curl::handle_setopt()].
+#' @param on_progress Progress handler function. It is only used if the
+#'   response body is written to a file. See details below.
+#' @return Deferred object.
+#'
+#' @section Progress bars:
+#'
+#' `http_get` can report on the progress of the download, via the
+#' `on_progress` argument. This is called with a list, with entries:
+#' * `url`: the specified url to download
+#' * `handle`: the curl handle of the request. This can be queried using
+#'   [curl::handle_data()] to get the response status_code, the final
+#'   URL (after redirections), timings, etc.
+#' * `file`: the `file` argument.
+#' * `total`: total bytes of the response. If this is unknown, it is set
+#'    to zero.
+#' * `current`: already received bytes of the response.
+#'
+#' @family asyncronous HTTP calls
+#' @noRd
 #' @importFrom curl new_handle handle_setheaders
+#' @examples
+#' \donttest{
+#' afun <- async(function() {
+#'   http_get("https://eu.httpbin.org/status/200")$
+#'     then(function(x) x$status_code)
+#' })
+#' synchronise(afun())
+#' }
 
 http_get <- function(url, headers = character(), file = NULL,
                      options = list(), on_progress = NULL) {
@@ -1587,7 +2444,30 @@ http_get <- function(url, headers = character(), file = NULL,
 
 http_get <- mark_as_async(http_get)
 
+#' Asynchronous HTTP HEAD request
+#'
+#' @inheritParams http_get
+#' @return Deferred object.
+#'
+#' @family asyncronous HTTP calls
+#' @noRd
 #' @importFrom curl handle_setopt
+#' @examples
+#' \donttest{
+#' afun <- async(function() {
+#'   dx <- http_head("https://eu.httpbin.org/status/200")$
+#'     then(function(x) x$status_code)
+#' })
+#' synchronise(afun())
+#'
+#' # Check a list of URLs in parallel
+#' afun <- function(urls) {
+#'   when_all(.list = lapply(urls, http_head))$
+#'     then(function(x) lapply(x, "[[", "status_code"))
+#' }
+#' urls <- c("https://google.com", "https://eu.httpbin.org")
+#' synchronise(afun(urls))
+#' }
 
 http_head <- function(url, headers = character(), file = NULL,
                       options = list(), on_progress = NULL) {
@@ -1609,6 +2489,32 @@ http_head <- function(url, headers = character(), file = NULL,
 }
 
 http_head <- mark_as_async(http_head)
+
+#' Asynchronous HTTP POST request
+#'
+#' Start an HTTP POST requrest in the background, and report its completion
+#' via a deferred value.
+#'
+#' @inheritParams http_get
+#' @param data Data to send. Either a raw vector, or a character string
+#'   that will be converted to raw with [base::charToRaw].
+#' @param on_progress Progress handler function. It is only used if the
+#'   response body is written to a file. See details at [http_get()].
+#'
+#' @noRd
+#' @examples
+#' json <- jsonlite::toJSON(list(baz = 100, foo = "bar"))
+#'
+#' do <- function() {
+#'   headers <- c("content-type" = "application/json")
+#'   http_post("https://eu.httpbin.org/post", data = json, headers = headers)$
+#'     then(http_stop_for_status)$
+#'     then(function(x) {
+#'       jsonlite::fromJSON(rawToChar(x$content))$json
+#'     })
+#' }
+#'
+#' synchronise(do())
 
 http_post <- function(url, data, headers = character(), file = NULL,
                       options = list(), on_progress = NULL) {
@@ -1677,6 +2583,27 @@ make_deferred_http <- function(cb, file) {
     }
   )
 }
+
+#' Throw R errors for HTTP errors
+#'
+#' Status codes below 400 are considered successful, others will trigger
+#' errors. Note that this is different from the `httr` package, which
+#' considers the 3xx status code errors as well.
+#'
+#' @param resp HTTP response from [http_get()], [http_head()], etc.
+#' @return The HTTP response invisibly, if it is considered successful.
+#'   Otherwise an error is thrown.
+#'
+#' @noRd
+#' @examples
+#' \donttest{
+#' afun <- async(function() {
+#'   http_get("https://eu.httpbin.org/status/404")$
+#'     then(http_stop_for_status)
+#' })
+#'
+#' tryCatch(synchronise(afun()), error = function(e) e)
+#' }
 
 http_stop_for_status <- function(resp) {
   if (!is.integer(resp$status_code)) stop("Not an HTTP response")
@@ -1796,6 +2723,280 @@ http_statuses <- c(
   "599" = "Network connect timeout error (Unknown)"
 )
 
+# # Standalone file for controlling when and where to build vignettes ----
+#
+# The canonical location of this file is in the asciicast package:
+# https://github.com/r-lib/asciicast/master/R/lazyrmd.R
+#
+# This standalone file provides a vignette builder that gives you more
+# control about when, where and how the vignettes of an R package will be
+# built. Possible use cases:
+# * do not rebuild vignettes on CRAN
+# * do not rebuild vignettes on a CI if the build time dependencies are
+#   not available.
+# * avoid rebuilding long running vignettes.
+# * fully static vignettes that never rebuild.
+# * etc.
+#
+# ## API
+#
+# ```
+# onload_hook(local = "if-newer", ci = TRUE, cran = "no-code")
+# build()
+# build_if_newer()
+# ```
+#
+# ## Usage
+#
+# To use this standalone in your package, do the following:
+# 1. Copy this file into your package, without changes.
+# 2. Call `lazyrmd$onload_hook()` from the `.onLoad()` function of your
+#    package. For example:
+#    ```
+#    .onLoad <- function(libname, pkgname) {
+#      lazyrmd$onload_hook(
+#        local = FALSE,
+#        ci = function() is_recording_supported(),
+#        cran = "no-code"
+#      )
+#    }
+#    ```
+# 3. Add the package itself as a vignette builder, in `DESCRIPTION`.
+# 4. Also in `DESCRIPTION`, add knitr and rmarkdown to `Suggests`, if you
+#    want to install them automatically on the CI, and/or you want to
+#    build vignettes in CRAN.
+# 5. Change the builder of the vignettes that you want to build lazily,
+#    in the YAML header. E.g.:
+#    ```
+#    vignette: >
+#    %\VignetteIndexEntry{asciicast example vignette}
+#    %\VignetteEngine{asciicast::lazyrmd}
+#    %\VignetteEncoding{UTF-8}
+#    ```
+#
+# ## NEWS:
+#
+# ### 1.0.0 -- 2019-12-01
+#
+# * First release.
+
+lazyrmd <- local({
+
+  # config ---------------------------------------------------------------
+
+  # Need to do this before we mess up the environment
+  package_name <- utils::packageName()
+  lazy_env <- environment()
+  parent.env(lazy_env) <- baseenv()
+
+  re_lazy_rmd <- "[.]Rmd$"
+
+  config = list()
+
+  # API ------------------------------------------------------------------
+
+  #' Configure the lazy vignette builder
+  #'
+  #' @noRd
+  #' @param local Whether/when to build vignettes for local builds.
+  #' @param ci Whether/when to build vignettes on the CI(s).
+  #' @param cran Whether/when to build vignettes on CRAN.
+  #'
+  #' Possible values for `local`, `ci` and `cran` are:
+  #' * `TRUE`: always (re)build the vignettes.
+  #' * `FALSE`: never (re)build the vignettes.
+  #' * `"if-newer"`: Only re(build) the vignettes if the Rmd file is newer.
+  #' * `"no-code"`: never rebuild the vignettes, and make sure that the
+  #'                `.R` file only contains dummy code. (This is to make
+  #'                sure that the `.R` file runs on CRAN.)
+  #' * a function object. This is called without arguments and if it
+  #'   returns an `isTRUE()` value, then the vignette is built.
+
+  onload_hook <- function(local = "if-newer", ci = TRUE, cran = "no-code") {
+    config <<- list(local = local, ci = ci, cran = cran, forced = NULL)
+    tools::vignetteEngine(
+      "lazyrmd",
+      weave = lazy_weave,
+      tangle = lazy_tangle,
+      pattern = re_lazy_rmd,
+      package = package_name
+    )
+  }
+
+  #' Build vignettes
+  #'
+  #' `build()` and `build_if_newer()` are is utility functions,
+  #' and you would probably not use them in the package code itself.
+  #' `build()` always rebuilds all vignettes, `build_if_newer()` only
+  #' if the source file is newer.
+  #'
+  #' @return The return value of [tools::buildVignettes()].
+
+  build_if_newer <- function() {
+    build_internal("if-newer")
+  }
+
+  build <- function() {
+    build_internal("force")
+  }
+
+  build_internal <- function(mode = c("force", "if-newer")) {
+    mode <- match.arg(mode)
+    config$forced <<- if (mode == "force") TRUE else mode
+    env_save <- Sys.getenv("LAZY_RMD_FORCED", NA_character_)
+    if (is.na(env_save)) {
+      on.exit(Sys.unsetenv("LAZY_RMD_FORCED"), add = TRUE)
+    } else {
+      on.exit(Sys.setenv(LAZY_RMD_FORCED = env_save), add = TRUE)
+    }
+    Sys.setenv(LAZY_RMD_FORCED = "true")
+    tools::buildVignettes(dir = ".", tangle = TRUE, clean = FALSE)
+  }
+
+  # internals ------------------------------------------------------------
+
+  #' This is called by [tools::buildVignettes], as the weave function of
+  #' the lazyrmd vignette engine
+
+  lazy_weave <- function(file, ...) {
+    output <- sub(re_lazy_rmd, ".html", file)
+    env <- detect_env()
+    conf <- config[[env]]
+
+    if (! should_build(file, output, conf)) {
+      message("--- chose not to rebuild vignette now")
+      create_if_needed(output, conf)
+      return(output)
+    }
+
+    message("--- weaving vignette...")
+    tic <- Sys.time()
+    ret <- weave(file, ...)
+    toc <- Sys.time()
+    message("--- weaving vignette... done in ", format(toc - tic))
+    ret
+  }
+
+  weave <- function(file, driver, syntax, encoding = "UTF-8",
+                    quiet = TRUE, ...) {
+
+    opts <- options(markdown.HTML.header = NULL)
+    on.exit({
+      knitr::opts_chunk$restore()
+      knitr::knit_hooks$restore()
+      options(opts)
+    }, add = TRUE)
+
+    knitr::opts_chunk$set(error = FALSE)
+
+    rmarkdown::render(
+      file,
+      encoding = encoding,
+      quiet = quiet,
+      envir = globalenv(),
+      ...
+    )
+  }
+
+  #' This is called by [tools::buildVignettes], as the tangle function of
+  #' the lazyrmd vignette engine
+
+  lazy_tangle <- function(file, ...) {
+    output <- sub(re_lazy_rmd, ".R", file)
+    env <- detect_env()
+    conf <- config[[env]]
+
+    if (! should_build(file, output, conf)) {
+      create_if_needed(output, conf)
+      return(output)
+    }
+
+    message("--- tangling vignette...")
+    tic <- Sys.time()
+    ret <- tangle(file, ...)
+    toc <- Sys.time()
+    message("--- tangling vignette... done in ", format(toc - tic))
+    ret
+  }
+
+  tangle <- function(file, ..., encoding = "UTF-8", quiet = FALSE) {
+    output <- sub(re_lazy_rmd, ".R", file)
+    knitr::purl(file, encoding = encoding, quiet = quiet, ...)
+  }
+
+  is_ci <- function() {
+    isTRUE(as.logical(Sys.getenv("CI")))
+  }
+
+  #' If NOT_CRAN is set to a true value, then we are local
+  #' Otherwise we are local if not running inside `R CMD check`.
+
+  is_local <- function() {
+    if (isTRUE(as.logical(Sys.getenv("NOT_CRAN")))) return(TRUE)
+    Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") == ""
+  }
+
+  detect_env <- function() {
+    # Order matters here, is_local() == TRUE on the CI as well, usually
+    if (!is.na(Sys.getenv("LAZY_RMD_FORCED", NA_character_))) return("forced")
+    if (is_ci()) return("ci")
+    if (is_local()) return("local")
+    "cran"
+  }
+
+  should_build <- function(input, output, conf) {
+    if (isTRUE(conf)) return(TRUE)
+    if (identical(conf, FALSE)) return(FALSE)
+    if (is.function(conf)) return(isTRUE(conf()))
+    if (identical(conf, "if-newer")) {
+      return(!file.exists(output) || file_mtime(input) > file_mtime(output))
+    }
+    FALSE
+  }
+
+  file_mtime <- function(...) {
+    file.info(..., extra_cols = FALSE)$mtime
+  }
+
+  create_if_needed <- function(path, conf) {
+    if (!file.exists(path)) file.create(path)
+    if (identical(conf, "no-code")) {
+      code_file <- sub("\\.html$", ".R", path)
+      message("--- creating dummy file ", basename(path))
+      cat("# Dummy file for static vignette\n", file = code_file)
+    }
+    Sys.setFileTime(path, Sys.time())
+  }
+
+  structure(
+    list(
+      .internal = lazy_env,
+      onload_hook = onload_hook,
+      build = build,
+      build_if_newer = build_if_newer
+    ),
+    class = c("standalone_lazyrmd", "standalone")
+  )
+})
+
+#' Apply an asynchronous function to each element of a vector
+#'
+#' @param .x A list or atomic vector.
+#' @param .f Asynchronous function to apply.
+#' @param ... Additional arguments to `.f`.
+#' @param .args More additional arguments to `.f`.
+#' @param .limit Number of elements to process simulateneously.
+#' @return Deferred value that is resolved after all deferred values
+#'   from the application of `.f` are resolved.
+#'
+#' @family async iterators
+#' @noRd
+#' @examples
+#' synchronise(async_map(
+#'   seq(10, 100, by = 10) / 100,
+#'   function(wait) delay(wait)$then(function() "OK")
+#' ))
+
 async_map <- function(.x, .f, ..., .args = list(), .limit = Inf) {
   if (.limit < length(.x))  {
     async_map_limit(.x, .f, ..., .args = .args, .limit = .limit)
@@ -1815,7 +3016,6 @@ async_map_limit <- function(.x, .f, ..., .args = list(), .limit = Inf) {
 
   nextone <- .limit + 1L
   firsts <- lapply_args(.x[seq_len(.limit)], .f, .args = args)
-  ids <- viapply(firsts, function(x) x$get_id())
 
   result <- structure(
     vector(mode = "list", length = len),
@@ -1824,17 +3024,23 @@ async_map_limit <- function(.x, .f, ..., .args = list(), .limit = Inf) {
 
   self <- deferred$new(
     type = "async_map (limit)", call = sys.call(),
-    parents = firsts,
-    action = function(resolve) if (nx == 0) resolve(result),
-    parent_resolve = function(value, resolve, id) {
+    action = function(resolve) {
+      self; nx; firsts
+      lapply(seq_along(firsts), function(idx) {
+        firsts[[idx]]$then(function(val) list(idx, val))$then(self)
+      })
+      if (nx == 0) resolve(result)
+    },
+    parent_resolve = function(value, resolve) {
+      self; nx; nextone; result; .f
       nx <<- nx - 1L
-      result[[match(id, ids)]] <<- value
+      result[ value[[1]] ] <<- value[2]
       if (nx == 0) {
         resolve(result)
       } else if (nextone <= len) {
+        idx <- nextone
         dx <- do.call(".f", c(list(.x[[nextone]]), args))
-        ids <<- c(ids, dx$get_id())
-        dx$then(self)
+        dx$then(function(val) list(idx, val))$then(self)
         nextone <<- nextone + 1L
       }
     }
@@ -1843,10 +3049,43 @@ async_map_limit <- function(.x, .f, ..., .args = list(), .limit = Inf) {
   self
 }
 
+## nocov start
+
+.onLoad <- function(libname, pkgname) {
+  lazyrmd$onload_hook(
+    local = "if-newer",
+    ci = TRUE,
+    cran = FALSE
+  )
+  if (requireNamespace("debugme", quietly = TRUE)) debugme::debugme()
+}
+
+## nocov end
+
 #' @import rlang
 NULL
 
+#' Asynchronous external process execution
+#'
+#' Start an external process in the background, and report its completion
+#' via a deferred.
+#'
+#' @inheritParams processx::run
+#' @param error_on_status Whether to reject the referred value if the
+#'    program exits with a non-zero status.
+#' @return Deferred object.
+#'
+#' @family asynchronous external processes
+#' @noRd
 #' @importFrom processx process
+#' @examples
+#' \dontrun{
+#' afun <- function() {
+#'   run_process("ls", "-l")$
+#'     then(function(x) strsplit(x$stdout, "\r?\n")[[1]])
+#' }
+#' synchronise(afun())
+#' }
 
 run_process <- function(command = NULL, args = character(),
   error_on_status = TRUE, wd = NULL, env = NULL,
@@ -1883,11 +3122,26 @@ run_process <- function(command = NULL, args = character(),
 
 run_process <- mark_as_async(run_process)
 
+#' Asynchronous call to an R function, in a background R process
+#'
+#' Start a background R process and evaluate a function call in it.
+#' It uses [callr::r_process] internally.
+#'
+#' @inheritParams callr::r_bg
+#' @noRd
 #' @importFrom callr r_process_options r_process rcmd_safe_env
+#'
+#' @examples
+#' \dontrun{
+#' afun <- function() {
+#'   run_r_process(function() Sys.getpid())
+#' }
+#' synchronise(afun())
+#' }
 
 run_r_process <- function(func, args = list(), libpath = .libPaths(),
   repos = c(getOption("repos"), c(CRAN = "https://cloud.r-project.org")),
-  cmdargs = c("--no-site-file", "-s", "--no-save", "--no-restore"),
+  cmdargs = c("--no-site-file", "--slave", "--no-save", "--no-restore"),
   system_profile = FALSE, user_profile = FALSE, env = rcmd_safe_env()) {
 
   func; args; libpath; repos; cmdargs; system_profile; user_profile; env
@@ -1922,6 +3176,25 @@ run_r_process <- function(func, args = list(), libpath = .libPaths(),
 
 run_r_process <- mark_as_async(run_r_process)
 
+#' Make an asynchronous function that always succeeds
+#'
+#' This is sometimes useful, if the function is applied to entries in
+#' a vector or list.
+#'
+#' @param task Function to transform.
+#' @return Async function returning a deferred value that is never
+#'   rejected. Instead its value is a list with entries `error` and
+#'   `result`. If the original deferred was resolved, then `error` is
+#'   `NULL`. If the original deferred was rejected, then `result` is
+#'   `NULL`.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#'  badfun <- async(function() stop("oh no!"))
+#'  safefun <- async_reflect(badfun)
+#'  synchronise(when_all(safefun(), "good"))
+
 async_reflect <- function(task) {
   task <- async(task)
   function(...) {
@@ -1932,6 +3205,29 @@ async_reflect <- function(task) {
 }
 
 async_reflect <- mark_as_async(async_reflect)
+
+#' Replicate an async function a number of times
+#'
+#' Similar to [base::replicate()], with some differences:
+#' * it takes an async function, instead of an expression, and
+#' * it always returns a list.
+#'
+#' @param n Number of replications.
+#' @param task Async function to call.
+#' @param ... Additional arguments to `task`.
+#' @param .limit Number of concurrent async processes to create.
+#' @return Resolves to a list of the results of the `n` `task` calls.
+#'
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## perform an HTTP request three times, and list the reponse times
+#' do <- function() {
+#'   async_replicate(3,
+#'     function() http_get("https://eu.httpbin.org")$then(function(x) x$times))
+#' }
+#' synchronise(do())
+#' }
 
 async_replicate <- function(n, task, ...,  .limit = Inf) {
   assert_that(
@@ -1958,23 +3254,25 @@ async_replicate_nolimit <- function(n, task, ...) {
 async_replicate_limit  <- function(n, task, ..., .limit = .limit) {
   n; .limit
 
-  defs <- ids <- nextone <- result <- NULL
+  defs <- nextone <- result <- NULL
 
   self <- deferred$new(
     type = "async_replicate", call = sys.call(),
     action = function(resolve) {
       defs <<- lapply(seq_len(n), function(i) task(...))
-      ids <<- viapply(defs, function(x) x$get_id())
       result <<- vector(n, mode = "list")
-      for (i in 1:.limit) defs[[i]]$then(self)
+      lapply(seq_len(.limit), function(idx) {
+        defs[[idx]]$then(function(val) list(idx, val))$then(self)
+      })
       nextone <<- .limit + 1L
     },
-    parent_resolve = function(value, resolve, id) {
-      result[[match(id, ids)]] <<- value
+    parent_resolve = function(value, resolve) {
+      result[ value[[1]] ] <<- value[2]
       if (nextone > n) {
         resolve(result)
       } else {
-        defs[[nextone]]$then(self)
+        idx <- nextone
+        defs[[nextone]]$then(function(val) list(idx, val))$then(self)
         nextone <<- nextone + 1L
       }
     }
@@ -1982,6 +3280,31 @@ async_replicate_limit  <- function(n, task, ..., .limit = .limit) {
 
   self
 }
+
+#' Retry an asynchronous function a number of times
+#'
+#' Keeps trying until the function's deferred value resolves without
+#' error, or `times` tries have been performed.
+#'
+#' @param task An asynchronous function.
+#' @param times Number of tries.
+#' @param ... Arguments to pass to `task`.
+#' @return Deferred value for the operation with retries.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## Try a download at most 5 times
+#' afun <- async(function() {
+#'   async_retry(
+#'     function() http_get("https://eu.httpbin.org"),
+#'     times = 5
+#'   )$then(function(x) x$status_code)
+#' })
+#'
+#' synchronise(afun())
+#' }
 
 async_retry <- function(task, times, ...) {
   task <- async(task)
@@ -2004,6 +3327,25 @@ async_retry <- function(task, times, ...) {
 
 async_retry <- mark_as_async(async_retry)
 
+#' Make an asynchronous funcion retryable
+#'
+#' @param task An asynchronous function.
+#' @param times Number of tries.
+#' @return Asynchronous retryable function.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## Create a downloader that retries five times
+#' http_get_5 <- async_retryable(http_get, times = 5)
+#' ret <- synchronise(
+#'   http_get_5("https://eu.httpbin.org/get?q=1")$
+#'     then(function(x) rawToChar(x$content))
+#' )
+#' cat(ret)
+#' }
+
 async_retryable <- function(task, times) {
   task <- async(task)
   force(times)
@@ -2011,6 +3353,27 @@ async_retryable <- function(task, times) {
     async_retry(task, times, ...)
   }
 }
+
+#' Compose asynchronous functions
+#'
+#' This is equivalent to using the `$then()` method of a deferred, but
+#' it is easier to use programmatically.
+#'
+#' @param ... Asynchronous functions to compose.
+#' @param .list Mose asynchronous functions to compose.
+#' @return Asynchronous function, the composition of all input functions.
+#'   They are performed left to right, the ones in `.list` are the last
+#'   ones.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' \donttest{
+#' check_url <- async_sequence(
+#'   http_head, function(x) identical(x$status_code, 200L))
+#' synchronise(check_url("https://eu.httpbin.org/status/404"))
+#' synchronise(check_url("https://eu.httpbin.org/status/200"))
+#' }
 
 async_sequence <- function(..., .list = NULL) {
   funcs <- c(list(...), .list)
@@ -2024,6 +3387,9 @@ async_sequence <- function(..., .list = NULL) {
 }
 
 async_sequence <- mark_as_async(async_sequence)
+
+#' @noRd
+#' @rdname async_every
 
 async_some <- function(.x, .p, ...) {
   defs <- lapply(.x, async(.p), ...)
@@ -2048,6 +3414,33 @@ async_some <- function(.x, .p, ...) {
 
 async_some <- mark_as_async(async_some)
 
+#' Synchronously wrap asynchronous code
+#'
+#' Evaluate an expression in an async phase. It creates an event loop,
+#' then evaluates the supplied expression. If its result is a deferred
+#' value, it keeps running the event loop, until the deferred value is
+#' resolved, and returns its resolved value.
+#'
+#' If an error is not handled in the async phase, `synchronise()` will
+#' re-throw that error.
+#'
+#' `synchronise()` cancels all async processes on interrupt or external
+#' error.
+#'
+#' @param expr Async function call expression. If it does not evaluate
+#' to a deferred value, then it is just returned.
+#'
+#' @noRd
+#' @examples
+#' \donttest{
+#' http_status <- function(url, ...) {
+#'   http_get(url, ...)$
+#'     then(function(x) x$status_code)
+#' }
+#'
+#' synchronise(http_status("https://eu.httpbin.org/status/418"))
+#' }
+
 synchronise <- function(expr) {
   new_el <- push_event_loop()
   on.exit({ new_el$cancel_all(); pop_event_loop() }, add = TRUE)
@@ -2055,9 +3448,19 @@ synchronise <- function(expr) {
   ## Mark this frame as a synchronization point, for debugging
   `__async_synchronise_frame__` <- TRUE
 
+  ## This is to allow `expr` to contain `async_list()` etc
+  ## calls that look for the top promise. Without this there
+  ## is no top promise. This is a temporary top promise that
+  ## is never started.
+  res <- async_constant(NULL)
+
   res <- expr
 
   if (!is_deferred(res)) return(res)
+
+  ## We need an extra final promise that cannot be replaced,
+  ## so priv stays the same.
+  res <- res$then(function(x) x)
 
   priv <- get_private(res)
   if (! identical(priv$event_loop, new_el)) {
@@ -2093,6 +3496,36 @@ start_browser <- function() {
   browser(skipCalls = 1)
 }
 
+#' Run event loop to completion
+#'
+#' Creates a new event loop, evaluates `expr` in it, and then runs the
+#' event loop to completion. It stops when the event loop does not have
+#' any tasks.
+#'
+#' The expression typically creates event loop tasks. It should not create
+#' deferred values, though, because those will never be evaluated.
+#'
+#' Unhandled errors propagate to the `run_event_loop()` call, which fails.
+#'
+#' In case of an (unhandled) error, all event loop tasks will be cancelled.
+#'
+#' @param expr Expression to run after creating a new event loop.
+#' @return `NULL`, always. If the event loop is to return some value,
+#' you can use lexical scoping, see the example below.
+#'
+#' @noRd
+#' @examples
+#' counter <- 0L
+#' do <- function() {
+#'   callback <- function() {
+#'     counter <<- counter + 1L
+#'     if (runif(1) < 1/10) t$cancel()
+#'   }
+#'   t <- async_timer$new(1/1000, callback)
+#' }
+#' run_event_loop(do())
+#' counter
+
 run_event_loop <- function(expr) {
   new_el <- push_event_loop()
   on.exit({ new_el$cancel_all(); pop_event_loop() }, add = TRUE)
@@ -2118,6 +3551,7 @@ distill_error <- function(err) {
 }
 
 # nocov start
+#' @noRd
 
 print.async_rejected <- function(x, ...) {
   cat(format(x, ...))
@@ -2125,6 +3559,8 @@ print.async_rejected <- function(x, ...) {
 }
 
 # nocov end
+
+#' @noRd
 
 format.async_rejected <- function(x, ...) {
   x <- distill_error(x)
@@ -2136,6 +3572,8 @@ format.async_rejected <- function(x, ...) {
     "` at ", src$filename, ":", src$position, ">"
   )
 }
+
+#' @noRd
 
 summary.async_rejected <- function(object, ...) {
   x <- distill_error(object)
@@ -2150,6 +3588,8 @@ summary.async_rejected <- function(object, ...) {
 
 # nocov start
 
+#' @noRd
+
 print.async_rejected_summary <- function(x, ...) {
   cat(x)
   invisible(x)
@@ -2157,19 +3597,53 @@ print.async_rejected_summary <- function(x, ...) {
 
 # nocov end
 
+#' Asynchronous function call with a timeout
+#'
+#' If the deferred value is not resolved before the timeout expires,
+#' `async_timeout()` throws an `async_timeout` error.
+#'
+#' @param task Asynchronous function.
+#' @param timeout Timeout as a `difftime` object, or number of seconds.
+#' @param ... Additional arguments to `task`.
+#' @return A deferred value. An `async_timeout` error is thrown if it is
+#'   not resolved within the specified timeout.
+#'
+#' @family async utilities
+#' @noRd
+#' @examples
+#' ## You can catch the error, asynchronously
+#' synchronise(
+#'   async_timeout(function() delay(1/10)$then(function() "OK"), 1/1000)$
+#'     catch(async_timeout = function(e) "Timed out",
+#'           error = function(e) "Other error")
+#' )
+#'
+#' ## Or synchronously
+#' tryCatch(
+#'   synchronise(
+#'     async_timeout(function() delay(1/10)$then(function() "OK"), 1/1000)
+#'   ),
+#'   async_timeout = function(e) "Timed out. :(",
+#'   error = function(e) paste("Other error:", e$message)
+#' )
+
 async_timeout <- function(task, timeout, ...) {
   task <- async(task)
   force(timeout)
+  list(...)
   done <- FALSE
 
-  deferred$new(
+  self <- deferred$new(
     type = "timeout", call = sys.call(),
-    parents = list(d1 <- task(...), d2 <- delay(timeout)),
-    parent_resolve = function(value, resolve, id) {
+    action = function(resolve) {
+      task(...)$then(function(x) list("ok", x))$then(self)
+      delay(timeout)$then(~ list("timeout"))$then(self)
+    },
+    parent_resolve = function(value, resolve) {
       if (!done) {
         done <<- TRUE
-        if (id == d1$get_id()) {
-          resolve(value)
+        if (value[[1]] == "ok") {
+          resolve(value[[2]])
         } else {
           stop("Timed out")
         }
@@ -2180,7 +3654,100 @@ async_timeout <- function(task, timeout, ...) {
 
 async_timeout <- mark_as_async(async_timeout)
 
+#' Repeated timer
+#'
+#' The supplied callback function will be called by the event loop
+#' every `delay` seconds.
+#'
+#' @section Usage:
+#' ```
+#' t <- async_timer$new(delay, callback)
+#' t$cancel()
+#' ```
+#'
+#' @section Arguments:
+#' * `delay`: Time interval in seconds, the amount of time to delay
+#'   to delay the execution. It can be a fraction of a second.
+#' * `callback`: Callback function without arguments. It will be called
+#'   from the event loop every `delay` seconds.
+#'
+#' @section Details:
+#'
+#' An `async_timer` is an `[event_emitter]` object with a `timeout` event.
+#' It is possible to add multiple listeners to this event, once the timer
+#' is created. Note, however, that removing all listeners does not cancel
+#' the timer, `timeout` events will be still emitted as usual.
+#' For proper cancellation you'll need to call the `cancel()` method.
+#'
+#' It is only possible to create `async_timer` objects in an asynchronous
+#' context, i.e. within a `synchronise()` or `run_event_loop()` call.
+#' A `synchronise()` call finishes as soon as its returned deferred value
+#' is resolved (or rejected), even if some timers are still active. The
+#' active timers will be automatically cancelled in this case.
+#'
+#' @section Errors:
+#' Errors are handled the same way as for generic event emitters. I.e. to
+#' catch errors thrown in the `callback` function, you need to add a
+#' listener to the `error` event, see the example below.
+#'
+#' @section Congestion:
+#' `async_timer` is _not_ a real-time timer. In particular, if `callback`
+#' does not return in time, before the next timer event, then all future
+#' timer events will be delayed. Even if `callback` returns promptly, the
+#' event loop might be busy with other events, and then the next timer
+#' event is not emitted in time. In general there is no guarantee about
+#' the timing of the timer events.
+#'
 #' @importFrom R6 R6Class
+#' @noRd
+#' @examples
+#' ## Call 10 times a second, cancel with 1/10 probability
+#' counter <- 0L
+#' do <- function() {
+#'   cb <- function() {
+#'     cat("called\n")
+#'     counter <<- counter + 1L
+#'     if (runif(1) < 0.1) t$cancel()
+#'   }
+#'   t <- async_timer$new(1/10, cb)
+#' }
+#'
+#' run_event_loop(do())
+#' counter
+#'
+#' ## Error handling
+#' counter <- 0L
+#' do <- function() {
+#'   cb <- function() {
+#'     cat("called\n")
+#'     counter <<- counter + 1L
+#'     if (counter == 2L) stop("foobar")
+#'     if (counter == 3L) t$cancel()
+#'   }
+#'   t <- async_timer$new(1/10, cb)
+#'   handler <- function(err) {
+#'     cat("Got error:", sQuote(conditionMessage(err)), ", handled\n")
+#'   }
+#'   t$listen_on("error", handler)
+#' }
+#'
+#' run_event_loop(do())
+#' counter
+#'
+#' ## Error handling at the synchonization point
+#' counter <- 0L
+#' do <- function() {
+#'   cb <- function() {
+#'     cat("called\n")
+#'     counter <<- counter + 1L
+#'     if (counter == 2L) stop("foobar")
+#'     if (counter == 3L) t$cancel()
+#'   }
+#'   t <- async_timer$new(1/10, cb)
+#' }
+#'
+#' tryCatch(run_event_loop(do()), error = function(x) x)
+#' counter
 
 async_timer <- R6Class(
   "async_timer",
@@ -2225,6 +3792,31 @@ async_timer_cancel  <- function(self, private) {
   invisible(self)
 }
 
+#' It runs each task in series but stops whenever any of the functions were
+#' successful. If one of the tasks were successful, the callback will be
+#' passed the result of the successful task. If all tasks fail, the
+#' callback will be passed the error and result (if any) of the final
+#' attempt.
+#' @param ... Deferred values to run in series.
+#' @param .list More deferred values to run, `.list` is easier to use
+#'   programmatically.
+#' @return Resolves to the result of the first successful deferred.
+#'   Otherwise throws an error. The error objects of all failed deferreds
+#'   will be in the `errors` member of the error object.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' do <- function() {
+#'   async_try_each(
+#'     async(function() stop("doh"))(),
+#'     async(function() "cool")(),
+#'     async(function() stop("doh2"))(),
+#'     async(function() "cool2")()
+#'   )
+#' }
+#' synchronise(do())
+
 async_try_each <- function(..., .list = list()) {
   defs <- c(list(...), .list)
   wh <- nx <- NULL
@@ -2238,10 +3830,10 @@ async_try_each <- function(..., .list = list()) {
       wh <<- 1L
       defs[[wh]]$then(self)
     },
-    parent_resolve = function(value, resolve, id) {
+    parent_resolve = function(value, resolve) {
       resolve(value)
     },
-    parent_reject = function(value, resolve, id) {
+    parent_reject = function(value, resolve) {
       errors <<- c(errors, list(value))
       if (wh == nx) {
         err <- structure(
@@ -2259,6 +3851,28 @@ async_try_each <- function(..., .list = list()) {
 }
 
 async_try_each <- mark_as_async(async_try_each)
+
+#' Repeatedly call task until it its test function returns `TRUE`
+#'
+#' @param test Synchronous test function.
+#' @param task Asynchronous function to call repeatedly.
+#' @param ... Arguments to pass to `task`.
+#' @return Deferred value, that is resolved when the iteration is done.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' ## Keep calling until it "returns" a number less than < 0.1
+#' calls <- 0
+#' number <- Inf
+#' synchronise(async_until(
+#'   function() number < 0.1,
+#'   function() {
+#'     calls <<- calls + 1
+#'     number <<- runif(1)
+#'   }
+#' ))
+#' calls
 
 async_until <- function(test, task, ...) {
   force(test)
@@ -2311,6 +3925,19 @@ get_private <- function(x) {
   x$.__enclos_env__$private
 }
 
+#' Call `func` and then call `callback` with the result
+#'
+#' `callback` will be called with two arguments, the first one will the
+#' error object if `func()` threw an error, or `NULL` otherwise. The second
+#' argument is `NULL` on error, and the result of `func()` otherwise.
+#'
+#' @param func Function to call.
+#' @param callback Callback to call with the result of `func()`,
+#'   or the error thrown.
+#' @param info Extra info to add to the error object. Must be a named list.
+#'
+#' @keywords internal
+
 call_with_callback <- function(func, callback, info = NULL) {
   recerror <- NULL
   result <- NULL
@@ -2321,6 +3948,7 @@ call_with_callback <- function(func, callback, info = NULL) {
         recerror <<- e
         recerror$aframe <<- recerror$aframe %||% find_async_data_frame()
         recerror$calls <<- recerror$calls %||% sys.calls()
+        if (is.null(recerror[["call"]])) recerror[["call"]] <<- sys.call()
         recerror$parents <<- recerror$parents %||% sys.parents()
         recerror[names(info)] <<- info
         handler <- getOption("async.error")
@@ -2374,6 +4002,7 @@ file_size <- function(...) {
 }
 
 read_all <- function(filename, encoding) {
+  if (is.null(filename)) return(NULL)
   r <- readBin(filename, what = raw(0), n = file_size(filename))
   s <- rawToChar(r)
   Encoding(s) <- encoding
@@ -2388,28 +4017,99 @@ str_trim <- function(x) {
   sub("\\s+$", "", sub("^\\s+", "", x))
 }
 
+#' Deferred value for a set of deferred values
+#'
+#' Create a deferred value that is resolved when all listed deferred values
+#' are resolved. Note that the error of an input deferred value
+#' triggers the error `when_all` as well.
+#'
+#' async has auto-cancellation, so if one deferred value errors, the rest
+#' of them will be automatically cancelled.
+#'
+#' @param ... Deferred values.
+#' @param .list More deferred values.
+#' @return A deferred value, that is conditioned on all deferred values
+#'   in `...` and `.list`.
+#'
+#' @seealso [when_any()], [when_some()]
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## Check that the contents of two URLs are the same
+#' afun <- async(function() {
+#'   u1 <- http_get("https://eu.httpbin.org")
+#'   u2 <- http_get("https://eu.httpbin.org/get")
+#'   when_all(u1, u2)$
+#'     then(function(x) identical(x[[1]]$content, x[[2]]$content))
+#' })
+#' synchronise(afun())
+#' }
+
 when_all <- function(..., .list = list()) {
 
   defs <- c(list(...), .list)
-  isdef <- vlapply(defs, is_deferred)
-  nx <- sum(isdef)
+  nx <- 0L
 
-  deferred$new(
-    type = "when_all", call = sys.call(),
-    parents = defs[isdef],
-    action = function(resolve) if (nx == 0) resolve(defs),
+  self <- deferred$new(
+    type = "when_all",
+    call = sys.call(),
+    action = function(resolve) {
+      self; nx; defs
+      lapply(seq_along(defs), function(idx) {
+        idx
+        if (is_deferred(defs[[idx]])) {
+          nx <<- nx + 1L
+          defs[[idx]]$then(function(val) list(idx, val))$then(self)
+        }
+      })
+      if (nx == 0) resolve(defs)
+    },
     parent_resolve = function(value, resolve) {
+      defs[ value[[1]] ] <<- value[2]
       nx <<- nx - 1L
-      if (nx == 0L) resolve(lapply(defs, get_value_x))
+      if (nx == 0L) resolve(defs)
     }
   )
 }
 
 when_all <- mark_as_async(when_all)
 
-get_value_x <- function(x) {
-  if (is_deferred(x)) get_private(x)$value else x
-}
+#' Resolve a deferred as soon as some deferred from a list resolve
+#'
+#' `when_some` creates a deferred value that is resolved as soon as the
+#' specified number of deferred values resolve.
+#'
+#' `when_any` is a special case for a single.
+#'
+#' If the specified number of deferred values cannot be resolved, then
+#' `when_any` throws an error.
+#'
+#' async has auto-cancellation, so if the required number of deferred values
+#' are resolved, or too many of them throw error, the rest of the are
+#' cancelled.
+#'
+#' If `when_any` throws an error, then all the underlying error objects
+#' are returned in the `errors` member of the error object thrown by
+#' `when_any`.
+#'
+#' @param count Number of deferred values that need to resolve.
+#' @param ... Deferred values.
+#' @param .list More deferred values.
+#' @return A deferred value, that is conditioned on all deferred values
+#'   in `...` and `.list`.
+#'
+#' @seealso [when_all()]
+#' @noRd
+#' @examples
+#' \donttest{
+#' ## Use the URL that returns first
+#' afun <- function() {
+#'   u1 <- http_get("https://eu.httpbin.org")
+#'   u2 <- http_get("https://eu.httpbin.org/get")
+#'   when_any(u1, u2)$then(function(x) x$url)
+#' }
+#' synchronise(afun())
+#' }
 
 when_some <- function(count, ..., .list = list()) {
   force(count)
@@ -2453,11 +4153,36 @@ when_some <- function(count, ..., .list = list()) {
 
 when_some <- mark_as_async(when_some)
 
+#' @noRd
+#' @rdname when_some
+
 when_any <- function(..., .list = list()) {
   when_some(1, ..., .list = .list)$then(function(x) x[[1]])
 }
 
 when_any <- mark_as_async(when_any)
+
+#' Repeatedly call task, while test returns true
+#'
+#' @param test Synchronous test function.
+#' @param task Asynchronous function to call repeatedly.
+#' @param ... Arguments to pass to `task`.
+#' @return Deferred value, that is resolved when the iteration is done.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' ## Keep calling while result is bigger than 0.1
+#' calls <- 0
+#' number <- Inf
+#' synchronise(async_whilst(
+#'   function() number >= 0.1,
+#'   function() {
+#'     calls <<- calls + 1
+#'     number <<- runif(1)
+#'   }
+#' ))
+#' calls
 
 async_whilst <- function(test, task, ...) {
   force(test)
@@ -2486,7 +4211,17 @@ async_whilst <- function(test, task, ...) {
 
 async_whilst <- mark_as_async(async_whilst)
 
+#' Worker pool
+#'
+#' The worker pool functions are independent of the event loop, to allow
+#' independent testing.
+#'
+#' @family worker pool functions
+#' @name worker_pool
+#' @noRd
+#' @keywords internal
 #' @importFrom R6 R6Class
+NULL
 
 worker_pool <- R6Class(
   public = list(
@@ -2698,6 +4433,36 @@ wp__try_start <- function(self, private) {
   invisible()
 }
 
+#' Interrupt a worker process
+#'
+#' We need to make sure that the worker is in a usable state after this.
+#'
+#' For speed, we try to interrupt with a SIGINT first, and if that does
+#' not work, then we kill the worker and start a new one.
+#'
+#' When we interrupt with a SIGINT a number of things can happen:
+#' 1. we successfully interrupted a computation, then
+#'    we'll just poll_io(), and read() and we'll get back an
+#'    interrupt error.
+#' 2. The computation has finished, so we did not interrupt it.
+#'    In this case the background R process will apply the interrupt
+#'    to the next computation (at least on Unix) so the bg process
+#'    needs to run a quick harmless call to absorb the interrupt.
+#'    We can use `Sys.sleep()` for this, and `write_input()` directly
+#'    for speed and simplicity.
+#' 3. The process has crashed already, in this case `interrupt()` will
+#'    return `FALSE`. `poll_io()` will return with "ready" immediately,
+#'    `read()` will return with an error, and `write_input()` throws
+#'    an error.
+#' 4. We could not interrupt the process, because it was in a
+#'    non-interruptable state. In this case we kill it, and start a
+#'    new process. `poll_io()` will not return with "ready" in this case.
+#'
+#' @param self self
+#' @param private private self
+#' @param pid pid of process
+#' @noRd
+
 wp__interrupt_worker <- function(self, private, pid) {
   ww <- match(pid, private$workers$pid)
   if (is.na(ww)) stop("Unknown task in interrupt_worker() method")
@@ -2729,4 +4494,81 @@ wp__interrupt_worker <- function(self, private, pid) {
   }
 
   invisible()
+}
+
+#' External process via a process generator
+#'
+#' Wrap any [processx::process] object into a deferred value. The
+#' process is created by a generator function.
+#'
+#' @param process_generator Function that returns a [processx::process]
+#'   object. See details below about the current requirements for the
+#'   returned process.
+#' @param error_on_status Whether to fail if the process terminates
+#'   with a non-zero exit status.
+#' @param ... Extra arguments, passed to `process_generator`.
+#' @return Deferred object.
+#'
+#' Current requirements for `process_generator`:
+#' * It must take a `...` argument, and pass it to
+#'   `processx::process$new()`.
+#' * It must use the `poll_connection = TRUE` argument.
+#' These requirements might be relaxed in the future.
+#'
+#' If you want to obtain the standard output and/or error of the
+#' process, then `process_generator` must redirect them to files.
+#' If you want to discard them, `process_generator` can set them to
+#' `NULL`.
+#'
+#' `process_generator` should not use pipes (`"|"`) for the standard
+#' output or error, because the process will stop running if the
+#' pipe buffer gets full. We currently never read out the pipe buffer.
+#'
+#' @noRd
+#' @examples
+#' \dontrun{
+#' lsgen <- function(dir = ".", ...) {
+#'   processx::process$new(
+#'     "ls",
+#'     dir,
+#'     poll_connection = TRUE,
+#'     stdout = tempfile(),
+#'     stderr = tempfile(),
+#'     ...
+#'   )
+#' }
+#' afun <- function() {
+#'   external_process(lsgen)
+#' }
+#' synchronise(afun())
+#' }
+
+external_process <- function(process_generator, error_on_status = TRUE,
+                             ...) {
+
+  process_generator; error_on_status; args <- list(...)
+  args$encoding <- args$encoding %||% ""
+
+  id <- NULL
+
+  deferred$new(
+    type = "external_process", call = sys.call(),
+    action = function(resolve) {
+      resolve
+      reject <- environment(resolve)$private$reject
+      px <- do.call(process_generator, args)
+      stdout <- px$get_output_file()
+      stderr <- px$get_error_file()
+      pipe <- px$get_poll_connection()
+      id <<- get_default_event_loop()$add_process(
+        list(pipe),
+        function(err, res) if (is.null(err)) resolve(res) else reject(err),
+        list(process = px, stdout = stdout, stderr = stderr,
+             error_on_status = TRUE, encoding = args$encoding)
+      )
+    },
+    on_cancel = function(reason) {
+      if (!is.null(id)) get_default_event_loop()$cancel(id)
+    }
+  )
 }

@@ -340,6 +340,7 @@ pkgenv$package_versions <- new.env(parent = emptyenv())
 
 onload_pkgcache <- function(libname, pkgname) {
   pkgenv$global_metadata_cache <- new.env(parent = emptyenv())
+  pkgenv$archive_cache <- new.env(parent = emptyenv())
 }
 
 if (exists(".onLoad", inherits = FALSE)) {

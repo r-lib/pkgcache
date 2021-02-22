@@ -2492,7 +2492,7 @@ http_head <- mark_as_async(http_head)
 
 #' Asynchronous HTTP POST request
 #'
-#' Start an HTTP POST requrest in the background, and report its completion
+#' Start an HTTP POST request in the background, and report its completion
 #' via a deferred value.
 #'
 #' @inheritParams http_get
@@ -2550,12 +2550,13 @@ get_default_curl_options <- function(options) {
   }
   modifyList(
     options,
-    list(
+    drop_nulls(list(
       timeout = as.integer(getopt("timeout") %||% 0),
       connecttimeout = as.integer(getopt("connecttimeout") %||% 300),
       low_speed_time = as.integer(getopt("low_speed_time") %||% 0),
-      low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0)
-    )
+      low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0),
+      cainfo = getopt("cainfo")
+    ))
   )
 }
 

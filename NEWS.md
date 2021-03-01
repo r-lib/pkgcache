@@ -1,5 +1,5 @@
 
-# pkgcache development version
+# pkgcache 1.2.0
 
 * New `repo_add()`, `repo_get()`, `repo_resolve()` and `with_repo()`
   functions to query and manipulate repositories.

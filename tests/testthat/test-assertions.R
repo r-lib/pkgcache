@@ -60,8 +60,9 @@ test_that("is_existing_file", {
 
 test_that("is_dependencies", {
   pos <- list(TRUE, FALSE, NA, NA_character_, character(),
-              "Depends", c("Depends", "Imports"), dep_types())
-  neg <- list(1, 1:5, "foo", c("Depends", NA), "linkingto")
+              "Depends", c("Depends", "Imports"), dep_types(),
+              "linkingto")
+  neg <- list(1, 1:5, "foo", c("Depends", NA))
   for (p in pos) expect_true(is_dependencies(p))
   for (n in neg) expect_false(is_dependencies(n))
 })

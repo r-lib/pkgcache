@@ -79,10 +79,12 @@ on_failure(is_existing_file) <- function(call, env) {
 }
 
 is_dependencies <- function(x) {
+  types <- dep_types()
+  types <- c(types, tolower(types))
   is_na_scalar(x) || isTRUE(x) || identical(x, FALSE) ||
-    (is_character(x) && all(x %in% dep_types())) ||
+    (is_character(x) && all(x %in% types)) ||
     (is.list(x) && all(names(x) == c("direct", "indirect")) &&
-     all(unlist(x) %in% dep_types()))
+     all(unlist(x) %in% types))
 }
 
 on_failure(is_dependencies) <- function(call, env) {

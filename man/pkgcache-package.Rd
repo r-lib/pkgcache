@@ -121,18 +121,18 @@ mirror. This takes priority over the \code{R_BIOC_MIRROR} environment
 variable.
 \item \code{pkgcache_timeout} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
-3600, one hour. It corresponds to the \href{https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}.
+3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}.
 \item \code{pkgcache_connecttimeout} is the HTTP timeout for the connection
 phase. It is in seconds and defaults to 30 seconds. It corresponds
-to the \href{https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}.
+to the \href{https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}.
 \item \code{pkgcache_low_speed_limit} and \code{pkgcache_low_speed_time} are used
 for a more sensible HTTP timeout. If the download speed is less than
 \code{pkgcache_low_speed_limit} bytes per second for at least
 \code{pkgcache_low_speed_time} seconds, the download errors. They
 correspond to the
-\href{https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html}{\code{LOW_SPEED_LIMIT}}
+\href{https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html}{\code{LOW_SPEED_LIMIT}}
 and
-\href{https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html}{\code{LOW_SPEED_TIME}}
+\href{https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html}{\code{LOW_SPEED_TIME}}
 curl options.
 }
 }
@@ -148,21 +148,20 @@ Bioconductor mirror. The \code{BioC_mirror} option takes priority over
 this, if set.
 \item \code{PKGCACHE_TIMEOUT} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
-3600, one hour. It corresponds to the \href{https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}. The
+3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}. The
 \code{pkgcache_timeout} option has priority over this, if set.
 \item \code{PKGCACHE_CONNECTTIMEOUT} is the HTTP timeout for the connection
 phase. It is in seconds and defaults to 30 seconds. It corresponds
-to the \href{https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}.
-The \code{pkgcache_connecttimeout} option takes precedence over this, if
-set.
+to the \href{https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}. The
+\code{pkgcache_connecttimeout} option takes precedence over this, if set.
 \item \code{PKGCACHE_LOW_SPEED_LIMIT} and \code{PKGCACHE_LOW_SPEED_TIME} are used
 for a more sensible HTTP timeout. If the download speed is less than
 \code{PKGCACHE_LOW_SPEED_LIMIT} bytes per second for at least
 \code{PKGCACHE_LOW_SPEED_TIME} seconds, the download errors. They
 correspond to the
-\href{https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html}{\code{LOW_SPEED_LIMIT}}
+\href{https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html}{\code{LOW_SPEED_LIMIT}}
 and
-\href{https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html}{\code{LOW_SPEED_TIME}}
+\href{https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html}{\code{LOW_SPEED_TIME}}
 curl options. The \code{pkgcache_low_speed_time} and
 \code{pkgcache_low_speed_limit} options have priority over these
 environment variables, if they are set.

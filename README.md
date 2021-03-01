@@ -7,7 +7,7 @@
 
 <!-- badges: start -->
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.org/package=pkgcache)
 [![R build
@@ -140,19 +140,19 @@ configure pkgcache’s Bioconductor support.
   - `pkgcache_timeout` is the HTTP timeout for all downloads. It is in
     seconds, and the limit for downloading the whole file. Defaults to
     3600, one hour. It corresponds to the [`TIMEOUT` libcurl
-    option](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html).
+    option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html).
   - `pkgcache_connecttimeout` is the HTTP timeout for the connection
     phase. It is in seconds and defaults to 30 seconds. It corresponds
     to the [`CONNECTTIMEOUT` libcurl
-    option](https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
+    option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
   - `pkgcache_low_speed_limit` and `pkgcache_low_speed_time` are used
     for a more sensible HTTP timeout. If the download speed is less than
     `pkgcache_low_speed_limit` bytes per second for at least
     `pkgcache_low_speed_time` seconds, the download errors. They
     correspond to the
-    [`LOW_SPEED_LIMIT`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+    [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
     and
-    [`LOW_SPEED_TIME`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+    [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
     curl options.
 
 ## Package environment variables
@@ -167,12 +167,12 @@ configure pkgcache’s Bioconductor support.
   - `PKGCACHE_TIMEOUT` is the HTTP timeout for all downloads. It is in
     seconds, and the limit for downloading the whole file. Defaults to
     3600, one hour. It corresponds to the [`TIMEOUT` libcurl
-    option](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html). The
+    option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html). The
     `pkgcache_timeout` option has priority over this, if set.
   - `PKGCACHE_CONNECTTIMEOUT` is the HTTP timeout for the connection
     phase. It is in seconds and defaults to 30 seconds. It corresponds
     to the [`CONNECTTIMEOUT` libcurl
-    option](https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
+    option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
     The `pkgcache_connecttimeout` option takes precedence over this, if
     set.
   - `PKGCACHE_LOW_SPEED_LIMIT` and `PKGCACHE_LOW_SPEED_TIME` are used
@@ -180,9 +180,9 @@ configure pkgcache’s Bioconductor support.
     `PKGCACHE_LOW_SPEED_LIMIT` bytes per second for at least
     `PKGCACHE_LOW_SPEED_TIME` seconds, the download errors. They
     correspond to the
-    [`LOW_SPEED_LIMIT`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+    [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
     and
-    [`LOW_SPEED_TIME`](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+    [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
     curl options. The `pkgcache_low_speed_time` and
     `pkgcache_low_speed_limit` options have priority over these
     environment variables, if they are set.

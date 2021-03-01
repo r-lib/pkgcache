@@ -553,7 +553,7 @@ cmc__load_replica_rds <- function(self, private, max_age) {
   time <- file_get_time(rds)
   if (Sys.time() - time > max_age) stop("Replica RDS cache file outdated")
 
-  sts <- cli_process_start("Loading session disk cached package metadata")
+  sts <- cli_process_start("Loading metadata database")
   private$data <- readRDS(rds)
   private$data_time <- time
   private$data_messaged <- NULL
@@ -595,7 +595,7 @@ cmc__load_primary_rds <- function(self, private, max_age) {
     stop("Primary PACKAGES missing or newer than replica RDS, removing")
   }
 
-  sts <- cli_process_start("Loading global cached package metadata")
+  sts <- cli_process_start("Loading metadata database")
   file_copy_with_time(pri_files$rds, rep_files$rds)
   unlock(l)
 
@@ -645,7 +645,7 @@ cmc__load_primary_pkgs <- function(self, private, max_age) {
   }
 
   ## Copy to replica, if we cannot copy the etags, that's ok
-  sts <- cli_process_start("Loading raw global disk cached package metadata")
+  sts <- cli_process_start("Loading metadata database")
   private$copy_to_replica(rds = FALSE, pkgs = TRUE, etags = TRUE)
 
   ## Update RDS in replica, this also loads it
@@ -735,7 +735,7 @@ missing_pkgs_note <- function(pkgs, result) {
 
 cmc__update_replica_rds <- function(self, private, alert) {
   "!!DEBUG Update replica RDS"
-  if (alert) sts <- cli_process_start("Updating local metadata database")
+  if (alert) sts <- cli_process_start("Updating metadata database")
   rep_files <- private$get_cache_files("replica")
 
   data_list <- lapply_rows(

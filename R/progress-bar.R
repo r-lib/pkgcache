@@ -6,7 +6,7 @@ create_progress_bar <- function(data) {
 
   if (isTRUE(getOption("pkg.show_progress", FALSE))) {
     bar$status <- cli_status(
-      "Checking {nrow(data)} metadata file{?s}",
+      "Checking for {nrow(data)} new metadata file{?s}",
       .auto_close = FALSE
     )
   } else {
@@ -77,7 +77,7 @@ show_progress_bar <- function(bar) {
 
   cli_status_update(
     bar$status,
-    c("{spinner} Updating metadata [{uptodate}/{numfiles}] | ",
+    c("{spinner} Updating metadata database [{uptodate}/{numfiles}] | ",
       "Downloading {downloads}")
   )
 }
@@ -99,7 +99,7 @@ finish_progress_bar <- function(ok, bar) {
     cli_status_clear(
       bar$status,
       result = "done",
-      msg_done = "{.alert-success Updated metadata: {bytes} in {files} file{?s}.}"
+      msg_done = "{.alert-success Updated metadata database: {bytes} in {files} file{?s}.}"
     )
 
   } else {

@@ -38,7 +38,6 @@ Suggests:
     fs,
     mockery,
     pingr,
-    webfakes,
     rprojroot,
     sessioninfo,
     testthat,

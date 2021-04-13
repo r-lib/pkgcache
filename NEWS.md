@@ -1,5 +1,7 @@
 
-# pkgcache development version
+# pkgcache 1.2.1
+
+No user visible changes.
 
 # pkgcache 1.2.0
 

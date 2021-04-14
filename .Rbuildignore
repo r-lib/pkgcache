@@ -12,4 +12,3 @@
 ^.*_cache$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^tests$

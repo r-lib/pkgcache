@@ -199,4 +199,4 @@ By contributing to this project, you agree to abide by its terms.
 
 ## License
 
-MIT © [RStudio Inc](https://rstudio.com)
+MIT © [RStudio Inc](https://www.rstudio.com/)

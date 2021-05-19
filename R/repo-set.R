@@ -58,7 +58,7 @@ repo_get <- function(r_version = getRversion(), bioc = TRUE,
 #'   the repository.
 #'
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' repo_resolve("MRAN@2020-01-21")
 #' repo_resolve("RSPM@2020-01-21")
 #' repo_resolve("MRAN@dplyr-1.0.0")
@@ -117,7 +117,7 @@ repo_add_internal <- function(..., .list = NULL) {
 #' @return
 #'   `with_repo()` returns the value of `expr`.
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), repo_get())
 #' with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #'

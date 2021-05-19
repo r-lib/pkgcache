@@ -1,6 +1,10 @@
 
 # pkgcache development version
 
+* The default location of the cache has changed to align with the
+  standard `tools::R_user_dir()` cache location. To clean up your old
+  cache call `pkgcache:::cleanup_old_cache_dir()`.
+
 # pkgcache 1.2.1
 
 No user visible changes.

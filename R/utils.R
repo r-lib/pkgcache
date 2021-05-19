@@ -207,17 +207,17 @@ try_catch_null <- function(expr) {
   tryCatch(expr, error = function(e) NULL)
 }
 
-is_rcmd_check <- function() {
-  if (identical(Sys.getenv("NOT_CRAN"), "true")) {
-    FALSE
+run_examples <- function() {
+  if (Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") == "") {
+    # If this is not a check, then OK
+    TRUE
+  } else if (identical(Sys.getenv("NOT_CRAN"), "true") &&
+      isTRUE(as.logical(Sys.getenv("CI")))) {
+    # If NOT_CRAN is set and we are on the CI, then we run examples
+    TRUE
   } else {
-    Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") != ""
+    FALSE
   }
-}
-
-is_online <- function() {
-  if (is_rcmd_check()) return(FALSE)
-  curl::has_internet()
 }
 
 modify_vec <- function(old, new) {

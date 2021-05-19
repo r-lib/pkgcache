@@ -59,7 +59,7 @@ The returned tibble has a \code{summary()} method, which shows
 the same information is a concise table. See examples below.
 }
 \examples{
-\dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 repo_status()
 rst <- repo_status(
   platforms = c("windows", "macos"),

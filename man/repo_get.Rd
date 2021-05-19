@@ -126,7 +126,7 @@ an error.
 
 \examples{
 repo_get()
-\dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 repo_resolve("MRAN@2020-01-21")
 repo_resolve("RSPM@2020-01-21")
 repo_resolve("MRAN@dplyr-1.0.0")
@@ -134,7 +134,7 @@ repo_resolve("RSPM@dplyr-1.0.0")
 repo_resolve("MRAN@R-4.0.0")
 repo_resolve("RSPM@R-4.0.0")
 \dontshow{\}) # examplesIf}
-\dontshow{if (pkgcache:::is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), repo_get())
 with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 

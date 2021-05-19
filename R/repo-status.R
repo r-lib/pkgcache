@@ -40,7 +40,7 @@
 #'
 #' @family repository functions
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' repo_status()
 #' rst <- repo_status(
 #'   platforms = c("windows", "macos"),

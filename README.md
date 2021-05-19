@@ -190,6 +190,18 @@ configure pkgcache’s Bioconductor support.
     (Otherwise `rappdirs::user_cache_dir()` is used, see also
     `meta_cache_summary()` and `pkg_cache_summary()`).
 
+## Using pkgcache in CRAN packages
+
+If you use pkgcache in your CRAN package, please make sure that
+
+  - you don’t use pkgcache in your examples, and
+  - you set the `R_USER_CACHE_DIR` environment variable to a temporary
+    directory (e.g. via `tempfile()`) during test cases. See the
+    `tests/testthat/setup.R` file in pkgcache for an example.
+
+This is to make sure that pkgcache does not modify the user’s files
+while running `R CMD check`.
+
 ## Code of Conduct
 
 Please note that the ‘pkgcache’ project is released with a [Contributor
@@ -199,4 +211,4 @@ By contributing to this project, you agree to abide by its terms.
 
 ## License
 
-MIT © [RStudio Inc](https://www.rstudio.com/)
+MIT (c) [RStudio Inc](https://www.rstudio.com/)

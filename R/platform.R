@@ -73,7 +73,7 @@ default_cran_mirror <- function() {
 #' @return `bioc_version()` returns a [package_version] object.
 #'
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' bioc_version()
 #' bioc_version("4.0")
 #' bioc_version("4.1")
@@ -95,7 +95,7 @@ bioc_version <- function(r_version = getRversion(), forget = FALSE) {
 #' @rdname bioc_version
 #'
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' bioc_version_map()
 
 bioc_version_map <- function(forget = FALSE) {
@@ -110,7 +110,7 @@ bioc_version_map <- function(forget = FALSE) {
 #' @rdname bioc_version
 #'
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' bioc_devel_version()
 
 bioc_devel_version <- function(forget = FALSE) {
@@ -125,7 +125,7 @@ bioc_devel_version <- function(forget = FALSE) {
 #' @rdname bioc_version
 #'
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' bioc_release_version()
 
 bioc_release_version <- function(forget = FALSE) {
@@ -146,7 +146,7 @@ bioc_release_version <- function(forget = FALSE) {
 #' @return `bioc_repos()` returns a named character vector.
 #' @rdname bioc_version
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' bioc_repos()
 
 bioc_repos <- function(bioc_version = "auto", forget = FALSE) {

@@ -56,7 +56,7 @@ and size.
 \code{meta_cache_cleanup()} deletes the cache files from the disk.
 }
 \examples{
-\dontshow{if (asNamespace("pkgcache")$is_online()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 meta_cache_list("pkgdown")
 meta_cache_deps("pkgdown", recursive = FALSE)
 meta_cache_revdeps("pkgdown", recursive = FALSE)

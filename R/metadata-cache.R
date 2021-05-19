@@ -154,7 +154,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' use only.
 #'
 #' @export
-#' @examplesIf asNamespace("pkgcache")$is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' dir.create(cache_path <- tempfile())
 #' cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 #' cmc$list()
@@ -961,7 +961,7 @@ cmc__get_repos <- function(repos, bioc, cran_mirror, r_version) {
 #'   queried `packages` as well.
 #'
 #' @export
-#' @examplesIf asNamespace("pkgcache")$is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' meta_cache_list("pkgdown")
 #' meta_cache_deps("pkgdown", recursive = FALSE)
 #' meta_cache_revdeps("pkgdown", recursive = FALSE)

@@ -86,6 +86,10 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
+      - name: "Set environmental variables"
+        run: |
+          echo "R_USER_CACHE_DIR=${{ env.GITHUB_WORKSPACE }}/.github/cache" >> $GITHUB_ENV
+
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_: false

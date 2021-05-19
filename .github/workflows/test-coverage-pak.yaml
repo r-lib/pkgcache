@@ -51,6 +51,10 @@ jobs:
           pak::pkg_install("covr")
         shell: Rscript {0}
 
+      - name: "Set environmental variables"
+        run: |
+          echo "R_USER_CACHE_DIR=${{ env.GITHUB_WORKSPACE }}/.github/cache" >> $GITHUB_ENV
+
       - name: Test coverage
         run: covr::codecov()
         shell: Rscript {0}

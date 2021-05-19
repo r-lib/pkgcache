@@ -88,7 +88,7 @@
 #'   * `mirror`: CRAN mirror that was used to get this data.
 #'
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' arch <- cran_archive_cache$new()
 #' arch$update()
 #' arch$list()
@@ -467,7 +467,7 @@ get_archive_cache <- function(cran_mirror) {
 #'
 #' @seealso The `cran_archive_cache` class for more flexibility.
 #' @export
-#' @examplesIf pkgcache:::is_online()
+#' @examplesIf pkgcache:::run_examples()
 #' cran_archive_list(packages = "readr")
 
 cran_archive_list <- function(cran_mirror = default_cran_mirror(),

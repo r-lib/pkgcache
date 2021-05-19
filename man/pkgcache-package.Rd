@@ -171,6 +171,20 @@ environment variables, if they are set.
 }
 }
 
+\subsection{Using pkgcache in CRAN packages}{
+
+If you use pkgcache in your CRAN package, please make sure that
+\itemize{
+\item you don’t use pkgcache in your examples, and
+\item you set the \code{R_USER_CACHE_DIR} environment variable to a temporary
+directory (e.g. via \code{tempfile()}) during test cases. See the
+\code{tests/testthat/setup.R} file in pkgcache for an example.
+}
+
+This is to make sure that pkgcache does not modify the user’s files
+while running \verb{R CMD check}.
+}
+
 \subsection{Code of Conduct}{
 
 Please note that the ‘pkgcache’ project is released with a \href{https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md}{Contributor Code of Conduct}.

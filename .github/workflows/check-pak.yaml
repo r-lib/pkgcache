@@ -88,7 +88,8 @@ jobs:
 
       - name: "Set environmental variables"
         run: |
-          echo "R_USER_CACHE_DIR=$GITHUB_WORKSPACE/.github/cache" >> $GITHUB_ENV
+          cat(paste0("R_USER_CACHE_DIR=", Sys.getenv("GITHUB_WORKSPACE"), "/.github/cache\n"), file = Sys.getenv("GITHUB_ENV"), append = TRUE)
+        shell: Rscript {0}
 
       - name: Check
         env:

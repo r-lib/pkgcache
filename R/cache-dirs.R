@@ -15,7 +15,11 @@ get_user_cache_dir <- function() {
   }
 
   # R_PKG_CACHE_DIR first. R_user_dir uses R_USER_CACHE_DIR, if set.
-  if (cdir == "") cdir <- R_user_dir("R-pkg", "cache")
+  if (cdir == "") {
+    cdir <- R_user_dir("pkgcache", "cache")
+  } else {
+    cdir <- file.path(cdir, "R", "pkgcache")
+  }
 
   mkdirp(cdir)
   cdir <- normalizePath(cdir)
@@ -32,21 +36,45 @@ get_user_cache_dir <- function() {
   res
 }
 
-#' @importFrom rappdirs user_data_dir user_config_dir user_cache_dir
+#' @importFrom rappdirs user_cache_dir
 #' @rawNamespace if (getRversion() >= "4.0.0") importFrom(tools, R_user_dir)
 
-my_R_user_dir <- function(package, which = c("data", "config", "cache")) {
+my_R_user_dir <- function(package, which = "cache") {
   stopifnot(is.character(package), length(package) == 1L)
-  which <- match.arg(which)
-  if (which == "data") {
-    rappdirs::user_data_dir(package)
-  } else if (which == "config") {
-    rappdirs::user_config_dir(package)
+  stopifnot(which == "cache")
+  ev <- Sys.getenv("R_USER_CACHE_DIR", "")
+  if (ev != "") {
+    path.expand(file.path(ev, "R", package))
+  } else if (Sys.info()[["sysname"]] == "Darwin") {
+    path.expand(file.path(user_cache_dir(), "org.R-project.R", "R", package))
   } else {
-    rappdirs::user_cache_dir(package)
+    path.expand(file.path(user_cache_dir(), "R", package))
   }
 }
 
 if (getRversion() < "4.0.0") {
   R_user_dir <- my_R_user_dir
+}
+
+cleanup_old_cache_dir <- function(force = FALSE) {
+  dir <- user_cache_dir("R-pkg")
+  if (!file.exists(dir)) {
+    message("Old cache directory does not exists, nothing to do")
+    return(invisible())
+  }
+
+  if (!interactive() && !force) {
+    stop("Set `force = TRUE` in non-interactive sessions")
+  }
+
+  if (!force) {
+    msg <- glue::glue("Are you sure you want to clean up `{dir}` (y/N)? ")
+    ans <- readline(msg)
+    if (!ans %in% c("y", "Y")) stop("Aborted")
+  }
+
+  unlink(dir, recursive = TRUE, force = TRUE)
+  message("Cleaned up cache.")
+
+  invisible()
 }

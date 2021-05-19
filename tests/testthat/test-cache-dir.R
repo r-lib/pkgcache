@@ -8,11 +8,14 @@ test_that("tools vs rappdirs", {
     R_USER_CACHE_DIR = NA_character_,
     R_PKG_CACHE_DIR = NA_character_
   )
-  
-  expect_equal(
-    my_R_user_dir("foo", "cache"),
-    tools::R_user_dir("foo", "cache")
-  )
+
+  d1 <- my_R_user_dir("foo", "cache")
+  d2 <- tools::R_user_dir("foo", "cache")
+
+  mkdirp(d1)
+  mkdirp(d2)
+
+  expect_equal(normalizePath(d1), normalizePath(d2))
 
   withr::local_envvar(
     "_R_CHECK_PACKAGE_NAME_" = NA_character_,
@@ -20,8 +23,11 @@ test_that("tools vs rappdirs", {
     R_PKG_CACHE_DIR = NA_character_
   )
 
-  expect_equal(
-    my_R_user_dir("foo", "cache"),
-    tools::R_user_dir("foo", "cache")
-  )  
+  d1 <- my_R_user_dir("foo", "cache")
+  d2 <- tools::R_user_dir("foo", "cache")
+
+  mkdirp(d1)
+  mkdirp(d2)
+
+  expect_equal(normalizePath(d1), normalizePath(d2))
 })

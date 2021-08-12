@@ -123,7 +123,7 @@ test_that("deps, extract_deps", {
   pkgs <- read_packages_file(
     get_fixture("PACKAGES-src.gz"),
     mirror = "mirror", repodir = "src/contrib", platform = "source",
-    rversion = get_minor_r_version(getRversion()), type = "cran")
+    rversion = "*", type = "cran")
 
   deps <- cmc$deps("abc", FALSE, FALSE)
   expect_identical(deps$package, "abc")

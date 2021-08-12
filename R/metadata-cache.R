@@ -741,10 +741,11 @@ cmc__update_replica_rds <- function(self, private, alert) {
   data_list <- lapply_rows(
     rep_files$pkgs,
     function(r) {
+      rversion <- if (r$platform == "source") "*" else private$r_version
       tryCatch(
         read_packages_file(r$path, mirror = r$mirror,
                            repodir = r$basedir, platform = r$platform,
-                           rversion = private$r_version, type = r$type,
+                           rversion = rversion, type = r$type,
                            meta_path = r$meta_path),
         error = function(x) {
           message()

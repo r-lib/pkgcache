@@ -1,6 +1,9 @@
 
 # pkgcache development version
 
+* `meta_cache_list()` and related functions now corrently set the
+  `rversion` column of source R packages to `"*"`.
+
 # pkgcache 1.2.2
 
 * The default location of the cache has changed to align with the

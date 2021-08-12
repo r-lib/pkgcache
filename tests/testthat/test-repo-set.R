@@ -45,7 +45,11 @@ test_that("repo_resolve", {
 
 test_that("repo_add", {
   testthat::local_edition(3)
-  withr::local_options(repos = character(), cli.num_colors = 1L)
+  withr::local_options(
+    repos = character(),
+    cli.num_colors = 1L,
+    cli.unicode = FALSE
+  )
   before <- repo_get()
   repo_add()
   expect_equal(repo_get(), before)
@@ -56,7 +60,11 @@ test_that("repo_add", {
 
 test_that("with_repo", {
   testthat::local_edition(3)
-  withr::local_options(repos = character(), cli.num_colors = 1L)
+  withr::local_options(
+    repos = character(),
+    cli.num_colors = 1L,
+    cli.unicode = FALSE
+  )
   expect_snapshot(
     with_repo(c(URL = "https://my.url"), repo_get()[1,])
   )

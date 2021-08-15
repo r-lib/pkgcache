@@ -64,16 +64,6 @@ read.dcf.gz <- function(x) {
   read.dcf(con)
 }
 
-get_cran_extension <- function(platform) {
-  switch(
-    platform,
-    "source" = ".tar.gz",
-    "macos" = ".tgz",
-    "windows" = ".zip",
-    stop("Unknown platform: ", sQuote(platform))
-  )
-}
-
 get_platform <- function() {
   .Platform
 }

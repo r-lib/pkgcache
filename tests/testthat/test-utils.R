@@ -91,7 +91,14 @@ test_that("get_all_package_dirs", {
 })
 
 test_that("get_cran_extension", {
-  expect_error(get_cran_extension("foobar"), "Unknown platform")
+  expect_equal(
+    get_cran_extension("x86_64-pc-linux-musl"),
+    "_R_x86_64-pc-linux-musl.tar.gz"
+  )
+  expect_equal(
+    get_cran_extension("foobar"),
+    "_R_foobar.tar.gz"
+  )
 })
 
 test_that("file.size", {

@@ -35,6 +35,35 @@ default_platforms <- function() {
   unique(c(current_r_platform(), "source"))
 }
 
+parse_platform <- function(x) {
+  pcs <- strsplit(x, "-", fixed = TRUE)
+  data.frame(
+    stringsAsFactors = FALSE,
+    cpu = vcapply(pcs, "[", 1),
+    vendor = vcapply(pcs, "[", 2),
+    os = vcapply(pcs, function(y) {
+      if (length(y) < 3) NA_character_ else paste(y[-(1:2)], collapse = "-")
+    })
+  )
+}
+
+get_cran_extension <- function(platform) {
+  if (platform == "source") {
+    return(".tar.gz")
+  } else if (platform %in% c("windows", "x86_64-w64-mingw32", "i386-w64-mingw32")) {
+    return(".zip")
+  } else if (platform == "macos") {
+    return(".tgz")
+  }
+
+  dtl <- parse_platform(platform)
+  if (!is.na(dtl$os) && grepl("^darwin", dtl$os)) {
+    return(".tgz")
+  } else {
+    paste0("_R_", platform, ".tar.gz")
+  }
+}
+
 #' Query the default CRAN repository for this session
 #'
 #' If `options("repos")` (see [options()]) contains an entry called

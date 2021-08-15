@@ -12,3 +12,4 @@
 ^.*_cache$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^vignettes$

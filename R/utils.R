@@ -103,11 +103,6 @@ get_all_package_dirs <- function(platforms, rversions) {
   mat <- do.call(rbind, res)
   colnames(mat) <- c("platform", "rversion", "contriburl")
   res <- as_tibble(mat)
-  res$prefix <- paste0(
-    "/",
-    ifelse(res$rversion == "*", "*", paste0("R-", res$rversion)),
-    "/", res$platform, "/"
-  )
 
   res
 }

@@ -85,7 +85,7 @@ test_that("get_all_package_dirs", {
   expect_s3_class(res, "tbl_df")
   expect_equal(
     colnames(res),
-    c("platform", "rversion", "contriburl", "prefix"))
+    c("platform", "rversion", "contriburl"))
   expect_gte(nrow(res), 1)
   expect_true(all(sapply(res, is.character)))
 })

@@ -39,7 +39,8 @@ test_that("packages_make_sources", {
 
   expect_equal(
     packages_make_sources(
-      "URL", "macos", c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
+      "URL", "x86_64-apple-darwin17.0",
+      c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
       c("p1", "p2"), c("1.0", "2.0"), type = "cran"),
     list(c("URL/s/c/p1_1.0.tgz", "https://mac.r-project.org/s/c/p1_1.0.tgz"),
          c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")

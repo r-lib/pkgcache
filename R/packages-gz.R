@@ -179,17 +179,18 @@ packages_make_sources <- function(mirror, platform, target, repodir,
 
   url <- paste0(mirror, "/", target)
 
-  if (type == "cran" && platform == "macos") {
+  os <- parse_platform(platform)$os
+  if (type == "cran" && !is.na(os) && grepl("^darwin", os)) {
     macurl <- paste0("https://mac.r-project.org/", target)
     zip_vecs(url, macurl)
 
-  } else if (type != "cran" || platform != "source") {
-    as.list(url)
-
-  } else {
+  } else if (type == "cran" && platform == "source") {
     url2 <- paste0(mirror, "/", repodir, "/Archive/", package, "_",
                    version, ".tar.gz")
     zip_vecs(url, url2)
+
+  } else {
+    as.list(url)
   }
 }
 

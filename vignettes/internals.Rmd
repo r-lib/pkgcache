@@ -1,0 +1,11 @@
+
+### Plastforms
+
+* [x] `get_cran_extension()`
+* [ ] `get_all_package_dirs()`
+* [ ] `async_repo_status()`
+* [ ] `packages_make_target()`
+* [ ] `packages_make_sources()`
+* [ ] `cmc__get_cache_files()`
+* [ ] `current_r_platform()`
+* [ ] `default_platforms()`

@@ -1,10 +1,7 @@
 
 #' Platform and R version information of the current session
 #'
-#' Currently used platforms:
-#' - `"source"`
-#' - `"macos"`
-#' - `"windows"`
+#' `r warning("TODO")`
 #'
 #' @return `current_r_platform()` returns a character scalar.
 #' @export
@@ -12,15 +9,12 @@
 #' current_r_platform()
 
 current_r_platform <- function() {
-  type <- get_platform()$pkgType
-  if (!is_string(type))
-    "source"
-  else if (grepl("^mac", type)) {
-    "macos"
-  } else if (grepl("^win", type)) {
-    "windows"
+  raw <- get_platform()
+  platform <- parse_platform(raw)
+  if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
+    current_r_platform_linux(raw)
   } else {
-    "source"
+    raw
   }
 }
 
@@ -62,6 +56,140 @@ get_cran_extension <- function(platform) {
   } else {
     paste0("_R_", platform, ".tar.gz")
   }
+}
+
+get_all_package_dirs <- function(platforms, rversions) {
+  minors <- unique(get_minor_r_version(rversions))
+  if (any(package_version(minors) < "3.2")) {
+    stop("pkgcache does not support packages for R versions before R 3.2")
+  }
+  res <- lapply(platforms, get_package_dirs_for_platform, minors)
+
+  mat <- do.call(rbind, res)
+  colnames(mat) <- c("platform", "rversion", "contriburl")
+  res <- as_tibble(mat)
+  res <- unique(res)
+
+  res
+}
+
+get_package_dirs_for_platform <- function(pl, minors) {
+  if (any(package_version(minors) < "3.2")) {
+    stop("pkgcache does not support packages for R versions before R 3.2")
+  }
+
+  ## Should we add extra arch repos?
+  xtr <- getOption(
+    "pkg.extra_arch_repos",
+    Sys.getenv("PKG_EXTRA_ARCH_REPOS", FALSE)
+  )
+
+  if (pl == "source") {
+    return(cbind("source", "*", "src/contrib"))
+
+  }
+
+  if (pl == "windows") {
+    return(cbind(
+      "x86_64-w64-mingw32",
+      minors,
+      paste0("bin/windows/contrib/", minors)
+    ))
+
+  }
+
+  if (pl == "macos") {
+    res1 <- lapply(minors, function(v) {
+      rpl <- get_cran_macos_platform(v)
+      if (nrow(rpl)) {
+        cbind(rpl$platform, v, paste0(
+          "bin/macosx/",
+          ifelse(nchar(rpl$subdir), paste0(rpl$subdir, "/"), ""),
+          "contrib/",
+          v
+        ))
+      }
+    })
+    return(do.call(rbind, res1))
+
+  }
+
+  ## Which R versions match this platform on CRAN?
+  mcp <- macos_cran_platforms
+  cranmrv <- mcp[mcp$platform == pl & mcp$rversion %in% minors,]
+
+  rbind(
+    if (nrow(cranmrv)) {
+      dirs <- paste0(
+        "bin/macosx/",
+        ifelse(nchar(cranmrv$subdir), paste0(cranmrv$subdir, "/"), ""),
+        "contrib/",
+        cranmrv$rversion
+      )
+      cbind(pl, cranmrv$rversion, dirs)
+    },
+    if (xtr) cbind(pl, minors, paste0("bin/", pl, "/", minors))
+  )
+}
+
+macos_cran_platforms <- read.table(
+  header = TRUE,
+  stringsAsFactors = FALSE,
+  textConnection(
+     "rversion platform subdir
+     3.1.3 x86_64-apple-darwin10.8.0 mavericks
+     3.2.0 x86_64-apple-darwin13.4.0 mavericks
+     3.2.1 x86_64-apple-darwin13.4.0 mavericks
+     3.2.2 x86_64-apple-darwin13.4.0 mavericks
+     3.2.3 x86_64-apple-darwin13.4.0 mavericks
+     3.2.4 x86_64-apple-darwin13.4.0 mavericks
+     3.2.5 x86_64-apple-darwin13.4.0 mavericks
+     3.3.0 x86_64-apple-darwin13.4.0 mavericks
+     3.3.1 x86_64-apple-darwin13.4.0 mavericks
+     3.3.2 x86_64-apple-darwin13.4.0 mavericks
+     3.3.3 x86_64-apple-darwin13.4.0 mavericks
+     3.4.0 x86_64-apple-darwin15.6.0 el-capitan
+     3.4.1 x86_64-apple-darwin15.6.0 el-capitan
+     3.4.2 x86_64-apple-darwin15.6.0 el-capitan
+     3.4.3 x86_64-apple-darwin15.6.0 el-capitan
+     3.4.4 x86_64-apple-darwin15.6.0 el-capitan
+     3.5.0 x86_64-apple-darwin15.6.0 el-capitan
+     3.5.1 x86_64-apple-darwin15.6.0 el-capitan
+     3.5.2 x86_64-apple-darwin15.6.0 el-capitan
+     3.5.3 x86_64-apple-darwin15.6.0 el-capitan
+     3.6.0 x86_64-apple-darwin15.6.0 el-capitan
+     3.6.1 x86_64-apple-darwin15.6.0 el-capitan
+     3.6.2 x86_64-apple-darwin15.6.0 el-capitan
+     3.6.3 x86_64-apple-darwin15.6.0 el-capitan
+     4.0.0 x86_64-apple-darwin17.0   ''
+     4.0.1 x86_64-apple-darwin17.0   ''
+     4.0.2 x86_64-apple-darwin17.0   ''
+     4.0.3 x86_64-apple-darwin17.0   ''
+     4.0.4 x86_64-apple-darwin17.0   ''
+     4.0.5 x86_64-apple-darwin17.0   ''
+     4.1.0 x86_64-apple-darwin17.0   ''
+     4.1.0 aarch64-apple-darwin20    big-sur-arm64
+     4.1.1 x86_64-apple-darwin17.0   ''
+     4.1.1 aarch64-apple-darwin20    big-sur-arm64
+     4.2.0 x86_64-apple-darwin17.0   ''
+     4.2.0 aarch64-apple-darwin20    big-sur-arm64
+"))
+
+# For now we only use the minor version number, because the CRAN OS version
+# does not change for a patch version.
+
+get_minor_r_version <- function(x) {
+  x <- package_version(x)
+  vapply(unclass(x), function(x) paste(x[1:2], collapse = "."), character(1))
+}
+
+macos_cran_platforms$rversion <- get_minor_r_version(
+  macos_cran_platforms$rversion
+)
+macos_cran_platforms <- unique(macos_cran_platforms)
+
+get_cran_macos_platform <- function(v) {
+  macos_cran_platforms[macos_cran_platforms$rversion %in% v,,drop = FALSE]
 }
 
 #' Query the default CRAN repository for this session

@@ -20,12 +20,27 @@ read_packages_file <- function(path, mirror, repodir, platform,
   pkgs <- as_tibble(read.dcf.gz(path))
   meta <- read_metadata_file(meta_path)
   extra <- c(
-    list(repodir = repodir, platform = platform),
+    list(repodir = repodir),
     list(...), .list)
   assert_that(all_named(extra))
   pkgs[names(extra)] <-
     if (nrow(pkgs)) extra else replicate(length(extra), character())
   names(pkgs) <- tolower(names(pkgs))
+
+  ## If Windows, then we need to check which binary has i386 support
+  if (platform == "x86_64-w64-mingw32") {
+    both <- c("x86_64-w64-mingw32", "i386-w64-mingw32")
+    pkgs$platform <- replicate(nrow(pkgs), both, simplify = FALSE)
+    if ("archs" %in% colnames(pkgs)) {
+      archs <- gsub(" ", "", fixed = TRUE, pkgs$archs)
+      p32 <- !is.na(archs) & archs == "x64"
+      pkgs$platform[p32] <- list(both[1])
+      p64 <- !is.na(archs) & archs == "i386"
+      pkgs$platform[p64] <- list(both[2])
+    }
+  } else {
+    pkgs$platform <- replicate(nrow(pkgs), platform, simplify = FALSE)
+  }
 
   if (! "needscompilation" %in% names(pkgs)) {
     pkgs$needscompilation <- if (! "built" %in% names(pkgs)) {

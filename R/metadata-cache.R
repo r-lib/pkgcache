@@ -52,8 +52,7 @@ cmc__data <- new.env(parent = emptyenv())
 #'   the user level cache directory of the machine.
 #' * `replica_path`: Path of the replica. Defaults to a temporary directory
 #'   within the session temporary directory.
-#' * `platforms`: Subset of `c("macos", "windows", "source")`, platforms
-#'   to get data for.
+#' * `platforms`: TODO.
 #' * `r_version`: R version to create the cache for.
 #' * `bioc`: Whether to include BioConductor packages.
 #' * `cran_mirror`: CRAN mirror to use, this takes precedence over `repos`.
@@ -125,7 +124,7 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `imports`: `Imports` field from `DESCRIPTION`, or `NA_character_`.
 #' * `archs`: `Archs` entries from `PACKAGES` files. Might be missing.
 #' * `repodir`: The directory of the file, inside the repository.
-#' * `platform`: Possible values: `macos`, `windows`, `source`.
+#' * `platform`: Possible values: TODO.
 #' * `needscompilation`: Whether the package needs compilation.
 #' * `type`: `bioc` or `cran`  currently.
 #' * `target`: The path of the package file inside the repository.

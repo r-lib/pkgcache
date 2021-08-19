@@ -1,11 +1,11 @@
 
-### Plastforms
+### Platforms
 
 * [x] `get_cran_extension()`
 * [x] `get_all_package_dirs()`
 * [x] `async_repo_status()`
-* [ ] `packages_make_target()`
-* [ ] `packages_make_sources()`
-* [ ] `cmc__get_cache_files()`
+* [x] `packages_make_target()`
+* [x] `packages_make_sources()`
+* [x] `cmc__get_cache_files()`
 * [x] `current_r_platform()`
 * [x] `default_platforms()`

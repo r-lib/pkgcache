@@ -89,7 +89,7 @@ get_package_dirs_for_platform <- function(pl, minors) {
 
   }
 
-  if (pl == "windows") {
+  if (pl %in% c("windows", "x86_64-w64-mingw32", "i386-w64-mingw32")) {
     return(cbind(
       "x86_64-w64-mingw32",
       minors,

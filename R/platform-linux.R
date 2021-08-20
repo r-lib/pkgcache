@@ -18,14 +18,14 @@ parse_linux_platform_info <- function(os_release = NULL,
                                       redhat_release = NULL) {
   if (is.null(os_release) &&
       is.null(redhat_release)) {
-    return("unknown")
+    "unknown"
+
+  } else if (!is.null(os_release)) {
+    parse_os_release(os_release)
+
+  } else {
+    parse_redhat_release(redhat_release)
   }
-
-  if (!is.null(os_release)) return(parse_os_release(os_release))
-
-  if (!is.null(redhat_release)) return(parse_redhat_release(redhat_release))
-
-  "unknown"
 }
 
 is_quoted <- function(x) {

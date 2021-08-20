@@ -25,9 +25,22 @@ test_that("get_all_package_dirs", {
     c("platform", "rversion", "contriburl"))
   expect_gte(nrow(res), 1)
   expect_true(all(sapply(res, is.character)))
+  expect_error(get_all_package_dirs("source", "3.1"), "R versions before")
+  expect_error(
+    get_package_dirs_for_platform("source", "3.1"),
+    "R versions before"
+  )
+
+  res2 <- get_all_package_dirs("x86_64-w64-mingw32", "4.0")
+  res3 <- get_all_package_dirs("windows", "4.0")
+  expect_equal(res2, res3)
 })
 
 test_that("get_cran_extension", {
+  expect_equal(get_cran_extension("source"), ".tar.gz")
+  expect_equal(get_cran_extension("windows"), ".zip")
+  expect_equal(get_cran_extension("macos"), ".tgz")
+  expect_equal(get_cran_extension("x86_64-apple-darwin17.0"), ".tgz")
   expect_equal(
     get_cran_extension("x86_64-pc-linux-musl"),
     "_R_x86_64-pc-linux-musl.tar.gz"
@@ -75,4 +88,30 @@ test_that("current_r_platform_linux", {
     etc <- test_path("fixtures", "linux", d, v)
     expect_snapshot(vcapply(etc, current_r_platform_linux, raw = "foo"))
   })
+})
+
+test_that("linux", {
+  mockery::stub(current_r_platform, "get_platform", "x86_64-pc-linux-gnu")
+  mockery::stub(current_r_platform, "current_r_platform_linux", "boo")
+  expect_equal(current_r_platform(), "boo")
+})
+
+test_that("unknown linux", {
+  expect_equal(current_r_platform_linux("foo", tempfile()), "foo-unknown")
+  tmp <- tempfile()
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  dir.create(tmp)
+  file.create(file.path(tmp, "os-release"))
+  expect_equal(current_r_platform_linux("foo", tmp), "foo-unknown")
+})
+
+test_that("remove_quotes", {
+  expect_equal(remove_quotes("x"), "x")
+  expect_equal(remove_quotes("'xyz'"), "xyz")
+  expect_equal(remove_quotes('"xyz"'), "xyz")
+})
+
+test_that("parse_redhat_release", {
+  expect_equal(parse_redhat_release(""), "unknown")
+  expect_equal(parse_redhat_release("Something"), "something")
 })

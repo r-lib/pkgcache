@@ -58,8 +58,7 @@ cmc$cleanup(force = FALSE)
 the user level cache directory of the machine.
 \item \code{replica_path}: Path of the replica. Defaults to a temporary directory
 within the session temporary directory.
-\item \code{platforms}: Subset of \code{c("macos", "windows", "source")}, platforms
-to get data for.
+\item \code{platforms}: see \code{\link[=default_platforms]{default_platforms()}} for possible values.
 \item \code{r_version}: R version to create the cache for.
 \item \code{bioc}: Whether to include BioConductor packages.
 \item \code{cran_mirror}: CRAN mirror to use, this takes precedence over \code{repos}.
@@ -137,7 +136,19 @@ or \code{NA_character_}.
 \item \code{imports}: \code{Imports} field from \code{DESCRIPTION}, or \code{NA_character_}.
 \item \code{archs}: \code{Archs} entries from \code{PACKAGES} files. Might be missing.
 \item \code{repodir}: The directory of the file, inside the repository.
-\item \code{platform}: Possible values: \code{macos}, \code{windows}, \code{source}.
+\item \code{platform}: Possible values: This is a list column, and each value is
+a character vector of platform names. See \code{\link[=default_platforms]{default_platforms()}} for
+more about platform names. In practice each value of the \code{platform}
+column is either
+\itemize{
+\item \code{"source"} for source packages,
+\item a scalar platform string, e.g. \code{x86_64-apple-darwin17.0} for macOS
+packages compatible with macOS High Sierra or newer,
+\item a character vector of \code{"x86_64-w64-mingw32"} and
+\code{"i386-w64-mingw32"} for Windows binary packages supportin both
+the 32 bit and 64 bit Windows R build. CRAN windows packages are
+typically in this category before R 4.2.
+}
 \item \code{needscompilation}: Whether the package needs compilation.
 \item \code{type}: \code{bioc} or \code{cran}  currently.
 \item \code{target}: The path of the package file inside the repository.

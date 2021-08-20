@@ -26,7 +26,7 @@
 #' * `url`: base URL of the repository.
 #' * `bioc_version`: Bioconductor version, or `NA` for
 #'   non-Bioconductor repositories.
-#' * `platform`: platform, TODO
+#' * `platform`: platform, see [default_platforms()] for possible values.
 #' * `path`: the path to the packages within the base URL, for a
 #'   given platform and R version.
 #' * `r_version`: R version, one of the specified R versions.

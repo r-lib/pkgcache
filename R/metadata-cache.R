@@ -52,7 +52,7 @@ cmc__data <- new.env(parent = emptyenv())
 #'   the user level cache directory of the machine.
 #' * `replica_path`: Path of the replica. Defaults to a temporary directory
 #'   within the session temporary directory.
-#' * `platforms`: TODO.
+#' * `platforms`: see [default_platforms()] for possible values.
 #' * `r_version`: R version to create the cache for.
 #' * `bioc`: Whether to include BioConductor packages.
 #' * `cran_mirror`: CRAN mirror to use, this takes precedence over `repos`.
@@ -124,7 +124,17 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `imports`: `Imports` field from `DESCRIPTION`, or `NA_character_`.
 #' * `archs`: `Archs` entries from `PACKAGES` files. Might be missing.
 #' * `repodir`: The directory of the file, inside the repository.
-#' * `platform`: Possible values: TODO.
+#' * `platform`: Possible values: This is a list column, and each value is
+#'    a character vector of platform names. See [default_platforms()] for
+#'    more about platform names. In practice each value of the `platform`
+#'    column is either
+#'    * `"source"` for source packages,
+#'    * a scalar platform string, e.g. `x86_64-apple-darwin17.0` for macOS
+#'      packages compatible with macOS High Sierra or newer,
+#'    * a character vector of `"x86_64-w64-mingw32"` and
+#'      `"i386-w64-mingw32"` for Windows binary packages supportin both
+#'      the 32 bit and 64 bit Windows R build. CRAN windows packages are
+#'      typically in this category before R 4.2.
 #' * `needscompilation`: Whether the package needs compilation.
 #' * `type`: `bioc` or `cran`  currently.
 #' * `target`: The path of the package file inside the repository.

@@ -7,7 +7,7 @@
 #' By default pkgcache works with source packages and binary packages for
 #' the current platform. You can change this, by providing different
 #' platform names as arguments to
-#' [cranlike_metadata_cache][`cranlike_metadata_cache$new()`],
+#' [`cranlike_metadata_cache$new()`][cranlike_metadata_cache],
 #' [repo_status()], etc.
 #'
 #' These functions accept the following platform names:

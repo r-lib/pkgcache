@@ -31,7 +31,7 @@ test_that("get_all_package_dirs", {
     "R versions before"
   )
 
-  res2 <- get_all_package_dirs("x86_64-w64-mingw32", "4.0")
+  res2 <- get_all_package_dirs("i386+x86_64-w64-mingw32", "4.0")
   res3 <- get_all_package_dirs("windows", "4.0")
   expect_equal(res2, res3)
 })

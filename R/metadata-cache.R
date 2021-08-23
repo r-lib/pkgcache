@@ -250,7 +250,7 @@ cranlike_metadata_cache <- R6Class(
     ## We use this to make sure that different versions of pkgcache can
     ## share the same metadata cache directory. It is used to calculate
     ## the hash of the cached RDS file.
-    cache_version = "2",
+    cache_version = "3",
 
     data = NULL,
     data_time = NULL,

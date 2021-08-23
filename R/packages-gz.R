@@ -28,7 +28,8 @@ read_packages_file <- function(path, mirror, repodir, platform,
   names(pkgs) <- tolower(names(pkgs))
 
   ## If Windows, then we need to check which binary has i386 support
-  if (platform == "x86_64-w64-mingw32") {
+  if (platform %in% c("i386+x86_64-w64-mingw32",
+                      "i386-w64-mingw32", "x86_64-w64-mingw32")) {
     both <- c("x86_64-w64-mingw32", "i386-w64-mingw32")
     pkgs$platform <- replicate(nrow(pkgs), both, simplify = FALSE)
     if ("archs" %in% colnames(pkgs)) {
@@ -81,6 +82,12 @@ read_packages_file <- function(path, mirror, repodir, platform,
     pkgs$filesize <- rep(NA_integer_, nrow(pkgs))
     pkgs$sha256 <- pkgs$sysreqs <- pkgs$built <- pkgs$published <-
         rep(NA_character_, nrow(pkgs))
+  }
+
+  # If we only want one Windows platform, then filter here
+  if (platform %in% c("i386-w64-mingw32", "x86_64-w64-mingw32")) {
+    keep <- vlapply(pkgs$platform, function(p) platform %in% p)
+    pkgs <- pkgs[keep, ]
   }
 
   deps <- packages_parse_deps(pkgs)

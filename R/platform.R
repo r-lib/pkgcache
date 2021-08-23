@@ -22,13 +22,15 @@
 #'   repository might support both 32 bit and 64 builds, or only one of
 #'   them. In practice 32-bit only packages are very rare. CRAN builds
 #'   before and including R 4.1 have both architectures, from R 4.2 they
-#'   are 64 bit only.
+#'   are 64 bit only. `"windows"` is an alias to `i386+x86_64-w64-mingw32`
+#'   currently.
 #' * A platform string like `R.version$platform`, but on Linux the name
 #'   and version of the distribution are also included. Examples:
 #'   - `x86_64-apple-darwin17.0`: macOS High Sierra.
 #'   - `aarch64-apple-darwin20`: macOS Big Sur on arm64.
 #'   - `x86_64-w64-mingw32`: 64 bit Windows.
 #'   - `i386-w64-mingw32`: 32 bit Windows.
+#'   - `i386+x86_64-w64-mingw32`: 64 bit + 32 bit Windows.
 #'   - `i386-pc-solaris2.10`: 32 bit Solaris. (Some broken 64 Solaris
 #'     builds might have the same platform string, unfortunately.)
 #'   - `x86_64-pc-linux-gnu-debian-10`: Debian Linux 10 on x86_64.
@@ -83,7 +85,8 @@ parse_platform <- function(x) {
 get_cran_extension <- function(platform) {
   if (platform == "source") {
     return(".tar.gz")
-  } else if (platform %in% c("windows", "x86_64-w64-mingw32", "i386-w64-mingw32")) {
+  } else if (platform %in% c("windows", "i386+x86_64-mingw32",
+                             "x86_64-w64-mingw32", "i386-w64-mingw32")) {
     return(".zip")
   } else if (platform == "macos") {
     return(".tgz")
@@ -125,13 +128,22 @@ get_package_dirs_for_platform <- function(pl, minors) {
 
   }
 
-  if (pl %in% c("windows", "x86_64-w64-mingw32", "i386-w64-mingw32")) {
+  if (pl %in% c("x86_64-w64-mingw32", "i386-w64-mingw32",
+                "i386+x86_64-w64-mingw32")) {
     return(cbind(
-      "x86_64-w64-mingw32",
+      pl,
       minors,
       paste0("bin/windows/contrib/", minors)
     ))
 
+  }
+
+  if (pl == "windows") {
+    return(cbind(
+      "i386+x86_64-w64-mingw32",
+      minors,
+      paste0("bin/windows/contrib/", minors)
+    ))
   }
 
   if (pl == "macos") {

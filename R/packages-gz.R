@@ -30,17 +30,16 @@ read_packages_file <- function(path, mirror, repodir, platform,
   ## If Windows, then we need to check which binary has i386 support
   if (platform %in% c("i386+x86_64-w64-mingw32",
                       "i386-w64-mingw32", "x86_64-w64-mingw32")) {
-    both <- c("x86_64-w64-mingw32", "i386-w64-mingw32")
-    pkgs$platform <- replicate(nrow(pkgs), both, simplify = FALSE)
+    pkgs$platform <- "i386+x86_64-w64-mingw32"
     if ("archs" %in% colnames(pkgs)) {
       archs <- gsub(" ", "", fixed = TRUE, pkgs$archs)
-      p32 <- !is.na(archs) & archs == "x64"
-      pkgs$platform[p32] <- list(both[1])
-      p64 <- !is.na(archs) & archs == "i386"
-      pkgs$platform[p64] <- list(both[2])
+      p32 <- !is.na(archs) & archs == "i386"
+      pkgs$platform[p32] <- "i386-w64-mingw32"
+      p64 <- !is.na(archs) & archs == "x64"
+      pkgs$platform[p64] <- "x86_64-w64-mingw32"
     }
   } else {
-    pkgs$platform <- replicate(nrow(pkgs), platform, simplify = FALSE)
+    pkgs$platform <- platform
   }
 
   if (! "needscompilation" %in% names(pkgs)) {
@@ -86,8 +85,11 @@ read_packages_file <- function(path, mirror, repodir, platform,
 
   # If we only want one Windows platform, then filter here
   if (platform %in% c("i386-w64-mingw32", "x86_64-w64-mingw32")) {
-    keep <- vlapply(pkgs$platform, function(p) platform %in% p)
-    pkgs <- pkgs[keep, ]
+    drop <- pkgs$platform != platform &
+      pkgs$platform != "i386+x86_64-w64-mingw32"
+    if (any(drop)) {
+      pkgs <- pkgs[!drop, ]
+    }
   }
 
   deps <- packages_parse_deps(pkgs)

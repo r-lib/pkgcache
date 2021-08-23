@@ -14,7 +14,7 @@
 #' * `"source"` for source packages,
 #' * `"macos"` for macOS binaries that are appropriate for the R versions
 #'   pkgcache is working with (defaulting to the version of the current
-#'   session), as defined by CRAN binaries. E.g. on R R.5.0 macOS binaries
+#'   session), as defined by CRAN binaries. E.g. on R 3.5.0 macOS binaries
 #'   are built for macOS El Capitan.
 #' * `"windows"` for Windows binaries for the default CRAN architecture.
 #'   This is currently Windows Vista for all supported R versions, but it
@@ -56,7 +56,7 @@ current_r_platform <- function() {
 
 #' @details
 #' `default_platfoms()` returns the default platforms for the current R
-#' session. This typically consists of the detected platform of the current
+#' session. These typically consist of the detected platform of the current
 #' R session, and `"source"`, for source packages.
 #'
 #' @rdname current_r_platform

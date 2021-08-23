@@ -32,7 +32,7 @@ These functions accept the following platform names:
 \item \code{"source"} for source packages,
 \item \code{"macos"} for macOS binaries that are appropriate for the R versions
 pkgcache is working with (defaulting to the version of the current
-session), as defined by CRAN binaries. E.g. on R R.5.0 macOS binaries
+session), as defined by CRAN binaries. E.g. on R 3.5.0 macOS binaries
 are built for macOS El Capitan.
 \item \code{"windows"} for Windows binaries for the default CRAN architecture.
 This is currently Windows Vista for all supported R versions, but it
@@ -40,7 +40,8 @@ might change in the future. The actual binary packages in the
 repository might support both 32 bit and 64 builds, or only one of
 them. In practice 32-bit only packages are very rare. CRAN builds
 before and including R 4.1 have both architectures, from R 4.2 they
-are 64 bit only.
+are 64 bit only. \code{"windows"} is an alias to \code{i386+x86_64-w64-mingw32}
+currently.
 \item A platform string like \code{R.version$platform}, but on Linux the name
 and version of the distribution are also included. Examples:
 \itemize{
@@ -48,6 +49,7 @@ and version of the distribution are also included. Examples:
 \item \code{aarch64-apple-darwin20}: macOS Big Sur on arm64.
 \item \code{x86_64-w64-mingw32}: 64 bit Windows.
 \item \code{i386-w64-mingw32}: 32 bit Windows.
+\item \code{i386+x86_64-w64-mingw32}: 64 bit + 32 bit Windows.
 \item \code{i386-pc-solaris2.10}: 32 bit Solaris. (Some broken 64 Solaris
 builds might have the same platform string, unfortunately.)
 \item \code{x86_64-pc-linux-gnu-debian-10}: Debian Linux 10 on x86_64.
@@ -59,7 +61,7 @@ builds might have the same platform string, unfortunately.)
 }
 
 \code{default_platfoms()} returns the default platforms for the current R
-session. This typically consists of the detected platform of the current
+session. These typically consist of the detected platform of the current
 R session, and \code{"source"}, for source packages.
 }
 \examples{

@@ -71,6 +71,7 @@ test_that("read_packages_file", {
 
 test_that("read_packages_file windows", {
   testthat::local_edition(3)
+  testthat::local_reproducible_output()
   pkg_file <- get_fixture("PACKAGES-win2.gz")
 
   for (pl in c("x86_64-w64-mingw32", "i386-w64-mingw32",
@@ -83,10 +84,7 @@ test_that("read_packages_file windows", {
     )
     expect_snapshot({
       print(pl)
-      structure(
-        pkgs$pkgs$platform,
-        names = pkgs$pkgs$package
-      )
+      pkgs$pkgs[, c("package", "platform")]
     })
   }
 })

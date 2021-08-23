@@ -71,7 +71,7 @@ test_that("read_packages_file", {
 
 test_that("read_packages_file windows", {
   testthat::local_edition(3)
-  pkg_file <- get_fixture("PACkAGES-win2.gz")
+  pkg_file <- get_fixture("PACKAGES-win2.gz")
 
   for (pl in c("x86_64-w64-mingw32", "i386-w64-mingw32",
                "i386+x86_64-w64-mingw32")) {

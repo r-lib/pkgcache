@@ -69,6 +69,28 @@ test_that("read_packages_file", {
   }
 })
 
+test_that("read_packages_file windows", {
+  testthat::local_edition(3)
+  pkg_file <- get_fixture("PACkAGES-win2.gz")
+
+  for (pl in c("x86_64-w64-mingw32", "i386-w64-mingw32",
+               "i386+x86_64-w64-mingw32")) {
+    pkgs <- read_packages_file(
+      pkg_file,
+      mirror = "m",
+      repodir = "r",
+      platform = pl
+    )
+    expect_snapshot({
+      print(pl)
+      structure(
+        pkgs$pkgs$platform,
+        names = pkgs$pkgs$package
+      )
+    })
+  }
+})
+
 test_that("packages_parse_deps", {
   pkgs <- read_packages_file(
     get_fixture("PACKAGES-src.gz"), mirror = "mirror",

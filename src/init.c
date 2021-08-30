@@ -7,10 +7,10 @@
 
 static const R_CallMethodDef callMethods[]  = {
   REG(pkgcache_read_raw,              1),
-  REG(pkgcache_read_description,      1),
   REG(pkgcache_parse_description_raw, 1),
+  REG(pkgcache_parse_description,     1),
+  REG(pkgcache_parse_descriptions,    1),
   REG(pkgcache_parse_packages_raw,    1),
-  REG(pkgcache_merge_descriptions,    1),
   { NULL, NULL, 0 }
 };
 

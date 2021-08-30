@@ -23,57 +23,59 @@ static R_INLINE int hash_string(char *str, int strlen) {
   return hash % HASH_SIZE;
 }
 
-static SEXP hash_create(int max_cols, int npkgs) {
-  SEXP table = PROTECT(allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(table, 0, allocVector(STRSXP, max_cols));
-  SET_VECTOR_ELT(table, 1, allocVector(INTSXP, HASH_SIZE * MAX_COLL));
-  memset(INTEGER(VECTOR_ELT(table, 1)), 0, HASH_SIZE * MAX_COLL * sizeof(int));
-  SET_VECTOR_ELT(table, 2, allocVector(INTSXP, 3));
-  INTEGER(VECTOR_ELT(table, 2))[0] = 0;
-  INTEGER(VECTOR_ELT(table, 2))[1] = max_cols;
-  INTEGER(VECTOR_ELT(table, 2))[2] = npkgs;
-  SET_VECTOR_ELT(table, 3, allocVector(VECSXP,max_cols));
-  UNPROTECT(1);
-  return table;
-}
+struct hash_table {
+  SEXP nms;
+  SEXP *nmsptr;
+  SEXP cols;
+  int *tab;
+  int tablen;
+  int nfld;
+  int max_cols;
+  int npkgs;
+};
 
-static void hash_update(SEXP table, char *key, int keylen, int npkg, SEXP val) {
-  SEXP nms = VECTOR_ELT(table, 0);
-  SEXP *ptr = STRING_PTR(nms);
-  SEXP tab = VECTOR_ELT(table, 1);
-  SEXP cols = VECTOR_ELT(table, 3);
-  int len = LENGTH(tab);
-  int *t = INTEGER(tab);
+static void hash_create(struct hash_table *table, SEXP nms, SEXP cols,
+                        SEXP tab, int max_cols, int npkgs) {
+  table->nms = nms;
+  table->nmsptr = STRING_PTR(nms);
+  table->cols = cols;
+  table->tab = INTEGER(tab);
+  table->tablen = LENGTH(tab);
+  table->nfld = 0;
+  table->max_cols = max_cols;
+  table->npkgs = npkgs;
+  memset(table->tab, 0, sizeof(int) * table->tablen);
+};
+
+static void hash_update(struct hash_table *table, char *key, int keylen,
+                        int npkg, SEXP val) {
+  int len = table->tablen;
+  int *t = table->tab;
   int hash = hash_string(key, keylen);
   int start = hash * MAX_COLL;
 
   for (; start < len; start++) {
     int p = t[start];
     if (p == 0) {
-      int *pos = INTEGER(VECTOR_ELT(table, 2));
-      if (pos[0] == pos[1]) {
+      if (table->nfld == table->max_cols) {
         R_THROW_ERROR("pkgcache internal error, two many columns");
       }
-      SET_STRING_ELT(nms, pos[0], Rf_mkCharLenCE(key, keylen, CE_NATIVE));
-      SET_VECTOR_ELT(cols, pos[0], allocVector(STRSXP, pos[2]));
-      SET_STRING_ELT(VECTOR_ELT(cols, pos[0]), npkg, val);
-      t[start] = pos[0] + 1;
-      pos[0] ++;
+      SET_STRING_ELT(table->nms, table->nfld, Rf_mkCharLenCE(key, keylen, CE_NATIVE));
+      SET_VECTOR_ELT(table->cols, table->nfld, allocVector(STRSXP, table->npkgs));
+      SET_STRING_ELT(VECTOR_ELT(table->cols, table->nfld), npkg, val);
+      table->nfld += 1;
+      t[start] = table->nfld;
       return;
     } else {
       p--;
-      if (!strncmp(key, CHAR(ptr[p]), keylen)) {
-        SET_STRING_ELT(VECTOR_ELT(cols, p), npkg, val);
+      if (!strncmp(key, CHAR(table->nmsptr[p]), keylen)) {
+        SET_STRING_ELT(VECTOR_ELT(table->cols, p), npkg, val);
         return;
       }
     }
   }
 
   R_THROW_ERROR("pkgcache internal hash table is full, please report a bug");
-}
-
-static SEXP hash_getnames(SEXP table) {
-  return VECTOR_ELT(table, 0);
 }
 
 /* --------------------------------------------------------------------- */
@@ -309,8 +311,13 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
   char *kw = NULL, *vl = NULL;
   int kwsize = 0, vlsize = 0;
   int linum = 1;
+  int max_cols = 100;
 
-  SEXP table = PROTECT(hash_create(100, npkgs));
+  SEXP nms = PROTECT(allocVector(STRSXP, max_cols));
+  SEXP cols = PROTECT(allocVector(VECSXP, max_cols));
+  SEXP tab = PROTECT(allocVector(INTSXP, HASH_SIZE * MAX_COLL));
+  struct hash_table table;
+  hash_create(&table, nms, cols, tab, 100, npkgs);
   int npkg = 0;
 
   p = (char*) RAW(raw);
@@ -379,7 +386,7 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
       } else {
         /* Save field */
         SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
-        hash_update(table, kw, kwsize, npkg, val);
+        hash_update(&table, kw, kwsize, npkg, val);
         UNPROTECT(1);
 
         /* end of package? */
@@ -430,18 +437,15 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
   } else {
     /* Save field */
     SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
-    hash_update(table, kw, kwsize, npkg, val);
+    hash_update(&table, kw, kwsize, npkg, val);
     UNPROTECT(1);
   }
 
   /* ------------------------------------------------------------------- */
 
-  Rf_setAttrib(VECTOR_ELT(table, 3), R_NamesSymbol, VECTOR_ELT(table, 0));
-  SEXP final = PROTECT(Rf_lengthgets(
-    VECTOR_ELT(table, 3),
-    INTEGER(VECTOR_ELT(table, 2))[0]
-  ));
-  UNPROTECT(2);
+  Rf_setAttrib(cols, R_NamesSymbol, nms);
+  SEXP final = PROTECT(Rf_lengthgets(cols, table.nfld));
+  UNPROTECT(4);
   return final;
 }
 
@@ -454,6 +458,14 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
   char *kw = NULL, *vl = NULL;
   int kwsize = 0, vlsize = 0;
   int linum = 1;
+
+  int max_cols = 100;
+
+  SEXP nms = PROTECT(allocVector(STRSXP, max_cols));
+  SEXP cols = PROTECT(allocVector(VECSXP, max_cols));
+  SEXP tab = PROTECT(allocVector(INTSXP, HASH_SIZE * MAX_COLL));
+  struct hash_table table;
+  hash_create(&table, nms, cols, tab, 100, npkgs);
 
   for (npkg = 0; npkg < npkgs; npkg++) {
 
@@ -541,8 +553,10 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
 
         /* othewise we can save the field, and start parsing the next one */
         } else {
+          SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
+          hash_update(&table, kw, kwsize, npkg, val);
+          UNPROTECT(1);
 
-          /* todo: save field */
           kw = p;
           state = S_KW;
           p++;
@@ -579,15 +593,18 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
     if (state == S_KW) {
       R_THROW_ERROR("DESCRIPTION file `%s` ended while parsing a key", cpath);
     } else {
-      /* todo: save field */
+      /* Save field */
+      SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
+      hash_update(&table, kw, kwsize, npkg, val);
+      UNPROTECT(1);
     }
 
     UNPROTECT(1);
   }
 
 
-  /* Rf_setAttrib(data.cols, R_NamesSymbol, data.nms); */
-  /* SEXP final = PROTECT(Rf_lengthgets(data.cols, data.nfld)); */
-  UNPROTECT(2);
-  return R_NilValue;
+  Rf_setAttrib(cols, R_NamesSymbol, nms);
+  SEXP final = PROTECT(Rf_lengthgets(cols, table.nfld));
+  UNPROTECT(4);
+  return final;
 }

@@ -175,3 +175,11 @@ modify_vec <- function(old, new) {
 last <- function(x) {
   x[[length(x)]]
 }
+
+encode_path <- function(path) {
+  if (.Platform$OS.type == "windows") {
+    enc2utf8(path)
+  } else {
+    enc2native(path)
+  }
+}

@@ -1,0 +1,38 @@
+Package: pak
+Version: 0.1.2.9001
+Title: Another Approach to Package Installation
+Description: The goal of 'pak' is to make package installation faster and
+    more reliable. In particular, it performs all HTTP operations in parallel,
+    so metadata resolution and package downloads are fast. Metadata and package
+    files are cached on the local disk as well. 'pak' has a dependency solver,
+    so it finds version conflicts before performing the installation. This
+    version of 'pak' supports CRAN, 'Bioconductor' and 'GitHub' packages as well.
+Authors@R: c(
+    person("Gábor", "Csárdi", email = "csardi.gabor@gmail.com", role = c("aut", "cre")),
+    person("Jim", "Hester", email = "jim.hester@rstudio.com", role = "aut"),
+    person("RStudio", role = "cph"))
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+RoxygenNote: 7.1.1.9001
+Roxygen: list(markdown = TRUE)
+Depends: R (>= 3.2)
+Imports: tools, utils
+Suggests: callr (>= 3.5.0), cli (>= 3.0.0), covr, curl, distro,
+        filelock (>= 1.0.2), glue (>= 1.3.0), mockery, pingr, jsonlite,
+        pkgcache (>= 1.2.0), pkgdepends (>= 0.1.2), pkgsearch (>=
+        3.0.3), prettyunits, processx (>= 3.5.1), ps (>= 1.6.0),
+        rprojroot (>= 1.3-2), rstudioapi, testthat, tibble, withr
+Config/needs/dependencies: callr, cli, curl, distro, filelock, glue,
+        jsonlite, pkgcache, pkgdepends, pkgsearch, prettyunits,
+        processx, ps, rprojroot, tibble
+Remotes: r-lib/cli
+Config/testthat/edition: 3
+URL: https://pak.r-lib.org/
+BugReports: https://github.com/r-lib/pak/issues
+Author: Gábor Csárdi [aut, cre],
+  Jim Hester [aut],
+  RStudio [cph]
+Maintainer: Gábor Csárdi <csardi.gabor@gmail.com>
+Built: R 4.0.5; ; 2021-08-17 08:48:13 UTC; unix

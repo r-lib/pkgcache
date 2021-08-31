@@ -3,6 +3,23 @@
 
 #include <R_ext/Rdynload.h>
 
+#ifdef GCOV_COMPILE
+
+void __gcov_flush();
+SEXP pkgcache__gcov_flush() {
+  REprintf("Flushing coverage info\n");
+  __gcov_flush();
+  return R_NilValue;
+}
+
+#else
+
+SEXP pkgcache__gcov_flush() {
+  return R_NilValue;
+}
+
+#endif
+
 #define REG(name, args) { #name, (DL_FUNC) name, args }
 
 static const R_CallMethodDef callMethods[]  = {
@@ -11,6 +28,8 @@ static const R_CallMethodDef callMethods[]  = {
   REG(pkgcache_parse_description,     1),
   REG(pkgcache_parse_descriptions,    1),
   REG(pkgcache_parse_packages_raw,    1),
+
+  REG(pkgcache__gcov_flush,           0),
   { NULL, NULL, 0 }
 };
 

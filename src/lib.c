@@ -1,13 +1,18 @@
 
 #include "pkgcache.h"
 #include "errors.h"
+#include "winfiles.h"
 
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 
+#define STR1(x) STRING_ELT(x, 0)
 #define HASH_SIZE 256
 #define MAX_COLL 10
+
+#define ERROR_TOO_MANY_COLUMNS 1
+#define ERROR_HASH_TABLE_FULL  2
 
 static R_INLINE int hash_string(char *str, int strlen) {
   int backup = str[strlen];
@@ -47,8 +52,8 @@ static void hash_create(struct hash_table *table, SEXP nms, SEXP cols,
   memset(table->tab, 0, sizeof(int) * table->tablen);
 };
 
-static void hash_update(struct hash_table *table, char *key, int keylen,
-                        int npkg, SEXP val) {
+static inline int hash_update(struct hash_table *table, char *key, int keylen,
+                              int npkg, SEXP val, int err) {
   int len = table->tablen;
   int *t = table->tab;
   int hash = hash_string(key, keylen);
@@ -57,25 +62,39 @@ static void hash_update(struct hash_table *table, char *key, int keylen,
   for (; start < len; start++) {
     int p = t[start];
     if (p == 0) {
+
       if (table->nfld == table->max_cols) {
-        R_THROW_ERROR("pkgcache internal error, two many columns");
+        if (err) {                                                   // __NO_COVERAGE__
+          R_THROW_ERROR(                                             // __NO_COVERAGE__
+            "Internal pkgcache error, too many different fields in " // __NO_COVERAGE__
+            "PACKAGES or DESCRIPTION data, please report a bug"      // __NO_COVERAGE__
+          );                                                         // __NO_COVERAGE__
+        }                                                            // __NO_COVERAGE__
+        return ERROR_TOO_MANY_COLUMNS;                               // __NO_COVERAGE__
       }
+
       SET_STRING_ELT(table->nms, table->nfld, Rf_mkCharLenCE(key, keylen, CE_NATIVE));
       SET_VECTOR_ELT(table->cols, table->nfld, allocVector(STRSXP, table->npkgs));
       SET_STRING_ELT(VECTOR_ELT(table->cols, table->nfld), npkg, val);
       table->nfld += 1;
       t[start] = table->nfld;
-      return;
+      return 0;
+
     } else {
       p--;
       if (!strncmp(key, CHAR(table->nmsptr[p]), keylen)) {
         SET_STRING_ELT(VECTOR_ELT(table->cols, p), npkg, val);
-        return;
+        return 0;
       }
     }
-  }
+  }                                                                      // __NO_COVERAGE__
 
-  R_THROW_ERROR("pkgcache internal hash table is full, please report a bug");
+  if (err) {                                                             // __NO_COVERAGE__
+    R_THROW_ERROR(                                                       // __NO_COVERAGE__
+      "Internal pkgcache error, hash table is full, please report a bug" // __NO_COVERAGE__
+    );                                                                   // __NO_COVERAGE__
+  }                                                                      // __NO_COVERAGE__
+  return ERROR_HASH_TABLE_FULL;                                          // __NO_COVERAGE__
 }
 
 /* --------------------------------------------------------------------- */
@@ -83,23 +102,23 @@ static void hash_update(struct hash_table *table, char *key, int keylen,
 SEXP pkgcache__read_file_raw(const char *cpath) {
   SEXP result = R_NilValue;
   int err;
-  int fd = open(cpath, O_RDONLY);
+  int fd = open_file(cpath, O_RDONLY);
 
   if (fd == -1) {
-    return(R_FORMAT_SYSTEM_ERROR("Cannot oepn file `%s`", cpath));
+    return(R_FORMAT_SYSTEM_ERROR("Cannot open file `%s`", cpath));
   }
 
   off_t len = lseek(fd, 0, SEEK_END);
   if (len == -1) {
-    err = errno;
-    close(fd);
-    return R_FORMAT_SYSTEM_ERROR_CODE(err, "Cannot open `%s`", cpath);
+    err = errno;                                                       // __NO_COVERAGE__
+    close(fd);                                                         // __NO_COVERAGE__
+    return R_FORMAT_SYSTEM_ERROR_CODE(err, "Cannot seek `%s`", cpath); // __NO_COVERAGE__
   }
   off_t len2 = lseek(fd, 0, SEEK_SET);
   if (len2 == -1) {
-    err = errno;
-    close(fd);
-    return R_FORMAT_SYSTEM_ERROR_CODE(err, "Cannot seek `%s`", cpath);
+    err = errno;                                                       // __NO_COVERAGE__
+    close(fd);                                                         // __NO_COVERAGE__
+    return R_FORMAT_SYSTEM_ERROR_CODE(err, "Cannot seek `%s`", cpath); // __NO_COVERAGE__
   }
 
   /* TODO: should use cleancall to close the file if allocVector fails */
@@ -108,10 +127,10 @@ SEXP pkgcache__read_file_raw(const char *cpath) {
 
   ssize_t ret = read(fd, RAW(result), len);
   if (ret == -1) {
-    err = errno;
-    close(fd);
-    UNPROTECT(1);
-    return R_FORMAT_SYSTEM_ERROR_CODE(err, "Cannot read `%s`", cpath);
+    err = errno;                                                       // __NO_COVERAGE__
+    close(fd);                                                         // __NO_COVERAGE__
+    UNPROTECT(1);                                                      // __NO_COVERAGE__
+    return R_FORMAT_SYSTEM_ERROR_CODE(err, "Cannot read `%s`", cpath); // __NO_COVERAGE__
   }
 
   close(fd);
@@ -188,7 +207,7 @@ SEXP pkgcache_parse_description_raw(SEXP raw) {
       /* A newline within a keyword is an error */
       } else if (*p == '\n') {
         R_THROW_ERROR(
-          "Invalid line (%d) in DESCRIPTION: must contain `:`",
+          "Line %d invalid in DESCRIPTION: must be of form `key: value`",
           linum
         );
 
@@ -247,14 +266,16 @@ SEXP pkgcache_parse_description_raw(SEXP raw) {
 
     /* ----------------------------------------------------------------- */
     default:
-      R_THROW_ERROR("Internal DESCRIPTION parser error");
-      break;
+      R_THROW_ERROR("Internal DESCRIPTION parser error"); // __NO_COVERAGE__
+      break;                                              // __NO_COVERAGE__
     }
   }
 
   if (state == S_KW) {
     R_THROW_ERROR("DESCRIPTION file ended while parsing a key");
-  } else {
+  } else if (state != S_BG) {
+    /* Strip the trailing newline(s) */
+    while (p - 1 > start && *(p-1) == '\n') p--;
     vlsize = p - vl;
     SET_STRING_ELT(result, ridx, Rf_mkCharLen(vl, vlsize));
     SET_STRING_ELT(names, ridx, Rf_mkCharLen(kw, kwsize));
@@ -272,6 +293,10 @@ SEXP pkgcache_parse_description_raw(SEXP raw) {
 
 SEXP pkgcache_parse_description(SEXP path) {
   SEXP raw = PROTECT(pkgcache__read_file_raw(CHAR(STRING_ELT(path, 0))));
+  if (TYPEOF(raw) != RAWSXP) {
+    R_THROW_ERROR(CHAR(STRING_ELT(raw, 0)));
+  }
+
   SEXP desc = PROTECT(pkgcache_parse_description_raw(raw));
 
   UNPROTECT(2);
@@ -295,6 +320,7 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
      It is also faster than strstr, for this special case of a two
      character pattern. */
 
+  while (*p == '\n') p++;
   for (;;) {
     p = strchr(p, '\n');
     if (p == NULL) break;
@@ -302,6 +328,8 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
     if (*p == '\n') {
       p++;
       npkgs++;
+      while (*p == '\n') p++;
+      if (*p == '\0') npkgs--;
     }
   }
 
@@ -311,13 +339,13 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
   char *kw = NULL, *vl = NULL;
   int kwsize = 0, vlsize = 0;
   int linum = 1;
-  int max_cols = 100;
+  int max_cols = 1000;
 
   SEXP nms = PROTECT(allocVector(STRSXP, max_cols));
   SEXP cols = PROTECT(allocVector(VECSXP, max_cols));
   SEXP tab = PROTECT(allocVector(INTSXP, HASH_SIZE * MAX_COLL));
   struct hash_table table;
-  hash_create(&table, nms, cols, tab, 100, npkgs);
+  hash_create(&table, nms, cols, tab, max_cols, npkgs);
   int npkg = 0;
 
   p = (char*) RAW(raw);
@@ -331,7 +359,7 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
         p++;
       } else if (*p == ':' || *p == ' ' || *p == '\t') {
         R_THROW_ERROR(
-          "Invalid PACKAGES file in line %d: expected keyword",
+          "Invalid PACKAGES file in line %d: expected key",
           linum
         );
       } else {
@@ -351,7 +379,7 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
       } else if (*p == '\n') {
         R_THROW_ERROR(
-          "Invalid line (%d) in PACKAGES file: must contain `:`",
+          "Invalid line %d in PACKAGES file: must contain `:`",
           linum
         );
 
@@ -386,7 +414,7 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
       } else {
         /* Save field */
         SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
-        hash_update(&table, kw, kwsize, npkg, val);
+        hash_update(&table, kw, kwsize, npkg, val, /* err */ 1);
         UNPROTECT(1);
 
         /* end of package? */
@@ -422,8 +450,8 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
     /* ----------------------------------------------------------------- */
     default:
-      R_THROW_ERROR("Internal PACKAGES parser error");
-      break;
+      R_THROW_ERROR("Internal PACKAGES parser error");  // __NO_COVERAGE__
+      break;                                            // __NO_COVERAGE__
     }
   }
 
@@ -434,10 +462,10 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
   if (state == S_KW) {
     R_THROW_ERROR("PACKAGES file ended while parsing a key");
-  } else {
+  } else if (state != S_BG) {
     /* Save field */
     SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
-    hash_update(&table, kw, kwsize, npkg, val);
+    hash_update(&table, kw, kwsize, npkg, val, /* err= */ 1);
     UNPROTECT(1);
   }
 
@@ -458,23 +486,25 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
   char *kw = NULL, *vl = NULL;
   int kwsize = 0, vlsize = 0;
   int linum = 1;
+  int haserrors = 0;
 
-  int max_cols = 100;
+  int max_cols = 1000;
 
+  SEXP errors = PROTECT(allocVector(STRSXP, npkgs));
   SEXP nms = PROTECT(allocVector(STRSXP, max_cols));
   SEXP cols = PROTECT(allocVector(VECSXP, max_cols));
   SEXP tab = PROTECT(allocVector(INTSXP, HASH_SIZE * MAX_COLL));
   struct hash_table table;
-  hash_create(&table, nms, cols, tab, 100, npkgs);
+  hash_create(&table, nms, cols, tab, max_cols, npkgs);
 
   for (npkg = 0; npkg < npkgs; npkg++) {
 
     const char *cpath = CHAR(STRING_ELT(paths, npkg));
     SEXP raw = PROTECT(pkgcache__read_file_raw(cpath));
     if (TYPEOF(raw) != RAWSXP) {
-      /* TODO: error or warning? */
+      SET_STRING_ELT(errors, npkg, STR1(raw));
       UNPROTECT(1);
-      continue;
+      goto failedpkg;
     }
 
     state = S_BG;
@@ -494,11 +524,16 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
       /* -- at the begining -------------------------------------------- */
       case S_BG:
         if (*p == ':' || *p == '\n' || *p == ' ' || *p == '\t') {
-          R_THROW_ERROR(
-            "Invalid DESCRIPTION file `%s` , must start with an "
-            "alphanumeric character",
-            cpath
+          SET_STRING_ELT(
+            errors,
+            npkg,
+            STR1(R_FORMAT_ERROR(
+              "`%s` is invalid, must start with an alphanumeric character",
+              cpath
+            ))
           );
+          UNPROTECT(1);
+          goto failedpkg;
         }
         /* Otherwise it must be the start of a keyword */
         kw = p++;
@@ -518,10 +553,17 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
 
         /* A newline within a keyword is an error */
         } else if (*p == '\n') {
-          R_THROW_ERROR(
-            "Invalid line (%d) in DESCRIPTION file `%s`: must contain `:`",
-            linum, cpath
+          SET_STRING_ELT(
+            errors,
+            npkg,
+            STR1(R_FORMAT_ERROR(
+              "Line %d is invalid in `%s`: must contain `:`",
+              linum,
+              cpath
+            ))
           );
+          UNPROTECT(1);
+          goto failedpkg;
 
         /* Otherwise we are inside the keyword */
         } else {
@@ -554,7 +596,7 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
         /* othewise we can save the field, and start parsing the next one */
         } else {
           SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
-          hash_update(&table, kw, kwsize, npkg, val);
+          hash_update(&table, kw, kwsize, npkg, val, 1);
           UNPROTECT(1);
 
           kw = p;
@@ -580,8 +622,8 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
 
       /* --------------------------------------------------------------- */
       default:
-        R_THROW_ERROR("Internal DESCRIPTION parser error");
-        break;
+        R_THROW_ERROR("Internal DESCRIPTION parser error");  // __NO_COVERAGE__
+        break;                                               // __NO_COVERAGE__
       }
     }
 
@@ -591,20 +633,37 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
     if (state == S_VL && tail != '\n') vlsize++;
 
     if (state == S_KW) {
-      R_THROW_ERROR("DESCRIPTION file `%s` ended while parsing a key", cpath);
+      SET_STRING_ELT(
+        errors,
+        npkg,
+        STR1(R_FORMAT_ERROR(
+          "`%s` ended while parsing a key",
+          cpath
+        ))
+      );
+      UNPROTECT(1);
+      goto failedpkg;
+
     } else {
       /* Save field */
       SEXP val = PROTECT(mkCharLenCE(vl, vlsize, CE_BYTES));
-      hash_update(&table, kw, kwsize, npkg, val);
+      hash_update(&table, kw, kwsize, npkg, val, /* err = */ 1);
       UNPROTECT(1);
     }
 
     UNPROTECT(1);
+    continue;
+
+  failedpkg:
+    haserrors = 1;
   }
 
-
   Rf_setAttrib(cols, R_NamesSymbol, nms);
-  SEXP final = PROTECT(Rf_lengthgets(cols, table.nfld));
-  UNPROTECT(4);
+  SEXP final = PROTECT(allocVector(VECSXP, 3));
+  SET_VECTOR_ELT(final, 0, Rf_lengthgets(cols, table.nfld));
+  SET_VECTOR_ELT(final, 1, errors);
+  SET_VECTOR_ELT(final, 2, ScalarLogical(haserrors));
+
+  UNPROTECT(5);
   return final;
 }

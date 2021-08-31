@@ -37,7 +37,7 @@ SEXP r_format_error(const char *func, const char *filename, int line,
     func
   );
 
-  return Rf_mkString(msgbuf);
+  return Rf_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
 }
 
 #ifdef _WIN32
@@ -132,7 +132,7 @@ SEXP r_format_system_error(const char *func, const char *filename, int line,
     func
   );
 
-  return Rf_mkString(msgbuf);
+  return Rd_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
 }
 
 #endif
@@ -183,5 +183,5 @@ SEXP r_format_system_error(
     func
   );
 
-  return Rf_mkString(msgbuf);
+  return Rf_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
 }

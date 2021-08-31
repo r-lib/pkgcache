@@ -48,7 +48,11 @@ parse_packages <- function(path) {
     }
 
     if (ext == "gz") {
-      bts <- memDecompress(cmp, type = "gzip")
+      if (getRversion() >= "4.0.0") {
+        bts <- memDecompress(cmp, type = "gzip")
+      } else {
+        bts <- gzip_decompress(cmp)
+      }
     } else if (ext %in% c("bz2", "bzip2")) {
       bts <- memDecompress(cmp, type = "bzip2")
     } else if (ext == "xz") {

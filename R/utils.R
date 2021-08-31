@@ -183,3 +183,14 @@ encode_path <- function(path) {
     enc2native(path)
   }
 }
+
+gzip_decompress <- function(from, chunk_size = 5 * 1000 * 1000) {
+  con <- gzcon(rawConnection(from))
+  on.exit(close(con), add = TRUE)
+  pieces <- list()
+  while (1) {
+    pieces[[length(pieces) + 1]] <- readBin(con, what = "raw", n = chunk_size)
+    if (length(pieces[[length(pieces)]]) == 0) break;
+  }
+  do.call("c", pieces)
+}

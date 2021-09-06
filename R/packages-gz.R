@@ -17,7 +17,8 @@ packages_gz_cols <- function()  {
 read_packages_file <- function(path, mirror, repodir, platform,
                                type = "standard", meta_path = NA_character_,
                                ..., .list = list()) {
-  pkgs <- as_tibble(read.dcf.gz(path))
+
+  pkgs <- parse_packages(path)
   meta <- read_metadata_file(meta_path)
   extra <- c(
     list(repodir = repodir),

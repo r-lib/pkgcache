@@ -310,17 +310,23 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
   char *p = NULL;
   int npkgs = 1;
 
+  if (len == 0) return R_NilValue;
+
   /* ------------------------------------------------------------------- */
   /* Count number of empty lines, to guess the number of packages */
   p = (char*) RAW(raw);
   char tail = p[len - 1];
   p[len - 1] = '\0';
 
+  /* Skip whitespace first, check for empty file */
+
+  while (*p == '\n' || *p == '\r') p++;
+  if (*p == '\0') return R_NilValue;
+
   /* This is faster than manual search, because strchr is optimized.
      It is also faster than strstr, for this special case of a two
      character pattern. */
 
-  while (*p == '\n' || *p == '\r') p++;
   for (;;) {
     p = strchr(p, '\n');
     if (p == NULL) break;

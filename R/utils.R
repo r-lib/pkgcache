@@ -58,12 +58,6 @@ add_attr <- function(x, attr, value) {
   x
 }
 
-read.dcf.gz <- function(x) {
-  con <- gzfile(x, open = "r")
-  on.exit(close(con))
-  read.dcf(con)
-}
-
 get_platform <- function() {
   R.version$platform
 }

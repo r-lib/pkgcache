@@ -533,7 +533,7 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
       switch(state) {
       /* -- at the begining -------------------------------------------- */
       case S_BG:
-        if (*p == ':' || *p == '\n' || *p == ' ' || *p == '\t') {
+        if (*p == ':' || *p == '\r' || *p == '\n' || *p == ' ' || *p == '\t') {
           SET_STRING_ELT(
             errors,
             npkg,

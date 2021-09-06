@@ -143,6 +143,14 @@ test_that("lib_status", {
   expect_true("LibPath" %in% names(pkgs))
 })
 
+test_that("lib_status, DESCRIPTION with <CR><LF>", {
+  testthat::local_edition(3)
+  testthat::local_reproducible_output(width = 60)
+  pkgs <- lib_status(get_fixture("lib4"))
+  expect_snapshot(pkgs$Package)
+  expect_true("LibPath" %in% names(pkgs))
+})
+
 test_that("lib_status, multiple libs", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)

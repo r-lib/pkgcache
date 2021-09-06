@@ -138,6 +138,7 @@ lib_status <- function(library = .libPaths()) {
   tab <- prs[[1]]
 
   tab[] <- lapply(tab, function(x) {
+    x <- gsub("\r", "", x, fixed = TRUE)
     empt <- is.na(x)
     miss <- x == ""
     x[empt] <- ""

@@ -64,6 +64,13 @@
     Output
       [1] "cli"   "rlang"
 
+# lib_status, DESCRIPTION with <CR><LF>
+
+    Code
+      pkgs$Package
+    Output
+      [1] "cli"   "rlang"
+
 # lib_status, multiple libs
 
     Code

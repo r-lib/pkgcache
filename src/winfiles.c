@@ -4,6 +4,8 @@
 #ifdef WIN32
 
 #include <windows.h>
+#include <io.h>
+#include <fcntl.h>
 
 static int utf8_to_utf16(const char* s, WCHAR** ws_ptr) {
   int ws_len, r;
@@ -39,10 +41,10 @@ static int utf8_to_utf16(const char* s, WCHAR** ws_ptr) {
 }
 
 int open_file(const char *path, int oflag) {
-  WHAT *wpath;
+  WCHAR *wpath;
   int ret = utf8_to_utf16(path, &wpath);
   if (ret) R_THROW_SYSTEM_ERROR_CODE(ret, "Failed to open `%s`", path);
-  return _wopen(wpath, oflag);
+  return _wopen(wpath, oflag | _O_BINARY);
 }
 
 #else

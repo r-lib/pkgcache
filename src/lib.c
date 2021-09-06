@@ -50,7 +50,7 @@ static void hash_create(struct hash_table *table, SEXP nms, SEXP cols,
   table->max_cols = max_cols;
   table->npkgs = npkgs;
   memset(table->tab, 0, sizeof(int) * table->tablen);
-};
+}
 
 static inline int hash_update(struct hash_table *table, char *key, int keylen,
                               int npkg, SEXP val, int err) {

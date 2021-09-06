@@ -123,7 +123,7 @@ SEXP r_format_system_error(const char *func, const char *filename, int line,
   snprintf(
     msgbuf,
     ERRORBUF_SIZE,
-    "%s (system error %d, %s) @%s:%d (%s)",
+    "%s (system error %ld, %s) @%s:%d (%s)",
     errorbuf,
     errorcode,
     realsysmsg,
@@ -132,7 +132,7 @@ SEXP r_format_system_error(const char *func, const char *filename, int line,
     func
   );
 
-  return Rd_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
+  return Rf_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
 }
 
 #endif

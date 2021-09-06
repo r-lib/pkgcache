@@ -182,7 +182,7 @@ SEXP pkgcache_parse_description_raw(SEXP raw) {
 
     /* -- at the begining ---------------------------------------------- */
     case S_BG:
-      if (*p == ':' || *p == '\n' || *p == ' ' || *p == '\t') {
+      if (*p == ':' || *p == '\r' || *p == '\n' || *p == ' ' || *p == '\t') {
         R_THROW_ERROR(
           "Invalid DESCRIPTION file, must start with an "
           "alphanumeric character"
@@ -320,15 +320,15 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
      It is also faster than strstr, for this special case of a two
      character pattern. */
 
-  while (*p == '\n') p++;
+  while (*p == '\n' || *p == '\r') p++;
   for (;;) {
     p = strchr(p, '\n');
     if (p == NULL) break;
     p++;
-    if (*p == '\n') {
+    if (*p == '\n' || *p == '\r') {
       p++;
       npkgs++;
-      while (*p == '\n') p++;
+      while (*p == '\n' || *p == '\r') p++;
       if (*p == '\0') npkgs--;
     }
   }
@@ -354,7 +354,9 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
     /* -- at the begining of a package --------------------------------- */
     case S_BG:
-      if (*p == '\n') {
+      if (*p == '\r') {
+        p++;
+      } else if (*p == '\n') {
         linum++;
         p++;
       } else if (*p == ':' || *p == ' ' || *p == '\t') {
@@ -405,6 +407,7 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
     /* -- right after a newline ---------------------------------------- */
     case S_NL:
+
       /* maybe a continuation line */
       if (*p == ' ' || *p == '\t') {
         state = S_WS;
@@ -419,6 +422,13 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
         /* end of package? */
         if (*p == '\n') {
+          p++;
+          npkg++;
+          linum++;
+          state = S_BG;
+
+        } else if (*p == '\r' && *(p+1) == '\n') {
+          p++;
           p++;
           npkg++;
           linum++;

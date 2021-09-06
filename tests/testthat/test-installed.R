@@ -49,6 +49,10 @@ test_that("parse_description", {
     "Line 2 invalid in DESCRIPTION: must be of form `key: value`",
     fixed = TRUE
   )
+
+  # \r\n line endings
+  d <- parse_description(get_fixture("description/cli/DESCRIPTION"))
+  expect_equal(d[["Encoding"]], "UTF-8")
 })
 
 test_that("parse_packages", {
@@ -73,6 +77,20 @@ test_that("parse_packages, compressed", {
   p_bz2   <- parse_packages(get_fixture("packages/PACKAGES.bz2"))
   p_bzip2 <- parse_packages(get_fixture("packages/PACKAGES.bzip2"))
   p_xz    <- parse_packages(get_fixture("packages/PACKAGES.xz"))
+  expect_equal(p0, p_gz)
+  expect_equal(p0, p_bz2)
+  expect_equal(p0, p_bzip2)
+  expect_equal(p0, p_xz)
+})
+
+test_that("parse_packages, <CR><LF>", {
+  p0      <- parse_packages(get_fixture("packages/PACKAGES"))
+  p       <- parse_packages(get_fixture("packages/PACKAGES2"))
+  p_gz    <- parse_packages(get_fixture("packages/PACKAGES2.gz"))
+  p_bz2   <- parse_packages(get_fixture("packages/PACKAGES2.bz2"))
+  p_bzip2 <- parse_packages(get_fixture("packages/PACKAGES2.bzip2"))
+  p_xz    <- parse_packages(get_fixture("packages/PACKAGES2.xz"))
+  expect_equal(p0, p)
   expect_equal(p0, p_gz)
   expect_equal(p0, p_bz2)
   expect_equal(p0, p_bzip2)
@@ -112,6 +130,9 @@ test_that("somewhat weird packages files", {
   pkgs <- parse_packages(get_fixture("packages/P1"))
   expect_snapshot(colnames(pkgs))
   expect_snapshot(pkgs$Package)
+
+  pkgs2 <- parse_packages(get_fixture("packages/P2"))
+  expect_equal(pkgs, pkgs2)
 })
 
 test_that("lib_status", {

@@ -6,7 +6,9 @@
 parse_description <- function(path) {
   path <- path.expand(path)
   path <- encode_path(path)
-  .Call(pkgcache_parse_description, path)
+  ret <- .Call(pkgcache_parse_description, path)
+  ret2 <- gsub("\r", "", ret, fixed = TRUE)
+  ret2
 }
 
 #' Parse a repository metadata `PACAKGES*` file
@@ -63,6 +65,7 @@ parse_packages <- function(path) {
 
     tab <- .Call(pkgcache_parse_packages_raw, bts)
     tab[] <- lapply(tab, function(x) {
+      x <- gsub("\r", "", fixed = TRUE, x)
       empt <- is.na(x)
       miss <- x == ""
       x[empt] <- ""

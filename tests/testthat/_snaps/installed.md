@@ -85,3 +85,39 @@
     Output
       [1] "cli"      "rlang"    "pak"      "pkgcache"
 
+# lib_status priority
+
+    Code
+      lib_status(lib5, priority = "base")$Package
+    Output
+      [1] "stats"
+
+---
+
+    Code
+      lib_status(lib5, priority = "recommended")$Package
+    Output
+      [1] "Matrix"
+
+---
+
+    Code
+      lib_status(lib5, priority = NA)$Package
+    Output
+      [1] "cli"   "rlang"
+
+---
+
+    Code
+      lib_status(lib5, priority = c("base", "recommended"))$
+        Package
+    Output
+      [1] "Matrix" "stats" 
+
+---
+
+    Code
+      lib_status(lib5, priority = c("base", NA))$Package
+    Output
+      [1] "cli"   "rlang" "stats"
+

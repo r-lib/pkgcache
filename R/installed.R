@@ -88,8 +88,6 @@ parse_packages <- function(path) {
 #' Differences with [utils::installed.packages()]:
 #' * `lib_status()` cannot subset the extracted fields. (But you can
 #'   subset the result.)
-#' * `lib_status()` cannot filter the packages based
-#'   on their priority. (But you can filter the result.)
 #' * `lib_status()` does not cache the results.
 #' * `lib_status()` handles errors better. See Section 'Errors'`below.
 #' #' * `lib_status()` uses the `DESCRIPTION` files in the installed packages
@@ -105,10 +103,14 @@ parse_packages <- function(path) {
 #' TODO
 #'
 #' @param library Character vector of library paths.
+#' @param priority If not `NULL` then it may be a `"base"` `"recommended"`
+#'   `NA` or a vector of these to select _base_ packages, _recommended_
+#'   packages or _other_ packages. (These are the official, CRAN supported
+#'   package priorities, but you may introduce others in non-CRAN packages.)
 #'
 #' @export
 
-lib_status <- function(library = .libPaths()) {
+lib_status <- function(library = .libPaths(), priority = NULL) {
   stopifnot(
     "`library` must be a charcater vector" = is.character(library),
     "`library` cannot have length zero" = length(library) > 0
@@ -118,7 +120,8 @@ lib_status <- function(library = .libPaths()) {
   if (length(library) > 1) {
     lsts <- lapply(
       library,
-      lib_status
+      lib_status,
+      priority = priority
     )
     return(rbind_expand(.list = lsts))
   }
@@ -162,6 +165,18 @@ lib_status <- function(library = .libPaths()) {
       muffleWarning = function() NULL,
       signalCondition(cnd)
     )
+  }
+
+  # filter for priority
+  if (!is.null(priority)) {
+    keep <- if (anyNA(priority)) {
+      is.na(tbl$Priority)
+    } else {
+      FALSE
+    }
+    priority <- na.omit(priority)
+    keep <- keep | tbl$Priority %in% priority
+    tbl <- tbl[keep, ]
   }
 
   tbl

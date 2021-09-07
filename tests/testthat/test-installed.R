@@ -194,3 +194,14 @@ test_that("lib_status, more errors", {
   expect_match(out[[2]], "Line 2 is invalid")
 
 })
+
+test_that("lib_status priority", {
+  testthat::local_edition(3)
+  testthat::local_reproducible_output(width = 60)
+  lib5 <- get_fixture("lib5")
+  expect_snapshot(lib_status(lib5, priority = "base")$Package)
+  expect_snapshot(lib_status(lib5, priority = "recommended")$Package)
+  expect_snapshot(lib_status(lib5, priority = NA)$Package)
+  expect_snapshot(lib_status(lib5, priority = c("base", "recommended"))$Package)
+  expect_snapshot(lib_status(lib5, priority = c("base", NA))$Package)
+})

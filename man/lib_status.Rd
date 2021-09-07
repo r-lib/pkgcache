@@ -4,10 +4,15 @@
 \alias{lib_status}
 \title{List metadata of installed packages}
 \usage{
-lib_status(library = .libPaths())
+lib_status(library = .libPaths(), priority = NULL)
 }
 \arguments{
 \item{library}{Character vector of library paths.}
+
+\item{priority}{If not \code{NULL} then it may be a \code{"base"} \code{"recommended"}
+\code{NA} or a vector of these to select \emph{base} packages, \emph{recommended}
+packages or \emph{other} packages. (These are the official, CRAN supported
+package priorities, but you may introduce others in non-CRAN packages.)}
 }
 \description{
 This function is similar to \code{\link[utils:installed.packages]{utils::installed.packages()}}.
@@ -18,8 +23,6 @@ Differences with \code{\link[utils:installed.packages]{utils::installed.packages
 \itemize{
 \item \code{lib_status()} cannot subset the extracted fields. (But you can
 subset the result.)
-\item \code{lib_status()} cannot filter the packages based
-on their priority. (But you can filter the result.)
 \item \code{lib_status()} does not cache the results.
 \item \code{lib_status()} handles errors better. See Section 'Errors'\code{below. #' * }lib_status()\verb{uses the}DESCRIPTION\verb{files in the installed packages instead of the}Meta/package.rds\verb{files. This should not matter, but because of a bug}Meta/package.rds\verb{might contain the wrong}Archs` field on multi-arch platforms.
 \item \code{lib_status()} reads \emph{all} fields from the \code{DESCRIPTION} files.

@@ -160,7 +160,7 @@ archived since the metadata was cached.
 \item \code{enhances}: \code{Enhances} field from \code{DESCRIPTION}, or \code{NA_character_}.
 \item \code{os_type}: \code{unix} or \code{windows} for OS specific packages. Usually \code{NA}.
 \item \code{priority}: "optional", "recommended" or \code{NA}. (Base packages are
-normalliy not included in the list, so "base" should not appear here.)
+normally not included in the list, so "base" should not appear here.)
 \item \code{md5sum}: MD5 sum, if available, may be \code{NA}.
 \item \code{sysreqs}: For CRAN packages, the \code{SystemRequirements} field, the
 required system libraries or other software for the package. For

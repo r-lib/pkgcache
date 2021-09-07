@@ -46,7 +46,7 @@ version.}
 }
 \description{
 Various helper functions to deal with Bioconductor repositories.
-See https://www.bioconductor.org/ for more infornation on
+See \url{https://www.bioconductor.org/} for more information on
 Bioconductor.
 }
 \details{

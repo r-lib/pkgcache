@@ -267,7 +267,7 @@ default_cran_mirror <- function() {
 #' Query Bioconductor version information
 #'
 #' Various helper functions to deal with Bioconductor repositories.
-#' See https://www.bioconductor.org/ for more infornation on
+#' See <https://www.bioconductor.org/> for more information on
 #' Bioconductor.
 #'
 #' `bioc_version()` queries the matching Bioconductor version for

@@ -130,7 +130,7 @@ The `package_cache` class provides a finer API.
 Both the metadata cache and the package cache support Bioconductor by
 default, automatically. See the `BioC_mirror` option and the
 `R_BIOC_MIRROR` and `R_BIOC_VERSION` environment variables below to
-configure pkgcache’s Bioconductor support.
+configure Bioconductor support.
 
 ## Package Options
 
@@ -204,7 +204,7 @@ while running `R CMD check`.
 
 ## Code of Conduct
 
-Please note that the ‘pkgcache’ project is released with a [Contributor
+Please note that the pkgcache project is released with a [Contributor
 Code of
 Conduct](https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.

@@ -1,7 +1,7 @@
 
 # pkgcache development version
 
-* `meta_cache_list()` and related functions now corrently set the
+* `meta_cache_list()` and related functions now correctly set the
   `rversion` column of source R packages to `"*"`.
 
 # pkgcache 1.2.2
@@ -38,7 +38,7 @@ No user visible changes.
 * `package_cache` has now much relaxed HTTP timeouts, and handles
   downloading many packages (slowly) much better.
 
-* The package download progress bar can now be supressed by setting
+* The package download progress bar can now be suppressed by setting
   the `pkg.show_progress` option to `FALSE`.
 
 # pkgcache 1.1.0
@@ -78,7 +78,7 @@ No user visible changes.
 
 # pkgcache 1.0.4
 
-* Fix handling of Bioconducor versions and repositories, see
+* Fix handling of Bioconductor versions and repositories, see
   README for the details.
 
 * Now different versions of pkgcache, that potentially have different

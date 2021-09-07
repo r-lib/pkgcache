@@ -17,7 +17,7 @@ architectures.
 Probably most people us 64 bit R on Windows, because that's
 what RStudio starts by default.
 But we also need to make sure that people who need 32 bit R will have a
-way to install packages, without borking the 64 bit installation.
+way to install packages, without ruining the 64 bit installation.
 
 Luckily, there are no packages on CRAN and Bioconductor currently that are
 32 bit only.

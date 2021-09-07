@@ -24,7 +24,11 @@ Differences with \code{\link[utils:installed.packages]{utils::installed.packages
 \item \code{lib_status()} cannot subset the extracted fields. (But you can
 subset the result.)
 \item \code{lib_status()} does not cache the results.
-\item \code{lib_status()} handles errors better. See Section 'Errors'\code{below. #' * }lib_status()\verb{uses the}DESCRIPTION\verb{files in the installed packages instead of the}Meta/package.rds\verb{files. This should not matter, but because of a bug}Meta/package.rds\verb{might contain the wrong}Archs` field on multi-arch platforms.
+\item \code{lib_status()} handles errors better. See Section 'Errors' below.
+#' * \code{lib_status()} uses the \code{DESCRIPTION} files in the installed packages
+instead of the \code{Meta/package.rds} files. This should not matter,
+but because of a bug \code{Meta/package.rds} might contain the wrong
+\code{Archs} field on multi-arch platforms.
 \item \code{lib_status()} reads \emph{all} fields from the \code{DESCRIPTION} files.
 \code{\link[utils:installed.packages]{utils::installed.packages()}} only reads
 \item \code{lib_status()} is considerably faster.
@@ -48,7 +52,7 @@ is a tibble with columns
 \item \code{error}: error message for this particular failure.
 }
 
-If you indend to handle broken package installation, you need to catch
+If you intend to handle broken package installation, you need to catch
 this condition with \code{withCallingHandlers()}.
 }
 }

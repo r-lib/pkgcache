@@ -112,7 +112,7 @@ The \code{package_cache} class provides a finer API.
 Both the metadata cache and the package cache support Bioconductor by
 default, automatically. See the \code{BioC_mirror} option and the
 \code{R_BIOC_MIRROR} and \code{R_BIOC_VERSION} environment variables below to
-configure pkgcache’s Bioconductor support.
+configure Bioconductor support.
 }
 
 \subsection{Package Options}{
@@ -188,7 +188,7 @@ while running \verb{R CMD check}.
 
 \subsection{Code of Conduct}{
 
-Please note that the ‘pkgcache’ project is released with a \href{https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md}{Contributor Code of Conduct}.
+Please note that the pkgcache project is released with a \href{https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md}{Contributor Code of Conduct}.
 By contributing to this project, you agree to abide by its terms.
 }
 

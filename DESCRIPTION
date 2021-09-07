@@ -40,6 +40,7 @@ Suggests:
     pingr,
     rprojroot,
     sessioninfo,
+    spelling,
     testthat,
     webfakes,
     withr

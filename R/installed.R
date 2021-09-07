@@ -89,7 +89,7 @@ parse_packages <- function(path) {
 #' * `lib_status()` cannot subset the extracted fields. (But you can
 #'   subset the result.)
 #' * `lib_status()` does not cache the results.
-#' * `lib_status()` handles errors better. See Section 'Errors'`below.
+#' * `lib_status()` handles errors better. See Section 'Errors' below.
 #' #' * `lib_status()` uses the `DESCRIPTION` files in the installed packages
 #'   instead of the `Meta/package.rds` files. This should not matter,
 #'   but because of a bug `Meta/package.rds` might contain the wrong
@@ -115,7 +115,7 @@ parse_packages <- function(path) {
 #' * `file`: path to the `DESCRIPTION` file of the broken package,
 #' * `error`: error message for this particular failure.
 #'
-#' If you indend to handle broken package installation, you need to catch
+#' If you intend to handle broken package installation, you need to catch
 #' this condition with `withCallingHandlers()`.
 #'
 #' @param library Character vector of library paths.

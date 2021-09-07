@@ -28,7 +28,7 @@
 #'   repository. This is only set for Bioconductor repositories. It is `*`
 #'   for others. This is also informational, and not used when retrieving
 #'   the package metadata.
-#' * `bioc_version`: Bioconductor version. Only set for Biocondictor
+#' * `bioc_version`: Bioconductor version. Only set for Bioconductor
 #'   repositories, and it is `NA` for others.
 #'
 #' @export
@@ -346,14 +346,14 @@ next_day <- function(x) {
 #'   specified date.
 #' - `RSPM@<package>-<version>` RSPM snapshot, for the day after the
 #'   release of `<version>` of `<package>`.
-#' - `RSPM@R-<version>` RSPM snapshot, for the day afer R `<version>`
+#' - `RSPM@R-<version>` RSPM snapshot, for the day after R `<version>`
 #'   was released.
 #' - `MRAN@<date>`, MRAN (Microsoft R Application Network) snapshot, at
 #'   the specified date.
 #' - `MRAN@<package>-<version>` MRAN snapshot, for the
 #'   day after the release of `<version>` of `<package>`.
 #' - `MRAN@R-<version>` MRAN snapshot, for the day
-#'   afer R `<version>` was released.
+#'   after R `<version>` was released.
 #'
 #'
 #' Notes:

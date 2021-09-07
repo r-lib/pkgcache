@@ -123,13 +123,18 @@ parse_packages <- function(path) {
 #'   `NA` or a vector of these to select _base_ packages, _recommended_
 #'   packages or _other_ packages. (These are the official, CRAN supported
 #'   package priorities, but you may introduce others in non-CRAN packages.)
+#' @param lowercase Whether to convert keys in `DESCRIPTION` to lowercase.
 #'
 #' @export
 
-parse_installed <- function(library = .libPaths(), priority = NULL) {
+parse_installed <- function(library = .libPaths(), priority = NULL,
+                            lowercase = FALSE) {
   stopifnot(
-    "`library` must be a charcater vector" = is.character(library),
-    "`library` cannot have length zero" = length(library) > 0
+    "`library` must be a character vector" = is.character(library),
+    "`priority` must be `NULL` or a character vector" =
+      is.null(priority) || is.character(priority) || identical(NA, priority),
+    "`library` cannot have length zero" = length(library) > 0,
+    "`lowercase` must be a boolean flag" = is_flag(lowercase)
   )
 
   # Merge multiple libraries
@@ -137,7 +142,8 @@ parse_installed <- function(library = .libPaths(), priority = NULL) {
     lsts <- lapply(
       library,
       parse_installed,
-      priority = priority
+      priority = priority,
+      lowercase = lowercase
     )
     return(rbind_expand(.list = lsts))
   }
@@ -153,7 +159,7 @@ parse_installed <- function(library = .libPaths(), priority = NULL) {
   dscs <- dscs[file.exists(dscs)]
 
   dscs <- encode_path(dscs)
-  prs <- .Call(pkgcache_parse_descriptions, dscs)
+  prs <- .Call(pkgcache_parse_descriptions, dscs, lowercase)
   tab <- prs[[1]]
 
   tab[] <- lapply(tab, function(x) {
@@ -166,7 +172,11 @@ parse_installed <- function(library = .libPaths(), priority = NULL) {
   })
 
   tbl <- tibble::as_tibble(tab)
-  tbl$LibPath <- library
+  if (lowercase) {
+    tbl$libpath <- library
+  } else {
+    tbl$LibPath <- library
+  }
 
   # Filter out errors
   if (prs[[3]]) {

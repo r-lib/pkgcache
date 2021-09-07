@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 
 #define STR1(x) STRING_ELT(x, 0)
 #define HASH_SIZE 256
@@ -495,8 +496,9 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
 
 /* --------------------------------------------------------------------- */
 
-SEXP pkgcache_parse_descriptions(SEXP paths) {
+SEXP pkgcache_parse_descriptions(SEXP paths, SEXP lowercase) {
   int npkg, npkgs = LENGTH(paths);
+  int clowercase = LOGICAL(lowercase)[0];
 
   int state = S_BG;
   char *kw = NULL, *vl = NULL;
@@ -552,6 +554,7 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
           goto failedpkg;
         }
         /* Otherwise it must be the start of a keyword */
+        if (clowercase) *p = tolower(*p);
         kw = p++;
         state = S_KW;
 
@@ -583,6 +586,7 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
 
         /* Otherwise we are inside the keyword */
         } else {
+          if (clowercase) *p = tolower(*p);
           p++;
         }
 
@@ -617,6 +621,7 @@ SEXP pkgcache_parse_descriptions(SEXP paths) {
 
           kw = p;
           state = S_KW;
+          if (clowercase) *p = tolower(*p);
           p++;
         }
 

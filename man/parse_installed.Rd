@@ -4,7 +4,7 @@
 \alias{parse_installed}
 \title{List metadata of installed packages}
 \usage{
-parse_installed(library = .libPaths(), priority = NULL)
+parse_installed(library = .libPaths(), priority = NULL, lowercase = FALSE)
 }
 \arguments{
 \item{library}{Character vector of library paths.}
@@ -13,6 +13,8 @@ parse_installed(library = .libPaths(), priority = NULL)
 \code{NA} or a vector of these to select \emph{base} packages, \emph{recommended}
 packages or \emph{other} packages. (These are the official, CRAN supported
 package priorities, but you may introduce others in non-CRAN packages.)}
+
+\item{lowercase}{Whether to convert keys in \code{DESCRIPTION} to lowercase.}
 }
 \description{
 This function is similar to \code{\link[utils:installed.packages]{utils::installed.packages()}}.

@@ -136,7 +136,7 @@ test_that("somewhat weird packages files", {
 })
 
 test_that("parse_installed", {
-  testthat::local_edition(3)
+   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
   pkgs <- parse_installed(get_fixture("lib"))
   expect_snapshot(pkgs$Package)
@@ -177,19 +177,19 @@ test_that("parse_installed, errors", {
 })
 
 test_that("parse_installed, more errors", {
-  out <- .Call(pkgcache_parse_descriptions, tempfile())
+  out <- .Call(pkgcache_parse_descriptions, tempfile(), FALSE)
   expect_true(out[[3]])
   expect_match(out[[2]], "Cannot open file")
 
   tmp <- tempfile()
   on.exit(unlink(tmp), add = TRUE)
   cat(":not a good start\n", file = tmp)
-  out <- .Call(pkgcache_parse_descriptions, tmp)
+  out <- .Call(pkgcache_parse_descriptions, tmp, FALSE)
   expect_true(out[[3]])
   expect_match(out[[2]], "must start with an alphanumeric character")
 
   cat("Package: foo\nOops again\nfoo:bar\n", file = tmp)
-  out <- .Call(pkgcache_parse_descriptions, tmp)
+  out <- .Call(pkgcache_parse_descriptions, tmp, FALSE)
   expect_true(out[[3]])
   expect_match(out[[2]], "Line 2 is invalid")
 
@@ -204,4 +204,10 @@ test_that("parse_installed priority", {
   expect_snapshot(parse_installed(lib5, priority = NA)$Package)
   expect_snapshot(parse_installed(lib5, priority = c("base", "recommended"))$Package)
   expect_snapshot(parse_installed(lib5, priority = c("base", NA))$Package)
+})
+
+test_that("parse_installed lowercase", {
+  pkgs <- parse_installed(get_fixture("lib"))
+  pkgsl <- parse_installed(get_fixture("lib"), lowercase = TRUE)
+  expect_equal(tolower(names(pkgs)), names(pkgsl))
 })

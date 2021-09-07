@@ -106,6 +106,11 @@
 #
 # * Do not convert error messages to native encoding before printing,
 #   to be able to print UTF-8 error messages on Windows.
+#
+# ### 2.0.2 -- 2021-09-07
+#
+# * Do not translate error messages, as this converts them to the native
+#   encoding. We keep messages in UTF-8 now.
 
 err <- local({
 

@@ -18,7 +18,12 @@ read_packages_file <- function(path, mirror, repodir, platform,
                                type = "standard", meta_path = NA_character_,
                                ..., .list = list()) {
 
-  pkgs <- parse_packages(path)
+  # We might have empty PACKAGES.gz files, we treat them as empty here
+  if (file.exists(path) && file.size(path) == 0) {
+    pkgs <- tibble()
+  } else {
+    pkgs <- parse_packages(path)
+  }
   meta <- read_metadata_file(meta_path)
   extra <- c(
     list(repodir = repodir),

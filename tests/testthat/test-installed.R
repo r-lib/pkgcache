@@ -135,36 +135,36 @@ test_that("somewhat weird packages files", {
   expect_equal(pkgs, pkgs2)
 })
 
-test_that("lib_status", {
+test_that("parse_installed", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- lib_status(get_fixture("lib"))
+  pkgs <- parse_installed(get_fixture("lib"))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 })
 
-test_that("lib_status, DESCRIPTION with <CR><LF>", {
+test_that("parse_installed, DESCRIPTION with <CR><LF>", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- lib_status(get_fixture("lib4"))
+  pkgs <- parse_installed(get_fixture("lib4"))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 })
 
-test_that("lib_status, multiple libs", {
+test_that("parse_installed, multiple libs", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- lib_status(get_fixture(c("lib", "lib2")))
+  pkgs <- parse_installed(get_fixture(c("lib", "lib2")))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 })
 
-test_that("lib_status, errors", {
+test_that("parse_installed, errors", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
   cond <- NULL
   pkgs <- withCallingHandlers(
-    lib_status(get_fixture(c("lib", "lib2", "lib3"))),
+    parse_installed(get_fixture(c("lib", "lib2", "lib3"))),
     "pkgcache_broken_install" = function(cnd) {
       cond <<- cnd
       invokeRestart("muffleWarning")
@@ -176,7 +176,7 @@ test_that("lib_status, errors", {
   expect_match(cond$errors$error, "ended while parsing a key")
 })
 
-test_that("lib_status, more errors", {
+test_that("parse_installed, more errors", {
   out <- .Call(pkgcache_parse_descriptions, tempfile())
   expect_true(out[[3]])
   expect_match(out[[2]], "Cannot open file")
@@ -195,13 +195,13 @@ test_that("lib_status, more errors", {
 
 })
 
-test_that("lib_status priority", {
+test_that("parse_installed priority", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
   lib5 <- get_fixture("lib5")
-  expect_snapshot(lib_status(lib5, priority = "base")$Package)
-  expect_snapshot(lib_status(lib5, priority = "recommended")$Package)
-  expect_snapshot(lib_status(lib5, priority = NA)$Package)
-  expect_snapshot(lib_status(lib5, priority = c("base", "recommended"))$Package)
-  expect_snapshot(lib_status(lib5, priority = c("base", NA))$Package)
+  expect_snapshot(parse_installed(lib5, priority = "base")$Package)
+  expect_snapshot(parse_installed(lib5, priority = "recommended")$Package)
+  expect_snapshot(parse_installed(lib5, priority = NA)$Package)
+  expect_snapshot(parse_installed(lib5, priority = c("base", "recommended"))$Package)
+  expect_snapshot(parse_installed(lib5, priority = c("base", NA))$Package)
 })

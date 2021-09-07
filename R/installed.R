@@ -86,17 +86,17 @@ parse_packages <- function(path) {
 #'
 #' @details
 #' Differences with [utils::installed.packages()]:
-#' * `lib_status()` cannot subset the extracted fields. (But you can
+#' * `parse_installed()` cannot subset the extracted fields. (But you can
 #'   subset the result.)
-#' * `lib_status()` does not cache the results.
-#' * `lib_status()` handles errors better. See Section 'Errors' below.
-#' #' * `lib_status()` uses the `DESCRIPTION` files in the installed packages
+#' * `parse_installed()` does not cache the results.
+#' * `parse_installed()` handles errors better. See Section 'Errors' below.
+#' #' * `parse_installed()` uses the `DESCRIPTION` files in the installed packages
 #'   instead of the `Meta/package.rds` files. This should not matter,
 #'   but because of a bug `Meta/package.rds` might contain the wrong
 #'   `Archs` field on multi-arch platforms.
-#' * `lib_status()` reads _all_ fields from the `DESCRIPTION` files.
+#' * `parse_installed()` reads _all_ fields from the `DESCRIPTION` files.
 #'   [utils::installed.packages()] only reads
-#' * `lib_status()` is considerably faster.
+#' * `parse_installed()` is considerably faster.
 #'
 #' ## Errors
 #'
@@ -126,7 +126,7 @@ parse_packages <- function(path) {
 #'
 #' @export
 
-lib_status <- function(library = .libPaths(), priority = NULL) {
+parse_installed <- function(library = .libPaths(), priority = NULL) {
   stopifnot(
     "`library` must be a charcater vector" = is.character(library),
     "`library` cannot have length zero" = length(library) > 0
@@ -136,7 +136,7 @@ lib_status <- function(library = .libPaths(), priority = NULL) {
   if (length(library) > 1) {
     lsts <- lapply(
       library,
-      lib_status,
+      parse_installed,
       priority = priority
     )
     return(rbind_expand(.list = lsts))

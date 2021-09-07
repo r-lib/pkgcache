@@ -57,59 +57,59 @@
     Output
       [1] "A3"    "aaSEA"
 
-# lib_status
+# parse_installed
 
     Code
       pkgs$Package
     Output
       [1] "cli"   "rlang"
 
-# lib_status, DESCRIPTION with <CR><LF>
+# parse_installed, DESCRIPTION with <CR><LF>
 
     Code
       pkgs$Package
     Output
       [1] "cli"   "rlang"
 
-# lib_status, multiple libs
+# parse_installed, multiple libs
 
     Code
       pkgs$Package
     Output
       [1] "cli"   "rlang" "pak"  
 
-# lib_status, errors
+# parse_installed, errors
 
     Code
       pkgs$Package
     Output
       [1] "cli"      "rlang"    "pak"      "pkgcache"
 
-# lib_status priority
+# parse_installed priority
 
     Code
-      lib_status(lib5, priority = "base")$Package
+      parse_installed(lib5, priority = "base")$Package
     Output
       [1] "stats"
 
 ---
 
     Code
-      lib_status(lib5, priority = "recommended")$Package
+      parse_installed(lib5, priority = "recommended")$Package
     Output
       [1] "Matrix"
 
 ---
 
     Code
-      lib_status(lib5, priority = NA)$Package
+      parse_installed(lib5, priority = NA)$Package
     Output
       [1] "cli"   "rlang"
 
 ---
 
     Code
-      lib_status(lib5, priority = c("base", "recommended"))$
+      parse_installed(lib5, priority = c("base", "recommended"))$
         Package
     Output
       [1] "Matrix" "stats" 
@@ -117,7 +117,7 @@
 ---
 
     Code
-      lib_status(lib5, priority = c("base", NA))$Package
+      parse_installed(lib5, priority = c("base", NA))$Package
     Output
       [1] "cli"   "rlang" "stats"
 

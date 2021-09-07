@@ -58,68 +58,8 @@ add_attr <- function(x, attr, value) {
   x
 }
 
-read.dcf.gz <- function(x) {
-  con <- gzfile(x, open = "r")
-  on.exit(close(con))
-  read.dcf(con)
-}
-
-get_cran_extension <- function(platform) {
-  switch(
-    platform,
-    "source" = ".tar.gz",
-    "macos" = ".tgz",
-    "windows" = ".zip",
-    stop("Unknown platform: ", sQuote(platform))
-  )
-}
-
 get_platform <- function() {
-  .Platform
-}
-
-get_minor_r_version <- function(x) {
-  x <- package_version(x)
-  vapply(unclass(x), function(x) paste(x[1:2], collapse = "."), character(1))
-}
-
-get_all_package_dirs <- function(platforms, rversions) {
-  minors <- unique(get_minor_r_version(rversions))
-  if (any(package_version(minors) < "3.2")) {
-    stop("pkgcache does not support packages for R versions before R 3.2")
-  }
-  res <- lapply(platforms, function(pl) {
-    if (pl == "source") {
-      cbind("source", "*", "src/contrib")
-
-    } else if (pl == "windows") {
-      cbind("windows", minors, paste0("bin/windows/contrib/", minors))
-
-    } else if (pl == "macos") {
-      res1 <- lapply(minors, function(v) {
-        pv <- package_version(v)
-        if (pv >= "4.0") {
-          cbind("macos", v, paste0("bin/macosx/contrib/", v))
-        } else if (package_version(v) <= "3.3") {
-          cbind("macos", v, paste0("bin/macosx/mavericks/contrib/", v))
-        } else {
-          cbind("macos", v, paste0("bin/macosx/el-capitan/contrib/", v))
-        }
-      })
-      do.call(rbind, res1)
-    }
-  })
-
-  mat <- do.call(rbind, res)
-  colnames(mat) <- c("platform", "rversion", "contriburl")
-  res <- as_tibble(mat)
-  res$prefix <- paste0(
-    "/",
-    ifelse(res$rversion == "*", "*", paste0("R-", res$rversion)),
-    "/", res$platform, "/"
-  )
-
-  res
+  R.version$platform
 }
 
 read_lines <- function(con, ...) {
@@ -228,4 +168,23 @@ modify_vec <- function(old, new) {
 
 last <- function(x) {
   x[[length(x)]]
+}
+
+encode_path <- function(path) {
+  if (.Platform$OS.type == "windows") {
+    enc2utf8(path)
+  } else {
+    enc2native(path)
+  }
+}
+
+gzip_decompress <- function(from, chunk_size = 5 * 1000 * 1000) {
+  con <- gzcon(rawConnection(from))
+  on.exit(close(con), add = TRUE)
+  pieces <- list()
+  while (1) {
+    pieces[[length(pieces) + 1]] <- readBin(con, what = "raw", n = chunk_size)
+    if (length(pieces[[length(pieces)]]) == 0) break;
+  }
+  do.call("c", pieces)
 }

@@ -26,8 +26,7 @@
 #' * `url`: base URL of the repository.
 #' * `bioc_version`: Bioconductor version, or `NA` for
 #'   non-Bioconductor repositories.
-#' * `platform`: platform, possible values are `source`, `macos` and
-#'   `windows` currently.
+#' * `platform`: platform, see [default_platforms()] for possible values.
 #' * `path`: the path to the packages within the base URL, for a
 #'   given platform and R version.
 #' * `r_version`: R version, one of the specified R versions.
@@ -149,8 +148,8 @@ summary.pkgcache_repo_status <- function(object, ...) {
   for (i in seq_len(nrow(ssm))) {
     ssm$ping[i] <- mean(object$ping[key == ssm$repository[i]])
     for (pl in pls) {
-      ssm[[pl]][i] <-
-        object$ok[key == ssm$repository[i] & object$platform == pl]
+      ok <- object$ok[key == ssm$repository[i] & object$platform == pl]
+      ssm[[pl]][i] <- if (length(ok) == 0) NA else ok
     }
   }
 
@@ -180,10 +179,10 @@ print.pkgcache_repo_status_summary <- function(x, ...) {
   pls <- setdiff(names(x), c("repository", "ping"))
   pl_strs <- lapply(pls, function(pl) {
     s <- format(
-      c(pl, ifelse(x[[pl]], symbol_ok, symbol_notok)),
+      c(pl, ifelse(!is.na(x[[pl]]) & x[[pl]], symbol_ok, symbol_notok)),
       justify = "centre"
     )
-    s[-1] <- ifelse(x[[pl]], cli::col_green(s[-1]), cli::col_red(s[-1]))
+    s[-1] <- ifelse(!is.na(x[[pl]]) & x[[pl]], cli::col_green(s[-1]), cli::col_red(s[-1]))
     paste0(" ", s, "")
   })
   pl_str <- do.call("paste0", pl_strs)

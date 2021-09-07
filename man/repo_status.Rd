@@ -37,8 +37,7 @@ current Bioconductor repositories are \code{BioCsoft}, \code{BioCann},
 \item \code{url}: base URL of the repository.
 \item \code{bioc_version}: Bioconductor version, or \code{NA} for
 non-Bioconductor repositories.
-\item \code{platform}: platform, possible values are \code{source}, \code{macos} and
-\code{windows} currently.
+\item \code{platform}: platform, see \code{\link[=default_platforms]{default_platforms()}} for possible values.
 \item \code{path}: the path to the packages within the base URL, for a
 given platform and R version.
 \item \code{r_version}: R version, one of the specified R versions.

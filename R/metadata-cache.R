@@ -52,8 +52,7 @@ cmc__data <- new.env(parent = emptyenv())
 #'   the user level cache directory of the machine.
 #' * `replica_path`: Path of the replica. Defaults to a temporary directory
 #'   within the session temporary directory.
-#' * `platforms`: Subset of `c("macos", "windows", "source")`, platforms
-#'   to get data for.
+#' * `platforms`: see [default_platforms()] for possible values.
 #' * `r_version`: R version to create the cache for.
 #' * `bioc`: Whether to include BioConductor packages.
 #' * `cran_mirror`: CRAN mirror to use, this takes precedence over `repos`.
@@ -125,7 +124,12 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `imports`: `Imports` field from `DESCRIPTION`, or `NA_character_`.
 #' * `archs`: `Archs` entries from `PACKAGES` files. Might be missing.
 #' * `repodir`: The directory of the file, inside the repository.
-#' * `platform`: Possible values: `macos`, `windows`, `source`.
+#' * `platform`: This is a character vector. See [default_platforms()] for
+#'    more about platform names. In practice each value of the `platform`
+#'    column is either
+#'    * `"source"` for source packages,
+#'    * a platform string, e.g. `x86_64-apple-darwin17.0` for macOS
+#'      packages compatible with macOS High Sierra or newer.
 #' * `needscompilation`: Whether the package needs compilation.
 #' * `type`: `bioc` or `cran`  currently.
 #' * `target`: The path of the package file inside the repository.
@@ -241,7 +245,7 @@ cranlike_metadata_cache <- R6Class(
     ## We use this to make sure that different versions of pkgcache can
     ## share the same metadata cache directory. It is used to calculate
     ## the hash of the cached RDS file.
-    cache_version = "2",
+    cache_version = "3",
 
     data = NULL,
     data_time = NULL,

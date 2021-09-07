@@ -5,3 +5,9 @@
 /revdep
 /r-packages
 *_cache
+/dev-lib
+/src/*.o
+/src/*.so
+/src/*.dll
+/src/*.gcno
+/src/*.gcda

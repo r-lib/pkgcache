@@ -12,3 +12,10 @@
 ^.*_cache$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^vignettes$
+^dev-lib$
+^src/pkgcache[.]dll$
+^src/pkgcache[.]so$
+^src/.*[.]o$
+^src/.*[.]gcda$
+^src/.*[.]gcno$

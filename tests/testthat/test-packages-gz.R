@@ -39,7 +39,8 @@ test_that("packages_make_sources", {
 
   expect_equal(
     packages_make_sources(
-      "URL", "macos", c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
+      "URL", "x86_64-apple-darwin17.0",
+      c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
       c("p1", "p2"), c("1.0", "2.0"), type = "cran"),
     list(c("URL/s/c/p1_1.0.tgz", "https://mac.r-project.org/s/c/p1_1.0.tgz"),
          c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")
@@ -65,6 +66,26 @@ test_that("read_packages_file", {
       pf, mirror = "mirror", repodir = "src/contrib", platform = "source",
       rversion = "rversion")
     check_packages_data(pkgs)
+  }
+})
+
+test_that("read_packages_file windows", {
+  testthat::local_edition(3)
+  testthat::local_reproducible_output()
+  pkg_file <- get_fixture("PACKAGES-win2.gz")
+
+  for (pl in c("x86_64-w64-mingw32", "i386-w64-mingw32",
+               "i386+x86_64-w64-mingw32")) {
+    pkgs <- read_packages_file(
+      pkg_file,
+      mirror = "m",
+      repodir = "r",
+      platform = pl
+    )
+    expect_snapshot({
+      print(pl)
+      pkgs$pkgs[, c("package", "platform")]
+    })
   }
 })
 

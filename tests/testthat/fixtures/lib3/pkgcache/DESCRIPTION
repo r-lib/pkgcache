@@ -1,0 +1,49 @@
+Package: pkgcache
+Title: Cache 'CRAN'-Like Metadata and R Packages
+Version: 1.2.2.9000
+Authors@R: 
+    person(given = "Gábor",
+           family = "Csárdi",
+           role = c("aut", "cre"),
+           email = "csardi.gabor@gmail.com")
+Description: Metadata and package cache for CRAN-like repositories.
+     This is a utility package to be used by package management tools
+     that want to take advantage of caching.
+License: MIT + file LICENSE
+Encoding: UTF-8
+URL: https://github.com/r-lib/pkgcache#readme
+BugReports: https://github.com/r-lib/pkgcache/issues
+Imports:
+    assertthat,
+    callr (>= 2.0.4.9000),
+    cli (>= 2.0.0),
+    curl (>= 3.2),
+    digest,
+    filelock,
+    glue,
+    jsonlite,
+    prettyunits,
+    R6,
+    processx (>= 3.3.0.9001),
+    rappdirs,
+    rlang,
+    tibble,
+    tools,
+    utils,
+    uuid
+Suggests:
+    covr,
+    debugme,
+    desc,
+    fs,
+    mockery,
+    pingr,
+    rprojroot,
+    sessioninfo,
+    testthat,
+    webfakes,
+    withr
+Depends: 
+    R (>= 3.1)
+Roxygen: list(markdown = TRUE, r6 = FALSE)
+RoxygenNote: 7.1.1.9001

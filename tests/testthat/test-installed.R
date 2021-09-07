@@ -165,13 +165,13 @@ test_that("lib_status, errors", {
   cond <- NULL
   pkgs <- withCallingHandlers(
     lib_status(get_fixture(c("lib", "lib2", "lib3"))),
-    "pkgcache_broken_package" = function(cnd) {
+    "pkgcache_broken_install" = function(cnd) {
       cond <<- cnd
       invokeRestart("muffleWarning")
     }
   )
   expect_snapshot(pkgs$Package)
-  expect_true("pkgcache_broken_package" %in% class(cond))
+  expect_true("pkgcache_broken_install" %in% class(cond))
   expect_match(cond$errors$file, "lib3[\\\\/]foo[\\\\/]DESCRIPTION$")
   expect_match(cond$errors$error, "ended while parsing a key")
 })

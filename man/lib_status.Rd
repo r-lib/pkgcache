@@ -31,6 +31,24 @@ subset the result.)
 }
 \subsection{Errors}{
 
-TODO
+pkgcache silently ignores files and directories inside the library
+directory.
+
+The result also omits broken package installations. These include
+\itemize{
+\item packages with invalid \code{DESCRIPTION} files, and
+\item packages the current user have no access to.
+}
+
+These errors are reported via a condition with class
+\code{pkgcache_broken_install}. The condition has an \code{errors} entry, which
+is a tibble with columns
+\itemize{
+\item \code{file}: path to the \code{DESCRIPTION} file of the broken package,
+\item \code{error}: error message for this particular failure.
+}
+
+If you indend to handle broken package installation, you need to catch
+this condition with \code{withCallingHandlers()}.
 }
 }

@@ -100,7 +100,23 @@ parse_packages <- function(path) {
 #'
 #' ## Errors
 #'
-#' TODO
+#' pkgcache silently ignores files and directories inside the library
+#' directory.
+#'
+#' The result also omits broken package installations. These include
+#'
+#' * packages with invalid `DESCRIPTION` files, and
+#' * packages the current user have no access to.
+#'
+#' These errors are reported via a condition with class
+#' `pkgcache_broken_install`. The condition has an `errors` entry, which
+#' is a tibble with columns
+#'
+#' * `file`: path to the `DESCRIPTION` file of the broken package,
+#' * `error`: error message for this particular failure.
+#'
+#' If you indend to handle broken package installation, you need to catch
+#' this condition with `withCallingHandlers()`.
 #'
 #' @param library Character vector of library paths.
 #' @param priority If not `NULL` then it may be a `"base"` `"recommended"`
@@ -158,7 +174,7 @@ lib_status <- function(library = .libPaths(), priority = NULL) {
     tbl <- tbl[!bad, ]
     cnd <- new_pkgcache_warning(
       "Cannot read DESCRIPTION files:\n", paste0("* ", prs[[2]][bad], "\n"),
-      class = "pkgcache_broken_package",
+      class = "pkgcache_broken_install",
       data = list(errors = tibble(file = dscs[bad], error = prs[[2]][bad]))
     )
     withRestarts(

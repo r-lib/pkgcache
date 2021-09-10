@@ -242,8 +242,8 @@ SEXP pkgcache_parse_description_raw(SEXP raw) {
 
       /* othewise we can save the field, and start parsing the next one */
       } else {
-        SET_STRING_ELT(result, ridx, Rf_mkCharLen(vl, vlsize));
-        SET_STRING_ELT(names, ridx, Rf_mkCharLen(kw, kwsize));
+        SET_STRING_ELT(result, ridx, Rf_mkCharLenCE(vl, vlsize, CE_BYTES));
+        SET_STRING_ELT(names, ridx, Rf_mkCharLenCE(kw, kwsize, CE_NATIVE));
         ridx++;
         kw = p;
         state = S_KW;
@@ -278,8 +278,8 @@ SEXP pkgcache_parse_description_raw(SEXP raw) {
     /* Strip the trailing newline(s) */
     while (p - 1 > start && *(p-1) == '\n') p--;
     vlsize = p - vl;
-    SET_STRING_ELT(result, ridx, Rf_mkCharLen(vl, vlsize));
-    SET_STRING_ELT(names, ridx, Rf_mkCharLen(kw, kwsize));
+    SET_STRING_ELT(result, ridx, Rf_mkCharLenCE(vl, vlsize, CE_BYTES));
+    SET_STRING_ELT(names, ridx, Rf_mkCharLenCE(kw, kwsize, CE_NATIVE));
     ridx++;
   }
 

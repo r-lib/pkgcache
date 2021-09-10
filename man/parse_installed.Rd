@@ -32,9 +32,21 @@ instead of the \code{Meta/package.rds} files. This should not matter,
 but because of a bug \code{Meta/package.rds} might contain the wrong
 \code{Archs} field on multi-arch platforms.
 \item \code{parse_installed()} reads \emph{all} fields from the \code{DESCRIPTION} files.
-\code{\link[utils:installed.packages]{utils::installed.packages()}} only reads
+\code{\link[utils:installed.packages]{utils::installed.packages()}} only reads the specified fields.
+\item \code{parse_installed()} converts its output to UTF-8 encoding, from the
+encodings declared in the \code{DESCRIPTION} files.
 \item \code{parse_installed()} is considerably faster.
 }
+\subsection{Encodings}{
+
+\code{parse_installed()} always returns its result in UTF-8 encoding.
+It uses the \code{Encoding} fields in the \code{DESCRIPTION} files to learn their
+encodings. \code{parse_installed()} does not check that an UTF-8 file has a
+valid encoding. If it fails to convert a string to UTF-8 from another
+declared encoding, then it leaves it as \code{"bytes"} encoded, without a
+warning.
+}
+
 \subsection{Errors}{
 
 pkgcache silently ignores files and directories inside the library

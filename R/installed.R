@@ -8,7 +8,43 @@ parse_description <- function(path) {
   path <- encode_path(path)
   ret <- .Call(pkgcache_parse_description, path)
   ret2 <- gsub("\r", "", ret, fixed = TRUE)
+
+  # Fix encoding. If UTF-8 is declared, then we just mark it.
+  # Otherwise we convert it to UTF-8. Conversion might throw an error.
+  if ("Encoding" %in% names(ret2)) {
+    enc <- trimws(ret2[["Encoding"]])
+    if (enc == "UTF-8") {
+      Encoding(ret2) <- "UTF-8"
+    } else {
+      trs <- iconv(ret2, enc, "UTF-8")
+      ret2[] <- ifelse(is.na(trs), ret2, trs)
+    }
+  }
   ret2
+}
+
+fix_encodings <- function(lst, col = "Encoding") {
+  if (! col %in% names(lst)) return(lst)
+  utf8 <- which(!is.na(lst[[col]]) & lst[[col]] == "UTF-8")
+  other <- which(!is.na(lst[[col]]) & lst[[col]] != "UTf-8")
+  unq <- unique(lst[[col]][other])
+  if (length(utf8)) {
+    for (i in seq_along(lst)) {
+      Encoding(lst[[i]][utf8]) <- "UTF-8"
+    }
+  }
+  if (length(unq)) {
+    for (u in unq) {
+      wh <- which(!is.na(lst[[col]]) & lst[[col]] == u)
+      for (i in seq_along(lst)) {
+        tryCatch({
+          trs <- iconv(lst[[i]][wh], u, "UTF-8")
+          lst[[i]][wh] <- ifelse(is.na(trs), lst[[i]][wh], trs)
+        }, error = function(e) NULL)
+      }
+    }
+  }
+  lst
 }
 
 #' Parse a repository metadata `PACAKGES*` file
@@ -16,6 +52,9 @@ parse_description <- function(path) {
 #' @details
 #' Non-existent, unreadable or corrupt `PACKAGES` files with trigger an
 #' error.
+#'
+#' `PACKAGES*` files do not usually declare an encoding, but nevertheless
+#' `parse_packages()` works correctly if they do.
 #'
 #' # Note
 #' `parse_packages()` cannot currently read files that have very many
@@ -72,6 +111,9 @@ parse_packages <- function(path) {
       x[miss] <- NA_character_
       x
     })
+
+    # this is rarely needed for PACKAGES files, included for completeness
+    tab <- fix_encodings(tab)
   }
 
   tbl <- tibble::as_tibble(tab)
@@ -95,8 +137,19 @@ parse_packages <- function(path) {
 #'   but because of a bug `Meta/package.rds` might contain the wrong
 #'   `Archs` field on multi-arch platforms.
 #' * `parse_installed()` reads _all_ fields from the `DESCRIPTION` files.
-#'   [utils::installed.packages()] only reads
+#'   [utils::installed.packages()] only reads the specified fields.
+#' * `parse_installed()` converts its output to UTF-8 encoding, from the
+#'   encodings declared in the `DESCRIPTION` files.
 #' * `parse_installed()` is considerably faster.
+#'
+#' ## Encodings
+#'
+#' `parse_installed()` always returns its result in UTF-8 encoding.
+#' It uses the `Encoding` fields in the `DESCRIPTION` files to learn their
+#' encodings. `parse_installed()` does not check that an UTF-8 file has a
+#' valid encoding. If it fails to convert a string to UTF-8 from another
+#' declared encoding, then it leaves it as `"bytes"` encoded, without a
+#' warning.
 #'
 #' ## Errors
 #'
@@ -204,6 +257,8 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
     keep <- keep | tbl$Priority %in% priority
     tbl <- tbl[keep, ]
   }
+
+  tbl <- fix_encodings(tbl)
 
   tbl
 }

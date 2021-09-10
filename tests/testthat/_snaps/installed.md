@@ -121,3 +121,119 @@
     Output
       [1] "cli"   "rlang" "stats"
 
+# fix_encodings
+
+    Code
+      lst2$Package
+    Output
+      [1] "foo"    "bar"    "foobar"
+
+---
+
+    Code
+      lst2$Encoding
+    Output
+      [1] NA       "UTF-8"  "latin1"
+
+---
+
+    Code
+      Encoding(lst2$Maintainer)
+    Output
+      [1] "unknown" "UTF-8"   "UTF-8"  
+
+---
+
+    Code
+      lapply(lst2$Maintainer, charToRaw)
+    Output
+      [[1]]
+      [1] 47 61 62 6f 72
+      
+      [[2]]
+      [1] 47 c3 a1 62 6f 72
+      
+      [[3]]
+      [1] 47 c3 a1 62 6f 72
+      
+
+---
+
+    Code
+      Encoding(lst2$Bad)
+    Output
+      [1] "bytes"   "UTF-8"   "unknown"
+
+---
+
+    Code
+      lapply(lst2$Bad, charToRaw)
+    Output
+      [[1]]
+      [1] 47 c3 a1 62 6f 72
+      
+      [[2]]
+      [1] 47 e1 62 6f 72
+      
+      [[3]]
+      [1] 47 61 62 6f 72
+      
+
+# fix encodings on tibbles
+
+    Code
+      tbl2$Package
+    Output
+      [1] "foo"    "bar"    "foobar"
+
+---
+
+    Code
+      tbl2$Encoding
+    Output
+      [1] NA       "UTF-8"  "latin1"
+
+---
+
+    Code
+      Encoding(tbl2$Maintainer)
+    Output
+      [1] "unknown" "UTF-8"   "UTF-8"  
+
+---
+
+    Code
+      lapply(tbl2$Maintainer, charToRaw)
+    Output
+      [[1]]
+      [1] 47 61 62 6f 72
+      
+      [[2]]
+      [1] 47 c3 a1 62 6f 72
+      
+      [[3]]
+      [1] 47 c3 a1 62 6f 72
+      
+
+---
+
+    Code
+      Encoding(tbl2$Bad)
+    Output
+      [1] "bytes"   "UTF-8"   "unknown"
+
+---
+
+    Code
+      lapply(tbl2$Bad, charToRaw)
+    Output
+      [[1]]
+      [1] 47 c3 a1 62 6f 72
+      
+      [[2]]
+      [1] 47 e1 62 6f 72
+      
+      [[3]]
+      [1] 47 61 62 6f 72
+      
+

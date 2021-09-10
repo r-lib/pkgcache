@@ -55,6 +55,18 @@ test_that("parse_description", {
   expect_equal(d[["Encoding"]], "UTF-8")
 })
 
+test_that("parse_description encoding", {
+  d <- parse_description(get_fixture("description/pkgcache/DESCRIPTION"))
+  expect_equal(Encoding(d[["Authors@R"]]), "UTF-8")
+
+  d[["Encoding"]] <- "latin1"
+  d[] <- iconv(d, "UTF-8", "latin1")
+  on.exit(unlink(tmp), add = TRUE)
+  write.dcf(as.list(d), tmp <- tempfile())
+  d2 <- parse_description(get_fixture("description/pkgcache/DESCRIPTION"))
+  expect_equal(Encoding(d2[["Authors@R"]]), "UTF-8")
+})
+
 test_that("parse_packages", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
@@ -210,4 +222,46 @@ test_that("parse_installed lowercase", {
   pkgs <- parse_installed(get_fixture("lib"))
   pkgsl <- parse_installed(get_fixture("lib"), lowercase = TRUE)
   expect_equal(tolower(names(pkgs)), names(pkgsl))
+})
+
+as_bytes <- function(l) {
+  lapply(l, function(x) { Encoding(x) <- "bytes"; x })
+}
+
+test_that("fix_encodings", {
+  testthat::local_edition(3)
+  testthat::local_reproducible_output(width = 60)
+  lst <- as_bytes(list(
+    Package = c("foo", "bar", "foobar"),
+    Encoding = c(NA_character_, "UTF-8", "latin1"),
+    Maintainer = c("Gabor", "G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1")),
+    Bad = c("G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1"), "Gabor")
+  ))
+  lst2 <- fix_encodings(lst)
+  expect_snapshot(lst2$Package)
+  expect_snapshot(lst2$Encoding)
+  expect_snapshot(Encoding(lst2$Maintainer))
+  expect_snapshot(lapply(lst2$Maintainer, charToRaw))
+  expect_snapshot(Encoding(lst2$Bad))
+  expect_snapshot(lapply(lst2$Bad, charToRaw))
+})
+
+test_that("fix encodings on tibbles", {
+  testthat::local_edition(3)
+  testthat::local_reproducible_output(width = 60)
+  lst <- as_bytes(list(
+    Package = c("foo", "bar", "foobar"),
+    Encoding = c(NA_character_, "UTF-8", "latin1"),
+    Maintainer = c("Gabor", "G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1")),
+    Bad = c("G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1"), "Gabor")
+  ))
+  tbl <- tibble::as_tibble(lst)
+  tbl2 <- fix_encodings(tbl)
+  expect_s3_class(tbl2, "tbl_df")
+  expect_snapshot(tbl2$Package)
+  expect_snapshot(tbl2$Encoding)
+  expect_snapshot(Encoding(tbl2$Maintainer))
+  expect_snapshot(lapply(tbl2$Maintainer, charToRaw))
+  expect_snapshot(Encoding(tbl2$Bad))
+  expect_snapshot(lapply(tbl2$Bad, charToRaw))
 })

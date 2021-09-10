@@ -22,6 +22,9 @@ Parse a repository metadata \verb{PACAKGES*} file
 \details{
 Non-existent, unreadable or corrupt \code{PACKAGES} files with trigger an
 error.
+
+\verb{PACKAGES*} files do not usually declare an encoding, but nevertheless
+\code{parse_packages()} works correctly if they do.
 }
 \section{Note}{
 \code{parse_packages()} cannot currently read files that have very many

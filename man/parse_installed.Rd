@@ -4,7 +4,12 @@
 \alias{parse_installed}
 \title{List metadata of installed packages}
 \usage{
-parse_installed(library = .libPaths(), priority = NULL, lowercase = FALSE)
+parse_installed(
+  library = .libPaths(),
+  priority = NULL,
+  lowercase = FALSE,
+  reencode = TRUE
+)
 }
 \arguments{
 \item{library}{Character vector of library paths.}
@@ -15,6 +20,11 @@ packages or \emph{other} packages. (These are the official, CRAN supported
 package priorities, but you may introduce others in non-CRAN packages.)}
 
 \item{lowercase}{Whether to convert keys in \code{DESCRIPTION} to lowercase.}
+
+\item{reencode}{Whether to re-encode strings in UTF-8, from the
+encodings specified in the \code{DESCRIPTION} files. Re-encoding is
+somewhat costly, and sometimes it is not important (e.g. when you only
+want to extract the dependencies of the installed packages).}
 }
 \description{
 This function is similar to \code{\link[utils:installed.packages]{utils::installed.packages()}}.

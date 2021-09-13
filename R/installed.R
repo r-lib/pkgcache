@@ -177,11 +177,15 @@ parse_packages <- function(path) {
 #'   packages or _other_ packages. (These are the official, CRAN supported
 #'   package priorities, but you may introduce others in non-CRAN packages.)
 #' @param lowercase Whether to convert keys in `DESCRIPTION` to lowercase.
+#' @param reencode Whether to re-encode strings in UTF-8, from the
+#'   encodings specified in the `DESCRIPTION` files. Re-encoding is
+#'   somewhat costly, and sometimes it is not important (e.g. when you only
+#'   want to extract the dependencies of the installed packages).
 #'
 #' @export
 
 parse_installed <- function(library = .libPaths(), priority = NULL,
-                            lowercase = FALSE) {
+                            lowercase = FALSE, reencode = TRUE) {
   stopifnot(
     "`library` must be a character vector" = is.character(library),
     "`priority` must be `NULL` or a character vector" =
@@ -196,7 +200,8 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
       library,
       parse_installed,
       priority = priority,
-      lowercase = lowercase
+      lowercase = lowercase,
+      reencode = reencode
     )
     return(rbind_expand(.list = lsts))
   }
@@ -258,7 +263,7 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
     tbl <- tbl[keep, ]
   }
 
-  tbl <- fix_encodings(tbl)
+  if (reencode) tbl <- fix_encodings(tbl)
 
   tbl
 }

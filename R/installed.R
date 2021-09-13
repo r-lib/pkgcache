@@ -258,7 +258,7 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
     } else {
       FALSE
     }
-    priority <- na.omit(priority)
+    priority <- na_omit(priority)
     keep <- keep | tbl$Priority %in% priority
     tbl <- tbl[keep, ]
   }

@@ -63,7 +63,7 @@ test_that("parse_description encoding", {
   d[] <- iconv(d, "UTF-8", "latin1")
   on.exit(unlink(tmp), add = TRUE)
   write.dcf(as.list(d), tmp <- tempfile())
-  d2 <- parse_description(get_fixture("description/pkgcache/DESCRIPTION"))
+  d2 <- parse_description(tmp)
   expect_equal(Encoding(d2[["Authors@R"]]), "UTF-8")
 })
 

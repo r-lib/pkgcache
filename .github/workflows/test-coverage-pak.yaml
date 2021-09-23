@@ -16,6 +16,7 @@ jobs:
     env:
       RSPM: https://packagemanager.rstudio.com/cran/__linux__/bionic/latest
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      _R_CHECK_TESTS_NLINES_: 0
 
     steps:
       - uses: actions/checkout@v2

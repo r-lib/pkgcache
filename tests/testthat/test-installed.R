@@ -62,7 +62,10 @@ test_that("parse_description encoding", {
   d[["Encoding"]] <- "latin1"
   d[] <- iconv(d, "UTF-8", "latin1")
   on.exit(unlink(tmp), add = TRUE)
-  write.dcf(as.list(d), tmp <- tempfile())
+  # as.data.frame.list  converts Authors@R to Authors.R on older R versions.
+  dd <- as.data.frame(as.list(d))
+  names(dd) <- names(d)
+  write.dcf(dd, tmp <- tempfile())
   d2 <- parse_description(tmp)
   expect_equal(Encoding(d2[["Authors@R"]]), "UTF-8")
 })

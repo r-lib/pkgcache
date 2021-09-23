@@ -28,6 +28,7 @@ test_that("process", {
 
 test_that("process + http", {
   skip_on_cran()
+  skip("async processes are a bit flaky")
   px <- asNamespace("processx")$get_tool("px")
 
   afun <- async(function() {

@@ -258,6 +258,8 @@ get_cran_macos_platform <- function(v) {
 default_cran_mirror <- function() {
   mirror <- getOption("repos")["CRAN"]
   if (is.null(mirror) || is.na(mirror) || mirror == "@CRAN@") {
+    # This is a deliberate choice over cloud.r-project.org, because of a
+    # DNS fiasco.
     c(CRAN = "https://cran.rstudio.com")
   } else {
     unlist(mirror)

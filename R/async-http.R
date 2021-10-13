@@ -1,4 +1,15 @@
 
+default_http_version <- function() {
+  os <- Sys.info()["sysname"]
+  if (!is.na(os) && os == "Darwin") {
+    # FIXME: when is it safe to remove this? Does it depend on the OS
+    # version? The libcurl version?
+    2 # HTTP 1.1
+  } else {
+    0 # whatever curl chooses
+  }
+}
+
 #' @importFrom utils modifyList
 
 update_async_timeouts <- function(options) {
@@ -14,7 +25,8 @@ update_async_timeouts <- function(options) {
       timeout = as.integer(getopt("timeout") %||% 0),
       connecttimeout = as.integer(getopt("connecttimeout") %||% 300),
       low_speed_time = as.integer(getopt("low_speed_time") %||% 0),
-      low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0)
+      low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0),
+      http_version = as.integer(getopt("http_version") %||% default_http_version())
     )
   )
 }

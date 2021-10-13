@@ -323,7 +323,8 @@ test_that("update_async_timeouts", {
     PKGCACHE_TIMEOUT = 200,
     PKGCACHE_CONNECTTIMEOUT = 200,
     PKGCACHE_LOW_SPEED_TIME = 200,
-    PKGCACHE_LOW_SPEED_LIMIT = 200
+    PKGCACHE_LOW_SPEED_LIMIT = 200,
+    PKGCACHE_HTTP_VERSION = 200
   )
   withr::local_envvar(envs)
 
@@ -331,7 +332,8 @@ test_that("update_async_timeouts", {
     pkgcache_timeout = 100,
     pkgcache_connecttimeout = 100,
     pkgcache_low_speed_time = 100,
-    pkgcache_low_speed_limit = 100
+    pkgcache_low_speed_limit = 100,
+    pkgcache_http_version = 100
   )
   withr::local_options(opts)
 
@@ -339,7 +341,8 @@ test_that("update_async_timeouts", {
     timeout = 10,
     connecttimeout = 10,
     low_speed_time = 10,
-    low_speed_limit = 10
+    low_speed_limit = 10,
+    http_version = 10
   )
 
   # arg takes precedence
@@ -368,7 +371,8 @@ test_that("update_async_timeouts", {
     pkgcache_timeout = NULL,
     pkgcache_connecttimeout = NULL,
     pkgcache_low_speed_time = NULL,
-    pkgcache_low_speed_limit = NULL
+    pkgcache_low_speed_limit = NULL,
+    pkgcache_http_version = NULL
   )
   exp2 <- c(list(foo = "bar"), envs)
   names(exp2) <- sub("^pkgcache_", "", tolower(names(exp2)))
@@ -382,17 +386,26 @@ test_that("update_async_timeouts", {
     PKGCACHE_TIMEOUT = NA_character_,
     PKGCACHE_CONNECTTIMEOUT = NA_character_,
     PKGCACHE_LOW_SPEED_TIME = NA_character_,
-    PKGCACHE_LOW_SPEED_LIMIT = NA_character_
+    PKGCACHE_LOW_SPEED_LIMIT = NA_character_,
+    PKGCACHE_HTTP_VERSION = NA_character_
   )
   exp3 <- list(
     foo = "bar",
     timeout = 0,
     connecttimeout = 300,
     low_speed_time = 0,
-    low_speed_limit = 0
+    low_speed_limit = 0,
+    http_version = default_http_version()
   )
   expect_equal(
     update_async_timeouts(list(foo = "bar")),
     exp3
   )
+})
+
+test_that("default_http_version", {
+  mockery::stub(default_http_version, "Sys.info", c(sysname = "Darwin"))
+  expect_equal(default_http_version(), 2)
+  mockery::stub(default_http_version, "Sys.info", c(sysname = "Linux"))
+  expect_equal(default_http_version(), 0)
 })

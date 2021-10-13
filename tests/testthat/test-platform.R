@@ -156,6 +156,7 @@ test_that("default_cran_mirror", {
 
 test_that("bioc_version", {
   local_edition(3)
+  withr::local_options(useFancyQuotes = FALSE)
   expect_snapshot({
     bioc_version("4.1.1")
     bioc_version("4.0.0")
@@ -165,19 +166,22 @@ test_that("bioc_version", {
 
 test_that("bioc_version_map", {
   local_edition(3)
-  expect_snapshot(bioc_version_map())
+  withr::local_options(useFancyQuotes = FALSE)
+  expect_snapshot(as.data.frame(bioc_version_map()))
 })
 
 test_that("bioc_release_version, bioc_devel_version", {
   # This will fail when a new bioc devel version is out
   skip_on_cran()
   local_edition(3)
+  withr::local_options(useFancyQuotes = FALSE)
   expect_snapshot(bioc_release_version())
   expect_snapshot(bioc_devel_version())
 })
 
 test_that("bioc_repos", {
   local_edition(3)
+  withr::local_options(useFancyQuotes = FALSE)
   withr::local_envvar(c(R_BIOC_MIRROR = "https://bioconductor.org"))
   expect_snapshot(
     bioc_repos("3.13")

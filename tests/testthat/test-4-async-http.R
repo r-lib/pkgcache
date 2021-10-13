@@ -317,3 +317,82 @@ test_that("download_files, no errors", {
   expect_s3_class(ret[[3]], "async_http_403")
   expect_s3_class(ret[[3]], "async_http_error")
 })
+
+test_that("update_async_timeouts", {
+  envs <- list(
+    PKGCACHE_TIMEOUT = 200,
+    PKGCACHE_CONNECTTIMEOUT = 200,
+    PKGCACHE_LOW_SPEED_TIME = 200,
+    PKGCACHE_LOW_SPEED_LIMIT = 200
+  )
+  withr::local_envvar(envs)
+
+  opts <- list(
+    pkgcache_timeout = 100,
+    pkgcache_connecttimeout = 100,
+    pkgcache_low_speed_time = 100,
+    pkgcache_low_speed_limit = 100
+  )
+  withr::local_options(opts)
+
+  arg <- list(
+    timeout = 10,
+    connecttimeout = 10,
+    low_speed_time = 10,
+    low_speed_limit = 10
+  )
+
+  # arg takes precedence
+  expect_equal(
+    update_async_timeouts(arg),
+    arg
+  )
+
+  # extra options in arg are kept
+  arg2 <- utils::modifyList(arg, list(foo = "bar"))
+  expect_equal(
+    update_async_timeouts(arg2),
+    arg2
+  )
+
+  # options are used next
+  exp <- c(list(foo = "bar"), opts)
+  names(exp) <- sub("^pkgcache_", "", names(exp))
+  expect_equal(
+    update_async_timeouts(list(foo = "bar")),
+    exp
+  )
+
+  # env vars are used next
+  withr::local_options(
+    pkgcache_timeout = NULL,
+    pkgcache_connecttimeout = NULL,
+    pkgcache_low_speed_time = NULL,
+    pkgcache_low_speed_limit = NULL
+  )
+  exp2 <- c(list(foo = "bar"), envs)
+  names(exp2) <- sub("^pkgcache_", "", tolower(names(exp2)))
+  expect_equal(
+    update_async_timeouts(list(foo = "bar")),
+    exp2
+  )
+
+  # finally, fall back to defaults
+  withr::local_envvar(
+    PKGCACHE_TIMEOUT = NA_character_,
+    PKGCACHE_CONNECTTIMEOUT = NA_character_,
+    PKGCACHE_LOW_SPEED_TIME = NA_character_,
+    PKGCACHE_LOW_SPEED_LIMIT = NA_character_
+  )
+  exp3 <- list(
+    foo = "bar",
+    timeout = 0,
+    connecttimeout = 300,
+    low_speed_time = 0,
+    low_speed_limit = 0
+  )
+  expect_equal(
+    update_async_timeouts(list(foo = "bar")),
+    exp3
+  )
+})

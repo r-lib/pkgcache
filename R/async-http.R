@@ -1,18 +1,21 @@
 
 #' @importFrom utils modifyList
 
-get_async_timeouts <- function(options) {
+update_async_timeouts <- function(options) {
   getopt <- function(nm) {
     if (!is.null(v <- options[[nm]])) return(v)
     anm <- paste0("pkgcache_", nm)
     if (!is.null(v <- getOption(anm))) return(v)
     if (!is.na(v <- Sys.getenv(toupper(anm), NA_character_))) return (v)
   }
-  list(
-    timeout = as.integer(getopt("timeout") %||% 0),
-    connecttimeout = as.integer(getopt("connecttimeout") %||% 300),
-    low_speed_time = as.integer(getopt("low_speed_time") %||% 0),
-    low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0)
+  utils::modifyList(
+    options,
+    list(
+      timeout = as.integer(getopt("timeout") %||% 0),
+      connecttimeout = as.integer(getopt("connecttimeout") %||% 300),
+      low_speed_time = as.integer(getopt("low_speed_time") %||% 0),
+      low_speed_limit = as.integer(getopt("low_speed_limit") %||% 0)
+    )
   )
 }
 
@@ -93,7 +96,7 @@ download_file <- function(url, destfile, etag_file = NULL,
     is.list(options))
   force(list(...))
 
-  options <- get_async_timeouts(options)
+  options <- update_async_timeouts(options)
   destfile <- normalizePath(destfile, mustWork = FALSE)
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
   mkdirp(dirname(tmp_destfile))
@@ -208,7 +211,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
     is.list(options))
   force(list(...))
 
-  options <- get_async_timeouts(options)
+  options <- update_async_timeouts(options)
   etag_old <- get_etag_header_from_file(destfile, etag_file)
   headers <- c(headers, etag_old)
 
@@ -321,7 +324,7 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
     is.list(options))
   force(list(...))
 
-  options <- get_async_timeouts(options)
+  options <- update_async_timeouts(options)
   tmps <- paste0(destfile, ".tmp.", seq_along(urls))
   dls <- mapply(
     download_if_newer, url = urls, tmp_destfile = tmps,
@@ -345,7 +348,7 @@ download_files <- function(data, error_on_status = TRUE,
          paste0("`", unique(data$path[dup]), "`", collapse = ", "), ".")
   }
 
-  options <- get_async_timeouts(options)
+  options <- update_async_timeouts(options)
   bar <- create_progress_bar(data)
   prog_cb <- function(upd) update_progress_bar_progress(bar, upd)
 

@@ -252,14 +252,15 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
   }
 
   # filter for priority
-  if (!is.null(priority)) {
+  prname <- if (lowercase) "priority" else "Priority"
+  if (!is.null(priority) && prname %in% names(tbl)) {
     keep <- if (anyNA(priority)) {
-      is.na(tbl$Priority)
+      is.na(tbl[[prname]])
     } else {
       FALSE
     }
     priority <- na_omit(priority)
-    keep <- keep | tbl$Priority %in% priority
+    keep <- keep | tbl[[prname]] %in% priority
     tbl <- tbl[keep, ]
   }
 

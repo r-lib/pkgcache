@@ -19,6 +19,8 @@ vdapply <- function(X, FUN, ...) {
   vapply(X, FUN, FUN.VALUE = double(1), ...)
 }
 
+# Like mapply, but better recycling rules, and no simplifying
+
 mapx <- function(...) {
   args <- list(...)
   if (length(args) == 0) stop("No arguments to `mapx()`")
@@ -61,6 +63,15 @@ add_attr <- function(x, attr, value) {
 get_platform <- function() {
   R.version$platform
 }
+
+# Why are we using this?
+# AFAICT the only difference is that if `getOption("encoding")` is set,
+# then it is observed in `file()` and then `readLines()` converts the
+# file to UTF-8. (At least on R 4.1, earlier versions are probably
+# different.)
+#
+# OTOH it seems that we only use it to read the etag from a file, plus
+# in some test cases, so it should not matter much.
 
 read_lines <- function(con, ...) {
   if (is.character(con)) {
@@ -172,8 +183,12 @@ last <- function(x) {
   x[[length(x)]]
 }
 
+get_os_type <- function() {
+  .Platform$OS.type
+}
+
 encode_path <- function(path) {
-  if (.Platform$OS.type == "windows") {
+  if (get_os_type() == "windows") {
     enc2utf8(path)
   } else {
     enc2native(path)

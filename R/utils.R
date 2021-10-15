@@ -101,12 +101,10 @@ interpret_dependencies <- function(dp) {
 ## so we would need an R version specific vector here.
 ## Not an issue currently, might be in the future.
 
-#' @importFrom utils installed.packages
-
 base_packages <- function() {
   if (is.null(repoman_data$base_packages)) {
     repoman_data$base_packages <-
-      rownames(installed.packages(priority = "base"))
+      parse_installed(.Library, priority="base")$Package
   }
   repoman_data$base_packages
 }

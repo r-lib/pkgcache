@@ -110,7 +110,11 @@ base_packages <- function() {
 }
 
 is_na_scalar <- function(x) {
-  length(x) == 1 && is.na(x)
+  identical(x, NA_character_) ||
+    identical(x, NA_integer_) ||
+    identical(x, NA_real_) ||
+    identical(x, NA_complex_) ||
+    identical(x, NA)
 }
 
 drop_nulls <- function(x)  {

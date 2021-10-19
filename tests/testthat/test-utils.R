@@ -136,10 +136,18 @@ test_that("zip_vecs", {
     list(c(1L, 3L), c(2L, 3L))
   )
 
-  expect_error(
-    zip_vecs(integer(), 3L),
-    "zero-length inputs cannot be mixed"
-  )
+  # This has changed in R 4.2.0, apparently
+  if (getRversion() <= "4.1.100") {
+    expect_error(
+      zip_vecs(integer(), 3L),
+      "zero-length inputs cannot be mixed"
+    )
+  } else {
+    expect_equal(
+      zip_vecs(integer(), 3L),
+      list()
+    )
+  }
 })
 
 test_that("add_attr", {

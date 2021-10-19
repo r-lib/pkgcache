@@ -39,6 +39,8 @@ get_user_cache_dir <- function() {
 #' @importFrom rappdirs user_cache_dir
 #' @rawNamespace if (getRversion() >= "4.0.0") importFrom(tools, R_user_dir)
 
+# nocov start
+
 my_R_user_dir <- function(package, which = "cache") {
   stopifnot(is.character(package), length(package) == 1L)
   stopifnot(which == "cache")
@@ -53,6 +55,8 @@ my_R_user_dir <- function(package, which = "cache") {
     path.expand(file.path(user_cache_dir(), "R", package))
   }
 }
+
+# nocov end
 
 if (getRversion() < "4.0.0") {
   R_user_dir <- my_R_user_dir

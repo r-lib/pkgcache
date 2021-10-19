@@ -116,3 +116,17 @@ test_that("update_memory_cache", {
     cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE),
     "Cannot acquire lock to copy primary cache")
 })
+
+test_that("summary", {
+  pri <- test_temp_dir()
+  rep <- test_temp_dir()
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
+                                     bioc = FALSE)
+  sum <- cmc$summary()
+  expect_equal(
+    names(sum),
+    c("cachepath", "lockfile", "current_rds", "raw_files", "rds_files",
+      "size")
+  )
+})

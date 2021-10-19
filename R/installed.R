@@ -92,7 +92,7 @@ parse_packages <- function(path) {
       if (getRversion() >= "4.0.0") {
         bts <- memDecompress(cmp, type = "gzip")
       } else {
-        bts <- gzip_decompress(cmp)
+        bts <- gzip_decompress(cmp)     # nocov
       }
     } else if (ext %in% c("bz2", "bzip2")) {
       bts <- memDecompress(cmp, type = "bzip2")

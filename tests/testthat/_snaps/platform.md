@@ -164,7 +164,7 @@
     Code
       bioc_version("4.1.1")
     Output
-      [1] '3.13'
+      [1] '3.14'
     Code
       bioc_version("4.0.0")
     Output
@@ -212,23 +212,24 @@
       30         3.10       3.6 out-of-date
       31         3.11       4.0 out-of-date
       32         3.12       4.0 out-of-date
-      33         3.13       4.1     release
-      34         3.14       4.1       devel
-      35         3.14       4.2      future
+      33         3.13       4.1 out-of-date
+      34         3.14       4.1     release
+      35         3.15       4.2       devel
+      36         3.15       4.3      future
 
 # bioc_release_version, bioc_devel_version
 
     Code
       bioc_release_version()
     Output
-      [1] '3.13'
+      [1] '3.14'
 
 ---
 
     Code
       bioc_devel_version()
     Output
-      [1] '3.14'
+      [1] '3.15'
 
 # bioc_repos
 

@@ -47,4 +47,4 @@ Suggests:
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE, r6 = FALSE)
-RoxygenNote: 7.1.1.9001
+RoxygenNote: 7.1.2

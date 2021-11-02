@@ -31,8 +31,9 @@ These functions accept the following platform names:
 \itemize{
 \item \code{"source"} for source packages,
 \item \code{"macos"} for macOS binaries that are appropriate for the R versions
-pkgcache is working with (defaulting to the version of the current
-session), as defined by CRAN binaries. E.g. on R 3.5.0 macOS binaries
+pkgcache is working with by dropping packages for incompatible
+CPU architectures (defaulting to the CPU of the current machine),
+as defined by CRAN binaries. E.g. on R 3.5.0 macOS binaries
 are built for macOS El Capitan.
 \item \code{"windows"} for Windows binaries for the default CRAN architecture.
 This is currently Windows Vista for all supported R versions, but it

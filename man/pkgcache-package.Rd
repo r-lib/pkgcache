@@ -183,7 +183,7 @@ while running \verb{R CMD check}.
 
 \subsection{Code of Conduct}{
 
-Please note that the pkgcache project is released with a \href{https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md}{Contributor Code of Conduct}.
+Please note that the pkgcache project is released with a \href{https://github.com/r-lib/pkgcache/blob/main/.github/CODE_OF_CONDUCT.md}{Contributor Code of Conduct}.
 By contributing to this project, you agree to abide by its terms.
 }
 

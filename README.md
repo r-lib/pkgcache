@@ -13,7 +13,7 @@ status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.o
 [![R build
 status](https://github.com/r-lib/pkgcache/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/pkgcache/actions)
 [![Coverage
-status](https://codecov.io/gh/r-lib/pkgcache/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=master)
+status](https://codecov.io/gh/r-lib/pkgcache/branch/main/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=main)
 <!-- badges: end -->
 
 Metadata and package cache for CRAN-like repositories. This is a utility
@@ -206,7 +206,7 @@ while running `R CMD check`.
 
 Please note that the pkgcache project is released with a [Contributor
 Code of
-Conduct](https://github.com/r-lib/pkgcache/blob/master/.github/CODE_OF_CONDUCT.md).
+Conduct](https://github.com/r-lib/pkgcache/blob/main/.github/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.
 
 ## License

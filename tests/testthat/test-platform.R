@@ -52,6 +52,7 @@ test_that("get_cran_extension", {
 })
 
 test_that("get_all_package_dirs", {
+  if (grepl("^aarch64-apple-", R.version$platform)) skip("M1")
   d <- get_all_package_dirs(c("macos", "source"), "4.0.0")
   expect_true("x86_64-apple-darwin17.0" %in% d$platform)
   expect_true("source" %in% d$platform)

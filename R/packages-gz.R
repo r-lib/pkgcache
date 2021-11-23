@@ -75,7 +75,8 @@ read_packages_file <- function(path, mirror, repodir, platform,
     mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version, type)
 
   if (!is.null(meta)) {
-    map <- match(pkgs$target, paste0(repodir, "/", meta$file))
+    metatarget <- paste0(repodir, "/", meta$file)
+    map <- match(pkgs$target, metatarget)
     pkgs$filesize  <- meta$size[map]
     pkgs$sha256    <- meta$sha[map]
     pkgs$sysreqs   <- meta$sysreqs[map]
@@ -83,6 +84,15 @@ read_packages_file <- function(path, mirror, repodir, platform,
     pkgs$published <- meta$published[map]
     pkgs$published[pkgs$published == ""] <- NA_character_
     pkgs$published <- as.POSIXct(pkgs$published, tz = "GMT")
+
+    # fall back to previous version for filesize and sysreqs
+    nameonly <- function(x) sub("_[^_]*$", "", x)
+    map2 <- match(nameonly(pkgs$target), nameonly(metatarget))
+    filesize2 <- meta$size[map2]
+    sysreqs2 <- meta$sysreqs[map2]
+    pkgs$filesize <- ifelse(is.na(pkgs$filesize), filesize2, pkgs$filesize)
+    pkgs$sysreqs <- ifelse(is.na(pkgs$sysreqs), sysreqs2, pkgs$sysreqs)
+
   } else {
     pkgs$filesize <- rep(NA_integer_, nrow(pkgs))
     pkgs$sha256 <- pkgs$sysreqs <- pkgs$built <- pkgs$published <-

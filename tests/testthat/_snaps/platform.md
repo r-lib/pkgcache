@@ -1,7 +1,7 @@
-# current_r_platform_linux
+# current_r_platform_data_linux
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/almalinux/8`
         raw distribution release
@@ -11,7 +11,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/alpine/3.11`
         raw distribution release
@@ -37,7 +37,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/arch/base`
         raw distribution
@@ -51,7 +51,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/centos/5`
         raw distribution release
@@ -73,7 +73,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/debian/10`
         raw distribution release
@@ -99,7 +99,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/fedora/32`
         raw distribution release
@@ -121,7 +121,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/opensuse/15.0`
         raw  distribution release
@@ -151,7 +151,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/oraclelinux/6`
         raw distribution release
@@ -169,7 +169,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/sl/6`
         raw distribution release
@@ -183,7 +183,7 @@
 ---
 
     Code
-      nlapply(etc, current_r_platform_linux, raw = raw)
+      nlapply(etc, current_r_platform_data_linux, raw = raw)
     Output
       $`fixtures/linux/ubuntu/14.04`
         raw distribution release

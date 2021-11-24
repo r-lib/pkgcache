@@ -1,7 +1,7 @@
 
 # Result is underined if not Linux
 
-current_r_platform_linux <- function(raw, etc = "/etc") {
+current_r_platform_data_linux <- function(raw, etc = "/etc") {
   os <- tryCatch(
     suppressWarnings(readLines(file.path(etc, "os-release"))),
     error = function(e) NULL

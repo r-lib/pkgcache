@@ -3,6 +3,8 @@
 #'
 #' @details
 #' `current_r_platform()` detects the platform of the current R version.
+#' `current_r_platform_data()` is similar, but returns the raw data instead
+#' of a character scalar.
 #'
 #' By default pkgcache works with source packages and binary packages for
 #' the current platform. You can change this, by providing different
@@ -40,8 +42,10 @@
 #'   - `s390x-ibm-linux-gnu-ubuntu-20.04`: Ubuntu Linux 20.04 on S390x.
 #'   - `amd64-portbld-freebsd12.1`: FreeBSD 12.1 on x86_64.
 #'
-#' @return `current_r_platform()` returns a data frame with character
-#'   scalar columns:
+#' @return `current_r_platform()` returns a character scalar.
+#'
+#' `current_r_platform_data()` returns a data frame with character
+#' scalar columns:
 #'   * `cpu`,
 #'   * `vendor`,
 #'   * `os`,
@@ -54,10 +58,17 @@
 #' current_r_platform()
 
 current_r_platform <- function() {
+  current_r_platform_data()$platform
+}
+
+#' @export
+#' @rdname current_r_platform
+
+current_r_platform_data <- function() {
   raw <- get_platform()
   platform <- parse_platform(raw)
   if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
-    platform <- current_r_platform_linux(platform)
+    platform <- current_r_platform_data_linux(platform)
   }
 
   platform$platform <- apply(platform, 1, paste, collapse = "-")
@@ -77,7 +88,7 @@ current_r_platform <- function() {
 #' default_platforms()
 
 default_platforms <- function() {
-  unique(c(current_r_platform()$platform, "source"))
+  unique(c(current_r_platform(), "source"))
 }
 
 parse_platform <- function(x) {
@@ -159,7 +170,7 @@ get_package_dirs_for_platform <- function(pl, minors) {
   if (pl == "macos") {
     res1 <- lapply(minors, function(v) {
       rpl <- get_cran_macos_platform(v)
-      pcrt <- parse_platform(current_r_platform()$platform)
+      pcrt <- parse_platform(current_r_platform())
       prpl <- parse_platform(rpl$platform)
       rpl <- rpl[prpl$cpu == pcrt$cpu,, drop = FALSE ]
       if (nrow(rpl)) {

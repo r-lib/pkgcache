@@ -1,23 +1,23 @@
 
-test_that("current_r_platform", {
-  mockery::stub(current_r_platform, "get_platform", "x86_64-apple-darwin17.0")
-  expect_equal(current_r_platform()$platform, "x86_64-apple-darwin17.0")
+test_that("current_r_platform_data", {
+  mockery::stub(current_r_platform_data, "get_platform", "x86_64-apple-darwin17.0")
+  expect_equal(current_r_platform_data()$platform, "x86_64-apple-darwin17.0")
 })
 
 test_that("default_platforms", {
-  mockery::stub(default_platforms, "current_r_platform", list(platform = "macos"))
+  mockery::stub(default_platforms, "current_r_platform", "macos")
   expect_equal(default_platforms(), c("macos", "source"))
 
-  mockery::stub(default_platforms, "current_r_platform", list(platform = "windows"))
+  mockery::stub(default_platforms, "current_r_platform", "windows")
   expect_equal(default_platforms(), c("windows", "source"))
 
-  mockery::stub(default_platforms, "current_r_platform", list(platform = "source"))
+  mockery::stub(default_platforms, "current_r_platform", "source")
   expect_equal(default_platforms(), "source")
 })
 
 test_that("get_all_package_dirs", {
   res <- get_all_package_dirs(
-    unique(c(current_r_platform()$platform, "source")), getRversion())
+    unique(c(current_r_platform_data()$platform, "source")), getRversion())
 
   expect_s3_class(res, "tbl_df")
   expect_equal(
@@ -80,7 +80,7 @@ test_that("get_all_package_dirs", {
   expect_match(d$contriburl, "bin/macosx/contrib/4.0")
 })
 
-test_that("current_r_platform_linux", {
+test_that("current_r_platform_data_linux", {
   testthat::local_edition(3)
   dists <- dir(test_path("fixtures", "linux"))
   vers <- lapply(dists, function(d) dir(test_path("fixtures", "linux", d)))
@@ -94,24 +94,24 @@ test_that("current_r_platform_linux", {
   raw <- data.frame(stringsAsFactors = FALSE, raw = "foo")
   mapply(dists, vers, FUN = function(d, v) {
     etc <- test_path("fixtures", "linux", d, v)
-    expect_snapshot(nlapply(etc, current_r_platform_linux, raw = raw))
+    expect_snapshot(nlapply(etc, current_r_platform_data_linux, raw = raw))
   })
 })
 
 test_that("linux", {
-  mockery::stub(current_r_platform, "get_platform", "x86_64-pc-linux-gnu")
+  mockery::stub(current_r_platform_data, "get_platform", "x86_64-pc-linux-gnu")
   mockery::stub(
-    current_r_platform,
-    "current_r_platform_linux",
+    current_r_platform_data,
+    "current_r_platform_data_linux",
     data.frame(stringsAsFactors = FALSE, x = "boo")
   )
-  expect_equal(current_r_platform()$platform, "boo")
+  expect_equal(current_r_platform_data()$platform, "boo")
 })
 
 test_that("unknown linux", {
   dummy <- data.frame(stringsAsFactors = FALSE, x = "foo")
   expect_equal(
-    current_r_platform_linux(dummy, tempfile())$distribution,
+    current_r_platform_data_linux(dummy, tempfile())$distribution,
     "unknown"
   )
   tmp <- tempfile()
@@ -119,7 +119,7 @@ test_that("unknown linux", {
   dir.create(tmp)
   file.create(file.path(tmp, "os-release"))
   expect_equal(
-    current_r_platform_linux(dummy, tmp)$distribution,
+    current_r_platform_data_linux(dummy, tmp)$distribution,
     "unknown"
   )
 })

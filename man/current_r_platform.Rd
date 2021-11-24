@@ -10,7 +10,17 @@ current_r_platform()
 default_platforms()
 }
 \value{
-\code{current_r_platform()} returns a character scalar.
+\code{current_r_platform()} returns a data frame with character
+scalar columns:
+\itemize{
+\item \code{cpu},
+\item \code{vendor},
+\item \code{os},
+\item \code{distribution} (only on Linux),
+\item \code{release} (only on Linux),
+\item \code{platform}: the concatenation of the other columns, separated by
+a dash.
+}
 
 \code{default_platforms()} returns a character vector of the
 default platforms.

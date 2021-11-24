@@ -40,7 +40,15 @@
 #'   - `s390x-ibm-linux-gnu-ubuntu-20.04`: Ubuntu Linux 20.04 on S390x.
 #'   - `amd64-portbld-freebsd12.1`: FreeBSD 12.1 on x86_64.
 #'
-#' @return `current_r_platform()` returns a character scalar.
+#' @return `current_r_platform()` returns a data frame with character
+#'   scalar columns:
+#'   * `cpu`,
+#'   * `vendor`,
+#'   * `os`,
+#'   * `distribution` (only on Linux),
+#'   * `release` (only on Linux),
+#'   * `platform`: the concatenation of the other columns, separated by
+#'     a dash.
 #' @export
 #' @examples
 #' current_r_platform()
@@ -49,10 +57,11 @@ current_r_platform <- function() {
   raw <- get_platform()
   platform <- parse_platform(raw)
   if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
-    current_r_platform_linux(raw)
-  } else {
-    raw
+    platform <- current_r_platform_linux(platform)
   }
+
+  platform$platform <- apply(platform, 1, paste, collapse = "-")
+  platform
 }
 
 #' @details
@@ -68,7 +77,7 @@ current_r_platform <- function() {
 #' default_platforms()
 
 default_platforms <- function() {
-  unique(c(current_r_platform(), "source"))
+  unique(c(current_r_platform()$platform, "source"))
 }
 
 parse_platform <- function(x) {
@@ -150,7 +159,7 @@ get_package_dirs_for_platform <- function(pl, minors) {
   if (pl == "macos") {
     res1 <- lapply(minors, function(v) {
       rpl <- get_cran_macos_platform(v)
-      pcrt <- parse_platform(current_r_platform())
+      pcrt <- parse_platform(current_r_platform()$platform)
       prpl <- parse_platform(rpl$platform)
       rpl <- rpl[prpl$cpu == pcrt$cpu,, drop = FALSE ]
       if (nrow(rpl)) {

@@ -11,14 +11,21 @@ current_r_platform_linux <- function(raw, etc = "/etc") {
     error = function(e) NULL
   )
 
-  paste0(raw, "-", parse_linux_platform_info(os, rh))
+  cbind(raw, parse_linux_platform_info(os, rh))
+}
+
+unknown_dist <- function() {
+  data.frame(
+    stringsAsFactors = FALSE,
+    distribution = "unknown"
+  )
 }
 
 parse_linux_platform_info <- function(os_release = NULL,
                                       redhat_release = NULL) {
   if (is.null(os_release) &&
       is.null(redhat_release)) {
-    "unknown"
+    unknown_dist()
 
   } else if (!is.null(os_release)) {
     parse_os_release(os_release)
@@ -46,25 +53,37 @@ remove_quotes <- function(x) {
 
 parse_os_release <- function(lines) {
   id <- grep("^ID=", lines, value = TRUE)[1]
-  if (is.na(id)) return("unknown")
+  if (is.na(id)) return(unknown_dist())
   id <- trimws(sub("^ID=(.*)$", "\\1", id, perl = TRUE))
   if (is_quoted(id)) id <- remove_quotes(id)
 
   ver <- grep("^VERSION_ID=", lines, value = TRUE)[1]
-  if (is.na(ver)) return(id)
-  ver <- trimws(sub("VERSION_ID=(.*)$", "\\1", ver, perl = TRUE))
-  if (is_quoted(ver)) ver <- remove_quotes(ver)
+  if (!is.na(ver)) {
+    ver <- trimws(sub("VERSION_ID=(.*)$", "\\1", ver, perl = TRUE))
+    if (is_quoted(ver)) ver <- remove_quotes(ver)
+  }
 
-  paste0(id, "-", ver)
+  out <- data.frame(
+    stringsAsFactors = FALSE,
+    distribution = id
+  )
+  if (!is.na(ver)) out$release <- ver
+
+  out
 }
 
 parse_redhat_release <- function(lines) {
   pcs <- strsplit(lines[1], " ", fixed = TRUE)[[1]]
   id <- tolower(pcs[1])
-  if (id == "" || is.na(id)) return("unknown")
+  if (id == "" || is.na(id)) return(unknown_dist())
 
   wver <- grepl("^[-\\.0-9]+$", pcs)
-  if (!any(wver)) return(id)
 
-  paste0(id, "-", pcs[wver][1])
+  out <- data.frame(
+    stringsAsFactors = FALSE,
+    distribution = id
+  )
+  if (any(wver)) out$release <- pcs[wver][1]
+
+  out
 }

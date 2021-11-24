@@ -1,23 +1,23 @@
 
 test_that("current_r_platform", {
   mockery::stub(current_r_platform, "get_platform", "x86_64-apple-darwin17.0")
-  expect_equal(current_r_platform(), "x86_64-apple-darwin17.0")
+  expect_equal(current_r_platform()$platform, "x86_64-apple-darwin17.0")
 })
 
 test_that("default_platforms", {
-  mockery::stub(default_platforms, "current_r_platform", "macos")
+  mockery::stub(default_platforms, "current_r_platform", list(platform = "macos"))
   expect_equal(default_platforms(), c("macos", "source"))
 
-  mockery::stub(default_platforms, "current_r_platform", "windows")
+  mockery::stub(default_platforms, "current_r_platform", list(platform = "windows"))
   expect_equal(default_platforms(), c("windows", "source"))
 
-  mockery::stub(default_platforms, "current_r_platform", "source")
+  mockery::stub(default_platforms, "current_r_platform", list(platform = "source"))
   expect_equal(default_platforms(), "source")
 })
 
 test_that("get_all_package_dirs", {
   res <- get_all_package_dirs(
-    unique(c(current_r_platform(), "source")), getRversion())
+    unique(c(current_r_platform()$platform, "source")), getRversion())
 
   expect_s3_class(res, "tbl_df")
   expect_equal(
@@ -85,25 +85,43 @@ test_that("current_r_platform_linux", {
   dists <- dir(test_path("fixtures", "linux"))
   vers <- lapply(dists, function(d) dir(test_path("fixtures", "linux", d)))
 
+  nlapply <- function(X, FUN, ...) {
+    ret <- lapply(X, FUN, ...)
+    if (is.character(X) && is.null(names(ret))) names(ret) <- X
+    ret
+  }
+
+  raw <- data.frame(stringsAsFactors = FALSE, raw = "foo")
   mapply(dists, vers, FUN = function(d, v) {
     etc <- test_path("fixtures", "linux", d, v)
-    expect_snapshot(vcapply(etc, current_r_platform_linux, raw = "foo"))
+    expect_snapshot(nlapply(etc, current_r_platform_linux, raw = raw))
   })
 })
 
 test_that("linux", {
   mockery::stub(current_r_platform, "get_platform", "x86_64-pc-linux-gnu")
-  mockery::stub(current_r_platform, "current_r_platform_linux", "boo")
-  expect_equal(current_r_platform(), "boo")
+  mockery::stub(
+    current_r_platform,
+    "current_r_platform_linux",
+    data.frame(stringsAsFactors = FALSE, x = "boo")
+  )
+  expect_equal(current_r_platform()$platform, "boo")
 })
 
 test_that("unknown linux", {
-  expect_equal(current_r_platform_linux("foo", tempfile()), "foo-unknown")
+  dummy <- data.frame(stringsAsFactors = FALSE, x = "foo")
+  expect_equal(
+    current_r_platform_linux(dummy, tempfile())$distribution,
+    "unknown"
+  )
   tmp <- tempfile()
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
   dir.create(tmp)
   file.create(file.path(tmp, "os-release"))
-  expect_equal(current_r_platform_linux("foo", tmp), "foo-unknown")
+  expect_equal(
+    current_r_platform_linux(dummy, tmp)$distribution,
+    "unknown"
+  )
 })
 
 test_that("remove_quotes", {
@@ -113,8 +131,8 @@ test_that("remove_quotes", {
 })
 
 test_that("parse_redhat_release", {
-  expect_equal(parse_redhat_release(""), "unknown")
-  expect_equal(parse_redhat_release("Something"), "something")
+  expect_equal(parse_redhat_release(""), unknown_dist())
+  expect_equal(parse_redhat_release("Something")$distribution, "something")
 })
 
 test_that("default_cran_mirror", {

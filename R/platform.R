@@ -15,9 +15,10 @@
 #' These functions accept the following platform names:
 #' * `"source"` for source packages,
 #' * `"macos"` for macOS binaries that are appropriate for the R versions
-#'   pkgcache is working with by dropping packages for incompatible
-#'   CPU architectures (defaulting to the CPU of the current machine),
-#'   as defined by CRAN binaries. E.g. on R 3.5.0 macOS binaries
+#'   pkgcache is working with. Packages for incompatible CPU architectures are
+#'   dropped (defaulting to the CPU of the current macOS machine and x86_64 on
+#'   non-macOS systems). The macOS Darwin version is selected based on the
+#'   CRAN macOS binaries. E.g. on R 3.5.0 macOS binaries
 #'   are built for macOS El Capitan.
 #' * `"windows"` for Windows binaries for the default CRAN architecture.
 #'   This is currently Windows Vista for all supported R versions, but it
@@ -125,8 +126,17 @@ get_all_package_dirs <- function(platforms, rversions) {
   minors <- unique(get_minor_r_version(rversions))
   res <- lapply(platforms, get_package_dirs_for_platform, minors)
 
+  # zero size edge case
+  empty <- data.frame(
+    stringsAsFactors = FALSE,
+    platform = character(),
+    rversion = character(),
+    contriburl = character()
+  )
+  res <- lapply(res, function(x) { colnames(x) <- names(empty); x })
+  res <- c(list(empty), res)
+
   mat <- do.call(rbind, res)
-  colnames(mat) <- c("platform", "rversion", "contriburl")
   res <- as_tibble(mat)
   res <- unique(res)
 
@@ -170,9 +180,15 @@ get_package_dirs_for_platform <- function(pl, minors) {
   if (pl == "macos") {
     res1 <- lapply(minors, function(v) {
       rpl <- get_cran_macos_platform(v)
-      pcrt <- parse_platform(current_r_platform())
       prpl <- parse_platform(rpl$platform)
-      rpl <- rpl[prpl$cpu == pcrt$cpu,, drop = FALSE ]
+      # On macos we use the current arch, otherwise intel
+      target_cpu <- if (Sys.info()["sysname"] == "Darwin") {
+        pcrt <- parse_platform(current_r_platform())
+        pcrt$cpu
+      } else {
+        "x86_64"
+      }
+      rpl <- rpl[prpl$cpu == target_cpu,, drop = FALSE ]
       if (nrow(rpl)) {
         cbind(rpl$platform, v, paste0(
           "bin/macosx/",

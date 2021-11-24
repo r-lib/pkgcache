@@ -17,7 +17,9 @@ test_that("default_platforms", {
 
 test_that("get_all_package_dirs", {
   res <- get_all_package_dirs(
-    unique(c(current_r_platform_data()$platform, "source")), getRversion())
+    unique(c(current_r_platform(), "source")),
+    getRversion()
+  )
 
   expect_s3_class(res, "tbl_df")
   expect_equal(

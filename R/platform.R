@@ -136,7 +136,7 @@ get_all_package_dirs <- function(platforms, rversions) {
   res <- lapply(res, function(x) { colnames(x) <- names(empty); x })
   res <- c(list(empty), res)
 
-  mat <- do.call(rbind, res)
+  mat <- do.call(rbind, c(res, list(stringsAsFactors = FALSE)))
   res <- as_tibble(mat)
   res <- unique(res)
 

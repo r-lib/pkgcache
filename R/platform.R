@@ -124,7 +124,7 @@ get_cran_extension <- function(platform) {
 
 get_all_package_dirs <- function(platforms, rversions) {
   minors <- unique(get_minor_r_version(rversions))
-  res <- lapply(platforms, get_package_dirs_for_platform, minors)
+  res <- drop_nulls(lapply(platforms, get_package_dirs_for_platform, minors))
 
   # zero size edge case
   empty <- data.frame(

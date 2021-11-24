@@ -2,15 +2,30 @@
 % Please edit documentation in R/platform.R
 \name{current_r_platform}
 \alias{current_r_platform}
+\alias{current_r_platform_data}
 \alias{default_platforms}
 \title{R platforms}
 \usage{
 current_r_platform()
 
+current_r_platform_data()
+
 default_platforms()
 }
 \value{
 \code{current_r_platform()} returns a character scalar.
+
+\code{current_r_platform_data()} returns a data frame with character
+scalar columns:
+\itemize{
+\item \code{cpu},
+\item \code{vendor},
+\item \code{os},
+\item \code{distribution} (only on Linux),
+\item \code{release} (only on Linux),
+\item \code{platform}: the concatenation of the other columns, separated by
+a dash.
+}
 
 \code{default_platforms()} returns a character vector of the
 default platforms.
@@ -20,6 +35,8 @@ R platforms
 }
 \details{
 \code{current_r_platform()} detects the platform of the current R version.
+\code{current_r_platform_data()} is similar, but returns the raw data instead
+of a character scalar.
 
 By default pkgcache works with source packages and binary packages for
 the current platform. You can change this, by providing different

@@ -3,6 +3,8 @@
 #'
 #' @details
 #' `current_r_platform()` detects the platform of the current R version.
+#' `current_r_platform_data()` is similar, but returns the raw data instead
+#' of a character scalar.
 #'
 #' By default pkgcache works with source packages and binary packages for
 #' the current platform. You can change this, by providing different
@@ -41,18 +43,36 @@
 #'   - `amd64-portbld-freebsd12.1`: FreeBSD 12.1 on x86_64.
 #'
 #' @return `current_r_platform()` returns a character scalar.
+#'
+#' `current_r_platform_data()` returns a data frame with character
+#' scalar columns:
+#'   * `cpu`,
+#'   * `vendor`,
+#'   * `os`,
+#'   * `distribution` (only on Linux),
+#'   * `release` (only on Linux),
+#'   * `platform`: the concatenation of the other columns, separated by
+#'     a dash.
 #' @export
 #' @examples
 #' current_r_platform()
 
 current_r_platform <- function() {
+  current_r_platform_data()$platform
+}
+
+#' @export
+#' @rdname current_r_platform
+
+current_r_platform_data <- function() {
   raw <- get_platform()
   platform <- parse_platform(raw)
   if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
-    current_r_platform_linux(raw)
-  } else {
-    raw
+    platform <- current_r_platform_data_linux(platform)
   }
+
+  platform$platform <- apply(platform, 1, paste, collapse = "-")
+  platform
 }
 
 #' @details

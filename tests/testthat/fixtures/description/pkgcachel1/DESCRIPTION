@@ -1,9 +1,9 @@
 Package: pkgcache
 Title: Cache 'CRAN'-Like Metadata and R Packages
-Version: 1.2.2.9001
+Version: 1.2.2.9000
 Authors@R: 
-    person(given = "GÃ¡bor",
-           family = "CsÃ¡rdi",
+    person(given = "Gábor",
+           family = "Csárdi",
            role = c("aut", "cre"),
            email = "csardi.gabor@gmail.com")
 Description: Metadata and package cache for CRAN-like repositories.
@@ -40,11 +40,10 @@ Suggests:
     pingr,
     rprojroot,
     sessioninfo,
-    spelling,
     testthat,
     webfakes,
     withr
 Depends: 
     R (>= 3.1)
 Roxygen: list(markdown = TRUE, r6 = FALSE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.1.1.9001

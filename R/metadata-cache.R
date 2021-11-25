@@ -435,13 +435,14 @@ cmc__get_cache_files <- function(self, private, which) {
   pkgs_files <- file.path(pkgs_dirs, "PACKAGES.gz")
   pkgs_files2 <- file.path(pkgs_dirs, "PACKAGES")
   mirror <- rep(private$repos$url, each = nrow(private$dirs))
+  name <- tolower(rep(private$repos$name, each = nrow(private$dirs)))
   type <- rep(private$repos$type, each = nrow(private$dirs))
   r_version <- rep(private$dirs$rversion, nrow(private$repos))
   bioc_version <- rep(private$repos$bioc_version, each = nrow(private$dirs))
 
   pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
   meta_path <- ifelse(
-    type == "cran",
+    type == "cran" | name == "rspm",
     file.path(root, "_metadata", repo_enc, pkgs_dirs, "METADATA2.gz"),
     NA_character_)
   meta_etag <- ifelse(

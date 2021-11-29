@@ -1,8 +1,31 @@
 
 # pkgcache development version
 
+* pkgcache now works better on M1 macs.
+
+* `current_r_platform()` does a much better job now. In particular, on
+  Linux it includes the name and release of the distribution.
+  The new `current_r_platform_data()` function returns the platform information
+  as a data frame, instead of a single string.
+
+* Metadata is now more accurate for Windows packages that are typically
+  not multi-arch any more on R 4.2.0 (current R-devel).
+
+* pkgcache has its own DCF metadata parser now, which is much faster, and
+  it parses all fields of `PACAKGES*` and `DESCRIPTION` files.
+
+* New `parse_installed()` function to get the metadata of all installed
+  packages in a library. It uses the new DCF parser, so it is quite fast.
+
 * `meta_cache_list()` and related functions now correctly set the
   `rversion` column of source R packages to `"*"`.
+
+* pkgcache now users HTTP 1.1 on macOS, to work around a possible
+  slowdown issue with libcurl for HTTP/2.
+
+* pkgcache now uses our extra metadata (file sizes, system requirements,
+  etc.) for RStudio Package Manager (RSPM) repositories as well, as long
+  as they are named `RSPM ` in `getOption("repos")`.
 
 # pkgcache 1.2.2
 

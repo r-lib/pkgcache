@@ -27,7 +27,9 @@ SEXP r_format_error(const char *func, const char *filename, int line,
   va_start(args, msg);
   vsnprintf(errorbuf, ERRORBUF_SIZE, msg, args);
   va_end (args);
-  snprintf(
+
+  // Recent GCC warns if return value is not used
+  int ret = snprintf(
     msgbuf,
     ERRORBUF_SIZE,
     "%s @%s:%d (%s)",
@@ -36,6 +38,12 @@ SEXP r_format_error(const char *func, const char *filename, int line,
     line,
     func
   );
+  if (ret < 0) {
+    msgbuf[ERRORBUF_SIZE - 1] = '\0';
+    msgbuf[ERRORBUF_SIZE - 2] = '.';
+    msgbuf[ERRORBUF_SIZE - 3] = '.';
+    msgbuf[ERRORBUF_SIZE - 4] = '.';
+  }
 
   return Rf_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
 }
@@ -171,7 +179,8 @@ SEXP r_format_system_error(
   vsnprintf(errorbuf, ERRORBUF_SIZE, msg, args);
   va_end(args);
 
-  snprintf(
+  // Recent GCC warns if return value is not used
+  int ret = snprintf(
     msgbuf,
     ERRORBUF_SIZE,
     "%s (system error %d, %s) @%s:%d (%s)",
@@ -182,6 +191,12 @@ SEXP r_format_system_error(
     line,
     func
   );
+  if (ret < 0) {
+    msgbuf[ERRORBUF_SIZE - 1] = '\0';
+    msgbuf[ERRORBUF_SIZE - 2] = '.';
+    msgbuf[ERRORBUF_SIZE - 3] = '.';
+    msgbuf[ERRORBUF_SIZE - 4] = '.';
+  }
 
   return Rf_ScalarString(Rf_mkCharCE(msgbuf, CE_NATIVE));
 }

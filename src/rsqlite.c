@@ -1,5 +1,4 @@
 
-#include <R_ext/Rdynload.h>
 #include <R.h>
 #include <Rinternals.h>
 
@@ -7,12 +6,11 @@
 #include <ctype.h>
 
 #include "sqlite3.h"
-#include "cleancall.h"
 
 static char *tempdir = NULL;
 static char sqlite3_error[1024];
 
-SEXP sql3_set_tempdir(SEXP path) {
+SEXP c_sql3_set_tempdir(SEXP path) {
   if (tempdir) error("sqlite3 temporary directory is already set");
   tempdir = strdup(CHAR(STRING_ELT(path, 0)));
   if (!tempdir) error("Not enough memory for sqlite3 tempdir name");
@@ -28,7 +26,7 @@ static void sql3_finalizer(SEXP con) {
   }
 }
 
-SEXP sql3_open(SEXP filename) {
+SEXP c_sql3_open(SEXP filename) {
   sqlite3 *ccon = NULL;
   int ret = sqlite3_open(CHAR(STRING_ELT(filename, 0)), &ccon);
   if (ret != SQLITE_OK) {
@@ -46,7 +44,7 @@ SEXP sql3_open(SEXP filename) {
   return xptr;
 }
 
-SEXP sql3_close(SEXP con) {
+SEXP c_sql3_close(SEXP con) {
   sqlite3 *ccon = R_ExternalPtrAddr(con);
   if (!ccon) error("sqlite3 connection already closed");
   R_ClearExternalPtr(con);
@@ -67,7 +65,7 @@ void sql3_finalizer_stmt(SEXP xptr) {
   }
 }
 
-SEXP sql3_prepare(SEXP con, SEXP query) {
+SEXP c_sql3_prepare(SEXP con, SEXP query) {
   sqlite3 *ccon = R_ExternalPtrAddr(con);
   sqlite3_stmt *stmt = NULL;
   const char *cquery = CHAR(STRING_ELT(query, 0));
@@ -210,10 +208,10 @@ SEXP sql3_exec_generic(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
   }
 }
 
-SEXP sql3_exec(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
+SEXP c_sql3_exec(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
   int prepped = TYPEOF(query) == EXTPTRSXP;
   if (!prepped) {
-    query = PROTECT(sql3_prepare(con, query));
+    query = PROTECT(c_sql3_prepare(con, query));
   }
 
   sql3_exec_generic(con, query, bind, bindlen);
@@ -226,10 +224,10 @@ SEXP sql3_exec(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
   return R_NilValue;
 }
 
-SEXP sql3_get_query(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
+SEXP c_sql3_get_query(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
   int prepped = TYPEOF(query) == EXTPTRSXP;
   if (!prepped) {
-    query = PROTECT(sql3_prepare(con, query));
+    query = PROTECT(c_sql3_prepare(con, query));
   }
 
   if (!prepped) {
@@ -240,27 +238,7 @@ SEXP sql3_get_query(SEXP con, SEXP query, SEXP bind, SEXP bindlen) {
   return sql3_exec_generic(con, query, bind, bindlen);
 }
 
-SEXP sql3_insert(SEXP con, SEXP table, SEXP df, SEXP dflen) {
+SEXP c_sql3_insert(SEXP con, SEXP table, SEXP df, SEXP dflen) {
   /* TODO */
   return R_NilValue;
-}
-
-static const R_CallMethodDef callMethods[]  = {
-  CLEANCALL_METHOD_RECORD,
-
-  { "sql3_set_tempdir", (DL_FUNC) &sql3_set_tempdir, 1 },
-  { "sql3_open",        (DL_FUNC) &sql3_open,        1 },
-  { "sql3_close",       (DL_FUNC) &sql3_close,       1 },
-  { "sql3_prepare",     (DL_FUNC) &sql3_prepare,     2 },
-  { "sql3_exec",        (DL_FUNC) &sql3_exec,        4 },
-  { "sql3_get_query",   (DL_FUNC) &sql3_get_query,   4 },
-  { "sql3_insert",      (DL_FUNC) &sql3_insert,      4 },
-  { NULL, NULL, 0 }
-};
-
-void R_init_pkgcache(DllInfo *dll) {
-  R_registerRoutines(dll, NULL, callMethods, NULL, NULL);
-  R_useDynamicSymbols(dll, FALSE);
-  R_forceSymbols(dll, TRUE);
-  cleancall_fns_dot_call = Rf_findVar(Rf_install(".Call"), R_BaseEnv);
 }

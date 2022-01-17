@@ -1,9 +1,13 @@
 
 default_http_version <- function() {
   os <- Sys.info()["sysname"]
-  if (!is.na(os) && os == "Darwin") {
+  if (!is.na(os) && os %in% c("Darwin", "Linux")) {
     # FIXME: when is it safe to remove this? Does it depend on the OS
     # version? The libcurl version?
+    # UPDATE: HTTP/2 now also causes issues on Linux:
+    # https://github.com/r-lib/pak/issues/358
+    # https://github.com/r-lib/actions/issues/483
+    # So this will be here for now. :(
     2 # HTTP 1.1
   } else {
     0 # whatever curl chooses

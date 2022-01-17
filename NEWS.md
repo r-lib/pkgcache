@@ -1,6 +1,9 @@
 
 # pkgcache, development version
 
+* pkgcache now uses HTTP 1.1 on Linux as well, because of crashes with
+  HTTP/2.
+
 # pkgcache 1.3.0
 
 * pkgcache now works better on M1 macs.
@@ -22,7 +25,7 @@
 * `meta_cache_list()` and related functions now correctly set the
   `rversion` column of source R packages to `"*"`.
 
-* pkgcache now users HTTP 1.1 on macOS, to work around a possible
+* pkgcache now uses HTTP 1.1 on macOS, to work around a possible
   slowdown issue with libcurl for HTTP/2.
 
 * pkgcache now uses our extra metadata (file sizes, system requirements,

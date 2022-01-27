@@ -59,15 +59,15 @@
 #' a platform dependent user level cache directory.) If the cache does
 #' not exists, it creates it.
 #'
-#' `pc$list()` lists all files in the cache, returns a tibble with all the
+#' `pc$list()` lists all files in the cache, returns a data frame with all the
 #' default columns, and potentially extra columns as well.
 #'
 #' `pc$find()` list all files that match the specified criteria (`fullpath`,
 #' `path`, `package`, etc.). Custom columns can be searched for as well.
 #'
 #' `pc$copy_to()` will copy the first matching file from the cache to
-#' `target`. It returns the tibble of _all_ matching records, invisibly.
-#' If no file matches, it returns an empty (zero-row) tibble.
+#' `target`. It returns the data frame of _all_ matching records, invisibly.
+#' If no file matches, it returns an empty (zero-row) data frame.
 #'
 #' `pc$add()` adds a file to the cache.
 #'

@@ -58,7 +58,7 @@ fix_encodings <- function(lst, col = "Encoding") {
 #'
 #' # Note
 #' `parse_packages()` cannot currently read files that have very many
-#' different fields (many columns in the result tibble). The current
+#' different fields (many columns in the result data frame). The current
 #' limit is 1000. Typical `PACKAGES` files contain less than 20 field
 #' types.
 #'
@@ -67,7 +67,7 @@ fix_encodings <- function(lst, col = "Encoding") {
 #'   or `xz` compressed with extension `xz`. It may also be a `PACKAGES.rds`
 #'   file, which will be read using [base::readRDS()]. Otherwise the file at
 #'   `path` is assumed to be uncompressed.
-#' @return A tibble, with all columns from the file at `path`.
+#' @return A data frame, with all columns from the file at `path`.
 #'
 #' @export
 
@@ -116,7 +116,7 @@ parse_packages <- function(path) {
     tab <- fix_encodings(tab)
   }
 
-  tbl <- tibble::as_tibble(tab)
+  tbl <- as_data_frame(tab)
 
   tbl
 }
@@ -163,7 +163,7 @@ parse_packages <- function(path) {
 #'
 #' These errors are reported via a condition with class
 #' `pkgcache_broken_install`. The condition has an `errors` entry, which
-#' is a tibble with columns
+#' is a data frame with columns
 #'
 #' * `file`: path to the `DESCRIPTION` file of the broken package,
 #' * `error`: error message for this particular failure.
@@ -229,7 +229,7 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
     x
   })
 
-  tbl <- tibble::as_tibble(tab)
+  tbl <- as_data_frame(tab)
   if (lowercase) {
     tbl$libpath <- library
   } else {
@@ -243,7 +243,7 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
     cnd <- new_pkgcache_warning(
       "Cannot read DESCRIPTION files:\n", paste0("* ", prs[[2]][bad], "\n"),
       class = "pkgcache_broken_install",
-      data = list(errors = tibble(file = dscs[bad], error = prs[[2]][bad]))
+      data = list(errors = data_frame(file = dscs[bad], error = prs[[2]][bad]))
     )
     withRestarts(
       muffleWarning = function() NULL,

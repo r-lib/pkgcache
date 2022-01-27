@@ -34,8 +34,8 @@ test_that("cmc__get_repos", {
   ## No bioc, CRAN is replaced
   expect_equal(
     cmc__get_repos(repos, FALSE, cran_mirror = "good", r_version = "3.5"),
-    tibble(name = "CRAN", url = "good", type = "cran",
-           r_version = "*", bioc_version = NA_character_)
+    data_frame(name = "CRAN", url = "good", type = "cran",
+               r_version = "*", bioc_version = NA_character_)
   )
 
   ## BioC, all new

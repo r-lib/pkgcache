@@ -387,7 +387,7 @@ cac__convert_archive_file <- function(self, private, raw, out) {
   vers <- sub("[.]tar[.]gz$", "", sub("^.*_", "", raw))
   mtime <- unlist(lapply(archive, function(x) x$mtime), use.names = FALSE)
   class(mtime) <- class(archive[[1]]$mtime)
-  res <- tibble(
+  res <- data_frame(
     package = rep(names(archive), lens),
     version = vers,
     raw = raw,
@@ -452,7 +452,7 @@ get_archive_cache <- function(cran_mirror) {
 #'   it gets older than this. Set it to `Inf` to avoid updates. Defaults
 #'   to seven days.
 #' @param packages Character vector. Only report these packages.
-#' @return `cran_archive_list()` returns a tibble with columns:
+#' @return `cran_archive_list()` returns a data frame with columns:
 #'   * `package`: package name,
 #'   * `version`: package version. This is a character vector, and not
 #'      a [package_version()] object. Some older package versions are not
@@ -482,7 +482,7 @@ cran_archive_list <- function(cran_mirror = default_cran_mirror(),
 #' @export
 #' @rdname cran_archive_list
 #' @details `cran_archive_update()` updates the archive cache.
-#' @return `cran_archive_update()` returns all archive data in a tibble,
+#' @return `cran_archive_update()` returns all archive data in a data frame,
 #' in the same format as `cran_archive_list()`, invisibly.
 
 cran_archive_update <- function(cran_mirror = default_cran_mirror()) {

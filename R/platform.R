@@ -137,7 +137,7 @@ get_all_package_dirs <- function(platforms, rversions) {
   res <- c(list(empty), res)
 
   mat <- do.call(rbind, c(res, list(stringsAsFactors = FALSE)))
-  res <- as_tibble(mat)
+  res <- as_data_frame(mat)
   res <- unique(res)
 
   res
@@ -333,7 +333,7 @@ bioc_version <- function(r_version = getRversion(), forget = FALSE) {
 #' `bioc_version_map()` returns the current mapping between R versions
 #' and Bioconductor versions.
 #'
-#' @return `bioc_version_map()` returns a tibble with columns:
+#' @return `bioc_version_map()` returns a data frame with columns:
 #' * `bioc_version`: [package_version] object, Bioconductor versions.
 #' * `r_version`: [package_version] object, the matching R versions.
 #' * `bioc_status`: factor, with levels: `out-of-date`, `release`,
@@ -346,7 +346,7 @@ bioc_version <- function(r_version = getRversion(), forget = FALSE) {
 #' bioc_version_map()
 
 bioc_version_map <- function(forget = FALSE) {
-  tibble::as_tibble(bioconductor$get_version_map(forget))
+  as_data_frame(bioconductor$get_version_map(forget))
 }
 
 #' @details

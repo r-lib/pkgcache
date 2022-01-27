@@ -18,7 +18,7 @@ test_that("get_cache_files", {
     expect_equal(
       fs::path_common(c(files$rds, files$lock, files$rds, root)),
       root)
-    expect_true(tibble::is_tibble(files$pkgs))
+    expect_true(inherits(files$pkgs, "tbl"))
     expect_equal(
       sort(names(files$pkgs)),
       sort(c("path", "etag", "basedir", "base", "mirror", "url",

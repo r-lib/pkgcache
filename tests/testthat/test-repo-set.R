@@ -2,7 +2,7 @@
 test_that("repo_get", {
   withr::local_options(repos = character())
   rps <- repo_get()
-  expect_s3_class(rps, "tbl_df")
+  expect_s3_class(rps, "tbl")
   expect_equal(
     names(rps),
     c("name", "url", "type", "r_version", "bioc_version")

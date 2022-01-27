@@ -3,9 +3,9 @@
     Code
       repo_get()[1:3, ]
     Output
-      # A tibble: 3 x 5
+      # A data frame: 3 x 5
         name  url                      type     r_version bioc_version
-        <chr> <chr>                    <chr>    <chr>     <chr>       
+      * <chr> <chr>                    <chr>    <chr>     <chr>       
       1 URL   https://my.url           cranlike *         <NA>        
       2 PATH  /foo/bar                 cranlike *         <NA>        
       3 CRAN  https://cran.rstudio.com cran     *         <NA>        
@@ -15,9 +15,9 @@
     Code
       with_repo(c(URL = "https://my.url"), repo_get()[1, ])
     Output
-      # A tibble: 1 x 5
+      # A data frame: 1 x 5
         name  url            type     r_version bioc_version
-        <chr> <chr>          <chr>    <chr>     <chr>       
+      * <chr> <chr>          <chr>    <chr>     <chr>       
       1 URL   https://my.url cranlike *         <NA>        
 
 # get_rspm_versions

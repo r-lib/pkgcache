@@ -21,7 +21,7 @@ test_that("get_all_package_dirs", {
     getRversion()
   )
 
-  expect_s3_class(res, "tbl_df")
+  expect_s3_class(res, "tbl")
   expect_equal(
     colnames(res),
     c("platform", "rversion", "contriburl"))

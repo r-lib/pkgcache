@@ -30,30 +30,30 @@ pkg_cache_summary <- function(cachepath = NULL) {
   )
 }
 
-#' `pkg_cache_list()` lists all files in the cache. It returns a `tibble`.
+#' `pkg_cache_list()` lists all files in the cache. It returns a data frame.
 #'
 #' @rdname pkg_cache_api
 #' @export
 
 pkg_cache_list <- function(cachepath = NULL) {
   cachepath <- cachepath %||% get_user_cache_dir()$pkg
-  as_tibble(package_cache$new(cachepath)$list())
+  as_data_frame(package_cache$new(cachepath)$list())
 }
 
 #' `pkg_cache_find()` finds all files in the cache that match the specified
-#' attributes. It returns a `tibble`.
+#' attributes. It returns a data frame.
 #'
 #' @param ... Extra named arguments to select the package file.
 #' @rdname pkg_cache_api
 #' @export
 
 pkg_cache_find <- function(cachepath = NULL, ...) {
-  as_tibble(pkg_cache_get_file(cachepath, target = NULL, ...))
+  as_data_frame(pkg_cache_get_file(cachepath, target = NULL, ...))
 }
 
 #' `pkg_cache_get_file()` copied a file out of the cache into the specified
 #' path. If no file is found, then it returns `NULL`. Otherwise it returns
-#' (invisibly) the tibble of all selected files. If multiple
+#' (invisibly) the data frame of all selected files. If multiple
 #' files match the specified attributes, then the first one is copied to
 #' the `target` path.
 #'
@@ -63,7 +63,7 @@ pkg_cache_find <- function(cachepath = NULL, ...) {
 
 pkg_cache_get_file <- function(cachepath = NULL, target, ...) {
   cachepath <- cachepath %||% get_user_cache_dir()$pkg
-  invisible(as_tibble(package_cache$new(cachepath)$copy_to(target, ...)))
+  invisible(as_data_frame(package_cache$new(cachepath)$copy_to(target, ...)))
 }
 
 #' `pkg_cache_delete_files()` deletes the selected files from the caches.

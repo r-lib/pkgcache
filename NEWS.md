@@ -3,7 +3,7 @@
 
 ## BREAKING CHANGE
 
-* Starting from vresion 2.0.0 pkgcache returns data frames instead
+* Starting from version 2.0.0 pkgcache returns data frames instead
   of tibbles. While data frames and tibbles are very similar, they are
   not completely compatible. To convert the output of pkgcache to tibbles
   call the `as_tibble()` function on them.

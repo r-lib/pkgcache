@@ -37,8 +37,12 @@ library(pkgcache)
 meta_cache_list()
 ```
 
+(We load the pillar package, because it makes the pkgcache data frames
+print nicer, similarly to tibbles.)
+
 ```{r}
 library(pkgcache)
+library(pillar)
 meta_cache_list()
 ```
 

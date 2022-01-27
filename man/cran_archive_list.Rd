@@ -31,7 +31,7 @@ to seven days.}
 \item{force}{Force cleanup in non-interactive mode.}
 }
 \value{
-\code{cran_archive_list()} returns a tibble with columns:
+\code{cran_archive_list()} returns a data frame with columns:
 \itemize{
 \item \code{package}: package name,
 \item \code{version}: package version. This is a character vector, and not
@@ -46,7 +46,7 @@ The output is ordered according to package names (case insensitive) and
 release dates.
 }
 
-\code{cran_archive_update()} returns all archive data in a tibble,
+\code{cran_archive_update()} returns all archive data in a data frame,
 in the same format as \code{cran_archive_list()}, invisibly.
 
 \code{cran_archive_cleanup()} returns nothing.

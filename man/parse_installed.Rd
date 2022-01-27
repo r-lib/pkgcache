@@ -70,7 +70,7 @@ The result also omits broken package installations. These include
 
 These errors are reported via a condition with class
 \code{pkgcache_broken_install}. The condition has an \code{errors} entry, which
-is a tibble with columns
+is a data frame with columns
 \itemize{
 \item \code{file}: path to the \code{DESCRIPTION} file of the broken package,
 \item \code{error}: error message for this particular failure.

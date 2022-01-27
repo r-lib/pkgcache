@@ -32,7 +32,7 @@ parameter of \code{\link[utils:install.packages]{utils::install.packages()}}.}
 \item{force}{Whether to force cleanup without asking the user.}
 }
 \value{
-A data frame (tibble) of the dependencies. For
+A data frame of the dependencies. For
 \code{meta_cache_deps()} and \code{meta_cache_revdeps()} it includes the
 queried \code{packages} as well.
 }

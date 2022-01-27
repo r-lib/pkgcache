@@ -26,7 +26,7 @@ how pkgcache handles Bioconductor repositories.}
 \code{\link[=default_cran_mirror]{default_cran_mirror()}}.}
 }
 \value{
-A tibble that has a row for every repository, on every
+A data frame that has a row for every repository, on every
 queried platform and R version. It has these columns:
 \itemize{
 \item \code{name}: the name of the repository. This comes from the names
@@ -54,7 +54,7 @@ It checks the status of the configured or supplied repositories,
 for the specified platforms and R versions.
 }
 \details{
-The returned tibble has a \code{summary()} method, which shows
+The returned data frame has a \code{summary()} method, which shows
 the same information is a concise table. See examples below.
 }
 \examples{

@@ -1,4 +1,3 @@
-
 #' Cache for CRAN archive data
 #'
 #' This is an R6 class that implements a cache from older CRAN package
@@ -196,8 +195,8 @@ cac_async_update <- function(self, private) {
   }
 
   private$update_deferred <- private$update_replica()$
-    then(~ private$update_primary())$
-    then(~ private$data)$
+    then(function() private$update_primary())$
+    then(function() private$data)$
     catch(error = function(err) {
       err$message <- msg_wrap(
         conditionMessage(err), "\n\n",

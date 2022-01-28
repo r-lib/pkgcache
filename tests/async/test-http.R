@@ -4,8 +4,8 @@ context("http")
 test_that("GET", {
   do <- async(function() {
     http_get(http$url("/get", query = list(q = 42)))$
-      then(~ rawToChar(.$content))$
-      then(~ expect_match(., "\"q\":[ ]*\"42\""))
+      then(function(.) rawToChar(.$content))$
+      then(function(.) expect_match(., "\"q\":[ ]*\"42\""))
   })
   synchronise(do())
 })
@@ -25,7 +25,7 @@ test_that("headers", {
   do <- async(function() {
     headers = c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
     http_get(http$url("/headers"), headers = headers)$
-      then(~ jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE))$
+      then(function(.) jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE))$
       then(function(x) xx <<- x)
   })
   synchronise(do())
@@ -197,7 +197,7 @@ test_that("timeout, failed request", {
   expect_true(toc - tic < as.difftime(4, units = "secs"))
 
   do2 <- function() {
-    do()$catch(error = ~ "fixed")
+    do()$catch(error = function(.) "fixed")
   }
 
   tic <- Sys.time()
@@ -271,4 +271,21 @@ test_that("http_post", {
   expect_equal(resp$status_code, 200)
   cnt <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
   expect_equal(cnt$json, obj)
+})
+
+test_that("curl multi options", {
+  # It is not possible to query the options that were set on a handle,
+  # so this is not a great test case.
+  withr::local_options(
+    async_http_total_con = 1,
+    async_http_host_con = 1,
+    async_multiplext = 1
+  )
+  do <- function() {
+    http_get(http$url("/delay/0.34"))
+  }
+  tic <- proc.time()["elapsed"]
+  synchronise(when_all(do(), do(), do()))
+  toc <- proc.time()["elapsed"]
+  expect_true(toc - tic > as.difftime(1, units = "secs"))
 })

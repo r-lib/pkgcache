@@ -64,30 +64,27 @@ test_that("mixing deferred and timers", {
       counter <<- counter + 1L
       if (counter == 3L) t$cancel()
     }
-    t <- async_timer$new(.2, cb)
+    t <- async_timer$new(.6, cb)
     delay(s)$then(function() "OK")
   }
 
-  ## Do it once to warm up, it is more robust this way
-  synchronise(do(.3))
-
   ## Once we have the output, we quit
-  start <- Sys.time()
-  res <- synchronise(do(.30))
-  end <-  Sys.time()
-
-  expect_equal(res, "OK")
-  expect_true(end - start >= as.difftime(.30, units = "secs"))
-  expect_true(end - start <= as.difftime(4, units = "secs"))
-  expect_equal(counter, 1L)
-
-  ## Run the timer to the end
   start <- Sys.time()
   res <- synchronise(do(1))
   end <-  Sys.time()
 
   expect_equal(res, "OK")
-  expect_true(end - start >= as.difftime(2/5, units = "secs"))
-  expect_true(end - start <= as.difftime(4, units = "secs"))
+  expect_true(end - start >= as.difftime(1, units = "secs"))
+  expect_true(end - start <= as.difftime(2, units = "secs"))
+  expect_equal(counter, 1L)
+
+  ## Run the timer to the end
+  start <- Sys.time()
+  res <- synchronise(do(3))
+  end <-  Sys.time()
+
+  expect_equal(res, "OK")
+  expect_true(end - start >= as.difftime(1/5, units = "secs"))
+  expect_true(end - start <= as.difftime(5, units = "secs"))
   expect_equal(counter, 3L)
 })

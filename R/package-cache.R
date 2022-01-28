@@ -191,7 +191,7 @@ package_cache <- R6Class(
       on_progress; http_headers
       etag <- tempfile()
       async_constant()$
-        then(~ self$copy_to(target, url = urls[1], ..., .list = .list))$
+        then(function() self$copy_to(target, url = urls[1], ..., .list = .list))$
         then(function(res) {
           if (! nrow(res)) {
             download_one_of(urls, target, on_progress = on_progress,
@@ -227,7 +227,7 @@ package_cache <- R6Class(
       self; private; target; urls; path; sha256; list(...); .list;
       on_progress; http_headers
       async_constant()$
-        then(~ self$copy_to(target, url = urls[1], path = path, ...,
+        then(function() self$copy_to(target, url = urls[1], path = path, ...,
                             .list = .list))$
         then(function(res) {
           if (! nrow(res)) {

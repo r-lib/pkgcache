@@ -26,7 +26,6 @@ Imports:
     R6,
     processx (>= 3.3.0.9001),
     rappdirs,
-    rlang,
     tools,
     utils,
     uuid

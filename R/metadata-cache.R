@@ -293,7 +293,7 @@ cmc_async_deps <- function(self, private, packages, dependencies,
 
   "!!DEBUG Getting deps"
   private$async_ensure_cache()$
-    then(~ extract_deps(., packages, dependencies, recursive))
+    then(function(.) extract_deps(., packages, dependencies, recursive))
 }
 
 cmc_async_revdeps <- function(self, private, packages, dependencies,
@@ -305,7 +305,7 @@ cmc_async_revdeps <- function(self, private, packages, dependencies,
 
   "!!DEBUG Getting revdeps"
   private$async_ensure_cache()$
-    then(~ extract_revdeps(., packages, dependencies, recursive))
+    then(function(.) extract_revdeps(., packages, dependencies, recursive))
 }
 
 cmc_async_list <- function(self, private, packages) {
@@ -323,9 +323,9 @@ cmc_async_update <- function(self, private) {
   if (!is.null(private$update_deferred)) return(private$update_deferred)
 
   private$update_deferred <- async(private$update_replica_pkgs)()$
-    then(~ private$update_replica_rds())$
-    then(~ private$update_primary())$
-    then(~ private$data)$
+    then(function() private$update_replica_rds())$
+    then(function() private$update_primary())$
+    then(function() private$data)$
     catch(error = function(err) {
       err$message <- msg_wrap(
         conditionMessage(err), "\n\n",

@@ -242,7 +242,7 @@ test_that("fix_encodings", {
   expect_snapshot(lapply(lst2$Bad, charToRaw))
 })
 
-test_that("fix encodings on tibbles", {
+test_that("fix encodings on data frames", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
   lst <- as_bytes(list(
@@ -251,9 +251,9 @@ test_that("fix encodings on tibbles", {
     Maintainer = c("Gabor", "G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1")),
     Bad = c("G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1"), "Gabor")
   ))
-  tbl <- tibble::as_tibble(lst)
+  tbl <- as_data_frame(lst)
   tbl2 <- fix_encodings(tbl)
-  expect_s3_class(tbl2, "tbl_df")
+  expect_s3_class(tbl2, "tbl")
   expect_snapshot(tbl2$Package)
   expect_snapshot(tbl2$Encoding)
   expect_snapshot(Encoding(tbl2$Maintainer))

@@ -4,7 +4,7 @@
 #' It checks the status of the configured or supplied repositories,
 #' for the specified platforms and R versions.
 #'
-#' The returned tibble has a `summary()` method, which shows
+#' The returned data frame has a `summary()` method, which shows
 #' the same information is a concise table. See examples below.
 #'
 #' @param platforms Platforms to use, default is [default_platforms()].
@@ -16,7 +16,7 @@
 #'   how pkgcache handles Bioconductor repositories.
 #' @param cran_mirror The CRAN mirror to use, see
 #'   [default_cran_mirror()].
-#' @return A tibble that has a row for every repository, on every
+#' @return A data frame that has a row for every repository, on every
 #' queried platform and R version. It has these columns:
 #' * `name`: the name of the repository. This comes from the names
 #'   of the configured repositories in `options("repos")`, or
@@ -76,7 +76,7 @@ async_repo_status <- function(platforms = default_platforms(),
 
   wc_dirs <- merge(
     subset(dirs[dirs$r_version == "*", ], select = -r_version),
-    tibble::tibble(r_version = r_version)
+    data_frame(r_version = r_version)
   )
 
   dirs <- rbind(wc_dirs, dirs[dirs$r_version != "*", ])
@@ -93,7 +93,7 @@ async_repo_status <- function(platforms = default_platforms(),
     by = "r_version"
   )
 
-  sts <- tibble::as_tibble(rbind(wc_sts, nwc_sts))
+  sts <- as_data_frame(rbind(wc_sts, nwc_sts))
 
   fns <- paste0("PACKAGES", c(".rds", ".gz", ""))
   urls <- mapx(sts$url, "/", sts$path, "/", list(fns), paste0)
@@ -139,7 +139,7 @@ summary.pkgcache_repo_status <- function(object, ...) {
       " (R ", object$r_version, ")"
     )
   }
-  ssm <- tibble::tibble(repository = unique(key))
+  ssm <- data_frame(repository = unique(key))
 
   pls <- unique(object$platform)
   for (pl in pls) ssm[[pl]] <- TRUE

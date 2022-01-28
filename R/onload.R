@@ -339,6 +339,9 @@ pkgenv$rspm_versions <- c(
 pkgenv$package_versions <- new.env(parent = emptyenv())
 
 onload_pkgcache <- function(libname, pkgname) {
+  if (Sys.getenv("PKGCACHE_NO_PILLAR") == "") {
+    requireNamespace("pillar", quietly = TRUE)
+  }
   pkgenv$global_metadata_cache <- new.env(parent = emptyenv())
   pkgenv$archive_cache <- new.env(parent = emptyenv())
 }

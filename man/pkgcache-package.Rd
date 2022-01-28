@@ -23,9 +23,13 @@ You can install the released version of pkgcache from
 
 \code{meta_cache_list()} lists all packages in the metadata cache. It
 includes Bioconductor package, and all versions (i.e. both binary and
-source) of the packages for the current platform and R version.\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
+source) of the packages for the current platform and R version.
+
+(We load the pillar package, because it makes the pkgcache data frames
+print nicer, similarly to tibbles.)\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
+library(pillar)
 meta_cache_list()
-#> # A tibble: 42,556 x 32
+#> # A data frame: 41,440 x 32
 #>    package  version depends  suggests  license imports  linkingto archs enhances
 #>    <chr>    <chr>   <chr>    <chr>     <chr>   <chr>    <chr>     <chr> <chr>   
 #>  1 A3       1.0.0   R (>= 2~ randomFo~ GPL (>~ <NA>     <NA>      <NA>  <NA>    
@@ -38,11 +42,11 @@ meta_cache_list()
 #>  8 ABHgeno~ 1.0.1   <NA>     knitr, r~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
 #>  9 ABPS     0.3     <NA>     testthat  GPL (>~ kernlab  <NA>      <NA>  <NA>    
 #> 10 ACA      1.1     R (>= 3~ <NA>      GPL     graphic~ <NA>      <NA>  <NA>    
-#> # ... with 42,546 more rows, and 23 more variables: os_type <chr>,
+#> # ... with 41,430 more rows, and 23 more variables: os_type <chr>,
 #> #   priority <chr>, license_is_foss <chr>, license_restricts_use <chr>,
 #> #   repodir <chr>, rversion <chr>, platform <chr>, needscompilation <chr>,
 #> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
-#> #   mirror <chr>, sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
+#> #   mirror <chr>, sources <list>, filesize <dbl>, sha256 <chr>, sysreqs <chr>,
 #> #   built <chr>, published <dttm>, deps <list>, md5sum <chr>, path <chr>
 }\if{html}{\out{</div>}}
 
@@ -67,32 +71,34 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 146
+#> [1] 1482
 #> 
 #> $size
-#> [1] 151224905
+#> [1] 1610749135
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A tibble: 146 x 11
+#> # A data frame: 1,482 x 11
 #>    fullpath  path   package  url   etag  sha256 version platform built vignettes
 #>    <chr>     <chr>  <chr>    <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/g~ bin/m~ R6       http~ "\"1~ 7244f~ 2.5.1   x86_64-~    NA        NA
-#>  2 /Users/g~ bin/m~ RColorB~ http~ "\"c~ fac4f~ 1.1-2   x86_64-~    NA        NA
-#>  3 /Users/g~ bin/m~ Formula  http~ "\"2~ 02b11~ 1.2-4   x86_64-~    NA        NA
-#>  4 /Users/g~ bin/m~ base64e~ http~ "\"7~ 40811~ 0.1-3   x86_64-~    NA        NA
-#>  5 /Users/g~ bin/m~ abind    http~ "\"f~ b7dc5~ 1.4-5   x86_64-~    NA        NA
-#>  6 /Users/g~ bin/m~ backpor~ http~ "\"1~ 812be~ 1.3.0   x86_64-~    NA        NA
-#>  7 /Users/g~ bin/m~ corpcor  http~ "\"1~ af4a3~ 1.6.10  x86_64-~    NA        NA
-#>  8 /Users/g~ bin/m~ crayon   http~ "\"2~ 1a582~ 1.4.2   x86_64-~    NA        NA
-#>  9 /Users/g~ bin/m~ checkma~ http~ "\"a~ 47f0b~ 2.0.0   x86_64-~    NA        NA
-#> 10 /Users/g~ bin/m~ cli      http~ "\"1~ bf6cd~ 3.1.0   x86_64-~    NA        NA
-#> # ... with 136 more rows, and 1 more variable: rversion <int>
+#>  1 /Users/g~ archi~ <NA>     http~ "W/\~ 96c17~ <NA>    <NA>        NA        NA
+#>  2 /Users/g~ bin/m~ plogr    http~ "\"3~ 2b195~ 0.2.0   aarch64~    NA        NA
+#>  3 /Users/g~ src/c~ RMariaDB http~ "\"d~ c9176~ 1.2.1   source      NA        NA
+#>  4 /Users/g~ bin/m~ RMariaDB http~ "\"2~ 1483f~ 1.2.0   aarch64~    NA        NA
+#>  5 /Users/g~ src/c~ remotes  <NA>   <NA> fcad1~ <NA>    <NA>         0        NA
+#>  6 /Users/g~ bin/m~ archive  http~ "\"1~ 5a6c0~ 1.1.3   aarch64~    NA        NA
+#>  7 /Users/g~ src/c~ prompt   http~ "\"2~ 13cd8~ 1.0.1   source      NA        NA
+#>  8 /Users/g~ bin/m~ assertt~ http~ "\"a~ d3c8b~ 0.2.0   x86_64-~    NA        NA
+#>  9 /Users/g~ bin/m~ cli      http~ "\"4~ 15c3c~ 1.0.0   x86_64-~    NA        NA
+#> 10 /Users/g~ bin/m~ crayon   http~ "\"a~ 1cca1~ 1.3.4   x86_64-~    NA        NA
+#> # ... with 1,472 more rows, and 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A tibble: 2 x 11
-#>   fullpath   path   package url    etag  sha256 version platform built vignettes
-#>   <chr>      <chr>  <chr>   <chr>  <chr> <chr>  <chr>   <chr>    <int>     <int>
-#> 1 /Users/ga~ bin/m~ dplyr   https~ "\"6~ c7fac~ 1.0.7   x86_64-~    NA        NA
-#> 2 /Users/ga~ src/c~ dplyr   https~ "\"d~ d2fe3~ 1.0.7   source      NA        NA
-#> # ... with 1 more variable: rversion <int>
+#> # A data frame: 4 x 11
+#>   fullpath  path   package url     etag  sha256 version platform built vignettes
+#> * <chr>     <chr>  <chr>   <chr>   <chr> <chr>  <chr>   <chr>    <int>     <int>
+#> 1 /Users/g~ src/c~ dplyr   https:~ "\"d~ d2fe3~ 1.0.7   source      NA        NA
+#> 2 /Users/g~ bin/m~ dplyr   https:~ "\"5~ ae115~ 0.8.5   x86_64-~    NA        NA
+#> 3 /Users/g~ bin/m~ dplyr   https:~ "\"6~ 93f35~ 1.0.7   x86_64-~    NA        NA
+#> 4 /Users/g~ bin/m~ dplyr   https:~ "\"1~ c7fac~ 1.0.7   x86_64-~    NA        NA
+#> # ... with 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,

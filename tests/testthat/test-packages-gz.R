@@ -96,7 +96,7 @@ test_that("packages_parse_deps", {
 
   pkgs1 <- pkgs$pkgs[1,]
   deps <- packages_parse_deps(pkgs1)
-  expect_true(inherits(deps, "tbl_df"))
+  expect_true(inherits(deps, "tbl"))
   expect_equal(
     colnames(deps),
     c("upstream", "idx", "ref", "type", "package", "op",  "version"))
@@ -131,8 +131,8 @@ test_that("merge_packages_data", {
 })
 
 test_that("rbind_expand", {
-  d1 <- tibble::tibble(a = 1:2, b = c("a", "b"), c = NA_character_)
-  d2 <- tibble::tibble(a = 3:4, c = c("c", "d"), d = c(1L, 2L))
+  d1 <- data_frame(a = 1:2, b = c("a", "b"), c = NA_character_)
+  d2 <- data_frame(a = 3:4, c = c("c", "d"), d = c(1L, 2L))
   m <- rbind_expand(d1, d2)
   expect_identical(names(m), c("a", "b", "c", "d"))
   expect_identical(m$a, 1:4)

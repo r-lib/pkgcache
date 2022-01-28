@@ -179,7 +179,7 @@
       [1] 47 61 62 6f 72
       
 
-# fix encodings on tibbles
+# fix encodings on data frames
 
     Code
       tbl2$Package

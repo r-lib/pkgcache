@@ -24,9 +24,9 @@ test_that("metadata api", {
   }
 
   ret <- callr::r(fun)
-  expect_true("tbl_df" %in% ret[[1]])
+  expect_true("tbl" %in% ret[[1]])
   expect_true("R" %in% ret[[2]])
-  expect_s3_class(ret[[3]], "tbl_df")
+  expect_s3_class(ret[[3]], "tbl")
   expect_true("igraph" %in% ret[[3]]$package)
   expect_true("igraph" %in% ret[[4]]$package)
   expect_true("pkgconfig" %in% ret[[5]]$package)

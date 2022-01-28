@@ -14,7 +14,7 @@ file, which will be read using \code{\link[base:readRDS]{base::readRDS()}}. Othe
 \code{path} is assumed to be uncompressed.}
 }
 \value{
-A tibble, with all columns from the file at \code{path}.
+A data frame, with all columns from the file at \code{path}.
 }
 \description{
 Parse a repository metadata \verb{PACAKGES*} file
@@ -28,7 +28,7 @@ error.
 }
 \section{Note}{
 \code{parse_packages()} cannot currently read files that have very many
-different fields (many columns in the result tibble). The current
+different fields (many columns in the result data frame). The current
 limit is 1000. Typical \code{PACKAGES} files contain less than 20 field
 types.
 }

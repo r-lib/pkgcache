@@ -30,7 +30,7 @@ version.}
 \value{
 \code{bioc_version()} returns a \link{package_version} object.
 
-\code{bioc_version_map()} returns a tibble with columns:
+\code{bioc_version_map()} returns a data frame with columns:
 \itemize{
 \item \code{bioc_version}: \link{package_version} object, Bioconductor versions.
 \item \code{r_version}: \link{package_version} object, the matching R versions.

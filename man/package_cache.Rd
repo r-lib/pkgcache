@@ -70,15 +70,15 @@ function \code{http_get()}.
 a platform dependent user level cache directory.) If the cache does
 not exists, it creates it.
 
-\code{pc$list()} lists all files in the cache, returns a tibble with all the
+\code{pc$list()} lists all files in the cache, returns a data frame with all the
 default columns, and potentially extra columns as well.
 
 \code{pc$find()} list all files that match the specified criteria (\code{fullpath},
 \code{path}, \code{package}, etc.). Custom columns can be searched for as well.
 
 \code{pc$copy_to()} will copy the first matching file from the cache to
-\code{target}. It returns the tibble of \emph{all} matching records, invisibly.
-If no file matches, it returns an empty (zero-row) tibble.
+\code{target}. It returns the data frame of \emph{all} matching records, invisibly.
+If no file matches, it returns an empty (zero-row) data frame.
 
 \code{pc$add()} adds a file to the cache.
 

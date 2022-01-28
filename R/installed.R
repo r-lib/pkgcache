@@ -231,9 +231,9 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
 
   tbl <- as_data_frame(tab)
   if (lowercase) {
-    tbl$libpath <- library
+    tbl$libpath <- if (nrow(tbl)) library else character()
   } else {
-    tbl$LibPath <- library
+    tbl$LibPath <- if (nrow(tbl)) library else character()
   }
 
   # Filter out errors

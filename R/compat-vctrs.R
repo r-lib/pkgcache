@@ -1,27 +1,7 @@
 
 compat_vctrs <- local({
 
-# nocov start - compat-vctrs.R
-# Latest version: https://github.com/r-lib/rlang/blob/master/R/compat-vctrs.R
-
-# This file provides a minimal shim to provide a vctrs-like API on top of
-# base R functions. They are not drop-in replacements but allow a similar style
-# of programming.
-#
-# The main goal of these functions is robust-by-default manipulation
-# of data frames without having to depend on tibble or vctrs. The
-# embedded type system is minimal and not extensible.
-
-# 2021-08-27:
-# * `vec_slice()` now preserves attributes of data frames and vectors.
-# * `vec_ptype2()` detects unspecified columns of data frames.
-
-# 2021-08-26:
-# * Added compat for `vec_as_location()`.
-#
-# 2021-05-28:
-# * Initial revision.
-
+# Modified from https://github.com/r-lib/rlang/blob/master/R/compat-vctrs.R
 
 # Construction ------------------------------------------------------------
 
@@ -153,14 +133,6 @@ vec_slice <- function(x, i) {
       row_names <- attr(out, "row.names")
     }
 
-    # Restore attributes
-    mtd <- .rlang_vctrs_s3_method("[", class(x))
-    if (is_null(mtd) || identical(environment(mtd), asNamespace("base"))) {
-      attrib <- attributes(x)
-      attrib$row.names <- row_names
-      attributes(out) <- attrib
-    }
-
     return(out)
   }
 
@@ -176,15 +148,6 @@ vec_slice <- function(x, i) {
   } else {
     j <- rep(list(quote(expr = )), d - 1)
     out <- eval(as.call(list(quote(`[`), quote(x), quote(i), j, drop = FALSE)))
-  }
-
-  mtd <- .rlang_vctrs_s3_method("[", class(x))
-  if (is_null(mtd) || identical(environment(mtd), asNamespace("base"))) {
-    attrib <- attributes(x)
-    attrib$names <- attr(out, "names")
-    attrib$dim <- attr(out, "dim")
-    attrib$dim.names <- attr(out, "dim.names")
-    attributes(out) <- attrib
   }
 
   out

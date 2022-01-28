@@ -22,7 +22,7 @@
 #' dx
 
 async <- function(fun) {
-  fun <- as_function(fun)
+  fun <- as.function(fun)
   if (is_async(fun)) return(fun)
 
   async_fun <- fun
@@ -1082,7 +1082,7 @@ def__run_action <- function(self, private) {
 
   if (!is.null(action)) {
     if (!is.function(action)) {
-      action <- as_function(action)
+      action <- as.function(action)
       formals(action) <- alist(resolve = NULL, progress = NULL)
     }
     assert_that(is_action_function(action))
@@ -1239,7 +1239,7 @@ def__make_parent_resolve <- function(fun) {
   if (is.null(fun)) {
     function(value, resolve) resolve(value)
   } else if (!is.function(fun)) {
-    fun <- as_function(fun)
+    fun <- as.function(fun)
     function(value, resolve) resolve(fun(value))
   } else if (num_args(fun) == 0) {
     function(value, resolve) resolve(fun())
@@ -1259,7 +1259,7 @@ def__make_parent_reject <- function(fun) {
   } else if (is.list(fun)) {
     def__make_parent_reject_catch(fun)
   } else if (!is.function(fun)) {
-    fun <- as_function(fun)
+    fun <- as.function(fun)
     function(value, resolve) resolve(fun(value))
   } else if (num_args(fun) == 0) {
     function(value, resolve) resolve(fun())
@@ -1274,12 +1274,12 @@ def__make_parent_reject <- function(fun) {
 }
 
 def__make_parent_reject_catch <- function(handlers) {
-  handlers <- lapply(handlers, as_function)
+  handlers <- lapply(handlers, as.function)
   function(value, resolve) {
     ok <- FALSE
     ret <- tryCatch({
-      quo <- quo(tryCatch(stop(value), !!!handlers))
-      ret <- eval_tidy(quo)
+      quo <- as.call(c(list(quote(tryCatch), quote(stop(value))), handlers))
+      ret <- eval(quo)
       ok <- TRUE
       ret
     }, error = function(x) x)
@@ -1583,6 +1583,9 @@ event_loop <- R6Class(
     add_http = function(handle, callback, file = NULL, progress = NULL,
                         data = NULL)
       el_add_http(self, private, handle, callback, file, progress, data),
+    http_setopt = function(total_con = NULL, host_con = NULL, multiplex = NULL)
+      el_http_setopt(self, private, total_con, host_con, multiplex),
+
     add_process = function(conns, callback, data)
       el_add_process(self, private, conns, callback, data),
     add_r_process = function(conns, callback, data)
@@ -1611,8 +1614,8 @@ event_loop <- R6Class(
   private = list(
     create_task = function(callback, ..., id =  NULL, type = "foobar")
       el__create_task(self, private, callback, ..., id = id, type = type),
-    ensure_pool = function(...)
-      el__ensure_pool(self, private, ...),
+    ensure_pool = function()
+      el__ensure_pool(self, private),
     get_poll_timeout = function()
       el__get_poll_timeout(self, private),
     run_pending = function()
@@ -1638,7 +1641,8 @@ event_loop <- R6Class(
     curl_poll = TRUE,                  # should we poll for curl sockets?
     curl_timer = NULL,                 # call multi_run() before this
     next_ticks = character(),
-    worker_pool = NULL
+    worker_pool = NULL,
+    http_opts = NULL
   )
 )
 
@@ -2005,8 +2009,40 @@ el__create_task <- function(self, private, callback, data, ..., id, type) {
 
 #' @importFrom curl new_pool
 
-el__ensure_pool <- function(self, private, ...) {
-  if (is.null(private$pool)) private$pool <- new_pool(...)
+el__ensure_pool <- function(self, private) {
+  getopt <- function(nm) {
+    anm <- paste0("async_http_", nm)
+    if (!is.null(v <- getOption(anm))) return(v)
+    if (!is.na(v <- Sys.getenv(toupper(anm), NA_character_))) return(v)
+    NULL
+  }
+  if (is.null(private$pool)) {
+    private$http_opts <- list(
+      total_con = getopt("total_con") %||% 100,
+      host_con = getopt("host_con") %||%  6,
+      multiplex  = getopt("multiplex") %||% TRUE
+    )
+    private$pool <- new_pool(
+      total_con = private$http_opts$total_con,
+      host_con =  private$http_opts$host_con,
+      multiplex = private$http_opts$multiplex
+    )
+  }
+}
+
+#' @importFrom curl multi_set
+
+el_http_setopt <- function(self, private, total_con, host_con, multiplex) {
+  private$ensure_pool()
+  if (!is.null(total_con)) private$http_opts$total_con <- total_con
+  if (!is.null(host_con))  private$http_opts$host_con  <- host_con
+  if (!is.null(multiplex)) private$http_opts$multiplex <- multiplex
+  multi_set(
+    pool = private$pool,
+    total_con = private$http_opts$total_con,
+    host_con = private$http_opts$host_con,
+    multiplex = private$http_opts$multiplex
+  )
 }
 
 el__get_poll_timeout <- function(self, private) {
@@ -2724,10 +2760,30 @@ http_statuses <- c(
   "599" = "Network connect timeout error (Unknown)"
 )
 
+#' Set curl HTTP options in an event loop
+#'
+#' The event loop must be already running. In other words, you can only
+#' call this function from async functions.
+#'
+#' The default values are set when the first deferred HTTP operation of the
+#' event loop is created, and they are taken from the `async_http_total_con`,
+#' `async_http_host_con` and `async_http_multiplex` options.
+#'
+#' @param total_con,host_con,multiplex They are passed to
+#'   [curl::multi_set()]. If an argument is `NULL` (the default) then it is
+#'   ignored.
+#' @noRd
+#' @family asyncronous HTTP calls
+
+http_setopt <- function(total_con = NULL, host_con = NULL, multiplex = NULL) {
+  get_default_event_loop()$http_setopt(total_con, host_con, multiplex)
+  invisible()
+}
+
 # # Standalone file for controlling when and where to build vignettes ----
 #
 # The canonical location of this file is in the asciicast package:
-# https://github.com/r-lib/asciicast/tree/main/R/lazyrmd.R
+# https://github.com/r-lib/asciicast/master/R/lazyrmd.R
 #
 # This standalone file provides a vignette builder that gives you more
 # control about when, where and how the vignettes of an R package will be
@@ -3062,9 +3118,6 @@ async_map_limit <- function(.x, .f, ..., .args = list(), .limit = Inf) {
 }
 
 ## nocov end
-
-#' @import rlang
-NULL
 
 #' Asynchronous external process execution
 #'
@@ -3638,7 +3691,7 @@ async_timeout <- function(task, timeout, ...) {
     type = "timeout", call = sys.call(),
     action = function(resolve) {
       task(...)$then(function(x) list("ok", x))$then(self)
-      delay(timeout)$then(~ list("timeout"))$then(self)
+      delay(timeout)$then(function() list("timeout"))$then(self)
     },
     parent_resolve = function(value, resolve) {
       if (!done) {
@@ -4016,6 +4069,31 @@ crash <- function () {
 
 str_trim <- function(x) {
   sub("\\s+$", "", sub("^\\s+", "", x))
+}
+
+expr_name <- function(expr) {
+  if (is.null(expr)) {
+    return("NULL")
+  }
+
+  if (is.symbol(expr)) {
+    return(as.character(expr))
+  }
+
+  if (is.call(expr)) {
+    cl <- as.list(expr)[[1]]
+    if (is.symbol(cl)) {
+      return(as.character(cl))
+    } else {
+      return(paste0(format(cl), collapse = ""))
+    }
+  }
+
+  if (is.atomic(expr) && length(expr) == 1) {
+    return(as.character(expr))
+  }
+
+  gsub("\n.*$", "...", as.character(expr))
 }
 
 #' Deferred value for a set of deferred values

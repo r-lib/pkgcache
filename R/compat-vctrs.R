@@ -626,14 +626,13 @@ environment()
 
 data_frame <- compat_vctrs$data_frame
 
-as_data_frame <- function(...) {
-  x <- as.data.frame(
-    ...,
-    stringsAsFactors = FALSE
-  )
-
-  class(x) <- c("tbl", "data.frame")
-  x
+as_data_frame <- function(x) {
+  if (is.matrix(x)) {
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+  } else {
+    x <- compat_vctrs$vec_recycle_common(x)
+  }
+  compat_vctrs$new_data_frame(x, .class = "tbl")
 }
 
 # nocov end

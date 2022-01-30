@@ -27,8 +27,7 @@ Imports:
     processx (>= 3.3.0.9001),
     rappdirs,
     tools,
-    utils,
-    uuid
+    utils
 Suggests:
     covr,
     debugme,

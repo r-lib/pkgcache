@@ -1992,10 +1992,8 @@ el__io_poll <- function(self, private, timeout) {
   }
 }
 
-#' @importFrom uuid UUIDgenerate
-
 el__create_task <- function(self, private, callback, data, ..., id, type) {
-  id <- id %||% UUIDgenerate()
+  id <- id %||% get_uuid()
   private$tasks[[id]] <- list(
     type = type,
     id = id,
@@ -4094,6 +4092,13 @@ expr_name <- function(expr) {
   }
 
   gsub("\n.*$", "...", as.character(expr))
+}
+
+get_uuid <- function() {
+  async_env$pid <- async_env$pid %||% Sys.getpid()
+  async_env$counter <- async_env$counter %||% 0
+  async_env$counter <- async_env$counter + 1L
+  paste0(async_env$pid, "-", async_env$counter)
 }
 
 #' Deferred value for a set of deferred values

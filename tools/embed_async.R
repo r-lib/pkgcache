@@ -7,6 +7,8 @@ if (!file.exists("../async")) {
 
 unlink("R/aaa-async.R")
 files <- list.files("../async/R", full.names = TRUE)
+# We don't need this, we have our own copy, which is slightly different
+files <- files[!grepl("aa-assertthat.R", files)]
 for (f in files) file.append("R/aaa-async.R", f)
 
 ## Do not export anything

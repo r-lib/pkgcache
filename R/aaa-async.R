@@ -84,9 +84,6 @@ is_async <- function(fun) {
   is.list(a <- attr(body(fun), "async")) && identical(a$async, TRUE)
 }
 
-#' @importFrom assertthat assert_that on_failure<-
-NULL
-
 is_string <- function(x) {
   is.character(x) && length(x) == 1 && !is.na(x)
 }

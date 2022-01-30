@@ -11,7 +11,6 @@ packages_gz_cols <- function()  {
 }
 
 #' @importFrom tools file_ext
-#' @importFrom assertthat assert_that
 
 read_packages_file <- function(path, mirror, repodir, platform,
                                type = "standard", meta_path = NA_character_,

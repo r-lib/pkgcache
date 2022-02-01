@@ -140,10 +140,8 @@ na_omit <- function(x) {
   x[!is.na(x)]
 }
 
-#' @importFrom digest digest
-
 shasum256 <- function(x) {
-  digest(algo = "sha256", file = x)
+  cli::hash_file_sha256(x)
 }
 
 file.size <- function (...) {

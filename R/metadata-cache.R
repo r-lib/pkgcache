@@ -405,13 +405,13 @@ cmc_cleanup <- function(self, private, force) {
   unlink(cache_dir, recursive = TRUE, force = TRUE)
 }
 
-#' @importFrom digest digest
+#' @importFrom cli hash_obj_md5
 #' @importFrom utils URLencode
 
 repo_encode <- function(repos) {
   paste0(
     vcapply(repos$name, URLencode, reserved = TRUE), "-",
-    substr(vcapply(repos$url, digest), 1, 10)
+    substr(vcapply(repos$url, "hash_obj_md5"), 1, 10)
   )
 }
 
@@ -424,8 +424,8 @@ cran_metadata_url <- function() {
 cmc__get_cache_files <- function(self, private, which) {
   root <- private[[paste0(which, "_path")]]
 
-  repo_hash <- digest(list(repos = private$repos, dirs = private$dirs,
-                           version = private$cache_version))
+  repo_hash <- hash_obj_md5(list(repos = private$repos, dirs = private$dirs,
+                                 version = private$cache_version))
 
   str_platforms <- paste(private$platforms, collapse = "+")
   rds_file <- paste0("pkgs-", substr(repo_hash, 1, 10), ".rds")

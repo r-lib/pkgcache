@@ -128,7 +128,7 @@ cran_archive_cache <- R6Class(
 
   private = list(
     get_hash = function() {
-      digest(list(private$cran_mirror, private$cache_version))
+      cli::hash_obj_md5(list(private$cran_mirror, private$cache_version))
     },
     get_cache_file = function(which = c("primary", "replica"))
       cac__get_cache_file(self, private, match.arg(which)),
@@ -427,7 +427,7 @@ cac__update_primary <- function(self, private, lock) {
 }
 
 get_archive_cache <- function(cran_mirror) {
-  hash <- digest::digest(cran_mirror)
+  hash <- cli::hash_obj_md5(cran_mirror)
   if (is.null(pkgenv$archive_cache[[hash]])) {
     pkgenv$archive_cache[[hash]] <-
       cran_archive_cache$new(cran_mirror = cran_mirror)

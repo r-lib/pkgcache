@@ -239,7 +239,7 @@ packages_make_sources <- function(mirror, platform, target, repodir,
   }
 
   if (!is.null(downloadurl)) {
-    srcs[!is.na(downloadurl)] <- as.list(na.omit(downloadurl))
+    srcs[!is.na(downloadurl)] <- as.list(na_omit(downloadurl))
   }
 
   srcs

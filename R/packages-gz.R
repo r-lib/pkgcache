@@ -74,7 +74,8 @@ read_packages_file <- function(path, mirror, repodir, platform,
     platform, repodir, pkgs$package, pkgs$version, pkgs[["file"]], pkgs[["path"]])
   pkgs$mirror <- if (nrow(pkgs)) mirror else character()
   pkgs$sources <- packages_make_sources(
-    mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version, type)
+    mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version,
+    type, pkgs$downloadurl)
 
   if (!is.null(meta)) {
     metatarget <- paste0(repodir, "/", meta$file)
@@ -207,7 +208,7 @@ packages_make_target <- function(platform, repodir, package, version,
 }
 
 packages_make_sources <- function(mirror, platform, target, repodir,
-                                  package, version, type) {
+                                  package, version, type, downloadurl) {
 
   assert_that(
     is_string(mirror),
@@ -215,14 +216,16 @@ packages_make_sources <- function(mirror, platform, target, repodir,
     is_character(target),
     is_string(repodir),
     is_character(package),
-    is_character(version), length(version) == length(package))
+    is_character(version), length(version) == length(package),
+    is.null(downloadurl) || is.character(downloadurl)
+  )
 
   if (!length(package)) return(list())
 
   url <- paste0(mirror, "/", target)
 
   os <- parse_platform(platform)$os
-  if (type == "cran" && !is.na(os) && grepl("^darwin", os)) {
+  srcs <- if (type == "cran" && !is.na(os) && grepl("^darwin", os)) {
     macurl <- paste0("https://mac.r-project.org/", target)
     zip_vecs(url, macurl)
 
@@ -234,6 +237,12 @@ packages_make_sources <- function(mirror, platform, target, repodir,
   } else {
     as.list(url)
   }
+
+  if (!is.null(downloadurl)) {
+    srcs[!is.na(downloadurl)] <- as.list(na.omit(downloadurl))
+  }
+
+  srcs
 }
 
 merge_packages_data <- function(..., .list = list()) {

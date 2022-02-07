@@ -242,7 +242,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
       if (resp$status_code == 304) {
         "!DEBUG download not needed, `url` current"
         etag <- unname(etag_old)
-      } else if (resp$status_code == 200) {
+      } else if (resp$status_code == 200 || resp$status_code == 0) {
         "!DEBUG downloaded `url`"
         file.rename(tmp_destfile, destfile)
         etag <- parse_headers_list(resp$headers)[["etag"]] %||% NA_character_

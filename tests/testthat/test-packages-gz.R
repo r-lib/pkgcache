@@ -41,7 +41,7 @@ test_that("packages_make_sources", {
     packages_make_sources(
       "URL", "x86_64-apple-darwin17.0",
       c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
-      c("p1", "p2"), c("1.0", "2.0"), type = "cran"),
+      c("p1", "p2"), c("1.0", "2.0"), type = "cran", downloadurl = NULL),
     list(c("URL/s/c/p1_1.0.tgz", "https://mac.r-project.org/s/c/p1_1.0.tgz"),
          c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")
   ))
@@ -49,10 +49,21 @@ test_that("packages_make_sources", {
   expect_equal(
     packages_make_sources(
       "URL", "source", c("s/c/xx.tar.gz", "s/c/yy.tar.gz"), "s/c",
-      c("p1", "p2"), c("1.0", "2.0"), type = "cran"),
+      c("p1", "p2"), c("1.0", "2.0"), type = "cran", downloadurl = NULL),
     list(c("URL/s/c/xx.tar.gz", "URL/s/c/Archive/p1_1.0.tar.gz"),
          c("URL/s/c/yy.tar.gz", "URL/s/c/Archive/p2_2.0.tar.gz"))
   )
+
+  urls <- c("foo", NA)
+
+  expect_equal(
+    packages_make_sources(
+      "URL", "x86_64-apple-darwin17.0",
+      c("s/c/p1_1.0.tgz", "s/c/p2_2.0.tgz"), "s/c",
+      c("p1", "p2"), c("1.0", "2.0"), type = "cran", downloadurl = urls),
+    list(c("foo"),
+         c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")
+  ))
 })
 
 test_that("read_packages_file", {

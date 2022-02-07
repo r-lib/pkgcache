@@ -16,6 +16,9 @@
 * pkgcache now uses HTTP 1.1 on Linux as well, because of crashes with
   HTTP/2.
 
+* pkgcache now supports `file:///`, repositories, i.e. repositorires on
+  the local file system.
+
 # pkgcache 1.3.0
 
 * pkgcache now works better on M1 macs.

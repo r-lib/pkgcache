@@ -107,7 +107,7 @@ test_that("parse_packages, <CR><LF>", {
 
 test_that("parse_packages, errors", {
   expect_error(
-    parse_packages(tempfile()),
+    parse_packages(tempfile(), type = "uncompressed"),
     "Cannot open file"
   )
 

@@ -4,14 +4,20 @@
 \alias{parse_packages}
 \title{Parse a repository metadata \verb{PACAKGES*} file}
 \usage{
-parse_packages(path)
+parse_packages(path, type = NULL)
 }
 \arguments{
-\item{path}{Path to \code{PACKAGES}. The file can be \code{gzip} compressed, with
-extension \code{.gz}; \code{bzip2} compressed, with extension \code{.bz2} or \code{bzip2};
-or \code{xz} compressed with extension \code{xz}. It may also be a \code{PACKAGES.rds}
-file, which will be read using \code{\link[base:readRDS]{base::readRDS()}}. Otherwise the file at
-\code{path} is assumed to be uncompressed.}
+\item{path}{Path to the \verb{PACKAGES*} file.}
+
+\item{type}{Type of the file. By default it is determined automatically.
+Types:
+\itemize{
+\item \code{uncompressed},
+\item \code{gzip} compressed,
+\item \code{bzip2} compressed,
+\item \code{xz} compressed.
+\item \code{rds}, an RDS file, which will be read using \code{\link[base:readRDS]{base::readRDS()}}.
+}}
 }
 \value{
 A data frame, with all columns from the file at \code{path}.

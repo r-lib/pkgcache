@@ -62,24 +62,28 @@ fix_encodings <- function(lst, col = "Encoding") {
 #' limit is 1000. Typical `PACKAGES` files contain less than 20 field
 #' types.
 #'
-#' @param path Path to `PACKAGES`. The file can be `gzip` compressed, with
-#'   extension `.gz`; `bzip2` compressed, with extension `.bz2` or `bzip2`;
-#'   or `xz` compressed with extension `xz`. It may also be a `PACKAGES.rds`
-#'   file, which will be read using [base::readRDS()]. Otherwise the file at
-#'   `path` is assumed to be uncompressed.
+#' @param path Path to the `PACKAGES*` file.
+#' @param type Type of the file. By default it is determined automatically.
+#'   Types:
+#'   * `uncompressed`,
+#'   * `gzip` compressed,
+#'   * `bzip2` compressed,
+#'   * `xz` compressed.
+#'   * `rds`, an RDS file, which will be read using [base::readRDS()].
 #' @return A data frame, with all columns from the file at `path`.
 #'
 #' @export
 
-parse_packages <- function(path) {
+parse_packages <- function(path, type = NULL) {
   stopifnot(
-    "`path` must be a character scalar" = is_string(path)
+    "`path` must be a character scalar" = is_string(path),
+    is.null(type) || (is_string(type) && type %in% packages_types)
   )
   path <- path.expand(path)
   path <- encode_path(path)
 
-  ext <- tools::file_ext(path)
-  if (ext == "rds") {
+  type <- type %||% guess_packages_type(path)
+  if (type == "rds") {
     tab <- readRDS(path)
 
   } else {
@@ -88,37 +92,75 @@ parse_packages <- function(path) {
       stop(cmp)
     }
 
-    if (ext == "gz") {
+    if (type == "gzip") {
       if (getRversion() >= "4.0.0") {
         bts <- memDecompress(cmp, type = "gzip")
       } else {
         bts <- gzip_decompress(cmp)     # nocov
       }
-    } else if (ext %in% c("bz2", "bzip2")) {
+    } else if (type == "bzip2") {
       bts <- memDecompress(cmp, type = "bzip2")
-    } else if (ext == "xz") {
+    } else if (type == "xz") {
       bts <- memDecompress(cmp, type = "xz")
     } else {
       bts <- cmp
     }
 
-    tab <- .Call(pkgcache_parse_packages_raw, bts)
-    tab[] <- lapply(tab, function(x) {
-      x <- gsub("\r", "", fixed = TRUE, x)
-      empt <- is.na(x)
-      miss <- x == ""
-      x[empt] <- ""
-      x[miss] <- NA_character_
-      x
-    })
+    # Might still be an RDS we just uncompressed
+    if (length(bts) >= 2 &&
+        bts[1] %in% as.raw(c(0x58, 0x41, 0x42)) &&
+        bts[2] == 0x0a) {
+      tab <- unserialize(bts)
 
-    # this is rarely needed for PACKAGES files, included for completeness
-    tab <- fix_encodings(tab)
+    } else {
+      tab <- .Call(pkgcache_parse_packages_raw, bts)
+      tab[] <- lapply(tab, function(x) {
+        x <- gsub("\r", "", fixed = TRUE, x)
+        empt <- is.na(x)
+        miss <- x == ""
+        x[empt] <- ""
+        x[miss] <- NA_character_
+        x
+      })
+
+      # this is rarely needed for PACKAGES files, included for completeness
+      tab <- fix_encodings(tab)
+    }
   }
 
   tbl <- as_data_frame(tab)
 
   tbl
+}
+
+packages_types <- c("uncompressed", "gzip", "bzip2", "xz", "rds")
+
+guess_packages_type <- function(path) {
+  buf <- readBin(path, what = "raw", 6)
+
+  if (length(buf) >= 3 &&
+      buf[1] == 0x1f &&
+      buf[2] == 0x8b &&
+      buf[3] == 0x08) return("gzip")
+
+  if (length(buf) >= 3 &&
+      buf[1] == 0x42 &&
+      buf[2] == 0x5a &&
+      buf[3] == 0x68) return("bzip2")
+
+  if (length(buf) >= 6 &&
+      buf[1] == 0xFD &&
+      buf[2] == 0x37 &&
+      buf[3] == 0x7A &&
+      buf[4] == 0x58 &&
+      buf[5] == 0x5A &&
+      buf[6] == 0x00) return("xz")
+
+  if (length(buf) >= 2 &&
+      buf[1] %in% as.raw(c(0x58, 0x41, 0x42)) &&
+      buf[2] == 0x0a) return("rds")
+
+  "uncompressed"
 }
 
 #' List metadata of installed packages

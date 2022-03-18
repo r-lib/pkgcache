@@ -1,8 +1,10 @@
 Package: pkgcache
 Title: Cache 'CRAN'-Like Metadata and R Packages
 Version: 2.0.1.9000
-Authors@R: 
-    person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
+    person("RStudio", role = c("cph", "fnd"))
+    )
 Description: Metadata and package cache for CRAN-like repositories.  This
     is a utility package to be used by package management tools that want
     to take advantage of caching.

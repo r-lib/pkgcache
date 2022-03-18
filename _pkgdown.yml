@@ -1,4 +1,45 @@
 url: https://r-lib.github.io/pkgcache/
-template:
-  bootstrap: 5
 
+template:
+  package: tidytemplate
+  bootstrap: 5
+  includes:
+    in_header: |
+      <script defer data-domain="r-lib.github.io/pkgcache,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
+
+development:
+  mode: auto
+
+reference:
+- title: CRAN-like metadata cache
+  contents:
+  - cranlike_metadata_cache
+  - cran_archive_cache
+  - cran_archive_summary
+  - get_cranlike_metadata_cache
+  - meta_cache_summary
+
+- title: Package cache
+  contents:
+  - package_cache
+  - pkg_cache_summary
+
+- title: Repositories
+  contents:
+  - repo_get
+  - repo_status
+
+- title: Parsing
+  contents:
+  - parse_installed
+  - parse_packages
+
+- title: Configuration
+  contents:
+  - bioc_version
+  - current_r_platform
+  - default_cran_mirror
+
+- title: internal
+  contents:
+  - pkgcache-package

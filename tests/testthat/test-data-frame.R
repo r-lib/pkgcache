@@ -1,6 +1,4 @@
 
-context("data-frame")
-
 test_that("find_in_data_frame", {
   df <- data.frame(
     stringsAsFactors = FALSE,

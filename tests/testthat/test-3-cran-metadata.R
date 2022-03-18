@@ -1,6 +1,4 @@
 
-context("CRAN metadata")
-
 test_that("what if cran.r-pkg.org is down?", {
   skip_if_offline()
   skip_on_cran()

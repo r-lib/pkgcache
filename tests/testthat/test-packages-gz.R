@@ -1,4 +1,3 @@
-context("packages-gz")
 
 test_that("packages_make_target", {
 

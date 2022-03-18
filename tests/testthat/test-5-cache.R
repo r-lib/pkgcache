@@ -1,6 +1,4 @@
 
-context("cache")
-
 test_that("init", {
   pc <- package_cache$new(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE))

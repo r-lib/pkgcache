@@ -1,6 +1,4 @@
 
-context("metadata-api")
-
 test_that("metadata api", {
 
   skip_if_offline()

@@ -1,6 +1,4 @@
 
-context("utils")
-
 test_that("%||%", {
   expect_equal(NULL %||% 100, 100)
   expect_equal(100 %||% 1000, 100)

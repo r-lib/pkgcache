@@ -1,6 +1,4 @@
 
-context("async http")
-
 test_that("read_etag", {
   cat("foobar\n", file = tmp <- tempfile())
   expect_equal(read_etag(tmp), "foobar")
@@ -40,15 +38,20 @@ test_that("download_file, errors", {
   skip_if_offline()
 
   tmp <- tempfile()
-  expect_error(
+  err <- tryCatch(
     synchronise(download_file("http://0.42.42.42", tmp)),
-    class = c("async_rejected", "async_http_error")
+    error = function(e) e
   )
+  expect_s3_class(err, "async_rejected")
+  expect_s3_class(err, "async_http_error")
 
-  expect_error(
+  err2 <- tryCatch(
     synchronise(download_file(http$url("/status/404"), tmp)),
-    class = c("async_rejected", "async_http_401", "async_http_error")
+    error = function(e) e
   )
+  expect_s3_class(err2, "async_rejected")
+  expect_s3_class(err2, "async_http_404")
+  expect_s3_class(err2, "async_http_error")
 
   ret <- synchronise(download_file(
     "https://eu.httpbin.org/status/404",
@@ -118,21 +121,26 @@ test_that("download_if_newer, error", {
   cat("dummy\n", file = target <- tempfile())
   on.exit(unlink(target), add = TRUE)
 
-  expect_error(
+  err <- tryCatch(
     synchronise(download_if_newer(
       url <- "http://0.42.42.42",
       destfile = target
     )),
-    class = c("async_rejected", "async_http_error")
+    error = function(e) e
   )
+  expect_s3_class(err, "async_rejected")
+  expect_s3_class(err, "async_http_error")
 
-  expect_error(
+  err <- tryCatch(
     synchronise(download_if_newer(
       url <- http$url("/status/404"),
       destfile = target
     )),
-    class = c("async_rejected", "async_http_404", "async_http_error")
+    error = function(e) e
   )
+  expect_s3_class(err, "async_rejected")
+  expect_s3_class(err, "async_http_404")
+  expect_s3_class(err, "async_http_error")
 
   err <- tryCatch(
     synchronise(download_if_newer(

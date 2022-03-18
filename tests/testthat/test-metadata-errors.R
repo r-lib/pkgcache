@@ -1,6 +1,4 @@
 
-context("metadata-errors")
-
 test_that("invalid PACKAGES file warns", {
   pri <- test_temp_dir()
   rep <- test_temp_dir()

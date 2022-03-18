@@ -1,6 +1,4 @@
 
-context("spelling")
-
 test_package_root <- function() {
   x <- tryCatch(
     rprojroot::find_package_root_file(),

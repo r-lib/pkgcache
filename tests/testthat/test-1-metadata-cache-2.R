@@ -1,6 +1,4 @@
 
-context("metadata cache 2/3")
-
 test_that("check_update", {
 
   skip_if_offline()

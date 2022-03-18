@@ -1,6 +1,8 @@
 BioC
 BioConductor
+CMD
 Capitan
+Codecov
 ETag
 ETags
 El
@@ -17,3 +19,4 @@ lifecycle
 macOS
 pak
 tibble
+tibbles

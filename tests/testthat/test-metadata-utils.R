@@ -1,6 +1,4 @@
 
-context("metadata-utils")
-
 test_that("bioconductor$get_repos", {
   skip_if_offline()
   skip_on_cran()

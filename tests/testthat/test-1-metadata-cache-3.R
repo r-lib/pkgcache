@@ -1,6 +1,4 @@
 
-context("metadata cache 3/3")
-
 test_that("concurrency in update", {
   skip_if_offline()
   skip_on_cran()

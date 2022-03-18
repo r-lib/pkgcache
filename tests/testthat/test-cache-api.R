@@ -1,6 +1,4 @@
 
-context("cache api")
-
 test_that("cache api", {
   dir.create(tmp <- tempfile())
   dir.create(tmp2 <- tempfile())

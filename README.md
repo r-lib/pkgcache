@@ -10,10 +10,9 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.org/package=pkgcache)
-[![R build
-status](https://github.com/r-lib/pkgcache/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/pkgcache/actions)
-[![Coverage
-status](https://codecov.io/gh/r-lib/pkgcache/branch/main/graph/badge.svg)](https://codecov.io/github/r-lib/pkgcache?branch=main)
+[![R-CMD-check](https://github.com/r-lib/pkgcache/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/pkgcache/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/r-lib/pkgcache/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/pkgcache?branch=main)
 <!-- badges: end -->
 
 Metadata and package cache for CRAN-like repositories. This is a utility
@@ -35,23 +34,27 @@ install.packages("pkgcache")
 includes Bioconductor package, and all versions (i.e. both binary and
 source) of the packages for the current platform and R version.
 
+(We load the pillar package, because it makes the pkgcache data frames
+print nicer, similarly to tibbles.)
+
 ``` r
 library(pkgcache)
+library(pillar)
 meta_cache_list()
-#> # A tibble: 40,825 x 32
-#>    package  version depends  suggests  license imports  linkingto archs enhances
-#>    <chr>    <chr>   <chr>    <chr>     <chr>   <chr>    <chr>     <chr> <chr>   
-#>  1 A3       1.0.0   R (>= 2~ randomFo~ GPL (>~ <NA>     <NA>      <NA>  <NA>    
-#>  2 AATtools 0.0.1   R (>= 3~ <NA>      GPL-3   magritt~ <NA>      <NA>  <NA>    
-#>  3 ABACUS   1.0.0   R (>= 3~ rmarkdow~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
-#>  4 ABC.RAP  0.9.0   R (>= 3~ knitr, r~ GPL-3   graphic~ <NA>      <NA>  <NA>    
-#>  5 ABCanal~ 1.2.1   R (>= 2~ <NA>      GPL-3   plotrix  <NA>      <NA>  <NA>    
-#>  6 ABCoptim 0.15.0  <NA>     testthat~ MIT + ~ Rcpp, g~ Rcpp      ABCo~ <NA>    
-#>  7 ABCp2    1.2     MASS     <NA>      GPL-2   <NA>     <NA>      <NA>  <NA>    
-#>  8 ABHgeno~ 1.0.1   <NA>     knitr, r~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
-#>  9 ABPS     0.3     <NA>     testthat  GPL (>~ kernlab  <NA>      <NA>  <NA>    
-#> 10 ACA      1.1     R (>= 3~ <NA>      GPL     graphic~ <NA>      <NA>  <NA>    
-#> # ... with 40,815 more rows, and 23 more variables: os_type <chr>,
+#> # A data frame: 42,012 x 32
+#>    package     version depends suggests license imports linkingto archs enhances
+#>    <chr>       <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
+#>  1 A3          1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
+#>  2 AATtools    0.0.1   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA>  <NA>    
+#>  3 ABACUS      1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  4 ABC.RAP     0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA>  <NA>    
+#>  5 ABCanalysis 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA>  <NA>    
+#>  6 ABCoptim    0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
+#>  7 ABCp2       1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
+#>  8 ABHgenotyp~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  9 ABPS        0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
+#> 10 ACA         1.1     R (>= ~ <NA>     GPL     graphi~ <NA>      <NA>  <NA>    
+#> # ... with 42,002 more rows, and 23 more variables: os_type <chr>,
 #> #   priority <chr>, license_is_foss <chr>, license_restricts_use <chr>,
 #> #   repodir <chr>, rversion <chr>, platform <chr>, needscompilation <chr>,
 #> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
@@ -82,38 +85,39 @@ pkg_cache_summary()
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 203
+#> [1] 413
 #> 
 #> $size
-#> [1] 112241143
+#> [1] 3493123806
 ```
 
 ``` r
 pkg_cache_list()
-#> # A tibble: 203 x 11
-#>    fullpath  path   package  url   etag  sha256 version platform built vignettes
-#>    <chr>     <glue> <chr>    <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/g~ bin/m~ lifecyc~ http~ "\"1~ 2a93c~ 1.0.1   aarch64~    NA        NA
-#>  2 /Users/g~ bin/m~ tibble   http~ "\"c~ 61fd0~ 3.1.6   aarch64~    NA        NA
-#>  3 /Users/g~ src/c~ dplyr    <NA>   <NA> fc181~ <NA>    <NA>         0        NA
-#>  4 /Users/g~ src/c~ rlang    <NA>   <NA> 20b7f~ <NA>    <NA>         0        NA
-#>  5 /Users/g~ bin/m~ askpass  http~ "\"5~ f724f~ 1.1     macos       NA        NA
-#>  6 /Users/g~ bin/m~ cachem   http~ "\"1~ 4efc0~ 1.0.6   macos       NA        NA
-#>  7 /Users/g~ bin/m~ brio     http~ "\"9~ 623ea~ 1.1.2   macos       NA        NA
-#>  8 /Users/g~ bin/m~ clipr    http~ "\"b~ 65f4b~ 0.7.1   macos       NA        NA
-#>  9 /Users/g~ bin/m~ brew     http~ "\"1~ bf6da~ 1.0-6   macos       NA        NA
-#> 10 /Users/g~ bin/m~ commonm~ http~ "\"4~ dccce~ 1.7     macos       NA        NA
-#> # ... with 193 more rows, and 1 more variable: rversion <int>
+#> # A data frame: 413 x 11
+#>    fullpath    path  package url   etag  sha256 version platform built vignettes
+#>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <chr> <chr>    
+#>  1 /Users/gab~ src/~ pak     file~  <NA> 4e451~ 0.2.0.~ source   <NA>  <NA>     
+#>  2 /Users/gab~ src/~ pak     <NA>   <NA> <NA>   0.2.0.~ aarch64~ TRUE  FALSE    
+#>  3 /Users/gab~ bin/~ cli     http~ "\"1~ cbf6f~ 3.1.1   aarch64~ <NA>  <NA>     
+#>  4 /Users/gab~ src/~ R7      <NA>   <NA> 76af5~ <NA>    <NA>     FALSE <NA>     
+#>  5 /Users/gab~ src/~ Annota~ http~ "\"4~ 9c18b~ 1.18.0  source   <NA>  <NA>     
+#>  6 /Users/gab~ bin/~ GGally  http~ "\"1~ a8ab8~ 2.1.2   aarch64~ <NA>  <NA>     
+#>  7 /Users/gab~ src/~ ensemb~ http~ "\"3~ 0913f~ 2.18.3  source   <NA>  <NA>     
+#>  8 /Users/gab~ src/~ bioviz~ http~ "\"2~ 5faa6~ 1.42.0  source   <NA>  <NA>     
+#>  9 /Users/gab~ src/~ Annota~ http~ "\"4~ 283e2~ 1.56.2  source   <NA>  <NA>     
+#> 10 /Users/gab~ src/~ rtrack~ http~ "\"3~ 0c5e4~ 1.54.0  source   <NA>  <NA>     
+#> # ... with 403 more rows, and 1 more variable: rversion <chr>
 ```
 
 ``` r
 pkg_cache_find(package = "dplyr")
-#> # A tibble: 2 x 11
-#>   fullpath  path   package url     etag  sha256 version platform built vignettes
-#>   <chr>     <glue> <chr>   <chr>   <chr> <chr>  <chr>   <chr>    <int>     <int>
-#> 1 /Users/g~ src/c~ dplyr   <NA>     <NA> fc181~ <NA>    <NA>         0        NA
-#> 2 /Users/g~ bin/m~ dplyr   https:~ "\"1~ e46b3~ 1.0.7   aarch64~    NA        NA
-#> # ... with 1 more variable: rversion <int>
+#> # A data frame: 3 x 11
+#>   fullpath     path  package url   etag  sha256 version platform built vignettes
+#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <chr> <chr>    
+#> 1 /Users/gabo~ src/~ dplyr   http~ "\"d~ 3b6aa~ 1.0.8   source   <NA>  <NA>     
+#> 2 /Users/gabo~ bin/~ dplyr   http~ "\"6~ e46b3~ 1.0.7   aarch64~ <NA>  <NA>     
+#> 3 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 94913~ 1.0.8   aarch64~ <NA>  <NA>     
+#> # ... with 1 more variable: rversion <chr>
 ```
 
 `pkg_cache_add_file()` can be used to add a file,
@@ -201,8 +205,7 @@ while running `R CMD check`.
 ## Code of Conduct
 
 Please note that the pkgcache project is released with a [Contributor
-Code of
-Conduct](https://github.com/r-lib/pkgcache/blob/main/.github/CODE_OF_CONDUCT.md).
+Code of Conduct](https://r-lib.github.io/pkgcache/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
 
 ## License

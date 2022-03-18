@@ -11,3 +11,4 @@
 /src/*.dll
 /src/*.gcno
 /src/*.gcda
+docs

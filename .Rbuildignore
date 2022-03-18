@@ -20,3 +20,6 @@
 ^src/.*[.]gcda$
 ^src/.*[.]gcno$
 ^.covrignore$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

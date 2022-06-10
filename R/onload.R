@@ -344,6 +344,7 @@ onload_pkgcache <- function(libname, pkgname) {
   }
   pkgenv$global_metadata_cache <- new.env(parent = emptyenv())
   pkgenv$archive_cache <- new.env(parent = emptyenv())
+  err$onload_hook()
 }
 
 if (exists(".onLoad", inherits = FALSE)) {

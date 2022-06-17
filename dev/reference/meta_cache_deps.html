@@ -77,17 +77,26 @@ R version, from the default repositories.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>packages</dt>
 <dd><p>Packages to query.</p></dd>
+
+
 <dt>dependencies</dt>
 <dd><p>Dependency types to query. See the <code>dependencies</code>
 parameter of <code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">utils::install.packages()</a></code>.</p></dd>
+
+
 <dt>recursive</dt>
 <dd><p>Whether to query recursive dependencies.</p></dd>
+
+
 <dt>force</dt>
 <dd><p>Whether to force cleanup without asking the user.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame of the dependencies. For
+    
+
+<p>A data frame of the dependencies. For
 <code>meta_cache_deps()</code> and <code>meta_cache_revdeps()</code> it includes the
 queried <code>packages</code> as well.</p>
     </div>
@@ -112,8 +121,8 @@ and size.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A data frame: 2 × 32</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   package version depends      suggests   license needscompilation imports</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> pkgdown 2.0.3   R (&gt;= 3.1.0) <span style="color: #949494;">"</span>covr, di… MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> pkgdown 2.0.3   R (&gt;= 3.1.0) <span style="color: #949494;">"</span>covr, di… MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> pkgdown 2.0.4   R (&gt;= 3.1.0) <span style="color: #949494;">"</span>covr, di… MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> pkgdown 2.0.4   R (&gt;= 3.1.0) <span style="color: #949494;">"</span>covr, di… MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 25 more variables: linkingto &lt;chr&gt;, enhances &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   os_type &lt;chr&gt;, path &lt;chr&gt;, repodir &lt;chr&gt;, rversion &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   platform &lt;chr&gt;, priority &lt;chr&gt;, ref &lt;chr&gt;, type &lt;chr&gt;, direct &lt;lgl&gt;,</span></span>
@@ -147,10 +156,10 @@ and size.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   package    version depends     suggests license needscompilation imports</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> CALANGO    1.0.10  R (&gt;= 3.6.… <span style="color: #949494;">"</span>Annota… GPL-2   no               <span style="color: #949494;">"</span>asser…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> pkgdown    2.0.3   R (&gt;= 3.1.… <span style="color: #949494;">"</span>covr, … MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> pkgdown    2.0.4   R (&gt;= 3.1.… <span style="color: #949494;">"</span>covr, … MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> preferably 0.4     R (&gt;= 3.4.…  <span style="color: #BB0000;">NA</span>      MIT + … no               <span style="color: #949494;">"</span>pkgdo…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> CALANGO    1.0.10  R (&gt;= 3.6.… <span style="color: #949494;">"</span>Annota… GPL-2   no               <span style="color: #949494;">"</span>asser…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> pkgdown    2.0.3   R (&gt;= 3.1.… <span style="color: #949494;">"</span>covr, … MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> pkgdown    2.0.4   R (&gt;= 3.1.… <span style="color: #949494;">"</span>covr, … MIT + … no               <span style="color: #949494;">"</span>bslib…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> preferably 0.4     R (&gt;= 3.4.…  <span style="color: #BB0000;">NA</span>      MIT + … no               <span style="color: #949494;">"</span>pkgdo…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 25 more variables: linkingto &lt;chr&gt;, enhances &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   os_type &lt;chr&gt;, path &lt;chr&gt;, repodir &lt;chr&gt;, rversion &lt;chr&gt;,</span></span>
@@ -172,7 +181,7 @@ and size.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

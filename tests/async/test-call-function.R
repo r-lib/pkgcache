@@ -112,7 +112,7 @@ test_that("handling call errors", {
   expect_true(is_count(res[[2]]))
   expect_true(is_count(res[[3]]))
   expect_s3_class(res[[4]], "async_rejected")
-  expect_match(res[[4]]$message, "nope")
+  expect_match(conditionMessage(res[[4]]), "nope")
 })
 
 test_that("mix calls with others", {

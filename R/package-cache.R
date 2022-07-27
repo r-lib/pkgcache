@@ -158,7 +158,7 @@ package_cache <- R6Class(
       db <- append_to_data_frame(
         db, fullpath = target, path = path, ..., sha256 = null2na(sha256),
         .list = .list)
-      saveRDS(db, dbfile, version = 2)
+      save_rds(db, dbfile)
       db[nrow(db), ]
     },
 
@@ -281,7 +281,7 @@ package_cache <- R6Class(
       if (nrow(ex) != 0) {
         unlink(file.path(private$path, ex$path))
         db <- delete_from_data_frame(readRDS(dbfile), ..., .list = .list)
-        saveRDS(db, dbfile, version = 2)
+        save_rds(db, dbfile)
       }
     }
   ),
@@ -327,7 +327,7 @@ create_empty_db_file_if_needed <- function(path) {
 
   l <- lock(lockfile)
   on.exit(unlock(l))
-  saveRDS(df, file = dbfile, version = 2)
+  save_rds(df, dbfile)
 }
 
 make_empty_db_data_frame <- function() {

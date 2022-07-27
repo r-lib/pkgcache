@@ -203,3 +203,7 @@ gzip_decompress <- function(from, chunk_size = 5 * 1000 * 1000) {
   }
   do.call("c", pieces)
 }
+
+save_rds <- function(data, path) {
+  saveRDS(data, file = path, version = 2, compress = FALSE)
+}

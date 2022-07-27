@@ -399,7 +399,7 @@ cac__convert_archive_file <- function(self, private, raw, out) {
   res <- res[ord, ]
 
   private$data <- res
-  saveRDS(res, out)
+  save_rds(res, out)
   private$data_time <- file_get_time(out)
   private$update_memory_cache()
 

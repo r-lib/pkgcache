@@ -10,9 +10,9 @@
     to take advantage of caching.">
 <title>Cache CRAN-Like Metadata and R Packages • pkgcache</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="deps/_Source%20Sans%20Pro-0.4.1/font.css" rel="stylesheet">
-<link href="deps/_Source%20Code%20Pro-0.4.1/font.css" rel="stylesheet">
+<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Cache CRAN-Like Metadata and R Packages">
@@ -84,7 +84,7 @@
 </h2>
 <p>You can install the released version of pkgcache from <a href="https://CRAN.R-project.org" class="external-link">CRAN</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pkgcache"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pkgcache"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="metadata-cache">Metadata cache<a class="anchor" aria-label="anchor" href="#metadata-cache"></a>
@@ -92,28 +92,28 @@
 <p><code><a href="reference/meta_cache_deps.html">meta_cache_list()</a></code> lists all packages in the metadata cache. It includes Bioconductor package, and all versions (i.e. both binary and source) of the packages for the current platform and R version.</p>
 <p>(We load the pillar package, because it makes the pkgcache data frames print nicer, similarly to tibbles.)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/pkgcache#readme" class="external-link">pkgcache</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pillar.r-lib.org/" class="external-link">pillar</a></span><span class="op">)</span>
-<span class="fu"><a href="reference/meta_cache_deps.html">meta_cache_list</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A data frame: 42,012 x 32</span>
-<span class="co">#&gt;    package     version depends suggests license imports linkingto archs enhances</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;   </span>
-<span class="co">#&gt;  1 A3          1.0.0   R (&gt;= ~ randomF~ GPL (&gt;~ &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  2 AATtools    0.0.1   R (&gt;= ~ &lt;NA&gt;     GPL-3   magrit~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  3 ABACUS      1.0.0   R (&gt;= ~ rmarkdo~ GPL-3   ggplot~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  4 ABC.RAP     0.9.0   R (&gt;= ~ knitr, ~ GPL-3   graphi~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  5 ABCanalysis 1.2.1   R (&gt;= ~ &lt;NA&gt;     GPL-3   plotrix &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  6 ABCoptim    0.15.0  &lt;NA&gt;    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ &lt;NA&gt;    </span>
-<span class="co">#&gt;  7 ABCp2       1.2     MASS    &lt;NA&gt;     GPL-2   &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  8 ABHgenotyp~ 1.0.1   &lt;NA&gt;    knitr, ~ GPL-3   ggplot~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt;  9 ABPS        0.3     &lt;NA&gt;    testthat GPL (&gt;~ kernlab &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt; 10 ACA         1.1     R (&gt;= ~ &lt;NA&gt;     GPL     graphi~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span>
-<span class="co">#&gt; # ... with 42,002 more rows, and 23 more variables: os_type &lt;chr&gt;,</span>
-<span class="co">#&gt; #   priority &lt;chr&gt;, license_is_foss &lt;chr&gt;, license_restricts_use &lt;chr&gt;,</span>
-<span class="co">#&gt; #   repodir &lt;chr&gt;, rversion &lt;chr&gt;, platform &lt;chr&gt;, needscompilation &lt;chr&gt;,</span>
-<span class="co">#&gt; #   ref &lt;chr&gt;, type &lt;chr&gt;, direct &lt;lgl&gt;, status &lt;chr&gt;, target &lt;chr&gt;,</span>
-<span class="co">#&gt; #   mirror &lt;chr&gt;, sources &lt;list&gt;, filesize &lt;dbl&gt;, sha256 &lt;chr&gt;, sysreqs &lt;chr&gt;,</span>
-<span class="co">#&gt; #   built &lt;chr&gt;, published &lt;dttm&gt;, deps &lt;list&gt;, md5sum &lt;chr&gt;, path &lt;chr&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/pkgcache#readme" class="external-link">pkgcache</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pillar.r-lib.org/" class="external-link">pillar</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/meta_cache_deps.html">meta_cache_list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A data frame: 42,012 x 32</span></span>
+<span><span class="co">#&gt;    package     version depends suggests license imports linkingto archs enhances</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 A3          1.0.0   R (&gt;= ~ randomF~ GPL (&gt;~ &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  2 AATtools    0.0.1   R (&gt;= ~ &lt;NA&gt;     GPL-3   magrit~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  3 ABACUS      1.0.0   R (&gt;= ~ rmarkdo~ GPL-3   ggplot~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  4 ABC.RAP     0.9.0   R (&gt;= ~ knitr, ~ GPL-3   graphi~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  5 ABCanalysis 1.2.1   R (&gt;= ~ &lt;NA&gt;     GPL-3   plotrix &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  6 ABCoptim    0.15.0  &lt;NA&gt;    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  7 ABCp2       1.2     MASS    &lt;NA&gt;     GPL-2   &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  8 ABHgenotyp~ 1.0.1   &lt;NA&gt;    knitr, ~ GPL-3   ggplot~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  9 ABPS        0.3     &lt;NA&gt;    testthat GPL (&gt;~ kernlab &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt; 10 ACA         1.1     R (&gt;= ~ &lt;NA&gt;     GPL     graphi~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt; # ... with 42,002 more rows, and 23 more variables: os_type &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   priority &lt;chr&gt;, license_is_foss &lt;chr&gt;, license_restricts_use &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   repodir &lt;chr&gt;, rversion &lt;chr&gt;, platform &lt;chr&gt;, needscompilation &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   ref &lt;chr&gt;, type &lt;chr&gt;, direct &lt;lgl&gt;, status &lt;chr&gt;, target &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   mirror &lt;chr&gt;, sources &lt;list&gt;, filesize &lt;dbl&gt;, sha256 &lt;chr&gt;, sysreqs &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   built &lt;chr&gt;, published &lt;dttm&gt;, deps &lt;list&gt;, md5sum &lt;chr&gt;, path &lt;chr&gt;</span></span></code></pre></div>
 <p><code><a href="reference/meta_cache_deps.html">meta_cache_deps()</a></code> and <code><a href="reference/meta_cache_deps.html">meta_cache_revdeps()</a></code> can be used to look up dependencies and reverse dependencies.</p>
 <p>The metadata is updated automatically if it is older than seven days, and it can also be updated manually with <code><a href="reference/meta_cache_deps.html">meta_cache_update()</a></code>.</p>
 <p>See the <code>cranlike_metadata_cache</code> R6 class for a lower level API, and more control.</p>
@@ -124,40 +124,40 @@
 <p>Package management tools may use the <code>pkg_cache_*</code> functions and in particular the <code>package_cache</code> class, to make use of local caching of package files.</p>
 <p>The <code>pkg_cache_*</code> API is high level, and uses a user level cache:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/pkg_cache_api.html">pkg_cache_summary</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; $cachepath</span>
-<span class="co">#&gt; [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $files</span>
-<span class="co">#&gt; [1] 413</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $size</span>
-<span class="co">#&gt; [1] 3493123806</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/pkg_cache_api.html">pkg_cache_summary</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $cachepath</span></span>
+<span><span class="co">#&gt; [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $files</span></span>
+<span><span class="co">#&gt; [1] 413</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $size</span></span>
+<span><span class="co">#&gt; [1] 3493123806</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/pkg_cache_api.html">pkg_cache_list</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A data frame: 413 x 11</span>
-<span class="co">#&gt;    fullpath    path  package url   etag  sha256 version platform built vignettes</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    </span>
-<span class="co">#&gt;  1 /Users/gab~ src/~ pak     file~  &lt;NA&gt; 4e451~ 0.2.0.~ source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt;  2 /Users/gab~ src/~ pak     &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;   0.2.0.~ aarch64~ TRUE  FALSE    </span>
-<span class="co">#&gt;  3 /Users/gab~ bin/~ cli     http~ "\"1~ cbf6f~ 3.1.1   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt;  4 /Users/gab~ src/~ R7      &lt;NA&gt;   &lt;NA&gt; 76af5~ &lt;NA&gt;    &lt;NA&gt;     FALSE &lt;NA&gt;     </span>
-<span class="co">#&gt;  5 /Users/gab~ src/~ Annota~ http~ "\"4~ 9c18b~ 1.18.0  source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt;  6 /Users/gab~ bin/~ GGally  http~ "\"1~ a8ab8~ 2.1.2   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt;  7 /Users/gab~ src/~ ensemb~ http~ "\"3~ 0913f~ 2.18.3  source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt;  8 /Users/gab~ src/~ bioviz~ http~ "\"2~ 5faa6~ 1.42.0  source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt;  9 /Users/gab~ src/~ Annota~ http~ "\"4~ 283e2~ 1.56.2  source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt; 10 /Users/gab~ src/~ rtrack~ http~ "\"3~ 0c5e4~ 1.54.0  source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt; # ... with 403 more rows, and 1 more variable: rversion &lt;chr&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/pkg_cache_api.html">pkg_cache_list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A data frame: 413 x 11</span></span>
+<span><span class="co">#&gt;    fullpath    path  package url   etag  sha256 version platform built vignettes</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    </span></span>
+<span><span class="co">#&gt;  1 /Users/gab~ src/~ pak     file~  &lt;NA&gt; 4e451~ 0.2.0.~ source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  2 /Users/gab~ src/~ pak     &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;   0.2.0.~ aarch64~ TRUE  FALSE    </span></span>
+<span><span class="co">#&gt;  3 /Users/gab~ bin/~ cli     http~ "\"1~ cbf6f~ 3.1.1   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  4 /Users/gab~ src/~ R7      &lt;NA&gt;   &lt;NA&gt; 76af5~ &lt;NA&gt;    &lt;NA&gt;     FALSE &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  5 /Users/gab~ src/~ Annota~ http~ "\"4~ 9c18b~ 1.18.0  source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  6 /Users/gab~ bin/~ GGally  http~ "\"1~ a8ab8~ 2.1.2   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  7 /Users/gab~ src/~ ensemb~ http~ "\"3~ 0913f~ 2.18.3  source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  8 /Users/gab~ src/~ bioviz~ http~ "\"2~ 5faa6~ 1.42.0  source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  9 /Users/gab~ src/~ Annota~ http~ "\"4~ 283e2~ 1.56.2  source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; 10 /Users/gab~ src/~ rtrack~ http~ "\"3~ 0c5e4~ 1.54.0  source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; # ... with 403 more rows, and 1 more variable: rversion &lt;chr&gt;</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/pkg_cache_api.html">pkg_cache_find</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span>
-<span class="co">#&gt; # A data frame: 3 x 11</span>
-<span class="co">#&gt;   fullpath     path  package url   etag  sha256 version platform built vignettes</span>
-<span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    </span>
-<span class="co">#&gt; 1 /Users/gabo~ src/~ dplyr   http~ "\"d~ 3b6aa~ 1.0.8   source   &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt; 2 /Users/gabo~ bin/~ dplyr   http~ "\"6~ e46b3~ 1.0.7   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt; 3 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 94913~ 1.0.8   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span>
-<span class="co">#&gt; # ... with 1 more variable: rversion &lt;chr&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/pkg_cache_api.html">pkg_cache_find</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A data frame: 3 x 11</span></span>
+<span><span class="co">#&gt;   fullpath     path  package url   etag  sha256 version platform built vignettes</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    </span></span>
+<span><span class="co">#&gt; 1 /Users/gabo~ src/~ dplyr   http~ "\"d~ 3b6aa~ 1.0.8   source   &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; 2 /Users/gabo~ bin/~ dplyr   http~ "\"6~ e46b3~ 1.0.7   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; 3 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 94913~ 1.0.8   aarch64~ &lt;NA&gt;  &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; # ... with 1 more variable: rversion &lt;chr&gt;</span></span></code></pre></div>
 <p><code><a href="reference/pkg_cache_api.html">pkg_cache_add_file()</a></code> can be used to add a file, <code><a href="reference/pkg_cache_api.html">pkg_cache_delete_files()</a></code> to remove files, <code>pkg_cache_get_files()</code> to copy files out of the cache.</p>
 <p>The <code>package_cache</code> class provides a finer API.</p>
 </div>
@@ -281,7 +281,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
   </div></footer>

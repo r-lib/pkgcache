@@ -261,6 +261,8 @@ macos_cran_platforms <- read.table(
      4.1.1 aarch64-apple-darwin20    big-sur-arm64
      4.2.0 x86_64-apple-darwin17.0   ''
      4.2.0 aarch64-apple-darwin20    big-sur-arm64
+     4.3.0 x86_64-apple-darwin17.0   ''
+     4.3.0 aarch64-apple-darwin20    big-sur-arm64
 "))
 
 # For now we only use the minor version number, because the CRAN OS version

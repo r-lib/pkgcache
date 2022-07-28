@@ -175,6 +175,8 @@ test_that("load_primary_pkgs", {
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$pkgs$path))
   fs::file_copy(get_fixture("PACKAGES-mac.gz"), pri_files$pkgs$path[1])
+  # if this fails, then we need to add a new R version to the list or
+  # CRAN macOS platforms in platform.R
   expect_error(
     synchronise(get_private(cmc)$load_primary_pkgs(oneday())),
     "Some primary PACKAGES files don't exist")

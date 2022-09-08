@@ -1,6 +1,11 @@
 
 # pkgcache development version
 
+* pkgcache error messages are better now.
+
+* pkgcache now does not compress the metadata cache files, which makes
+  loading the metadata cache faster.
+
 # pkgcache 2.0.1
 
 No user visible changes.

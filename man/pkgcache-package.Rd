@@ -15,7 +15,9 @@ advantage of caching.
 \subsection{Installation}{
 
 You can install the released version of pkgcache from
-\href{https://CRAN.R-project.org}{CRAN} with:\if{html}{\out{<div class="sourceCode r">}}\preformatted{install.packages("pkgcache")
+\href{https://CRAN.R-project.org}{CRAN} with:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{install.packages("pkgcache")
 }\if{html}{\out{</div>}}
 }
 
@@ -26,7 +28,9 @@ includes Bioconductor package, and all versions (i.e. both binary and
 source) of the packages for the current platform and R version.
 
 (We load the pillar package, because it makes the pkgcache data frames
-print nicer, similarly to tibbles.)\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
+print nicer, similarly to tibbles.)
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
 #> # A data frame: 41,440 x 32
@@ -66,7 +70,9 @@ Package management tools may use the \verb{pkg_cache_*} functions and in
 particular the \code{package_cache} class, to make use of local caching of
 package files.
 
-The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_summary()
+The \verb{pkg_cache_*} API is high level, and uses a user level cache:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_summary()
 #> $cachepath
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
@@ -75,7 +81,9 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{
 #> 
 #> $size
 #> [1] 1610749135
-}\if{html}{\out{</div>}}\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
 #> # A data frame: 1,482 x 11
 #>    fullpath  path   package  url   etag  sha256 version platform built vignettes
 #>    <chr>     <chr>  <chr>    <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
@@ -90,7 +98,9 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:\if{html}{
 #>  9 /Users/g~ bin/m~ cli      http~ "\"4~ 15c3c~ 1.0.0   x86_64-~    NA        NA
 #> 10 /Users/g~ bin/m~ crayon   http~ "\"a~ 1cca1~ 1.3.4   x86_64-~    NA        NA
 #> # ... with 1,472 more rows, and 1 more variable: rversion <chr>
-}\if{html}{\out{</div>}}\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
 #> # A data frame: 4 x 11
 #>   fullpath  path   package url     etag  sha256 version platform built vignettes
 #> * <chr>     <chr>  <chr>   <chr>   <chr> <chr>  <chr>   <chr>    <int>     <int>
@@ -189,7 +199,7 @@ while running \verb{R CMD check}.
 
 \subsection{Code of Conduct}{
 
-Please note that the pkgcache project is released with a \href{https://github.com/r-lib/pkgcache/blob/main/.github/CODE_OF_CONDUCT.md}{Contributor Code of Conduct}.
+Please note that the pkgcache project is released with a \href{https://r-lib.github.io/pkgcache/CODE_OF_CONDUCT.html}{Contributor Code of Conduct}.
 By contributing to this project, you agree to abide by its terms.
 }
 
@@ -202,11 +212,17 @@ MIT (c) \href{https://www.rstudio.com/}{RStudio Inc}
 Useful links:
 \itemize{
   \item \url{https://github.com/r-lib/pkgcache#readme}
+  \item \url{https://r-lib.github.io/pkgcache/}
   \item Report bugs at \url{https://github.com/r-lib/pkgcache/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Gábor Csárdi \email{csardi.gabor@gmail.com}
+
+Other contributors:
+\itemize{
+  \item RStudio [copyright holder, funder]
+}
 
 }

@@ -23,7 +23,9 @@ For a simple API to a session-wide instance of this class, see
 \code{\link[=pkg_cache_summary]{pkg_cache_summary()}} and the other functions listed there.
 }
 \section{Usage}{
-\preformatted{pc <- package_cache$new(path = NULL)
+
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{pc <- package_cache$new(path = NULL)
 
 pc$list()
 pc$find(..., .list = NULL)
@@ -42,7 +44,7 @@ pc$update_or_add(target, urls, path, ..., .list = NULL,
 pc$async_update_or_add(target, urls, path, ..., .list = NULL,
                on_progress = NULL, http_headers = NULL)
 pc$delete(..., .list = NULL)
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Arguments}{

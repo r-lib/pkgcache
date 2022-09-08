@@ -24,7 +24,9 @@ ETags, to minimize downloads.
 It has a synchronous and an asynchronous API.
 }
 \section{Usage}{
-\preformatted{cmc <- cranlike_metadata_cache$new(
+
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmc <- cranlike_metadata_cache$new(
   primary_path = NULL, replica_path = tempfile(),
   platforms = default_platforms(), r_version = getRversion(),
   bioc = TRUE, cran_mirror = default_cran_mirror(),
@@ -48,7 +50,7 @@ cmc$asnyc_check_update()
 cmc$summary()
 
 cmc$cleanup(force = FALSE)
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Arguments}{

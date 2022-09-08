@@ -133,6 +133,115 @@ on_failure(is_flag) <- function(call, env) {
   paste0(deparse(call$x), " must be a flag (length 1 logical)")
 }
 
+#' Retry an asynchronous function with exponential backoff
+#'
+#' Keeps trying until the function's deferred value resolves without
+#' error, or `times` tries have been performed, or `time_limit` seconds
+#' have passed since the start of the first try.
+#'
+#' Note that all unnamed arguments are passed to `task`.
+#'
+#' @param task An asynchronous function.
+#' @param ... Arguments to pass to `task`.
+#' @param .args More arguments to pass to `task`.
+#' @param times Maximum number of tries.
+#' @param time_limit Maximum number of seconds to try.
+#' @param custom_backoff If not `NULL` then a callback function to
+#'   calculate waiting time, after the `i`the try. `i` is passed as an
+#'   argument. If `NULL`, then the default is used, which is a uniform
+#'   random number of seconds between 1 and 2^i.
+#' @param on_progress Callback function for a progress bar. Retries are
+#'   announced here, if not `NULL`. `on_progress` is called with two
+#'   arguments. The first is a named list with entries:
+#'   * `event`: string that is either `"retry"` or `"givenup"`,
+#'   * `tries`: number of tried so far,
+#'   * `spent`: number of seconds spent trying so far,
+#'   * `error`: the error object for the last failure,
+#'   * `retry_in`: number of seconds before the next try.
+#'   The second argument is `progress_data`.
+#' @param progress_data `async_backoff()` will pass this object to
+#'   `on_progress` as the second argument.
+#' @return Deferred value for the operation with retries.
+#'
+#' @family async control flow
+#' @noRd
+#' @examples
+#' \donttest{
+#' afun <- function() {
+#'   wait_100_ms <- function(i) 0.1
+#'   async_backoff(
+#'     function() if (runif(1) < 0.8) stop("nope") else "yes!",
+#'     times = 5,
+#'     custom_backoff = wait_100_ms
+#'   )
+#' }
+#'
+#' # There is a slight chance that it fails
+#' tryCatch(synchronise(afun()), error = function(e) e)
+#' }
+
+async_backoff <- function(task, ..., .args = list(), times = Inf,
+                          time_limit = Inf, custom_backoff = NULL,
+                          on_progress = NULL, progress_data = NULL) {
+
+  task <- async(task)
+  args <- c(list(...), .args)
+  times <- times
+  time_limit <- time_limit
+  custom_backoff <- custom_backoff %||% default_backoff
+  on_progress <- on_progress
+  progress_data <- progress_data
+
+  did <- 0L
+  started <- NULL
+  limit <- NULL
+
+  self <- deferred$new(
+    type = "backoff", call = sys.call(),
+    action = function(resolve) {
+      started <<- Sys.time()
+      limit <<- started + time_limit
+      do.call(task, args)$then(self)
+    },
+    parent_reject = function(value, resolve) {
+      did <<- did + 1L
+      now <- Sys.time()
+      if (did < times && now < limit) {
+        wait <- custom_backoff(did)
+        if (!is.null(on_progress)) {
+          on_progress(list(
+            event = "retry",
+            tries = did,
+            spent = now - started,
+            error = value,
+            retry_in = wait
+          ), progress_data)
+        }
+        delay(wait)$
+          then(function() do.call(task, args))$
+          then(self)
+      } else {
+        if (!is.null(on_progress)) {
+          on_progress(list(
+            event = "givenup",
+            tries = did,
+            spent = now - started,
+            error = value,
+            retry_in = NA_real_
+          ), progress_data)
+        }
+        stop(value)
+      }
+    }
+  )
+}
+
+async_backoff <- mark_as_async(async_backoff)
+
+default_backoff <- function(i) {
+  as.integer(stats::runif(1, min = 1, max = 2^i) * 1000) / 1000
+}
+
 #' Asynchronous function call, in a worker pool
 #'
 #' The function will be called on another process, very much like
@@ -2775,262 +2884,6 @@ http_setopt <- function(total_con = NULL, host_con = NULL, multiplex = NULL) {
   invisible()
 }
 
-# # Standalone file for controlling when and where to build vignettes ----
-#
-# The canonical location of this file is in the asciicast package:
-# https://github.com/r-lib/asciicast/master/R/lazyrmd.R
-#
-# This standalone file provides a vignette builder that gives you more
-# control about when, where and how the vignettes of an R package will be
-# built. Possible use cases:
-# * do not rebuild vignettes on CRAN
-# * do not rebuild vignettes on a CI if the build time dependencies are
-#   not available.
-# * avoid rebuilding long running vignettes.
-# * fully static vignettes that never rebuild.
-# * etc.
-#
-# ## API
-#
-# ```
-# onload_hook(local = "if-newer", ci = TRUE, cran = "no-code")
-# build()
-# build_if_newer()
-# ```
-#
-# ## Usage
-#
-# To use this standalone in your package, do the following:
-# 1. Copy this file into your package, without changes.
-# 2. Call `lazyrmd$onload_hook()` from the `.onLoad()` function of your
-#    package. For example:
-#    ```
-#    .onLoad <- function(libname, pkgname) {
-#      lazyrmd$onload_hook(
-#        local = FALSE,
-#        ci = function() is_recording_supported(),
-#        cran = "no-code"
-#      )
-#    }
-#    ```
-# 3. Add the package itself as a vignette builder, in `DESCRIPTION`.
-# 4. Also in `DESCRIPTION`, add knitr and rmarkdown to `Suggests`, if you
-#    want to install them automatically on the CI, and/or you want to
-#    build vignettes in CRAN.
-# 5. Change the builder of the vignettes that you want to build lazily,
-#    in the YAML header. E.g.:
-#    ```
-#    vignette: >
-#    %\VignetteIndexEntry{asciicast example vignette}
-#    %\VignetteEngine{asciicast::lazyrmd}
-#    %\VignetteEncoding{UTF-8}
-#    ```
-#
-# ## NEWS:
-#
-# ### 1.0.0 -- 2019-12-01
-#
-# * First release.
-
-lazyrmd <- local({
-
-  # config ---------------------------------------------------------------
-
-  # Need to do this before we mess up the environment
-  package_name <- utils::packageName()
-  lazy_env <- environment()
-  parent.env(lazy_env) <- baseenv()
-
-  re_lazy_rmd <- "[.]Rmd$"
-
-  config = list()
-
-  # API ------------------------------------------------------------------
-
-  #' Configure the lazy vignette builder
-  #'
-  #' @noRd
-  #' @param local Whether/when to build vignettes for local builds.
-  #' @param ci Whether/when to build vignettes on the CI(s).
-  #' @param cran Whether/when to build vignettes on CRAN.
-  #'
-  #' Possible values for `local`, `ci` and `cran` are:
-  #' * `TRUE`: always (re)build the vignettes.
-  #' * `FALSE`: never (re)build the vignettes.
-  #' * `"if-newer"`: Only re(build) the vignettes if the Rmd file is newer.
-  #' * `"no-code"`: never rebuild the vignettes, and make sure that the
-  #'                `.R` file only contains dummy code. (This is to make
-  #'                sure that the `.R` file runs on CRAN.)
-  #' * a function object. This is called without arguments and if it
-  #'   returns an `isTRUE()` value, then the vignette is built.
-
-  onload_hook <- function(local = "if-newer", ci = TRUE, cran = "no-code") {
-    config <<- list(local = local, ci = ci, cran = cran, forced = NULL)
-    tools::vignetteEngine(
-      "lazyrmd",
-      weave = lazy_weave,
-      tangle = lazy_tangle,
-      pattern = re_lazy_rmd,
-      package = package_name
-    )
-  }
-
-  #' Build vignettes
-  #'
-  #' `build()` and `build_if_newer()` are is utility functions,
-  #' and you would probably not use them in the package code itself.
-  #' `build()` always rebuilds all vignettes, `build_if_newer()` only
-  #' if the source file is newer.
-  #'
-  #' @return The return value of [tools::buildVignettes()].
-
-  build_if_newer <- function() {
-    build_internal("if-newer")
-  }
-
-  build <- function() {
-    build_internal("force")
-  }
-
-  build_internal <- function(mode = c("force", "if-newer")) {
-    mode <- match.arg(mode)
-    config$forced <<- if (mode == "force") TRUE else mode
-    env_save <- Sys.getenv("LAZY_RMD_FORCED", NA_character_)
-    if (is.na(env_save)) {
-      on.exit(Sys.unsetenv("LAZY_RMD_FORCED"), add = TRUE)
-    } else {
-      on.exit(Sys.setenv(LAZY_RMD_FORCED = env_save), add = TRUE)
-    }
-    Sys.setenv(LAZY_RMD_FORCED = "true")
-    tools::buildVignettes(dir = ".", tangle = TRUE, clean = FALSE)
-  }
-
-  # internals ------------------------------------------------------------
-
-  #' This is called by [tools::buildVignettes], as the weave function of
-  #' the lazyrmd vignette engine
-
-  lazy_weave <- function(file, ...) {
-    output <- sub(re_lazy_rmd, ".html", file)
-    env <- detect_env()
-    conf <- config[[env]]
-
-    if (! should_build(file, output, conf)) {
-      message("--- chose not to rebuild vignette now")
-      create_if_needed(output, conf)
-      return(output)
-    }
-
-    message("--- weaving vignette...")
-    tic <- Sys.time()
-    ret <- weave(file, ...)
-    toc <- Sys.time()
-    message("--- weaving vignette... done in ", format(toc - tic))
-    ret
-  }
-
-  weave <- function(file, driver, syntax, encoding = "UTF-8",
-                    quiet = TRUE, ...) {
-
-    opts <- options(markdown.HTML.header = NULL)
-    on.exit({
-      knitr::opts_chunk$restore()
-      knitr::knit_hooks$restore()
-      options(opts)
-    }, add = TRUE)
-
-    knitr::opts_chunk$set(error = FALSE)
-
-    rmarkdown::render(
-      file,
-      encoding = encoding,
-      quiet = quiet,
-      envir = globalenv(),
-      ...
-    )
-  }
-
-  #' This is called by [tools::buildVignettes], as the tangle function of
-  #' the lazyrmd vignette engine
-
-  lazy_tangle <- function(file, ...) {
-    output <- sub(re_lazy_rmd, ".R", file)
-    env <- detect_env()
-    conf <- config[[env]]
-
-    if (! should_build(file, output, conf)) {
-      create_if_needed(output, conf)
-      return(output)
-    }
-
-    message("--- tangling vignette...")
-    tic <- Sys.time()
-    ret <- tangle(file, ...)
-    toc <- Sys.time()
-    message("--- tangling vignette... done in ", format(toc - tic))
-    ret
-  }
-
-  tangle <- function(file, ..., encoding = "UTF-8", quiet = FALSE) {
-    output <- sub(re_lazy_rmd, ".R", file)
-    knitr::purl(file, encoding = encoding, quiet = quiet, ...)
-  }
-
-  is_ci <- function() {
-    isTRUE(as.logical(Sys.getenv("CI")))
-  }
-
-  #' If NOT_CRAN is set to a true value, then we are local
-  #' Otherwise we are local if not running inside `R CMD check`.
-
-  is_local <- function() {
-    if (isTRUE(as.logical(Sys.getenv("NOT_CRAN")))) return(TRUE)
-    Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") == ""
-  }
-
-  detect_env <- function() {
-    # Order matters here, is_local() == TRUE on the CI as well, usually
-    if (!is.na(Sys.getenv("LAZY_RMD_FORCED", NA_character_))) return("forced")
-    if (is_ci()) return("ci")
-    if (is_local()) return("local")
-    "cran"
-  }
-
-  should_build <- function(input, output, conf) {
-    if (isTRUE(conf)) return(TRUE)
-    if (identical(conf, FALSE)) return(FALSE)
-    if (is.function(conf)) return(isTRUE(conf()))
-    if (identical(conf, "if-newer")) {
-      return(!file.exists(output) || file_mtime(input) > file_mtime(output))
-    }
-    FALSE
-  }
-
-  file_mtime <- function(...) {
-    file.info(..., extra_cols = FALSE)$mtime
-  }
-
-  create_if_needed <- function(path, conf) {
-    if (!file.exists(path)) file.create(path)
-    if (identical(conf, "no-code")) {
-      code_file <- sub("\\.html$", ".R", path)
-      message("--- creating dummy file ", basename(path))
-      cat("# Dummy file for static vignette\n", file = code_file)
-    }
-    Sys.setFileTime(path, Sys.time())
-  }
-
-  structure(
-    list(
-      .internal = lazy_env,
-      onload_hook = onload_hook,
-      build = build,
-      build_if_newer = build_if_newer
-    ),
-    class = c("standalone_lazyrmd", "standalone")
-  )
-})
-
 #' Apply an asynchronous function to each element of a vector
 #'
 #' @param .x A list or atomic vector.
@@ -3104,11 +2957,6 @@ async_map_limit <- function(.x, .f, ..., .args = list(), .limit = Inf) {
 ## nocov start
 
 .onLoad <- function(libname, pkgname) {
-  lazyrmd$onload_hook(
-    local = "if-newer",
-    ci = TRUE,
-    cran = FALSE
-  )
   if (requireNamespace("debugme", quietly = TRUE)) debugme::debugme()
 }
 

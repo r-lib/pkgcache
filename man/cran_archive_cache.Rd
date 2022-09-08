@@ -21,7 +21,9 @@ layers:
 It has a synchronous and an asynchronous API.
 }
 \section{Usage}{
-\preformatted{cac <- cran_archive_cache$new(
+
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cac <- cran_archive_cache$new(
   primary_path = NULL,
   replica_path = tempfile(),
   cran_mirror = default_cran_mirror(),
@@ -40,7 +42,7 @@ cac$async_check_update()
 cac$summary()
 
 cac$cleanup(force = FALSE)
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Arguments}{

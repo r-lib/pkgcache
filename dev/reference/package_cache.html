@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgcache</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.2.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,26 +71,27 @@
     <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
     
-<div class="sourceCode"><pre><code><span><span class="va">pc</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/package_cache.html">package_cache</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">list</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">find</span><span class="op">(</span><span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">copy_to</span><span class="op">(</span><span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">file</span>, <span class="va">path</span>, sha256 <span class="op">=</span> <span class="fu">shasum256</span><span class="op">(</span><span class="va">file</span><span class="op">)</span>, <span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">add_url</span><span class="op">(</span><span class="va">url</span>, <span class="va">path</span>, <span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span>, on_progress <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  http_headers <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">async_add_url</span><span class="op">(</span><span class="va">url</span>, <span class="va">path</span>, <span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span>, on_progress <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  http_headers <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">copy_or_add</span><span class="op">(</span><span class="va">target</span>, <span class="va">urls</span>, <span class="va">path</span>, sha256 <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>               on_progress <span class="op">=</span> <span class="cn">NULL</span>, http_headers <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">async_copy_or_add</span><span class="op">(</span><span class="va">target</span>, <span class="va">urls</span>, <span class="va">path</span>, <span class="va">...</span>, sha256 <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span>,</span>
-<span>               .list <span class="op">=</span> <span class="cn">NULL</span>, on_progress <span class="op">=</span> <span class="cn">NULL</span>, http_headers <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">update_or_add</span><span class="op">(</span><span class="va">target</span>, <span class="va">urls</span>, <span class="va">path</span>, <span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>               on_progress <span class="op">=</span> <span class="cn">NULL</span>, http_headers <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">async_update_or_add</span><span class="op">(</span><span class="va">target</span>, <span class="va">urls</span>, <span class="va">path</span>, <span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>               on_progress <span class="op">=</span> <span class="cn">NULL</span>, http_headers <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">pc</span><span class="op">$</span><span class="fu">delete</span><span class="op">(</span><span class="va">...</span>, .list <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 
+
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pc <span class="ot">&lt;-</span> package_cache<span class="sc">$</span><span class="fu">new</span>(<span class="at">path =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">list</span>()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">find</span>(..., <span class="at">.list =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">copy_to</span>(..., <span class="at">.list =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">add</span>(file, path, <span class="at">sha256 =</span> <span class="fu">shasum256</span>(file), ..., <span class="at">.list =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">add_url</span>(url, path, ..., <span class="at">.list =</span> <span class="cn">NULL</span>, <span class="at">on_progress =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">http_headers =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">async_add_url</span>(url, path, ..., <span class="at">.list =</span> <span class="cn">NULL</span>, <span class="at">on_progress =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">http_headers =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">copy_or_add</span>(target, urls, path, <span class="at">sha256 =</span> <span class="cn">NULL</span>, ..., <span class="at">.list =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">on_progress =</span> <span class="cn">NULL</span>, <span class="at">http_headers =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">async_copy_or_add</span>(target, urls, path, ..., <span class="at">sha256 =</span> <span class="cn">NULL</span>, ...,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">.list =</span> <span class="cn">NULL</span>, <span class="at">on_progress =</span> <span class="cn">NULL</span>, <span class="at">http_headers =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">update_or_add</span>(target, urls, path, ..., <span class="at">.list =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>               <span class="at">on_progress =</span> <span class="cn">NULL</span>, <span class="at">http_headers =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">async_update_or_add</span>(target, urls, path, ..., <span class="at">.list =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">on_progress =</span> <span class="cn">NULL</span>, <span class="at">http_headers =</span> <span class="cn">NULL</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>pc<span class="sc">$</span><span class="fu">delete</span>(..., <span class="at">.list =</span> <span class="cn">NULL</span>)</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
@@ -151,29 +152,29 @@ avoid unnecessary downloads.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"bar\n"</span>, file <span class="op">=</span> <span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">f1</span>, <span class="st">"/f1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpnA8Tgk/file2f2c6f833263//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpQUjuiu/file2e402341045c//f1  /f1      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">f2</span>, <span class="st">"/f2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpnA8Tgk/file2f2c6f833263//f2  /f2      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpQUjuiu/file2e402341045c//f2  /f2      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">list</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpnA8Tgk/file2f2c6f833263//f1  /f1      NA  NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpnA8Tgk/file2f2c6f833263//f2  /f2      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpQUjuiu/file2e402341045c//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpQUjuiu/file2e402341045c//f2  /f2      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">find</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"/f1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpnA8Tgk/file2f2c6f833263//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpQUjuiu/file2e402341045c//f1  /f1      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">copy_to</span><span class="op">(</span>target <span class="op">=</span> <span class="va">f3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>, path <span class="op">=</span> <span class="st">"/f1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpnA8Tgk/file2f2c6f833263//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpQUjuiu/file2e402341045c//f1  /f1      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">f3</span><span class="op">)</span></span></span>

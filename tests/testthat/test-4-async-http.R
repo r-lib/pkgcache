@@ -35,8 +35,6 @@ test_that("download_file", {
 })
 
 test_that("download_file, errors", {
-  skip_if_offline()
-
   tmp <- tempfile()
   err <- tryCatch(
     synchronise(download_file("http://0.42.42.42", tmp)),
@@ -54,7 +52,7 @@ test_that("download_file, errors", {
   expect_s3_class(err2, "async_http_error")
 
   ret <- synchronise(download_file(
-    "https://eu.httpbin.org/status/404",
+    http$url("/statud/404"),
     tmp,
     error_on_status = FALSE
   ))
@@ -267,10 +265,10 @@ test_that("download_files", {
   cat("foobar3\n", file = downloads$etag[3])
   cat("dummy\n", file = downloads$path[3])
 
-  ret <- synchronise(download_files(
+  ret <- suppressMessages(synchronise(download_files(
     downloads,
     headers = c("accept-encoding" = "")
-  ))
+  )))
 
   expect_equal(file.exists(downloads$path), rep(TRUE, 3))
   expect_equal(file.exists(downloads$etag), rep(TRUE, 3))
@@ -311,7 +309,9 @@ test_that("download_files, no errors", {
     etag = file.path(dir, paste0("etag", 1:3))
   )
 
-  ret <- synchronise(download_files(downloads, error_on_status = FALSE))
+  ret <- suppressMessages(
+    synchronise(download_files(downloads, error_on_status = FALSE))
+  )
   expect_equal(length(ret), 3)
   expect_s3_class(ret[[1]], "async_rejected")
   expect_s3_class(ret[[1]], "async_http_401")

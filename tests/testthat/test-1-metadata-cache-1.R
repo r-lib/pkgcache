@@ -1,4 +1,21 @@
 
+pkgs <- dcf("
+  Package: pkg1
+  Version: 1.0.0
+
+  Package: pkg2
+  Version: 1.0.0
+  Depends: pkg1
+
+  Package: pkg3
+  Version: 1.0.0
+  Depends: pkg2
+")
+cran <- webfakes::local_app_process(
+  cran_app(pkgs),
+  opts = webfakes::server_opts(num_threads = 3)
+)
+
 test_that("get_cache_files", {
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -83,7 +100,7 @@ test_that("load_replica_rds", {
 
   file_set_time(rep_files$rds, Sys.time() - 1/2  * oneday())
   expect_equal(
-    get_private(cmc)$load_replica_rds(oneday()),
+    suppressMessages(get_private(cmc)$load_replica_rds(oneday())),
     "This is it")
   expect_equal(get_private(cmc)$data, "This is it")
   expect_true(Sys.time() - get_private(cmc)$data_time < oneday())
@@ -115,14 +132,14 @@ test_that("load_primary_rds", {
   for (f in pri_files$pkgs$path) { mkdirp(dirname(f)); cat("x", file = f) }
   file_set_time(pri_files$pkgs$path, Sys.time() - 2  * oneday())
   expect_equal(
-    get_private(cmc)$load_primary_rds(oneday()),
+    suppressMessages(get_private(cmc)$load_primary_rds(oneday())),
     "This is it")
   expect_equal(get_private(cmc)$data, "This is it")
   expect_true(Sys.time() - get_private(cmc)$data_time < oneday())
 
   ## Replica was also updated
   expect_equal(
-    get_private(cmc)$load_replica_rds(oneday()),
+    suppressMessages(get_private(cmc)$load_replica_rds(oneday())),
     "This is it")
 })
 
@@ -158,7 +175,10 @@ test_that("load_primary_rds 3", {
 
 test_that("load_primary_pkgs", {
 
-  withr::local_options(list(repos = NULL))
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -190,7 +210,9 @@ test_that("load_primary_pkgs", {
     "Some primary PACKAGES files are outdated")
 
   file_set_time(pri_files$pkgs$path, Sys.time() - 1/2 * oneday())
-  res <- synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
+  res <- suppressMessages(
+    synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
+  )
   check_packages_data(res)
 
   ## RDS was updated as well
@@ -205,8 +227,10 @@ test_that("load_primary_pkgs", {
 
 test_that("update_replica_pkgs", {
 
-  skip_if_offline()
-  skip_on_cran()
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -215,12 +239,12 @@ test_that("update_replica_pkgs", {
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
-  synchronise(get_private(cmc)$update_replica_pkgs())
+  suppressMessages(synchronise(get_private(cmc)$update_replica_pkgs()))
   rep_files <- get_private(cmc)$get_cache_files("replica")
   expect_true(all(file.exists(rep_files$pkgs$path)))
   expect_true(all(file.exists(rep_files$pkgs$etag)))
 
-  data <- get_private(cmc)$update_replica_rds()
+  data <- suppressMessages(get_private(cmc)$update_replica_rds())
   expect_identical(data, get_private(cmc)$data)
   check_packages_data(data)
 })
@@ -241,7 +265,7 @@ test_that("update_replica_rds", {
     fs::file_copy(get_fixture("PACKAGES-src.gz"), rep_files$pkgs$path[i])
   }
 
-  data <- get_private(cmc)$update_replica_rds()
+  data <- suppressMessages(get_private(cmc)$update_replica_rds())
   expect_identical(get_private(cmc)$data, data)
   expect_true(get_private(cmc)$data_time > Sys.time() - oneminute())
   check_packages_data(data)
@@ -299,8 +323,10 @@ test_that("update_primary 2", {
 
 test_that("update", {
 
-  skip_if_offline()
-  skip_on_cran()
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -308,7 +334,7 @@ test_that("update", {
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
-  data <- cmc$update()
+  data <- suppressMessages(cmc$update())
   check_packages_data(data)
 
   ## Data is loaded
@@ -335,15 +361,15 @@ test_that("update", {
 
   ## List
   expect_equal(as.list(data$pkgs), as.list(cmc$list()))
-  lst <- cmc$list(c("igraph", "MASS"))
-  expect_equal(sort(c("igraph", "MASS")), sort(unique(lst$package)))
+  lst <- cmc$list(c("pkg1", "pkg2"))
+  expect_equal(sort(c("pkg1", "pkg2")), sort(unique(lst$package)))
 
   ## Revdeps
-  rdeps <- cmc$revdeps("MASS")
-  expect_true("abc" %in% rdeps$package)
-  expect_true("abd" %in% rdeps$package)
+  rdeps <- cmc$revdeps("pkg1")
+  expect_true("pkg2" %in% rdeps$package)
+  expect_true("pkg3" %in% rdeps$package)
 
-  rdeps <- cmc$revdeps("MASS", recursive = FALSE)
-  expect_true("abc" %in% rdeps$package)
-  expect_false("abd" %in% rdeps$package)
+  rdeps <- cmc$revdeps("pkg1", recursive = FALSE)
+  expect_true("pkg2" %in% rdeps$package)
+  expect_false("pkg3" %in% rdeps$package)
 })

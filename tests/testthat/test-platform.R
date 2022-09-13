@@ -186,6 +186,7 @@ test_that("bioc_version", {
 })
 
 test_that("bioc_version_map", {
+  skip_if_offline()
   local_edition(3)
   withr::local_options(useFancyQuotes = FALSE)
   expect_snapshot(as.data.frame(bioc_version_map()))
@@ -194,6 +195,7 @@ test_that("bioc_version_map", {
 test_that("bioc_release_version, bioc_devel_version", {
   # This will fail when a new bioc devel version is out
   skip_on_cran()
+  skip_if_offline()
   local_edition(3)
   withr::local_options(useFancyQuotes = FALSE)
   expect_snapshot(bioc_release_version())

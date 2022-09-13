@@ -14,9 +14,13 @@ test_that("invalid PACKAGES file warns", {
     writeBin(charToRaw("nope"), pgz)
   }
 
-  expect_error(
-    expect_warning(
-      get_private(cmc)$update_replica_rds(),
-      "Cannot read metadata information"),
-    "No metadata available")
+  suppressMessages(
+    expect_error(
+      expect_warning(
+        get_private(cmc)$update_replica_rds(),
+        "Cannot read metadata information"
+      ),
+      "No metadata available"
+    )
+  )
 })

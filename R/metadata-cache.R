@@ -416,9 +416,11 @@ repo_encode <- function(repos) {
 }
 
 cran_metadata_url <- function() {
-  Sys.getenv(
-    "R_PKG_CRAN_METADATA_URL",
-    "https://cran.r-pkg.org/metadata/")
+  getOption("pkg.cran_metadata_url",
+     Sys.getenv(
+       "R_PKG_CRAN_METADATA_URL",
+       "https://cran.r-pkg.org/metadata/")
+     )
 }
 
 cmc__get_cache_files <- function(self, private, which) {

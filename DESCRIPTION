@@ -41,8 +41,11 @@ Suggests:
     testthat (>= 3.0.0),
     webfakes,
     withr
+Remotes:
+    r-lib/webfakes
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE, r6 = FALSE)
 RoxygenNote: 7.2.1.9000
 Config/testthat/edition: 3
 Config/Needs/website: tidyverse/tidytemplate
+Language: en-US

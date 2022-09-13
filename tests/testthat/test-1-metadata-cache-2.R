@@ -1,11 +1,26 @@
 
+pkgs <- dcf("
+  Package: pkg1
+  Version: 1.0.0
+
+  Package: pkg2
+  Version: 1.0.0
+  Depends: pkg1
+
+  Package: pkg3
+  Version: 1.0.0
+  Depends: pkg2
+")
+cran <- webfakes::local_app_process(
+  cran_app(pkgs),
+  opts = webfakes::server_opts(num_threads = 3)
+)
+
 test_that("check_update", {
 
-  skip_if_offline()
-  skip_on_cran()
-
   withr::local_options(
-    list(repos = c(CRAN = "https://cloud.r-project.org"))
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
   )
 
   dir.create(pri <- fs::path_norm(tempfile()))
@@ -14,7 +29,7 @@ test_that("check_update", {
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
-  data <- cmc$check_update()
+  data <- suppressMessages(cmc$check_update())
   check_packages_data(data)
 
   ## Data is loaded
@@ -49,7 +64,7 @@ test_that("check_update", {
   expect_equal(read_lines(rep_files$pkgs$path[1]), "foobar")
 
   ## Cleanup
-  cmc$cleanup(force = TRUE)
+  suppressMessages(cmc$cleanup(force = TRUE))
   expect_false(file.exists(pri_files$rds))
   expect_false(any(file.exists(pri_files$pkgs$path)))
   expect_false(file.exists(rep_files$rds))
@@ -58,10 +73,10 @@ test_that("check_update", {
 
 test_that("deps will auto-update as needed", {
 
-  skip_if_offline()
-  skip_on_cran()
-
-  withr::local_options(list(repos = NULL))
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -75,7 +90,7 @@ test_that("deps will auto-update as needed", {
   fs::file_copy(get_fixture("PACKAGES-src.gz"), pri_files$pkgs$path)
 
   ## This will update the RDS files, and also load the data
-  cmc$deps("A3", recursive = FALSE)
+  suppressMessages(cmc$deps("pkg3", recursive = FALSE))
 
   ## Data is loaded
   expect_false(is.null(get_private(cmc)$data))
@@ -100,10 +115,10 @@ test_that("deps will auto-update as needed", {
 
 test_that("deps, extract_deps", {
 
-  skip_if_offline()
-  skip_on_cran()
-
-  withr::local_options(list(repos = NULL))
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -123,7 +138,7 @@ test_that("deps, extract_deps", {
     mirror = "mirror", repodir = "src/contrib", platform = "source",
     rversion = "*", type = "cran")
 
-  deps <- cmc$deps("abc", FALSE, FALSE)
+  deps <- suppressMessages(cmc$deps("abc", FALSE, FALSE))
   expect_identical(deps$package, "abc")
   expect_identical(attr(deps, "base"), character())
   expect_identical(attr(deps, "unknown"), character())

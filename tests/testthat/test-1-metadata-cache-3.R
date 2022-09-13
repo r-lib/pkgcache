@@ -1,7 +1,27 @@
 
+pkgs <- dcf("
+  Package: pkg1
+  Version: 1.0.0
+
+  Package: pkg2
+  Version: 1.0.0
+  Depends: pkg1
+
+  Package: pkg3
+  Version: 1.0.0
+  Depends: pkg2
+")
+cran <- webfakes::local_app_process(
+  cran_app(pkgs),
+  opts = webfakes::server_opts(num_threads = 3)
+)
+
 test_that("concurrency in update", {
-  skip_if_offline()
-  skip_on_cran()
+
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -18,7 +38,7 @@ test_that("concurrency in update", {
     when_all(dx1, dx2, dx3)
   }
 
-  res <- synchronise(do())
+  res <- suppressMessages(synchronise(do()))
   check_packages_data(res[[1]])
   check_packages_data(res[[2]])
   check_packages_data(res[[3]])
@@ -81,13 +101,15 @@ test_that("cleanup", {
 
 test_that("memory cache", {
 
-  skip_if_offline()
-  skip_on_cran()
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
 
   pri <- test_temp_dir()
   rep <- test_temp_dir()
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
-  data <- cmc$list()
+  data <- suppressMessages(cmc$list())
 
   rep2 <- test_temp_dir()
   cmc2 <- cranlike_metadata_cache$new(pri, rep2, "source", bioc = FALSE)

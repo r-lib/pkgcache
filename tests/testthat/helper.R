@@ -1,25 +1,4 @@
 
-httpbin <- (function() {
-  url <- NULL
-
-  update <- function(x) {
-    chk_url <- function(url, ...) {
-      http_head(url, ...)$
-        then(http_stop_for_status)$
-        then(function(r) r$url)
-    }
-    synchronise(when_any(
-      chk_url("https://httpbin.org"),
-      chk_url("https://eu.httpbin.org")
-    ))
-  }
-
-  function(endpoint = "") {
-    if (is.null(url)) url <<- update()
-    paste0(url, endpoint)
-  }
-})()
-
 check_packages_data <- function(pkgs) {
   cols <- packages_gz_cols()
   p_cols <- cols$pkgs

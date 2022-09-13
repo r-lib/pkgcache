@@ -115,5 +115,5 @@ cran_app <- function(packages = NULL,
 
 dcf <- function(txt) {
   txt <- gsub("\n[ ]+", "\n", txt)
-  as.data.frame(read.dcf(textConnection(txt)))
+  as.data.frame(read.dcf(textConnection(txt)), stringsAsFactors = FALSE)
 }

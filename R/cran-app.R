@@ -20,9 +20,9 @@ make_dummy_package <- function(data, path) {
   out
 }
 
-cran_app <- function(packages = NULL,
-                     log = interactive(),
-                     options = list()) {
+make_dummy_repo <- function(repo, packages = NULL, options = list()) {
+
+  mkdirp(repo)
 
   packages <- packages %||% data.frame(
     stringsAsFactors = FALSE,
@@ -33,9 +33,51 @@ cran_app <- function(packages = NULL,
     packages$Package <- paste0("pkg", seq_len(nrow(packages)))
   }
 
-  app <- webfakes::new_app()
+  dir_source <- utils::contrib.url("", "source")
+  mkdirp(repo_source <- file.path(repo, dir_source))
 
-  # -----------------------------------------------------------------------
+  packages$file <- character(nrow(packages))
+  for (i in seq_len(nrow(packages))) {
+    fn <- make_dummy_package(packages[i, , drop = FALSE], repo_source)
+    packages$file[i] <- fn
+  }
+
+  if (!isTRUE(options$no_packages)) {
+    file.create(file.path(repo_source, "PACKAGES"))
+    tools::write_PACKAGES(repo_source)
+  }
+
+  if (isTRUE(options$no_packages_gz)) {
+    file.remove(file.path(repo_source, "PACKAGES.gz"))
+  }
+
+  if (isTRUE(options$no_packages_rds)) {
+    file.remove(file.path(repo_source, "PACKAGES.rds"))
+  }
+
+  if (!isTRUE(options$no_metadata)) {
+    meta <- data.frame(
+      stringsAsFactors = FALSE,
+      file = packages$file,
+      size = file.size(file.path(repo_source, packages$file)),
+      sha = unname(tools::md5sum(file.path(repo_source, packages$file))),
+      sysreqs = packages$SystemRequirements %||% rep(NA_character_, nrow(packages)),
+      built = if (nrow(packages)) NA_character_ else character(),
+      published = if (nrow(packages)) format(Sys.time()) else character()
+    )
+    outcon <- gzcon(file(file.path(repo_source, "METADATA2.gz"), "wb"))
+    utils::write.csv(meta, outcon, row.names = FALSE)
+    close(outcon)
+  }
+
+  invisible()
+}
+
+cran_app <- function(packages = NULL,
+                     log = interactive(),
+                     options = list()) {
+
+  app <- webfakes::new_app()
 
   # Log requests by default
   if (log) app$use("logger" = webfakes::mw_log())
@@ -55,10 +97,7 @@ cran_app <- function(packages = NULL,
     "next"
   })
 
-  # -----------------------------------------------------------------------
-
-  app$locals$packages <- packages
-  dir.create(app$locals$repo <- repo <- tempfile())
+  app$locals$repo <- repo <- tempfile()
   reg.finalizer(
     app,
     function(obj) unlink(obj$locals$repo, recursive = TRUE),
@@ -66,51 +105,7 @@ cran_app <- function(packages = NULL,
   )
 
   app$use("repo" = webfakes::mw_static(repo))
-
-  # -----------------------------------------------------------------------
-
-  dir_source <- utils::contrib.url("", "source")
-  mkdirp(repo_source <- file.path(repo, dir_source))
-
-  packages$file <- character(nrow(packages))
-  for (i in seq_len(nrow(packages))) {
-    fn <- make_dummy_package(packages[i, , drop = FALSE], repo_source)
-    packages$file[i] <- fn
-  }
-
-  # -----------------------------------------------------------------------
-
-  if (!isTRUE(options$no_packages)) {
-    file.create(file.path(repo_source, "PACKAGES"))
-    tools::write_PACKAGES(repo_source)
-  }
-
-  if (isTRUE(options$no_packages_gz)) {
-    file.remove(file.path(repo_source, "PACKAGES.gz"))
-  }
-
-  if (isTRUE(options$no_packages_rds)) {
-    file.remove(file.path(repo_source, "PACKAGES.rds"))
-  }
-
-  # -----------------------------------------------------------------------
-
-  if (!isTRUE(options$no_metadata)) {
-    meta <- data.frame(
-      stringsAsFactors = FALSE,
-      file = packages$file,
-      size = file.size(file.path(repo_source, packages$file)),
-      sha = unname(tools::md5sum(file.path(repo_source, packages$file))),
-      sysreqs = packages$SystemRequirements %||% rep(NA_character_, nrow(packages)),
-      built = if (nrow(packages)) NA_character_ else character(),
-      published = if (nrow(packages)) format(Sys.time()) else character()
-    )
-    outcon <- gzcon(file(file.path(repo_source, "METADATA2.gz"), "wb"))
-    utils::write.csv(meta, outcon, row.names = FALSE)
-    close(outcon)
-  }
-
-  # -----------------------------------------------------------------------
+  make_dummy_repo(repo, packages, options)
 
   app
 }

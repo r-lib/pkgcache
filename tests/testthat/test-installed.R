@@ -77,6 +77,10 @@ test_that("parse_packages, RDS", {
   pkgs <- parse_packages(get_fixture("packages/PACKAGES.rds"))
   expect_snapshot(colnames(pkgs))
   expect_snapshot(pkgs$Path)
+
+  pkgs <- parse_packages(get_fixture("packages/PACKAGES2.rds"))
+  expect_snapshot(colnames(pkgs))
+  expect_snapshot(pkgs$Path)
 })
 
 test_that("parse_packages, compressed", {

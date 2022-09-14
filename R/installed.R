@@ -135,6 +135,9 @@ parse_packages <- function(path, type = NULL) {
 
 packages_types <- c("uncompressed", "gzip", "bzip2", "xz", "rds")
 
+# Note that compressed RDS will be reported as gzip, bzip2 or xz,
+# depending on the compression
+
 guess_packages_type <- function(path) {
   buf <- readBin(path, what = "raw", 6)
 

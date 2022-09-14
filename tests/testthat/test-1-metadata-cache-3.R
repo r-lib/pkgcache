@@ -150,3 +150,48 @@ test_that("summary", {
       "size")
   )
 })
+
+test_that("corrupt metadata", {
+  withr::local_options(
+    repos = c(CRAN = cran$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
+
+  pri <- nullfile()
+  dir.create(rep <- fs::path_norm(tempfile()))
+  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
+
+  expect_snapshot(error = TRUE, suppressMessages(cmc$list()))
+})
+
+test_that("missing packages note", {
+
+  cran2 <- webfakes::local_app_process(
+    cran_app(pkgs),
+    opts = webfakes::server_opts(num_threads = 3)
+  )
+
+  withr::local_options(
+    repos = c(CRAN = cran$url(), FOO = cran2$url()),
+    pkg.cran_metadata_url = cran$url()
+  )
+
+  dir.create(pri <- fs::path_norm(tempfile()))
+  on.exit(unlink(pri, recursive = TRUE), add = TRUE)
+  dir.create(rep <- fs::path_norm(tempfile()))
+  on.exit(unlink(rep, recursive = TRUE), add = TRUE)
+
+  cmc <- cranlike_metadata_cache$new(pri, rep, c("source", "windows"), bioc = FALSE)
+  msg <- ""
+  withCallingHandlers(
+    invisible(cmc$update()),
+    message = function(m) {
+      msg <<- paste0(msg, conditionMessage(m))
+      invokeRestart("muffleMessage")
+    }
+  )
+
+  expect_match(msg, "packages are missing from CRAN and 127.0.0.1:", fixed = TRUE)
+})

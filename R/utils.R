@@ -207,3 +207,7 @@ gzip_decompress <- function(from, chunk_size = 5 * 1000 * 1000) {
 save_rds <- function(data, path) {
   saveRDS(data, file = path, version = 2, compress = FALSE)
 }
+
+nullfile <- function() {
+  if (get_os_type() == "windows") "nul:" else "/dev/null"
+}

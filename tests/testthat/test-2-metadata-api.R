@@ -44,7 +44,8 @@ test_that("metadata api", {
     ret5 <- pkgcache::meta_cache_revdeps("pkg1", recursive = FALSE)
     ret6 <- pkgcache::meta_cache_cleanup(force = TRUE)
     ret7 <- pkgcache::get_cranlike_metadata_cache()
-    list(class(ret1), ret2, ret3, ret4, ret5, NULL, class(ret7))
+    ret8 <- pkgcache::meta_cache_summary()
+    list(class(ret1), ret2, ret3, ret4, ret5, NULL, class(ret7), ret8)
   }
 
   ret <- callr::r(fun)

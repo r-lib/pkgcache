@@ -191,19 +191,19 @@ cac_async_list <- function(self, private, packages, update_after) {
 cac_async_update <- function(self, private) {
   hash <- private$get_hash()
   if (!is.null(private$update_deferred)) {
-    return(private$update_deferred)
+    return(private$update_deferred)                                 # nocov
   }
 
   private$update_deferred <- private$update_replica()$
     then(function() private$update_primary())$
     then(function() private$data)$
     catch(error = function(err) {
-      err$message <- msg_wrap(
-        conditionMessage(err), "\n\n",
-        "Could not load or update archive cache. If you think your local ",
-        "cache is broken, try deleting it with `cran_archive_cleanup()` or ",
-        "the `$cleanup()` method.")
-      stop(err)
+      err$message <- msg_wrap(                                                # nocov
+        conditionMessage(err), "\n\n",                                        # nocov
+        "Could not load or update archive cache. If you think your local ",   # nocov
+        "cache is broken, try deleting it with `cran_archive_cleanup()` or ", # nocov
+        "the `$cleanup()` method.")                                           # nocov
+      stop(err)                                                               # nocov
     })$
     finally(function() private$update_deferred <- NULL)$
     share()
@@ -212,15 +212,14 @@ cac_async_update <- function(self, private) {
 cac_async_check_update <- function(self, private) {
   self; private
 
-  if (!is.null(private$update_deferred)) return(private$update_deferred)
-  if (!is.null(private$chk_update_deferred)) return(private$chk_update_deferred)
+  if (!is.null(private$update_deferred)) return(private$update_deferred)          # nocov
+  if (!is.null(private$chk_update_deferred)) return(private$chk_update_deferred)  # nocov
 
   private$chk_update_deferred <- async(private$update_replica)()$
     then(function(ret) {
       rep_file <- private$get_cache_file("replica")
       rep_time <- file_get_time(rep_file)
-      # Pretend that it did not change if not available
-      stat <- ret$response$status_code %||% 304L
+      stat <- ret$response$status_code
       if (stat < 300) {
         private$update_primary()
         private$data
@@ -367,15 +366,23 @@ cac__update_replica <- function(self, private) {
 
   etag_file <- paste0(rep_file, "-etag")
   tmp <- tempfile()
+  # we need to create the file, the etag is not used otherwise in
+  # download_if_newer(). If the response is 304, then we'll ignore the file.
+  file.create(tmp)
 
-  download_file(url, tmp, etag_file)$
+  download_if_newer(url, tmp, etag_file, error_on_status = FALSE)$
     then(function(dl) {
-      if (dl$response$status_code >= 300) {
+      if (dl$response$status_code >= 300 && dl$response$status_code != 304) {
         stop("Failed to update package archive metadata")
       }
       dl
     })$
-    then(function(x) private$convert_archive_file(tmp, rep_file))$
+    then(function(dl) {
+      if (dl$response$status_code != 304) {
+        private$convert_archive_file(tmp, rep_file)
+      }
+      dl
+    })$
     finally(function() unlink(tmp))
 }
 
@@ -497,7 +504,7 @@ cran_archive_update <- function(cran_mirror = default_cran_mirror()) {
 
 cran_archive_cleanup <- function(cran_mirror = default_cran_mirror(),
                                  force = FALSE) {
-  get_archive_cache(cran_mirror)$cleanup()
+  get_archive_cache(cran_mirror)$cleanup(force = force)
   invisible()
 }
 

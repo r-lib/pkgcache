@@ -59,3 +59,11 @@ touch <- function(path) {
 fix_port_number <- function(x) {
   gsub(":[0-9]+", ":3000", x)
 }
+
+fix_mtime <- function(x) {
+  gsub(
+    "\\d\\d\\d\\d[-]\\d\\d[-]\\d\\d \\d\\d:\\d\\d:\\d\\d",
+    "2022-09-14 13:28:34",
+    x
+  )
+}

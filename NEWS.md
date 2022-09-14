@@ -1,5 +1,10 @@
 # pkgcache (development version)
 
+* `cran_archive_*()` functions now only download the metadata if it is newer
+  than what you have currently.
+  
+* `cran_archive_cleanup()` now does not ignore the `force` argument.
+
 # pkgcache 2.0.2
 
 * pkgcache error messages are better now.

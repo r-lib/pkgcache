@@ -68,8 +68,9 @@ test_that("packages_make_sources", {
 test_that("read_packages_file", {
 
   pkg_files <- vcapply(
-    paste0("PACKAGES-", c("src", "win", "mac"), ".gz"),
-    get_fixture)
+    file.path("fixtures", paste0("PACKAGES-", c("src", "win", "mac"), ".gz")),
+    test_path
+  )
 
   for (pf in pkg_files) {
     pkgs <- read_packages_file(
@@ -82,7 +83,7 @@ test_that("read_packages_file", {
 test_that("read_packages_file windows", {
   testthat::local_edition(3)
   testthat::local_reproducible_output()
-  pkg_file <- get_fixture("PACKAGES-win2.gz")
+  pkg_file <- test_path("fixtures/PACKAGES-win2.gz")
 
   for (pl in c("x86_64-w64-mingw32", "i386-w64-mingw32",
                "i386+x86_64-w64-mingw32")) {
@@ -101,7 +102,7 @@ test_that("read_packages_file windows", {
 
 test_that("packages_parse_deps", {
   pkgs <- read_packages_file(
-    get_fixture("PACKAGES-src.gz"), mirror = "mirror",
+    test_path("fixtures/PACKAGES-src.gz"), mirror = "mirror",
     repodir = "src/contrib", platform = "source", rversion = "*")
 
   pkgs1 <- pkgs$pkgs[1,]
@@ -114,8 +115,9 @@ test_that("packages_parse_deps", {
 
 test_that("merge_packages_data", {
   pf <- vcapply(
-    paste0("PACKAGES-", c("src", "win", "mac"), ".gz"),
-    get_fixture)
+    file.path("fixtures", paste0("PACKAGES-", c("src", "win", "mac"), ".gz")),
+    test_path
+  )
 
   pkgsx <- list(
     read_packages_file(pf[1], mirror = "m1", repodir = "r1",

@@ -8,7 +8,7 @@ test_that("pkgcache_read_raw", {
 })
 
 test_that("parse_description", {
-  d <- parse_description(get_fixture("description/pkgcache/DESCRIPTION"))
+  d <- parse_description(test_path("fixtures/description/pkgcache/DESCRIPTION"))
   expect_equal(d[["RoxygenNote"]], "7.1.1.9001")
 
   # cannot open file
@@ -51,22 +51,22 @@ test_that("parse_description", {
   )
 
   # \r\n line endings
-  d <- parse_description(get_fixture("description/cli/DESCRIPTION"))
+  d <- parse_description(test_path("fixtures/description/cli/DESCRIPTION"))
   expect_equal(d[["Encoding"]], "UTF-8")
 })
 
 test_that("parse_description encoding", {
-  d <- parse_description(get_fixture("description/pkgcache/DESCRIPTION"))
+  d <- parse_description(test_path("fixtures/description/pkgcache/DESCRIPTION"))
   expect_equal(Encoding(d[["Authors@R"]]), "UTF-8")
 
-  d2 <- parse_description(get_fixture("description/pkgcachel1/DESCRIPTION"))
+  d2 <- parse_description(test_path("fixtures/description/pkgcachel1/DESCRIPTION"))
   expect_equal(Encoding(d2[["Authors@R"]]), "UTF-8")
 })
 
 test_that("parse_packages", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- parse_packages(get_fixture("packages/PACKAGES"))
+  pkgs <- parse_packages(test_path("fixtures/packages/PACKAGES"))
   expect_snapshot(colnames(pkgs))
   expect_snapshot(pkgs$Path)
 })
@@ -74,21 +74,21 @@ test_that("parse_packages", {
 test_that("parse_packages, RDS", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- parse_packages(get_fixture("packages/PACKAGES.rds"))
+  pkgs <- parse_packages(test_path("fixtures/packages/PACKAGES.rds"))
   expect_snapshot(colnames(pkgs))
   expect_snapshot(pkgs$Path)
 
-  pkgs <- parse_packages(get_fixture("packages/PACKAGES2.rds"))
+  pkgs <- parse_packages(test_path("fixtures/packages/PACKAGES2.rds"))
   expect_snapshot(colnames(pkgs))
   expect_snapshot(pkgs$Path)
 })
 
 test_that("parse_packages, compressed", {
-  p0      <- parse_packages(get_fixture("packages/PACKAGES"))
-  p_gz    <- parse_packages(get_fixture("packages/PACKAGES.gz"))
-  p_bz2   <- parse_packages(get_fixture("packages/PACKAGES.bz2"))
-  p_bzip2 <- parse_packages(get_fixture("packages/PACKAGES.bzip2"))
-  p_xz    <- parse_packages(get_fixture("packages/PACKAGES.xz"))
+  p0      <- parse_packages(test_path("fixtures/packages/PACKAGES"))
+  p_gz    <- parse_packages(test_path("fixtures/packages/PACKAGES.gz"))
+  p_bz2   <- parse_packages(test_path("fixtures/packages/PACKAGES.bz2"))
+  p_bzip2 <- parse_packages(test_path("fixtures/packages/PACKAGES.bzip2"))
+  p_xz    <- parse_packages(test_path("fixtures/packages/PACKAGES.xz"))
   expect_equal(p0, p_gz)
   expect_equal(p0, p_bz2)
   expect_equal(p0, p_bzip2)
@@ -96,12 +96,12 @@ test_that("parse_packages, compressed", {
 })
 
 test_that("parse_packages, <CR><LF>", {
-  p0      <- parse_packages(get_fixture("packages/PACKAGES"))
-  p       <- parse_packages(get_fixture("packages/PACKAGES2"))
-  p_gz    <- parse_packages(get_fixture("packages/PACKAGES2.gz"))
-  p_bz2   <- parse_packages(get_fixture("packages/PACKAGES2.bz2"))
-  p_bzip2 <- parse_packages(get_fixture("packages/PACKAGES2.bzip2"))
-  p_xz    <- parse_packages(get_fixture("packages/PACKAGES2.xz"))
+  p0      <- parse_packages(test_path("fixtures/packages/PACKAGES"))
+  p       <- parse_packages(test_path("fixtures/packages/PACKAGES2"))
+  p_gz    <- parse_packages(test_path("fixtures/packages/PACKAGES2.gz"))
+  p_bz2   <- parse_packages(test_path("fixtures/packages/PACKAGES2.bz2"))
+  p_bzip2 <- parse_packages(test_path("fixtures/packages/PACKAGES2.bzip2"))
+  p_xz    <- parse_packages(test_path("fixtures/packages/PACKAGES2.xz"))
   expect_equal(p0, p)
   expect_equal(p0, p_gz)
   expect_equal(p0, p_bz2)
@@ -139,18 +139,18 @@ test_that("parse_packages, errors", {
 test_that("somewhat weird packages files", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- parse_packages(get_fixture("packages/P1"))
+  pkgs <- parse_packages(test_path("fixtures/packages/P1"))
   expect_snapshot(colnames(pkgs))
   expect_snapshot(pkgs$Package)
 
-  pkgs2 <- parse_packages(get_fixture("packages/P2"))
+  pkgs2 <- parse_packages(test_path("fixtures/packages/P2"))
   expect_equal(pkgs, pkgs2)
 })
 
 test_that("parse_installed", {
    testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- parse_installed(get_fixture("lib"))
+  pkgs <- parse_installed(test_path("fixtures/lib"))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 })
@@ -158,7 +158,7 @@ test_that("parse_installed", {
 test_that("parse_installed, DESCRIPTION with <CR><LF>", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- parse_installed(get_fixture("lib4"))
+  pkgs <- parse_installed(test_path("fixtures/lib4"))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 })
@@ -166,7 +166,7 @@ test_that("parse_installed, DESCRIPTION with <CR><LF>", {
 test_that("parse_installed, multiple libs", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  pkgs <- parse_installed(get_fixture(c("lib", "lib2")))
+  pkgs <- parse_installed(test_path(file.path("fixtures", c("lib", "lib2"))))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 })
@@ -176,7 +176,7 @@ test_that("parse_installed, errors", {
   testthat::local_reproducible_output(width = 60)
   cond <- NULL
   pkgs <- withCallingHandlers(
-    parse_installed(get_fixture(c("lib", "lib2", "lib3"))),
+    parse_installed(test_path(file.path("fixtures", c("lib", "lib2", "lib3")))),
     "pkgcache_broken_install" = function(cnd) {
       cond <<- cnd
       invokeRestart("muffleWarning")
@@ -210,7 +210,7 @@ test_that("parse_installed, more errors", {
 test_that("parse_installed priority", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
-  lib5 <- get_fixture("lib5")
+  lib5 <- test_path("fixtures/lib5")
   expect_snapshot(parse_installed(lib5, priority = "base")$Package)
   expect_snapshot(parse_installed(lib5, priority = "recommended")$Package)
   expect_snapshot(parse_installed(lib5, priority = NA)$Package)
@@ -219,8 +219,8 @@ test_that("parse_installed priority", {
 })
 
 test_that("parse_installed lowercase", {
-  pkgs <- parse_installed(get_fixture("lib"))
-  pkgsl <- parse_installed(get_fixture("lib"), lowercase = TRUE)
+  pkgs <- parse_installed(test_path("fixtures/lib"))
+  pkgsl <- parse_installed(test_path("fixtures/lib"), lowercase = TRUE)
   expect_equal(tolower(names(pkgs)), names(pkgsl))
 })
 

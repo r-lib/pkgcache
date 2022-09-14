@@ -87,7 +87,7 @@ test_that("deps will auto-update as needed", {
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$pkgs$path))
-  fs::file_copy(get_fixture("PACKAGES-src.gz"), pri_files$pkgs$path)
+  fs::file_copy(test_path("fixtures/PACKAGES-src.gz"), pri_files$pkgs$path)
 
   ## This will update the RDS files, and also load the data
   suppressMessages(cmc$deps("pkg3", recursive = FALSE))
@@ -130,11 +130,11 @@ test_that("deps, extract_deps", {
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$pkgs$path))
-  fs::file_copy(get_fixture("PACKAGES-src.gz"), pri_files$pkgs$path)
+  fs::file_copy(test_path("fixtures/PACKAGES-src.gz"), pri_files$pkgs$path)
   file_set_time(pri_files$pkgs$path, Sys.time() - 1/2 * oneday())
 
   pkgs <- read_packages_file(
-    get_fixture("PACKAGES-src.gz"),
+    test_path("fixtures/PACKAGES-src.gz"),
     mirror = "mirror", repodir = "src/contrib", platform = "source",
     rversion = "*", type = "cran")
 

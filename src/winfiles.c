@@ -1,4 +1,6 @@
 
+// nocov start
+
 #include "errors.h"
 
 #ifdef WIN32
@@ -89,3 +91,5 @@ FILE *fopen_file(const char *filename, const char *mode) {
 }
 
 #endif
+
+// nocov end

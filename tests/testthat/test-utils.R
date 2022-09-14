@@ -323,7 +323,7 @@ test_that("encode_path", {
 })
 
 test_that("gzip_decompress", {
-  p_gz <- get_fixture("packages/PACKAGES.gz")
+  p_gz <- test_path("fixtures/packages/PACKAGES.gz")
   gz <- readBin(p_gz, "raw", file.size(p_gz))
   out <- gzip_decompress(gz)
   expect_true(grepRaw("Package:", out) > 0)

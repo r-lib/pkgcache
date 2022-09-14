@@ -194,7 +194,7 @@ test_that("load_primary_pkgs", {
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$pkgs$path))
-  fs::file_copy(get_fixture("PACKAGES-mac.gz"), pri_files$pkgs$path[1])
+  fs::file_copy(test_path("fixtures/PACKAGES-mac.gz"), pri_files$pkgs$path[1])
   # if this fails, then we need to add a new R version to the list or
   # CRAN macOS platforms in platform.R
   expect_error(
@@ -202,7 +202,7 @@ test_that("load_primary_pkgs", {
     "Some primary PACKAGES files don't exist")
 
   for (i in utils::tail(seq_len(nrow(pri_files$pkgs)), -1)) {
-    fs::file_copy(get_fixture("PACKAGES-src.gz"), pri_files$pkgs$path[i])
+    fs::file_copy(test_path("fixtures/PACKAGES-src.gz"), pri_files$pkgs$path[i])
   }
   file_set_time(pri_files$pkgs$path, Sys.time() - 2 * oneday())
   expect_error(
@@ -260,9 +260,9 @@ test_that("update_replica_rds", {
 
   rep_files <- get_private(cmc)$get_cache_files("replica")
   mkdirp(dirname(rep_files$pkgs$path))
-  fs::file_copy(get_fixture("PACKAGES-mac.gz"), rep_files$pkgs$path[1])
+  fs::file_copy(test_path("fixtures/PACKAGES-mac.gz"), rep_files$pkgs$path[1])
   for (i in utils::tail(seq_len(nrow(rep_files$pkgs)), -1)) {
-    fs::file_copy(get_fixture("PACKAGES-src.gz"), rep_files$pkgs$path[i])
+    fs::file_copy(test_path("fixtures/PACKAGES-src.gz"), rep_files$pkgs$path[i])
   }
 
   data <- suppressMessages(get_private(cmc)$update_replica_rds())

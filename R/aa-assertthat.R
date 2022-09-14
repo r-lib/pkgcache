@@ -18,7 +18,7 @@ see_if <- function(..., env = parent.frame(), msg = NULL) {
   for (assertion in asserts) {
     res <- tryCatch({
       eval(assertion, env)
-    }, new_assert_error = function(e) {
+    }, error = function(e) {
       structure(FALSE, msg = e$message)
     })
     check_result(res)

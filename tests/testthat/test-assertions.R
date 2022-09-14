@@ -22,6 +22,13 @@ test_that("is_string_or_null", {
   for (n in neg) expect_false(is_string_or_null(n))
 })
 
+test_that("is_flag", {
+  pos <- list(TRUE, FALSE)
+  neg <- list(c(TRUE, TRUE), NA, "TRUE", logical())
+  for (p in pos) expect_true(is_flag(p))
+  for (n in neg) expect_false(is_flag(n))
+})
+
 test_that("is_path", {
   pos <- list("", "x", "NA", "foobar", c(a = "b"))
   neg <- list(1, 1L, 1:10, NA, NA_character_, letters, letters[1:2],

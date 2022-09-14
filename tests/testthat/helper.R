@@ -55,3 +55,7 @@ touch <- function(path) {
   mkdirp(dirname(path))
   cat("", file = path)
 }
+
+fix_port_number <- function(x) {
+  gsub(":[0-9]+", ":3000", x)
+}

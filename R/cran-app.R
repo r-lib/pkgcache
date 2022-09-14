@@ -1,4 +1,6 @@
 
+# nocov start
+
 make_dummy_package <- function(data, path) {
   package <- data$Package
   data$Version <- data$Version %||% "1.0.0"
@@ -117,3 +119,5 @@ dcf <- function(txt) {
   txt <- gsub("\n[ ]+", "\n", txt)
   as.data.frame(read.dcf(textConnection(txt)), stringsAsFactors = FALSE)
 }
+
+# nocov end

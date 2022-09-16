@@ -1,5 +1,8 @@
 # pkgcache (development version)
 
+* The `deps` column of the metadata cache is not a tibble any more,
+  but a data frame with a `tbl` class, as it should be.
+
 * `cran_archive_*()` functions now only download the metadata if it is newer
   than what you have currently.
   

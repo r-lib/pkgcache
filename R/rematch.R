@@ -33,6 +33,6 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
   }
 
   names(res) <- c(attr(match, "capture.names"), ".text", ".match")
-  class(res) <- c("tbl_df", "tbl", class(res))
+  class(res) <- c("tbl", class(res))
   res
 }

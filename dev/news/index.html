@@ -52,7 +52,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="pkgcache-development-version">pkgcache (development version)<a class="anchor" aria-label="anchor" href="#pkgcache-development-version"></a></h2>
-<ul><li><p><code>cran_archive_*()</code> functions now only download the metadata if it is newer than what you have currently.</p></li>
+<ul><li><p>The <code>built</code> and <code>sysreqs</code> columns of the metadata case are always character vectors now, and not logicals, as it used to be in some edges cases in the past.</p></li>
+<li><p>The <code>deps</code> column of the metadata cache is not a tibble any more, but a data frame with a <code>tbl</code> class, as it should be.</p></li>
+<li><p><code>cran_archive_*()</code> functions now only download the metadata if it is newer than what you have currently.</p></li>
 <li><p><code><a href="../reference/cran_archive_list.html">cran_archive_cleanup()</a></code> now does not ignore the <code>force</code> argument.</p></li>
 </ul></div>
     <div class="section level2">

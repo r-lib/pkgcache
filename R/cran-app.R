@@ -84,7 +84,9 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
       stringsAsFactors = FALSE,
       file = current$file,
       size = file.size(file.path(repo_source, current$file)),
-      sha = unname(tools::md5sum(file.path(repo_source, current$file))),
+      sha = cli::hash_file_sha256(file.path(repo_source, current$file)),
+      sysreqs = current$SystemRequirements %||% rep("NA", nrow(current)),
+      built = if (nrow(current)) "NA" else character(),
       published = if (nrow(current)) format(Sys.time()) else character()
     )
     outcon <- gzcon(file(file.path(repo_source, "METADATA2.gz"), "wb"))
@@ -154,6 +156,10 @@ cran_app <- function(packages = NULL,
 dcf <- function(txt) {
   txt <- gsub("\n[ ]+", "\n", txt)
   as.data.frame(read.dcf(textConnection(txt)), stringsAsFactors = FALSE)
+}
+
+fix_port <- function(x) {
+  gsub("http://127[.]0[.]0[.]1:[0-9]+", "http://127.0.0.1:<port>", x)
 }
 
 # nocov end

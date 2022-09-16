@@ -3,7 +3,7 @@ pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   internals: internals.html
-last_built: 2022-09-16T10:51Z
+last_built: 2022-09-16T11:07Z
 urls:
   reference: https://r-lib.github.io/pkgcache/reference
   article: https://r-lib.github.io/pkgcache/articles

@@ -85,8 +85,6 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
       file = current$file,
       size = file.size(file.path(repo_source, current$file)),
       sha = unname(tools::md5sum(file.path(repo_source, current$file))),
-      sysreqs = current$SystemRequirements %||% rep(NA_character_, nrow(current)),
-      built = if (nrow(current)) NA_character_ else character(),
       published = if (nrow(current)) format(Sys.time()) else character()
     )
     outcon <- gzcon(file(file.path(repo_source, "METADATA2.gz"), "wb"))

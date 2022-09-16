@@ -1,5 +1,9 @@
 # pkgcache (development version)
 
+* The `built` and `sysreqs` columns of the metadata case are always
+  character vectors now, and not logicals, as it used to be in some
+  edges cases in the past.
+
 * The `deps` column of the metadata cache is not a tibble any more,
   but a data frame with a `tbl` class, as it should be.
 

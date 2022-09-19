@@ -21,10 +21,7 @@ make_dummy_package <- function(data, path) {
   out
 }
 
-make_dummy_repo <- function(repo, packages = NULL, options = list()) {
-
-  mkdirp(repo)
-
+standardize_dummy_packages <- function(packages) {
   packages <- packages %||% data.frame(
     stringsAsFactors = FALSE,
     Package = character()
@@ -35,13 +32,24 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
   }
 
   if (!"Version" %in% names(packages)) {
-    packages$Version <- "1.0.0"
+    packages$Version <- if (nrow(packages)) "1.0.0" else character()
   } else {
     packages$Version[is.na(packages$Version)] <- "1.0.0"
   }
 
-  dir_source <- utils::contrib.url("", "source")
-  mkdirp(repo_source <- file.path(repo, dir_source))
+  packages
+}
+
+make_dummy_repo <- function(repo, packages = NULL, options = list()) {
+
+  mkdirp(repo)
+
+  packages <- standardize_dummy_packages(packages)
+
+  if (!is.null(options$repo_prefix)) {
+    repo <- file.path(repo, options$repo_prefix)
+  }
+  mkdirp(repo_source <- file.path(repo, utils::contrib.url("", "source")))
 
   extra <- packages
   extra$file <- character(nrow(extra))
@@ -72,6 +80,9 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
 
   if (isTRUE(options$no_packages_gz)) {
     file.remove(file.path(repo_source, "PACKAGES.gz"))
+  } else if (file.exists(file.path(repo_source, "PACKAGES.gz"))) {
+    # if empty
+
   }
 
   if (isTRUE(options$no_packages_rds)) {
@@ -84,7 +95,9 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
       stringsAsFactors = FALSE,
       file = current$file,
       size = file.size(file.path(repo_source, current$file)),
-      sha = unname(tools::md5sum(file.path(repo_source, current$file))),
+      sha = cli::hash_file_sha256(file.path(repo_source, current$file)),
+      sysreqs = current$SystemRequirements %||% rep("NA", nrow(current)),
+      built = if (nrow(current)) "NA" else character(),
       published = if (nrow(current)) format(Sys.time()) else character()
     )
     outcon <- gzcon(file(file.path(repo_source, "METADATA2.gz"), "wb"))
@@ -154,6 +167,56 @@ cran_app <- function(packages = NULL,
 dcf <- function(txt) {
   txt <- gsub("\n[ ]+", "\n", txt)
   as.data.frame(read.dcf(textConnection(txt)), stringsAsFactors = FALSE)
+}
+
+fix_port <- function(x) {
+  gsub("http://127[.]0[.]0[.]1:[0-9]+", "http://127.0.0.1:<port>", x)
+}
+
+bioc_app <- function(packages = NULL,
+                     log = interactive(),
+                     options = list()) {
+
+  packages <- standardize_dummy_packages(packages)
+
+  bioc_version <- options$bioc_version %||% bioconductor$get_bioc_version()
+  options$no_metadata <- options$no_metadata %||% TRUE
+  options$no_archive <- options$no_archive %||% TRUE
+
+  packages$bioc_repo <- packages$bioc_repo %||%
+    if (nrow(packages)) "soft" else character()
+  packages$bioc_repo[is.na(packages$bioc_repo)] <- "soft"
+  bioc_repo <- packages$bioc_repo
+  packages <- packages[, setdiff(names(packages), "bioc_repo"), drop = FALSE]
+
+  # BioCsoft
+  options$repo_prefix <- sprintf("packages/%s/bioc", bioc_version)
+  pkg_soft <- packages[bioc_repo == "soft",, drop = FALSE]
+  app <- cran_app(pkg_soft, log, options)
+
+  # BioCann
+  options$repo_prefix <- sprintf("packages/%s/data/annotation", bioc_version)
+  pkg_ann <- packages[bioc_repo == "ann",, drop = FALSE]
+  make_dummy_repo(app$locals$repo, pkg_ann, options)
+
+  # BioCexp
+  options$repo_prefix <- sprintf("packages/%s/data/experiment", bioc_version)
+  pkg_exp <- packages[bioc_repo == "exp",, drop = FALSE]
+  make_dummy_repo(app$locals$repo, pkg_ann, options)
+
+  # BioCworkflows
+  options$repo_prefix <- sprintf("packages/%s/workflows", bioc_version)
+  pkg_workflows <- packages[bioc_repo == "workflows",, drop = FALSE]
+  make_dummy_repo(app$locals$repo, pkg_workflows, options)
+
+  config <- system.file("fixtures", "bioc-config.yaml", package = "pkgcache")
+  if (config == "") {
+    warning("Cannot find 'bioc-config.yaml' in pkgcache")
+  } else {
+    file.copy(config, file.path(app$locals$repo, "config.yaml"))
+  }
+
+  app
 }
 
 # nocov end

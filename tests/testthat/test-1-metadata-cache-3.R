@@ -1,27 +1,6 @@
 
-pkgs <- dcf("
-  Package: pkg1
-  Version: 1.0.0
-
-  Package: pkg2
-  Version: 1.0.0
-  Depends: pkg1
-
-  Package: pkg3
-  Version: 1.0.0
-  Depends: pkg2
-")
-cran <- webfakes::local_app_process(
-  cran_app(pkgs),
-  opts = webfakes::server_opts(num_threads = 3)
-)
-
 test_that("concurrency in update", {
-
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -100,11 +79,7 @@ test_that("cleanup", {
 })
 
 test_that("memory cache", {
-
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   pri <- test_temp_dir()
   rep <- test_temp_dir()
@@ -152,10 +127,7 @@ test_that("summary", {
 })
 
 test_that("corrupt metadata", {
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   pri <- nullfile()
   dir.create(rep <- fs::path_norm(tempfile()))
@@ -168,14 +140,13 @@ test_that("corrupt metadata", {
 
 test_that("missing packages note", {
 
-  cran2 <- webfakes::local_app_process(
-    cran_app(pkgs),
+  fake_cran2 <- webfakes::local_app_process(
+    cran_app(cran_app_pkgs),
     opts = webfakes::server_opts(num_threads = 3)
   )
 
   withr::local_options(
-    repos = c(CRAN = cran$url(), FOO = cran2$url()),
-    pkg.cran_metadata_url = cran$url()
+    repos = c(CRAN = fake_cran$url(), FOO = fake_cran2$url())
   )
 
   dir.create(pri <- fs::path_norm(tempfile()))

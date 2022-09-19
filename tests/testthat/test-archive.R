@@ -1,34 +1,7 @@
 
-pkgs <- dcf("
-  Package: pkg1
-  Version: 1.0.0
-
-  Package: pkg1
-  Version: 0.9.0
-
-  Package: pkg1
-  Version: 0.8.0
-
-  Package: pkg2
-  Version: 1.0.0
-  Depends: pkg1
-
-  Package: pkg3
-  Version: 1.0.0
-  Depends: pkg2
-
-  Package: pkg3
-  Version: 0.9.9
-")
-cran <- webfakes::local_app_process(
-  cran_app(pkgs),
-  opts = webfakes::server_opts(num_threads = 3)
-)
-
 test_that("API", {
+  setup_fake_apps()
   withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url(),
     width = 1000
   )
 
@@ -54,9 +27,8 @@ test_that("API", {
 })
 
 test_that("cran_archive_cache", {
+  setup_fake_apps()
   withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url(),
     width = 1000
   )
 
@@ -82,9 +54,8 @@ test_that("cran_archive_cache", {
 })
 
 test_that("check_update", {
+  setup_fake_apps()
   withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url(),
     width = 1000
   )
 

@@ -79,7 +79,12 @@ bioconductor <- local({
   # -------------------------------------------------------------------
   # Configuration that does not change often
 
-  config_url <- "https://bioconductor.org/config.yaml"
+  config_url <- function() {
+    Sys.getenv(
+      "R_BIOC_CONFIG_URL",
+      "https://bioconductor.org/config.yaml"
+    )
+  }
 
   builtin_map <- list(
     "2.1"  = package_version("1.6"),
@@ -123,9 +128,9 @@ bioconductor <- local({
 
   get_yaml_config <- function(forget = FALSE) {
     if (forget || is.null(yaml_config)) {
-      new <- tryCatch(read_url(config_url), error = function(x) x)
+      new <- tryCatch(read_url(config_url()), error = function(x) x)
       if (inherits(new, "error")) {
-        http_url <- sub("^https", "http", config_url)
+        http_url <- sub("^https", "http", config_url())
         new <- tryCatch(read_url(http_url), error = function(x) x)
       }
       if (inherits(new, "error")) stop(new)

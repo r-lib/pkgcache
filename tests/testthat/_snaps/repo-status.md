@@ -216,6 +216,31 @@
       Repository summary:      source i386+x86_64-w64-mingw32       
       CRAN @ 127.0.0.1:3000     OK             --                
 
+# bioc repo status
+
+    Code
+      stat <- repo_status(bioc = TRUE, platforms = "source", r_version = "4.2")
+      stat$ping[stat$ok] <- 0.1
+      stat
+    Output
+      # A data frame: 5 x 10
+        name          url                                                   type  bioc_version platform path        r_version ok     ping error 
+        <chr>         <chr>                                                 <chr> <chr>        <chr>    <chr>       <chr>     <lgl> <dbl> <list>
+      1 CRAN          http://127.0.0.1:3000/                               cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      2 BioCsoft      http://127.0.0.1:3000//packages/3.15/bioc            bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      3 BioCann       http://127.0.0.1:3000//packages/3.15/data/annotation bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      4 BioCexp       http://127.0.0.1:3000//packages/3.15/data/experiment bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      5 BioCworkflows http://127.0.0.1:3000//packages/3.15/workflows       bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
+    Code
+      summary(stat)
+    Output
+      Repository summary:               source          
+      CRAN          @ 127.0.0.1:3000     OK     (100ms)
+      BioCsoft      @ 127.0.0.1:3000     OK     (100ms)
+      BioCann       @ 127.0.0.1:3000     OK     (100ms)
+      BioCexp       @ 127.0.0.1:3000     OK     (100ms)
+      BioCworkflows @ 127.0.0.1:3000     OK     (100ms)
+
 # repo_status unicode output [fancy]
 
     Code

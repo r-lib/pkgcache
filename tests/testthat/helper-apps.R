@@ -39,19 +39,6 @@ cran_app_pkgs <- dcf("
   Package: pkg1
   Version: 1.0.0
 
-  Package: pkg2
-  Version: 1.0.0
-  Depends: pkg1
-
-  Package: pkg3
-  Version: 1.0.0
-  Depends: pkg2
-")
-
-cran_app_pkgs <- dcf("
-  Package: pkg1
-  Version: 1.0.0
-
   Package: pkg1
   Version: 0.9.0
 

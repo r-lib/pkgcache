@@ -28,6 +28,18 @@ test_that("repo_status", {
 
 })
 
+test_that("bioc repo status", {
+  setup_fake_apps()
+  withr::local_options(width = 1000)
+
+  expect_snapshot({
+    stat <- repo_status(bioc = TRUE, platforms = "source", r_version = "4.2")
+    stat$ping[stat$ok] <- 0.1
+    stat
+    summary(stat)
+  }, transform = fix_port_number)
+})
+
 cli::test_that_cli(config = "fancy", "repo_status unicode output", {
   setup_fake_apps()
   withr::local_options(

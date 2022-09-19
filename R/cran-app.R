@@ -13,7 +13,7 @@ make_dummy_package <- function(data, path) {
   file.create(file.path(package, "NAMESPACE"))
   write.dcf(data, file.path(package, "DESCRIPTION"))
   suppressMessages(utils::capture.output(
-    out <- asNamespace("tools")$.build_packages(args = package)
+    asNamespace("tools")$.build_packages(args = package, no.q = TRUE)
   ))
   unlink(package, recursive = TRUE)
   out <- dir()
@@ -249,15 +249,27 @@ cran_app <- function(packages = NULL,
     "next"
   })
 
-  app$locals$repo <- repo <- tempfile()
-  reg.finalizer(
-    app,
-    function(obj) unlink(obj$locals$repo, recursive = TRUE),
-    TRUE
-  )
+  app$locals$created <- FALSE
+  app$locals$repo <- tempfile()
+  app$locals$packages <- packages
+  app$locals$options <- options
 
-  app$use("repo" = webfakes::mw_static(repo))
-  make_dummy_repo(repo, packages, options)
+  app$use("create" = function(req, res) {
+    locals <- req$app$locals
+    if (!locals$created) {
+      make_dummy_repo(locals$repo, locals$packages, locals$options)
+      req$app$locals$created <- TRUE
+    }
+
+    reg.finalizer(
+      req$app,
+      function(obj) unlink(obj$locals$repo, recursive = TRUE),
+      TRUE
+    )
+
+    "next"
+  })
+  app$use("repo" = webfakes::mw_static(app$locals$repo))
 
   app
 }
@@ -275,6 +287,53 @@ bioc_app <- function(packages = NULL,
                      log = interactive(),
                      options = list()) {
 
+  app <- webfakes::new_app()
+
+  # Log requests by default
+  if (log) app$use("logger" = webfakes::mw_log())
+
+  # Parse all kinds of bodies
+  app$use("json body parser" = webfakes::mw_json())
+  app$use("text body parser" = webfakes::mw_text(type = c("text/plain", "application/json")))
+  app$use("multipart body parser" = webfakes::mw_multipart())
+  app$use("URL encoded body parser" = webfakes::mw_urlencoded())
+
+  # Add etags by default
+  app$use("add etag" = webfakes::mw_etag())
+
+  # Add date by default
+  app$use("add date" = function(req, res) {
+    res$set_header("Date", as.character(Sys.time()))
+    "next"
+  })
+
+  app$locals$created <- FALSE
+  app$locals$repo <- tempfile()
+  app$locals$packages <- packages
+  app$locals$options <- options
+
+  app$use("create" = function(req, res) {
+    locals <- req$app$locals
+    if (!locals$created) {
+      make_bioc_repo(locals$repo, locals$packages, locals$options)
+      req$app$locals$created <- TRUE
+    }
+
+    reg.finalizer(
+      req$app,
+      function(obj) unlink(obj$locals$repo, recursive = TRUE),
+      TRUE
+    )
+
+    "next"
+  })
+  app$use("repo" = webfakes::mw_static(app$locals$repo))
+
+  app
+}
+
+make_bioc_repo <- function(repo, packages, options) {
+
   packages <- standardize_dummy_packages(packages)
 
   bioc_version <- options$bioc_version %||% bioconductor$get_bioc_version()
@@ -290,31 +349,31 @@ bioc_app <- function(packages = NULL,
   # BioCsoft
   options$repo_prefix <- sprintf("packages/%s/bioc", bioc_version)
   pkg_soft <- packages[bioc_repo == "soft",, drop = FALSE]
-  app <- cran_app(pkg_soft, log, options)
+  make_dummy_repo(repo, pkg_soft, options)
 
   # BioCann
   options$repo_prefix <- sprintf("packages/%s/data/annotation", bioc_version)
   pkg_ann <- packages[bioc_repo == "ann",, drop = FALSE]
-  make_dummy_repo(app$locals$repo, pkg_ann, options)
+  make_dummy_repo(repo, pkg_ann, options)
 
   # BioCexp
   options$repo_prefix <- sprintf("packages/%s/data/experiment", bioc_version)
   pkg_exp <- packages[bioc_repo == "exp",, drop = FALSE]
-  make_dummy_repo(app$locals$repo, pkg_ann, options)
+  make_dummy_repo(repo, pkg_ann, options)
 
   # BioCworkflows
   options$repo_prefix <- sprintf("packages/%s/workflows", bioc_version)
   pkg_workflows <- packages[bioc_repo == "workflows",, drop = FALSE]
-  make_dummy_repo(app$locals$repo, pkg_workflows, options)
+  make_dummy_repo(repo, pkg_workflows, options)
 
   config <- system.file("fixtures", "bioc-config.yaml", package = "pkgcache")
   if (config == "") {
     warning("Cannot find 'bioc-config.yaml' in pkgcache")
   } else {
-    file.copy(config, file.path(app$locals$repo, "config.yaml"))
+    file.copy(config, file.path(repo, "config.yaml"))
   }
 
-  app
+  invisible()
 }
 
 # nocov end

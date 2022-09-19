@@ -1,6 +1,8 @@
 
 # nocov start
 
+fake_env <- new.env(parent = emptyenv())
+
 make_dummy_package <- function(data, path) {
   package <- data$Package
   data$Version <- data$Version %||% "1.0.0"
@@ -17,8 +19,87 @@ make_dummy_package <- function(data, path) {
   out <- dir()
   if (length(out) != 1) stop("Failed to build package ", package, " :(")
   mkdirp(path)
-  file.copy(out, path)
+  file.copy(out, path, overwrite = TRUE)
   out
+}
+
+dummy_so <- function() {
+  if (!is.null(fake_env$dummy_so)) return(fake_env$dummy_so)
+
+  mkdirp(tmp <- tempfile())
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  withr::local_dir(tmp)
+
+  writeLines(c(
+    "#include <Rinternals.h>",
+    "",
+    "SEXP minus1(SEXP i) {",
+    "  return Rf_ScalarInteger(REAL(i)[0] - 1.0);",
+    "}"
+  ), "init.c")
+  callr::rcmd("SHLIB", c("-o", "foo.so", "init.c"))
+  so <- readBin("foo.so", "raw", file.size("foo.so"))
+
+  fake_env$dummy_so <- so
+  so
+}
+
+make_dummy_binary <- function(data, path, platform = get_platform(),
+                              r_version = getRversion()) {
+  # Need these files:
+  # NAMESPACE  -- nded to add useDynLib() and import() as needed
+  # DESCRIPTION -- need `Built` field
+  # Meta/links.rds -- can be the same if no manual
+  # Meta/features.rds -- .install_package_description() creates this
+  # Meta/nsInfo.rds -- .install_package_namespace_info() creates this
+  # Meta/package.rds -- .install_package_description() creates this
+  # Meta/hsearch.rds -- can be the same if no manual
+  # libs/<pkg>.so -- use the same dummy .so
+
+  path <- normalizePath(path, mustWork = FALSE)
+  mkdirp(path)
+
+  package <- data$Package
+  data$Version <- data$Version %||% "1.0.0"
+
+  mkdirp(tmp <- tempfile())
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  withr::local_dir(tmp)
+  mkdirp(package)
+  file.create(file.path(package, "NAMESPACE"))
+  write.dcf(data, file.path(package, "DESCRIPTION"))
+
+  if (paste0("", data$NeedsCompilation) %in% c("yes", "true")) {
+    # TODO: multi-arch on Windows
+    writeLines(paste0("useDynLib(", package, ")"), file.path(package, "NAMESPACE"))
+    sofile <- paste0(package, .Platform$dynlib.ext)
+    sopath <- if (nzchar(.Platform$r_arch)) {
+      file.path(package, "libs", .Platform$r_arch, sofile)
+    } else {
+      file.path(package, "libs", sofile)
+    }
+    mkdirp(dirname(sopath))
+    writeBin(dummy_so(), sopath)
+  }
+
+  asNamespace("tools")$.install_package_description(package, package)
+  asNamespace("tools")$.install_package_namespace_info(package, package)
+
+  if (.Platform$OS.type == "windows") {
+    pkgfile <- paste0(package, "_", data$Version, ".zip")
+    zip::zip(pkgfile, package)
+
+  } else if (Sys.info()[["sysname"]] == "Darwin") {
+    pkgfile <- paste0(package, "_", data$Version, ".tgz")
+    utils::tar(pkgfile, package)
+  } else {
+    # Other binary package, we use .tar.gz like on RSPM
+    pkgfile <- paste0(package, "_", data$Version, ".tar.gz")
+    utils.tar(pkgfile, package)
+  }
+
+  file.copy(pkgfile, path, overwrite = TRUE)
+  pkgfile
 }
 
 standardize_dummy_packages <- function(packages) {

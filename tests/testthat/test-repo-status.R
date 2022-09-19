@@ -41,6 +41,8 @@ test_that("bioc repo status", {
 })
 
 test_that("repo with binary packages", {
+  if (getRversion() < "4.2.0" || getRversion() >= "4.3.0") skip("Need R 4.2.x")
+
   withr::local_options(width = 1000)
 
   platforms <- c("aarch64-apple-darwin20", "source")

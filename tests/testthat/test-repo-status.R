@@ -51,7 +51,7 @@ test_that("repo with binary packages", {
   withr::local_options(repos = c(CRAN = fake_cran$url()))
 
   expect_snapshot({
-    stat <- repo_status(bioc = FALSE)
+    stat <- repo_status(platforms = platforms, r_version = "4.2", bioc = FALSE)
     stat$ping[stat$ok] <- 0.1
     stat
     summary(stat)

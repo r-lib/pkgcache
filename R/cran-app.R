@@ -122,15 +122,32 @@ standardize_dummy_packages <- function(packages) {
 }
 
 make_dummy_repo <- function(repo, packages = NULL, options = list()) {
-
   mkdirp(repo)
 
+  packages <- standardize_dummy_packages(packages)
+
+  options[["platforms"]] <- options[["platforms"]] %||% "source"
+
+  for (plt in options[["platforms"]]) {
+    options[["platform"]] <- plt
+    make_dummy_repo_platform(repo, packages, options)
+  }
+
+  invisible()
+}
+
+make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
+  mkdirp(repo)
+
+  options[["platform"]] <- options[["platform"]] %||% "source"
+  options[["rversion"]] <- options[["rversion"]] %||% format(getRversion())
   packages <- standardize_dummy_packages(packages)
 
   if (!is.null(options$repo_prefix)) {
     repo <- file.path(repo, options$repo_prefix)
   }
-  mkdirp(repo_source <- file.path(repo, utils::contrib.url("", "source")))
+  pkgdirs <- get_all_package_dirs(options[["platform"]], getRversion())
+  mkdirp(pkgs_dir <- file.path(repo, pkgdirs$contriburl))
 
   extra <- packages
   extra$file <- character(nrow(extra))
@@ -145,9 +162,9 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
 
   for (i in seq_len(nrow(packages))) {
     pkg_dir <- if (extra$archive[i]) {
-      file.path(repo_source, "Archive", packages$Package[i])
+      file.path(pkgs_dir, "Archive", packages$Package[i])
     } else {
-      repo_source
+      pkgs_dir
     }
 
     fn <- make_dummy_package(packages[i, , drop = FALSE], pkg_dir)
@@ -155,19 +172,19 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
   }
 
   if (!isTRUE(options$no_packages)) {
-    file.create(file.path(repo_source, "PACKAGES"))
-    tools::write_PACKAGES(repo_source)
+    file.create(file.path(pkgs_dir, "PACKAGES"))
+    tools::write_PACKAGES(pkgs_dir)
   }
 
   if (isTRUE(options$no_packages_gz)) {
-    file.remove(file.path(repo_source, "PACKAGES.gz"))
-  } else if (file.exists(file.path(repo_source, "PACKAGES.gz"))) {
+    file.remove(file.path(pkgs_dir, "PACKAGES.gz"))
+  } else if (file.exists(file.path(pkgs_dir, "PACKAGES.gz"))) {
     # if empty
 
   }
 
   if (isTRUE(options$no_packages_rds)) {
-    file.remove(file.path(repo_source, "PACKAGES.rds"))
+    file.remove(file.path(pkgs_dir, "PACKAGES.rds"))
   }
 
   if (!isTRUE(options$no_metadata)) {
@@ -175,13 +192,13 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
     meta <- data.frame(
       stringsAsFactors = FALSE,
       file = current$file,
-      size = file.size(file.path(repo_source, current$file)),
-      sha = cli::hash_file_sha256(file.path(repo_source, current$file)),
+      size = file.size(file.path(pkgs_dir, current$file)),
+      sha = cli::hash_file_sha256(file.path(pkgs_dir, current$file)),
       sysreqs = current$SystemRequirements %||% rep("NA", nrow(current)),
       built = if (nrow(current)) "NA" else character(),
       published = if (nrow(current)) format(Sys.time()) else character()
     )
-    outcon <- gzcon(file(file.path(repo_source, "METADATA2.gz"), "wb"))
+    outcon <- gzcon(file(file.path(pkgs_dir, "METADATA2.gz"), "wb"))
     utils::write.csv(meta, outcon, row.names = FALSE)
     close(outcon)
   }
@@ -189,7 +206,7 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
   if (!isTRUE(options$no_archive)) {
     archive <- extra[extra$archive,, drop = FALSE]
     adf <- list()
-    adir <- file.path(repo_source, "Archive")
+    adir <- file.path(pkgs_dir, "Archive")
     if (file.exists(adir)) {
       adirs <- dir(adir)
       adf <- lapply(adirs, function(d) {
@@ -201,8 +218,8 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
       names(adf) <- adirs
     }
 
-    mkdirp(file.path(repo_source, "Meta"))
-    saveRDS(adf, file.path(repo_source, "Meta", "archive.rds"))
+    mkdirp(file.path(pkgs_dir, "Meta"))
+    saveRDS(adf, file.path(pkgs_dir, "Meta", "archive.rds"))
   }
 
   invisible()

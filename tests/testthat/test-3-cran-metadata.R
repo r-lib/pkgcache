@@ -1,27 +1,6 @@
 
-pkgs <- dcf("
-  Package: pkg1
-  Version: 1.0.0
-
-  Package: pkg2
-  Version: 1.0.0
-  Depends: pkg1
-
-  Package: pkg3
-  Version: 1.0.0
-  Depends: pkg2
-")
-cran <- webfakes::local_app_process(
-  cran_app(pkgs),
-  opts = webfakes::server_opts(num_threads = 3)
-)
-
 test_that("what if cran.r-pkg.org is down?", {
-
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)

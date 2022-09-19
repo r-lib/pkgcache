@@ -1,21 +1,4 @@
 
-pkgs <- dcf("
-  Package: pkg1
-  Version: 1.0.0
-
-  Package: pkg2
-  Version: 1.0.0
-  Depends: pkg1
-
-  Package: pkg3
-  Version: 1.0.0
-  Depends: pkg2
-")
-cran <- webfakes::local_app_process(
-  cran_app(pkgs),
-  opts = webfakes::server_opts(num_threads = 3)
-)
-
 test_that("get_cache_files", {
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -174,11 +157,7 @@ test_that("load_primary_rds 3", {
 })
 
 test_that("load_primary_pkgs", {
-
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -226,11 +205,7 @@ test_that("load_primary_pkgs", {
 })
 
 test_that("update_replica_pkgs", {
-
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)
@@ -322,11 +297,7 @@ test_that("update_primary 2", {
 })
 
 test_that("update", {
-
-  withr::local_options(
-    repos = c(CRAN = cran$url()),
-    pkg.cran_metadata_url = cran$url()
-  )
+  setup_fake_apps()
 
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)

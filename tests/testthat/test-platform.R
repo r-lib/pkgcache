@@ -186,6 +186,8 @@ test_that("bioc_version", {
 })
 
 test_that("bioc_version_map", {
+  # This does need the internet, because we use it to check that our
+  # bioc metadata snapshot is current
   skip_if_offline()
   local_edition(3)
   withr::local_options(useFancyQuotes = FALSE)

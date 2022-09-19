@@ -244,7 +244,7 @@
 # repo with binary packages
 
     Code
-      stat <- repo_status(bioc = FALSE)
+      stat <- repo_status(platforms = platforms, r_version = "4.2", bioc = FALSE)
       stat$ping[stat$ok] <- 0.1
       stat
     Output

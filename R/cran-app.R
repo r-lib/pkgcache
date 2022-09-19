@@ -129,8 +129,10 @@ make_dummy_repo <- function(repo, packages = NULL, options = list()) {
   options[["platforms"]] <- options[["platforms"]] %||% "source"
 
   for (plt in options[["platforms"]]) {
-    options[["platform"]] <- plt
-    make_dummy_repo_platform(repo, packages, options)
+    options2 <- options
+    options2[["platform"]] <- plt
+    options2[["no_archive"]] <- options[["no_archive"]] %||% plt != "source"
+    make_dummy_repo_platform(repo, packages, options2)
   }
 
   invisible()
@@ -161,10 +163,11 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
   extra$archive <- latest[extra$Package] != extra$Version
 
   for (i in seq_len(nrow(packages))) {
-    pkg_dir <- if (extra$archive[i]) {
-      file.path(pkgs_dir, "Archive", packages$Package[i])
+    if (extra$archive[i]) {
+      if (isTRUE(options$no_archive)) next;
+      pkg_dir <- file.path(pkgs_dir, "Archive", packages$Package[i])
     } else {
-      pkgs_dir
+      pkg_dir <- pkgs_dir
     }
 
     fn <- make_dummy_package(packages[i, , drop = FALSE], pkg_dir)

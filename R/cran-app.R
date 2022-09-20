@@ -174,9 +174,17 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
     extra$file[i] <- fn
   }
 
-  if (!isTRUE(options$no_packages)) {
-    file.create(file.path(pkgs_dir, "PACKAGES"))
-    tools::write_PACKAGES(pkgs_dir)
+  file.create(file.path(pkgs_dir, "PACKAGES"))
+
+  if (grepl("windows", pkgdirs$contriburl)) {
+    pkg_type <- "win.binary"
+  } else {
+    pkg_type <- "source"
+  }
+  tools::write_PACKAGES(pkgs_dir, type = pkg_type)
+
+  if (isTRUE(options$no_packages)) {
+    file.remove(file.path(pkgs_dir, "PACKAGES"))
   }
 
   if (isTRUE(options$no_packages_gz)) {

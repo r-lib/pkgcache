@@ -127,6 +127,9 @@ test_that("summary", {
 })
 
 test_that("corrupt metadata", {
+  # The nullfile() trick does not work on Windows, we need a different
+  # way to corrupt the files there
+  skip_on_os("windows")
   setup_fake_apps()
 
   pri <- nullfile()

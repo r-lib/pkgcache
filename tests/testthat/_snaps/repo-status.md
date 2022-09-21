@@ -241,6 +241,24 @@
       BioCexp       @ 127.0.0.1:3000     OK     (100ms)
       BioCworkflows @ 127.0.0.1:3000     OK     (100ms)
 
+# repo with binary packages
+
+    Code
+      stat <- repo_status(platforms = platforms, r_version = "4.2", bioc = FALSE)
+      stat$ping[stat$ok] <- 0.1
+      stat
+    Output
+      # A data frame: 2 x 10
+        name  url                     type  bioc_version platform               path                                 r_version ok     ping error 
+        <chr> <chr>                   <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>
+      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>
+      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       TRUE    0.1 <NULL>
+    Code
+      summary(stat)
+    Output
+      Repository summary:      source aarch64-apple-darwin20          
+      CRAN @ 127.0.0.1:3000     OK             OK             (100ms)
+
 # repo_status unicode output [fancy]
 
     Code

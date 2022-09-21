@@ -40,7 +40,8 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     webfakes,
-    withr
+    withr,
+    zip
 Remotes:
     r-lib/webfakes
 Encoding: UTF-8

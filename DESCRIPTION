@@ -19,7 +19,6 @@ Imports:
     cli (>= 3.2.0),
     curl (>= 3.2),
     filelock,
-    glue,
     jsonlite,
     prettyunits,
     processx (>= 3.3.0.9001),

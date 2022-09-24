@@ -74,7 +74,10 @@ cleanup_old_cache_dir <- function(force = FALSE) {
   }
 
   if (!force) {
-    msg <- glue::glue("Are you sure you want to clean up `{dir}` (y/N)? ")
+    msg <- sprintf(
+      "Are you sure you want to clean up `%s` (y/N)? ",
+      dir
+    )
     ans <- readline(msg)
     if (!ans %in% c("y", "Y")) stop("Aborted")
   }

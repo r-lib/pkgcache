@@ -391,8 +391,10 @@ cmc_cleanup <- function(self, private, force) {
   }
   cache_dir <- private$get_cache_files("primary")$meta
   if (!force) {
-    msg <- glue::glue(
-      "Are you sure you want to clean up the cache in `{cache_dir}` (y/N)? ")
+    msg <- sprintf(
+      "Are you sure you want to clean up the cache in `%s` (y/N)? ",
+      cache_dir
+    )
     ans <- readline(msg)
     if (! ans %in% c("y", "Y")) stop("Aborted")
   }

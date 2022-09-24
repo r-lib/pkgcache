@@ -252,8 +252,10 @@ cac_cleanup <- function(self, private, force) {
   pri_etag <- paste0(pri_rds, "-etag")
   pri_lock <- paste0(pri_rds, "-lock")
   if (!force) {
-    msg <- glue::glue(
-      "Are you sure you want to clean up the cache in `{pri_rds}` (y/N)? ")
+    msg <- sprintf(
+      "Are you sure you want to clean up the cache in `%s` (y/N)? ",
+      pri_rds
+    )
     ans <- readline(msg)
     if (! ans %in% c("y", "Y")) stop("Aborted")
   }

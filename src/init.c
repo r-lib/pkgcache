@@ -27,12 +27,6 @@ static const R_CallMethodDef callMethods[]  = {
   CLEANCALL_METHOD_RECORD,
 
   REG(c_sql3_set_tempdir,             1),
-  REG(c_sql3_open,                    1),
-  REG(c_sql3_close,                   1),
-  REG(c_sql3_prepare,                 2),
-  REG(c_sql3_exec,                    4),
-  REG(c_sql3_get_query,               4),
-  REG(c_sql3_insert,                  4),
 
   REG(pkgcache_read_raw,              1),
   REG(pkgcache_parse_description_raw, 1),

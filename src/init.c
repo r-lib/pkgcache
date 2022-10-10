@@ -5,8 +5,8 @@
 
 #ifdef GCOV_COMPILE
 
-void __gcov_dump();
-SEXP pkgcache__gcov_flush() {
+void __gcov_dump(void);
+SEXP pkgcache__gcov_flush(void) {
   REprintf("Flushing coverage info\n");
   (void) __gcov_dump;
   return R_NilValue;
@@ -14,7 +14,7 @@ SEXP pkgcache__gcov_flush() {
 
 #else
 
-SEXP pkgcache__gcov_flush() {
+SEXP pkgcache__gcov_flush(void) {
   return R_NilValue;
 }
 

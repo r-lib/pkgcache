@@ -8,7 +8,7 @@
 void __gcov_dump(void);
 SEXP pkgcache__gcov_flush(void) {
   REprintf("Flushing coverage info\n");
-  (void) __gcov_dump;
+  (void) __gcov_dump();
   return R_NilValue;
 }
 

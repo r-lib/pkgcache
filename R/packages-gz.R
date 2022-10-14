@@ -230,7 +230,7 @@ packages_make_sources <- function(mirror, platform, target, repodir,
     zip_vecs(url, macurl)
 
   } else if (type == "cran" && platform == "source") {
-    url2 <- paste0(mirror, "/", repodir, "/Archive/", package, "_",
+    url2 <- paste0(mirror, "/", repodir, "/Archive/", package, "/", package, "_",
                    version, ".tar.gz")
     zip_vecs(url, url2)
 

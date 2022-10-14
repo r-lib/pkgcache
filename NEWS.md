@@ -12,6 +12,9 @@
   
 * `cran_archive_cleanup()` now does not ignore the `force` argument.
 
+* The `sources` column in the metadata cache now has the correct URL for
+  packages in the CRAN archive (https://github.com/r-lib/pak/issues/425).
+
 # pkgcache 2.0.2
 
 * pkgcache error messages are better now.

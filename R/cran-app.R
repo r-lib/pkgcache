@@ -85,11 +85,11 @@ make_dummy_binary <- function(data, path, platform = get_platform(),
   asNamespace("tools")$.install_package_description(package, package)
   asNamespace("tools")$.install_package_namespace_info(package, package)
 
-  if (.Platform$OS.type == "windows") {
+  if (platform == "windows") {
     pkgfile <- paste0(package, "_", data$Version, ".zip")
     zip::zip(pkgfile, package)
 
-  } else if (Sys.info()[["sysname"]] == "Darwin") {
+  } else if (platform == "macos") {
     pkgfile <- paste0(package, "_", data$Version, ".tgz")
     utils::tar(pkgfile, package)
   } else {
@@ -163,6 +163,10 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
   extra$archive <- latest[extra$Package] != extra$Version
 
   for (i in seq_len(nrow(packages))) {
+    if (options[["platform"]] == "source" &&
+        packages$Package[i] %in% options[["no_sources"]]) next
+    if (options[["platform"]] != "source" &&
+        packages$Package[i] %in% options[["no_binaries"]]) next
     if (extra$archive[i]) {
       if (isTRUE(options$no_archive)) next;
       pkg_dir <- file.path(pkgs_dir, "Archive", packages$Package[i])
@@ -170,7 +174,15 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
       pkg_dir <- pkgs_dir
     }
 
-    fn <- make_dummy_package(packages[i, , drop = FALSE], pkg_dir)
+    if (options[["platform"]] == "source") {
+      fn <- make_dummy_package(packages[i, , drop = FALSE], pkg_dir)
+    } else {
+      fn <- make_dummy_binary(
+        packages[i, , drop = FALSE],
+        pkg_dir,
+        options[["platform"]]
+      )
+    }
     extra$file[i] <- fn
   }
 

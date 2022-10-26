@@ -41,8 +41,6 @@ Suggests:
     webfakes,
     withr,
     zip
-Remotes:
-    r-lib/webfakes
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE, r6 = FALSE)
 RoxygenNote: 7.2.1.9000

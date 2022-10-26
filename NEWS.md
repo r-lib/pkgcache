@@ -1,4 +1,4 @@
-# pkgcache (development version)
+# pkgcache 2.0.3
 
 * The `built` and `sysreqs` columns of the metadata case are always
   character vectors now, and not logicals, as it used to be in some

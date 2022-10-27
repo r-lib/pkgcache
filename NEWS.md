@@ -1,3 +1,5 @@
+# pkgcache (development version)
+
 # pkgcache 2.0.3
 
 * The `built` and `sysreqs` columns of the metadata case are always

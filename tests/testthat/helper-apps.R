@@ -63,7 +63,7 @@ fake_cran <- webfakes::local_app_process(
 )
 
 fake_bioc <- webfakes::local_app_process(
-  bioc_app(options = list(bioc_version = "3.15")),
+  bioc_app(options = list(bioc_version = "3.16")),
   opts = webfakes::server_opts(num_threads = 3)
 )
 

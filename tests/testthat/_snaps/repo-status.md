@@ -227,10 +227,10 @@
         name          url                                                   type  bioc_version platform path        r_version ok     ping error 
         <chr>         <chr>                                                 <chr> <chr>        <chr>    <chr>       <chr>     <lgl> <dbl> <list>
       1 CRAN          http://127.0.0.1:3000/                               cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
-      2 BioCsoft      http://127.0.0.1:3000//packages/3.15/bioc            bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
-      3 BioCann       http://127.0.0.1:3000//packages/3.15/data/annotation bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
-      4 BioCexp       http://127.0.0.1:3000//packages/3.15/data/experiment bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
-      5 BioCworkflows http://127.0.0.1:3000//packages/3.15/workflows       bioc  3.15         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      2 BioCsoft      http://127.0.0.1:3000//packages/3.16/bioc            bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      3 BioCann       http://127.0.0.1:3000//packages/3.16/data/annotation bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      4 BioCexp       http://127.0.0.1:3000//packages/3.16/data/experiment bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      5 BioCworkflows http://127.0.0.1:3000//packages/3.16/workflows       bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
     Code
       summary(stat)
     Output

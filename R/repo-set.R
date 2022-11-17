@@ -221,7 +221,7 @@ repo_sugar_rspm <- function(x, nm) {
 
   rspm <- Sys.getenv(
     "PKGCACHE_RSPM_URL",
-    "https://packagemanager.rstudio.com/all"
+    "https://packagemanager.posit.co/cran"
   )
   structure(paste0(rspm, "/", vers[[sel]]), names = nm)
 }
@@ -229,7 +229,7 @@ repo_sugar_rspm <- function(x, nm) {
 get_rspm_versions <- function() {
   url <- Sys.getenv(
     "PKGCACHE_RSPM_TRANSACTIONS_URL",
-    "https://packagemanager.rstudio.com/__api__/sources/1/transactions?_limit=10000"
+    "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
   )
   resp <- jsonlite::fromJSON(url, simplifyVector = FALSE)
 
@@ -357,7 +357,7 @@ next_day <- function(x) {
 #'
 #'
 #' Notes:
-#' * See more about RSPM at <https://packagemanager.rstudio.com/client/#/>.
+#' * See more about RSPM at <https://packagemanager.posit.co/client/#/>.
 #' * See more about MRAN snapshots at
 #'   <https://mran.microsoft.com/timemachine>.
 #' * All dates (or times) can be specified in the ISO 8601 format.

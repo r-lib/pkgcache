@@ -35,11 +35,11 @@ test_that("repo_resolve", {
   withr::local_envvar(PKGCACHE_RSPM_URL = NA_character_)
   expect_equal(
     repo_resolve("RSPM@2020-10-10"),
-    c(CRAN = "https://packagemanager.rstudio.com/all/344")
+    c(CRAN = "https://packagemanager.posit.co/cran/344")
   )
   expect_equal(
     repo_resolve("RSPM@2020-10-10T14:33:56"),
-    c(CRAN = "https://packagemanager.rstudio.com/all/344")
+    c(CRAN = "https://packagemanager.posit.co/cran/344")
   )
 })
 
@@ -115,7 +115,7 @@ test_that("repo_sugar_rspm", {
   withr::local_envvar(PKGCACHE_RSPM_URL = NA_character_)
   expect_equal(
     repo_sugar_rspm("2020-06-30", NULL),
-    c(CRAN = "https://packagemanager.rstudio.com/all/298")
+    c(CRAN = "https://packagemanager.posit.co/cran/298")
   )
 
   withr::local_envvar(PKGCACHE_RSPM_URL = "https://my.rspm")

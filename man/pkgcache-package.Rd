@@ -128,17 +128,16 @@ configure Bioconductor support.
 
 \subsection{Package Options}{
 \itemize{
-\item The \code{BioC_mirror} option can be used to select a Bioconductor
-mirror. This takes priority over the \code{R_BIOC_MIRROR} environment
-variable.
+\item The \code{BioC_mirror} option can be used to select a Bioconductor mirror.
+This takes priority over the \code{R_BIOC_MIRROR} environment variable.
 \item \code{pkgcache_timeout} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
 3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}.
 \item \code{pkgcache_connecttimeout} is the HTTP timeout for the connection
-phase. It is in seconds and defaults to 30 seconds. It corresponds
-to the \href{https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}.
-\item \code{pkgcache_low_speed_limit} and \code{pkgcache_low_speed_time} are used
-for a more sensible HTTP timeout. If the download speed is less than
+phase. It is in seconds and defaults to 30 seconds. It corresponds to
+the \href{https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}.
+\item \code{pkgcache_low_speed_limit} and \code{pkgcache_low_speed_time} are used for
+a more sensible HTTP timeout. If the download speed is less than
 \code{pkgcache_low_speed_limit} bytes per second for at least
 \code{pkgcache_low_speed_time} seconds, the download errors. They
 correspond to the
@@ -151,10 +150,9 @@ curl options.
 
 \subsection{Package environment variables}{
 \itemize{
-\item The \code{R_BIOC_VERSION} environment variable can be used to override
-the default Bioconductor version detection and force a given
-version. E.g. this can be used to force the development version of
-Bioconductor.
+\item The \code{R_BIOC_VERSION} environment variable can be used to override the
+default Bioconductor version detection and force a given version. E.g.
+this can be used to force the development version of Bioconductor.
 \item The \code{R_BIOC_MIRROR} environment variable can be used to select a
 Bioconductor mirror. The \code{BioC_mirror} option takes priority over
 this, if set.
@@ -163,11 +161,11 @@ seconds, and the limit for downloading the whole file. Defaults to
 3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}. The
 \code{pkgcache_timeout} option has priority over this, if set.
 \item \code{PKGCACHE_CONNECTTIMEOUT} is the HTTP timeout for the connection
-phase. It is in seconds and defaults to 30 seconds. It corresponds
-to the \href{https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}. The
+phase. It is in seconds and defaults to 30 seconds. It corresponds to
+the \href{https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html}{\code{CONNECTTIMEOUT} libcurl option}. The
 \code{pkgcache_connecttimeout} option takes precedence over this, if set.
-\item \code{PKGCACHE_LOW_SPEED_LIMIT} and \code{PKGCACHE_LOW_SPEED_TIME} are used
-for a more sensible HTTP timeout. If the download speed is less than
+\item \code{PKGCACHE_LOW_SPEED_LIMIT} and \code{PKGCACHE_LOW_SPEED_TIME} are used for
+a more sensible HTTP timeout. If the download speed is less than
 \code{PKGCACHE_LOW_SPEED_LIMIT} bytes per second for at least
 \code{PKGCACHE_LOW_SPEED_TIME} seconds, the download errors. They
 correspond to the
@@ -177,9 +175,9 @@ and
 curl options. The \code{pkgcache_low_speed_time} and
 \code{pkgcache_low_speed_limit} options have priority over these
 environment variables, if they are set.
-\item \code{R_PKG_CACHE_DIR} is used for the cache directory, if set.
-(Otherwise \code{rappdirs::user_cache_dir()} is used, see also
-\code{meta_cache_summary()} and \code{pkg_cache_summary()}).
+\item \code{R_PKG_CACHE_DIR} is used for the cache directory, if set. (Otherwise
+\code{rappdirs::user_cache_dir()} is used, see also \code{meta_cache_summary()}
+and \code{pkg_cache_summary()}).
 }
 }
 

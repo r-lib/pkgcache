@@ -1,5 +1,8 @@
 # pkgcache (development version)
 
+* Update R version -> Bioconductor version mapping. R 4.2.x now maps to
+  Bioconductor 3.16.
+
 # pkgcache 2.0.3
 
 * The `built` and `sysreqs` columns of the metadata case are always

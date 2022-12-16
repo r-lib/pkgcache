@@ -1,6 +1,6 @@
 Package: pkgcache
 Title: Cache 'CRAN'-Like Metadata and R Packages
-Version: 2.0.3.9000
+Version: 2.0.4
 Authors@R: c(
     person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
     person("RStudio", role = c("cph", "fnd"))

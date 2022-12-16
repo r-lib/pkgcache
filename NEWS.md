@@ -1,4 +1,4 @@
-# pkgcache (development version)
+# pkgcache 2.0.4
 
 * Update R version -> Bioconductor version mapping. R 4.2.x now maps to
   Bioconductor 3.16.

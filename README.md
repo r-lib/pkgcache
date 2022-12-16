@@ -210,4 +210,4 @@ By contributing to this project, you agree to abide by its terms.
 
 ## License
 
-MIT (c) [RStudio Inc](https://www.rstudio.com/)
+MIT (c) [Posit Software, PBC](https://posit.co)

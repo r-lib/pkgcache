@@ -203,7 +203,7 @@ By contributing to this project, you agree to abide by its terms.
 
 \subsection{License}{
 
-MIT (c) \href{https://www.rstudio.com/}{RStudio Inc}
+MIT (c) \href{https://posit.co}{Posit Software, PBC}
 }
 }
 \seealso{

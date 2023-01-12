@@ -8,3 +8,8 @@ withr::defer(
   .Call(pkgcache__gcov_flush),
   teardown_env()
 )
+
+withr::defer(
+  bioconductor$.internal$clear_cache(),
+  teardown_env()
+)

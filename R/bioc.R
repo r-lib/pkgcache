@@ -123,6 +123,13 @@ bioconductor <- local({
   version_map <- NULL
   yaml_config <- NULL
 
+  clear_cache <- function() {
+    devel_version <<- NULL
+    release_version <<- NULL
+    version_map <<- NULL
+    yaml_config <<- NULL
+  }
+
   # -------------------------------------------------------------------
   # API
 

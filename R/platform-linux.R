@@ -69,6 +69,13 @@ parse_os_release <- function(lines) {
   )
   if (!is.na(ver)) out$release <- ver
 
+  if (is.na(ver) && id == "debian") {
+    pn <- grep("^PRETTY_NAME=", lines, value = TRUE)[1]
+    if (!is.na(pn) && grepl("/sid\"?$", pn)) {
+      out$release <- "unstable"
+    }
+  }
+
   out
 }
 

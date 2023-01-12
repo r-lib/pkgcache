@@ -95,6 +95,10 @@
         raw distribution release
       1 foo       debian      11
       
+      $`fixtures/linux/debian/unstable`
+        raw distribution  release
+      1 foo       debian unstable
+      
 
 ---
 

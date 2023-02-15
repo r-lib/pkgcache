@@ -33,6 +33,7 @@ test_that("repo_resolve", {
 
   # RSPM
   withr::local_envvar(PKGCACHE_RSPM_URL = NA_character_)
+  withr::local_envvar(PKGCACHE_RSPM_BINARIES = "false")
   expect_equal(
     repo_resolve("RSPM@2020-10-10"),
     c(CRAN = "https://packagemanager.posit.co/cran/344")
@@ -113,6 +114,7 @@ test_that("repo_sugar_mran", {
 
 test_that("repo_sugar_rspm", {
   withr::local_envvar(PKGCACHE_RSPM_URL = NA_character_)
+  withr::local_envvar(PKGCACHE_RSPM_BINARIES = "false")
   expect_equal(
     repo_sugar_rspm("2020-06-30", NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/298")
@@ -131,12 +133,12 @@ test_that("repo_sugar_rspm", {
   })
 
   expect_error(
-    repo_sugar_rspm(as.Date(names(pkgenv$rspm_versions)[1]) - 1, NULL),
+    repo_sugar_rspm(as.Date(names(pkgenv$rspm_versions$versions)[1]) - 1, NULL),
     "RSPM snapshots go back to"
   )
 
   expect_error(
-    repo_sugar_rspm(as.Date(last(names(pkgenv$rspm_versions))) + 1, NULL),
+    repo_sugar_rspm(as.Date(last(names(pkgenv$rspm_versions$versions))) + 1, NULL),
     "Cannot find matching RSPM snapshot for"
   )
   expect_true(called)
@@ -145,8 +147,9 @@ test_that("repo_sugar_rspm", {
 test_that("get_rspm_versions", {
   testthat::local_edition(3)
   withr::local_envvar(
-    PKGCACHE_RSPM_TRANSACTIONS_URL = repo$url("/rspmversions")
-  )
+    PKGCACHE_RSPM_TRANSACTIONS_URL = repo$url("/rspmversions"),
+    PKGCACHE_RSPM_STATUS_URL = repo$url("/rspmstatus")
+    )
 
   ret <- get_rspm_versions()
   expect_snapshot(ret)

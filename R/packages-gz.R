@@ -14,6 +14,7 @@ packages_gz_cols <- function()  {
 
 read_packages_file <- function(path, mirror, repodir, platform,
                                type = "standard", meta_path = NA_character_,
+                               bin_path = NA_character_, orig_r_version = NULL,
                                ..., .list = list()) {
 
   # We might have empty PACKAGES.gz files, we treat them as empty here
@@ -23,6 +24,7 @@ read_packages_file <- function(path, mirror, repodir, platform,
     pkgs <- parse_packages(path)
   }
   meta <- read_metadata_file(meta_path)
+  bin <- read_rspm_binaries(bin_path)
   extra <- c(
     list(repodir = repodir),
     list(...), .list)
@@ -102,6 +104,22 @@ read_packages_file <- function(path, mirror, repodir, platform,
         rep(NA_character_, nrow(pkgs))
   }
 
+  # RSPM sources are really binaries for the current platform
+  hasbin <- pkgs$package %in% bin$Package
+  if (length(orig_r_version) == 1 && sum(hasbin) > 0) {
+    plat <- current_r_platform()
+    pkgs$platform[hasbin] <- plat
+    pkgs$rversion[hasbin] <- orig_r_version
+    pkgs$target[hasbin] <- paste0(
+      dirname(pkgs$target[hasbin]), "/",
+      plat, "/",
+      basename(pkgs$target[hasbin])
+    )
+    pkgs$filesize[hasbin] <- NA_integer_
+    pkgs$sha256[hasbin] <- NA_integer_
+    pkgs$needscompilation[hasbin] <- NA
+  }
+
   # If we only want one Windows platform, then filter here
   if (platform %in% c("i386-w64-mingw32", "x86_64-w64-mingw32")) {
     drop <- pkgs$platform != platform &
@@ -133,6 +151,15 @@ read_metadata_file <- function(path) {
     }
     md
   }), error = function(e) NULL)
+}
+
+read_rspm_binaries <- function(path) {
+  if (is.na(path) || !file.exists(path) || file.size(path) == 0) {
+    pkgs <- data_frame()
+  } else {
+    pkgs <- parse_packages(path)
+  }
+  pkgs
 }
 
 packages_parse_deps <- function(pkgs) {

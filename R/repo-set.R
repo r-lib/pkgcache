@@ -16,7 +16,7 @@
 #' if `bioc` is `TRUE`.
 #' @param cran_mirror The CRAN mirror to use, see
 #'   [default_cran_mirror()].
-#' 
+#'
 #' @return
 #' `repo_get()` returns a data frame with columns:
 #' * `name`: repository name. Names are informational only.
@@ -201,15 +201,15 @@ repo_sugar_rspm <- function(x, nm) {
   if (is.null(nm) || nm == "") nm <- "CRAN"
   date <- parse_spec(sub("^RSPM@", "", x))
   if (is.null(pkgenv$rspm_versions) ||
-      date < names(pkgenv$rspm_versions[1]) ||
-      date > last(names(pkgenv$rspm_versions))) {
+      date < names(pkgenv$rspm_versions$versions[1]) ||
+      date > last(names(pkgenv$rspm_versions$versions))) {
     tryCatch(
       pkgenv$rspm_versions <- get_rspm_versions(),
       error = function(err) warning("Failed to update list of RSPM versions")
     )
   }
 
-  vers <- pkgenv$rspm_versions
+  vers <- pkgenv$rspm_versions$versions
   rspm_dates <- names(vers)
   if (date < rspm_dates[1]) {
     stop("RSPM snapshots go back to ", as.Date(rspm_dates[1]), " only")
@@ -223,7 +223,28 @@ repo_sugar_rspm <- function(x, nm) {
     "PKGCACHE_RSPM_URL",
     "https://packagemanager.posit.co/cran"
   )
-  structure(paste0(rspm, "/", vers[[sel]]), names = nm)
+
+  # check if binaries are supported
+  current <- current_r_platform_data()
+  distros <- pkgenv$rspm_versions$distros
+  mch <- which(
+    distros$distribution == current$distribution &
+    distros$release == current$release
+  )
+  binaries <-
+    ! tolower(Sys.getenv("PKGCACHE_RSPM_BINARIES")) %in% c("no", "false", "0", "off") &&
+    current$cpu == "x86_64" &&
+    grepl("linux", current$os) &&
+    length(mch) == 1
+
+  if (binaries) {
+    structure(
+      paste0(rspm, "/", "__linux__/", distros$binary_url[mch], "/", vers[[sel]]),
+      names = nm
+    )
+  } else {
+    structure(paste0(rspm, "/", vers[[sel]]), names = nm)
+  }
 }
 
 get_rspm_versions <- function() {
@@ -231,14 +252,39 @@ get_rspm_versions <- function() {
     "PKGCACHE_RSPM_TRANSACTIONS_URL",
     "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
   )
-  resp <- jsonlite::fromJSON(url, simplifyVector = FALSE)
+  url2 <- Sys.getenv(
+    "PKGCACHE_RSPM_STATUS_URL",
+    "https://packagemanager.posit.co/__api__/status"
+  )
+  dl <- data.frame(
+    stringsAsFactors = FALSE,
+    url = c(url, url2),
+    path = c(tmp1 <- tempfile(), tmp2 <- tempfile()),
+    etag = ""
+  )
+  on.exit(unlink(c(tmp1, tmp2)), add = TRUE)
+  dlres <- synchronise(download_files(dl))
+
+  resp <- jsonlite::fromJSON(tmp1, simplifyVector = FALSE)
+  stat <- jsonlite::fromJSON(tmp2, simplifyVector = FALSE)
 
   vrs <- structure(
     vcapply(resp, function(x) as.character(x$id)),
     names = vcapply(resp, function(x) as.character(x$published_to))
   )
   vrs <- vrs[order(as.Date(names(vrs)))]
-  vrs
+
+  dst <- data.frame(
+    stringsAsFactors = FALSE,
+    name = vcapply(stat$distros, "[[", "name"),
+    os = vcapply(stat$distros, "[[", "os"),
+    binary_url = vcapply(stat$distros, "[[", "binaryURL"),
+    distribution = vcapply(stat$distros, "[[", "distribution"),
+    release = vcapply(stat$distros, "[[", "release"),
+    binaries = vlapply(stat$distros, "[[", "binaries")
+  )
+
+  list(versions = vrs, distros = dst)
 }
 
 parse_spec <- function(x) {

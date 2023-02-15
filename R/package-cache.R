@@ -171,6 +171,10 @@ package_cache <- R6Class(
       download_file(url, target, on_progress = on_progress,
                     headers = http_headers)$
         then(function(res) {
+          headers <- curl::parse_headers(res$response$headers, multiple = TRUE)[[1]]
+          if ("x-package-type: binary" %in% tolower(headers)) {
+            # TODO: update path, r_version, platform, etc.?
+          }
           self$add(target, path, url = url, etag = res$etag, ...,
                    sha256 = shasum256(target), .list = .list)
         })$

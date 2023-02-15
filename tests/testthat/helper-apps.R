@@ -12,6 +12,12 @@ repo_app <- function() {
     )
   })
 
+  app$get("/rspmstatus", function(req, res) {
+    res$send_json(
+      text = readLines(testthat::test_path("fixtures/rspm-status.json"))
+    )
+  })
+
   app$get("/rversions", function(req, res) {
     res$send_json(
       text = readLines(testthat::test_path("fixtures/r-versions.json"))

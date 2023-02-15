@@ -21,7 +21,8 @@ test_that("get_cache_files", {
       sort(names(files$pkgs)),
       sort(c("path", "etag", "basedir", "base", "mirror", "url",
              "fallback_url", "platform", "r_version", "type",
-             "bioc_version", "meta_path", "meta_etag", "meta_url"
+             "bioc_version", "meta_path", "meta_etag", "meta_url",
+             "bin_path", "bin_etag", "bin_url"
       ))
     )
     expect_equal(

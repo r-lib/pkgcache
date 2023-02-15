@@ -113,6 +113,7 @@ read_packages_file <- function(path, mirror, repodir, platform,
     pkgs$target[hasbin] <- paste0(
       dirname(pkgs$target[hasbin]), "/",
       plat, "/",
+      orig_r_version, "/",
       basename(pkgs$target[hasbin])
     )
     pkgs$filesize[hasbin] <- NA_integer_

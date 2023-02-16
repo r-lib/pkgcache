@@ -127,18 +127,18 @@ test_that("repo_sugar_rspm", {
   )
 
   called <- FALSE
-  mockery::stub(repo_sugar_rspm, "get_rspm_versions", function(...) {
+  mockery::stub(repo_sugar_rspm, "synchronise", function(...) {
     called <<- TRUE
-    pkgenv$rspm_versions
+    NULL
   })
 
   expect_error(
-    repo_sugar_rspm(as.Date(names(pkgenv$rspm_versions$versions)[1]) - 1, NULL),
+    repo_sugar_rspm(as.Date(names(pkgenv$rspm_versions)[1]) - 1, NULL),
     "RSPM snapshots go back to"
   )
 
   expect_error(
-    repo_sugar_rspm(as.Date(last(names(pkgenv$rspm_versions$versions))) + 1, NULL),
+    repo_sugar_rspm(as.Date(last(names(pkgenv$rspm_versions))) + 1, NULL),
     "Cannot find matching RSPM snapshot for"
   )
   expect_true(called)
@@ -151,7 +151,7 @@ test_that("get_rspm_versions", {
     PKGCACHE_RSPM_STATUS_URL = repo$url("/rspmstatus")
     )
 
-  ret <- get_rspm_versions()
+  ret <- synchronise(async_get_rspm_versions())
   expect_snapshot(ret)
 })
 

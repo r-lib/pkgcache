@@ -200,16 +200,37 @@ repo_sugar_mran <- function(x, nm) {
 repo_sugar_rspm <- function(x, nm) {
   if (is.null(nm) || nm == "") nm <- "CRAN"
   date <- parse_spec(sub("^RSPM@", "", x))
-  if (is.null(pkgenv$rspm_versions) ||
-      date < names(pkgenv$rspm_versions$versions[1]) ||
-      date > last(names(pkgenv$rspm_versions$versions))) {
-    tryCatch(
-      pkgenv$rspm_versions <- get_rspm_versions(),
-      error = function(err) warning("Failed to update list of RSPM versions")
-    )
-  }
 
-  vers <- pkgenv$rspm_versions$versions
+  # do we potentially have binaries?
+  current <- current_r_platform_data()
+  binaries <-
+    ! tolower(Sys.getenv("PKGCACHE_RSPM_BINARIES")) %in% c("no", "false", "0", "off") &&
+    current$cpu == "x86_64" &&
+    grepl("linux", current$os)
+
+  # if we may have binaries, then get the distro data as well
+  synchronise(when_all(
+    async_get_rspm_versions(date = date),
+    if (binaries) {
+      async_get_rspm_distros(
+        distribution = current$distribution,
+        release = current$release
+      )
+    } else {
+      async_constant()
+    }
+  ))
+
+  # do we really have binaries? check in RSPM status
+  distros <- pkgenv$rspm_distros
+  mch <- which(
+    distros$distribution == current$distribution &
+    distros$release == current$release
+  )
+  binaries <- binaries && length(mch) == 1
+
+  # search for date
+  vers <- pkgenv$rspm_versions
   rspm_dates <- names(vers)
   if (date < rspm_dates[1]) {
     stop("RSPM snapshots go back to ", as.Date(rspm_dates[1]), " only")
@@ -219,23 +240,11 @@ repo_sugar_rspm <- function(x, nm) {
     stop("Cannot find matching RSPM snapshot for ", date)
   }
 
+  # create repo URL
   rspm <- Sys.getenv(
     "PKGCACHE_RSPM_URL",
     "https://packagemanager.posit.co/cran"
   )
-
-  # check if binaries are supported
-  current <- current_r_platform_data()
-  distros <- pkgenv$rspm_versions$distros
-  mch <- which(
-    distros$distribution == current$distribution &
-    distros$release == current$release
-  )
-  binaries <-
-    ! tolower(Sys.getenv("PKGCACHE_RSPM_BINARIES")) %in% c("no", "false", "0", "off") &&
-    current$cpu == "x86_64" &&
-    grepl("linux", current$os) &&
-    length(mch) == 1
 
   if (binaries) {
     structure(
@@ -245,46 +254,6 @@ repo_sugar_rspm <- function(x, nm) {
   } else {
     structure(paste0(rspm, "/", vers[[sel]]), names = nm)
   }
-}
-
-get_rspm_versions <- function() {
-  url <- Sys.getenv(
-    "PKGCACHE_RSPM_TRANSACTIONS_URL",
-    "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
-  )
-  url2 <- Sys.getenv(
-    "PKGCACHE_RSPM_STATUS_URL",
-    "https://packagemanager.posit.co/__api__/status"
-  )
-  dl <- data.frame(
-    stringsAsFactors = FALSE,
-    url = c(url, url2),
-    path = c(tmp1 <- tempfile(), tmp2 <- tempfile()),
-    etag = ""
-  )
-  on.exit(unlink(c(tmp1, tmp2)), add = TRUE)
-  dlres <- synchronise(download_files(dl))
-
-  resp <- jsonlite::fromJSON(tmp1, simplifyVector = FALSE)
-  stat <- jsonlite::fromJSON(tmp2, simplifyVector = FALSE)
-
-  vrs <- structure(
-    vcapply(resp, function(x) as.character(x$id)),
-    names = vcapply(resp, function(x) as.character(x$published_to))
-  )
-  vrs <- vrs[order(as.Date(names(vrs)))]
-
-  dst <- data.frame(
-    stringsAsFactors = FALSE,
-    name = vcapply(stat$distros, "[[", "name"),
-    os = vcapply(stat$distros, "[[", "os"),
-    binary_url = vcapply(stat$distros, "[[", "binaryURL"),
-    distribution = vcapply(stat$distros, "[[", "distribution"),
-    release = vcapply(stat$distros, "[[", "release"),
-    binaries = vlapply(stat$distros, "[[", "binaries")
-  )
-
-  list(versions = vrs, distros = dst)
 }
 
 parse_spec <- function(x) {

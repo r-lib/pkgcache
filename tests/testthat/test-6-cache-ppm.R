@@ -85,12 +85,12 @@ test_that("source expected, got binary", {
 
   pkgs <- pc$list()
   cols <- setdiff(colnames(pkgs), "fullpath")
-  expect_snapshot(
-    pkgs[, cols],
-    transform = function(x) {
-      sub("[-a-zA-Z0-9]+ubuntu-22.04", "*-ubuntu-22.04", x)
-    }
-  )
+  fix_platform <- function(x) {
+    sub("[-_a-zA-Z0-9]+ubuntu-22.04", "*-ubuntu-22.04", x)
+  }
+  pkgs$path <- fix_platform(pkgs$path)
+  pkgs$platform <- fix_platform(pkgs$platform)
+  expect_snapshot(pkgs[, cols])
   expect_true(all(file.exists(pkgs$fullpath)))
 })
 

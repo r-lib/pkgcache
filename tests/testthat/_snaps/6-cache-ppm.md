@@ -35,10 +35,10 @@
     Code
       pkgs[, cols]
     Output
-                                                                       path package
-      1 src/contrib/aarch64-apple-darwin20-ubuntu22.04/4.2/pkg_1.0.0.tar.gz      NA
-        url etag                                                           sha256
-      1  NA   NA 32f7b637cf5ab87ba96679679e673901c339626b513a6b9d033d360302602080
-                                  platform
-      1 aarch64-apple-darwin20-ubuntu22.04
+                                                   path package url etag
+      1 src/contrib/*-ubuntu-22.04/4.2/pkg_1.0.0.tar.gz      NA  NA   NA
+                                                                  sha256
+      1 32f7b637cf5ab87ba96679679e673901c339626b513a6b9d033d360302602080
+              platform
+      1 *-ubuntu-22.04
 

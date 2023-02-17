@@ -115,13 +115,13 @@ test_that("read_packages_file from PPM", {
   )
 
   cols <- c("package", "platform", "rversion")
+  fix_platform <- function(x) {
+    sub(current_r_platform(), "<current-platform>", fixed = TRUE, x)
+  }
+  pkgs$pkgs$platform <- fix_platform(pkgs$pkgs$platform)
+  pkgs$pkgs$target <- fix_platform(pkgs$pkgs$target)
   expect_snapshot(pkgs$pkgs[, cols])
-  expect_snapshot(
-    pkgs$pkgs$target,
-    transform = function(x) {
-      sub(current_r_platform(), "<platform>", fixed = TRUE, x)
-    }
-  )
+  expect_snapshot(pkgs$pkgs$target)
 })
 
 test_that("packages_parse_deps", {

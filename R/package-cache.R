@@ -386,7 +386,7 @@ update_fields_for_rspm_download <- function(path, extra, headers) {
       release <- pkgenv$rspm_distros$release[wdist]
       res$extra$platform <- paste0(
         current$cpu, "-", current$vendor, "-", current$os, "-",
-        distro, release
+        distro, "-", release
       )
     }
 

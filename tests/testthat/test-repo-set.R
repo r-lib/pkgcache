@@ -44,6 +44,35 @@ test_that("repo_resolve", {
   )
 })
 
+
+test_that("repo_resolve with PPM", {
+  withr::local_envvar(
+    PKGCACHE_RSPM_URL = NA_character_,
+    PKGCACHE_RSPM_BINARIES = "true",
+    PKGCACHE_RSPM_TRANSACTIONS_URL = repo$url("/rspmversions"),
+    PKGCACHE_RSPM_STATUS_URL = repo$url("/rspmstatus")
+  )
+
+  mockery::stub(
+    repo_sugar_rspm,
+    "current_r_platform_data",
+    data.frame(
+      stringsAsFactors = FALSE,
+      cpu = "x86_64",
+      vendor = "pc",
+      os = "linux-gnu",
+      distribution = "ubuntu",
+      release = "22.04",
+      platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
+    )
+  )
+
+  expect_equal(
+    repo_sugar_rspm("RSPM@2021-01-26", nm = NULL),
+    c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
+  )
+})
+
 test_that("repo_add", {
   testthat::local_edition(3)
   withr::local_options(
@@ -142,17 +171,6 @@ test_that("repo_sugar_rspm", {
     "Cannot find matching RSPM snapshot for"
   )
   expect_true(called)
-})
-
-test_that("get_rspm_versions", {
-  testthat::local_edition(3)
-  withr::local_envvar(
-    PKGCACHE_RSPM_TRANSACTIONS_URL = repo$url("/rspmversions"),
-    PKGCACHE_RSPM_STATUS_URL = repo$url("/rspmstatus")
-    )
-
-  ret <- synchronise(async_get_rspm_versions())
-  expect_snapshot(ret)
 })
 
 test_that("parse_spec", {

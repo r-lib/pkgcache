@@ -18,7 +18,7 @@ async_get_rspm_versions <- function(forget = FALSE, date = NULL) {
         )
         pkgenv$rspm_versions <- vrs[order(as.Date(names(vrs)))]
       })$
-      catch(error = function() {
+      catch(error = function(err) {
         warning("Failed to download RSPM versions")
       })
 
@@ -76,7 +76,7 @@ async_get_rspm_distros <- function(forget = FALSE, distribution = NULL,
         pkgenv$rspm_distros <- dst
         pkgenv$rspm_distros_cached <- dst
       })$
-      catch(error = function() {
+      catch(error = function(err) {
         warning("Failed to download RSPM status")
       })
   }
@@ -84,16 +84,4 @@ async_get_rspm_distros <- function(forget = FALSE, distribution = NULL,
   def$
     finally(function() unlink(tmp2))$
     then(function() pkgenv$rspm_distros)
-}
-
-parse_rspm_bintag <- function(bintag) {
-  if (length(bintag) == 0) {
-    warning("No 'x-package-binary-tag' header from RSPM.")
-    return(list(
-      platform = current_r_platform(),
-      r_version = get_minor_r_version(getRversion())
-    ))
-  }
-  bintag <- sub("^x-package-binary-tag: ?", "", bintag[1])
-
 }

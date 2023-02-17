@@ -86,7 +86,7 @@ test_that("source expected, got binary", {
   pkgs <- pc$list()
   cols <- setdiff(colnames(pkgs), "fullpath")
   fix_platform <- function(x) {
-    sub("[-_a-zA-Z0-9]+ubuntu-22.04", "*-ubuntu-22.04", x)
+    sub("[-._a-zA-Z0-9]+ubuntu-22.04", "*-ubuntu-22.04", x)
   }
   pkgs$path <- fix_platform(pkgs$path)
   pkgs$platform <- fix_platform(pkgs$platform)

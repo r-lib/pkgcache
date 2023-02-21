@@ -152,12 +152,12 @@ package_cache <- R6Class(
 
       extra <- c(list(...), .list)
 
-      # updates for unexpected RSPM binaries and sources
+      # updates for unexpected PPM binaries and sources
       # need to update 'path', 'platform', 'sha256'
       if (is.list(.headers)) .headers <- .headers[[1]]
       .headers <- tolower(.headers)
       if ("x-repository-type: rspm" %in% .headers) {
-        fields <- update_fields_for_rspm_download(path, extra, .headers)
+        fields <- update_fields_for_ppm_download(path, extra, .headers)
         path <- fields$path
         extra <- fields$extra
       }
@@ -362,7 +362,7 @@ make_empty_db_data_frame <- function() {
   )
 }
 
-update_fields_for_rspm_download <- function(path, extra, headers) {
+update_fields_for_ppm_download <- function(path, extra, headers) {
   res <- list(path = path, extra = extra)
   pkg_type <- grep("^x-package-type:", headers, value = TRUE)[1]
   if (is.na(pkg_type)) return(res)
@@ -373,17 +373,17 @@ update_fields_for_rspm_download <- function(path, extra, headers) {
     bin_tag <- grep("x-package-binary-tag:", headers, value = TRUE)[1]
     if (is.na(bin_tag)) return(res)
     bin_tag <- sub("x-package-binary-tag: ?", "", bin_tag)
-    synchronise(async_get_rspm_distros())
+    synchronise(async_get_ppm_distros())
     rver <- strsplit(bin_tag, "-")[[1]][[1]]
     binurl <- strsplit(bin_tag, "-")[[1]][[2]]
-    if (!binurl %in% pkgenv$rspm_distros$binary_url) return(res)
+    if (!binurl %in% pkgenv$ppm_distros$binary_url) return(res)
 
     # fix platform if neeeded
     if (!is.null(extra$platform) && extra$platform == "source") {
       current <- current_r_platform_data()
-      wdist <- match(binurl, pkgenv$rspm_distros$binary_url)
-      distro <- pkgenv$rspm_distros$distribution[wdist]
-      release <- pkgenv$rspm_distros$release[wdist]
+      wdist <- match(binurl, pkgenv$ppm_distros$binary_url)
+      distro <- pkgenv$ppm_distros$distribution[wdist]
+      release <- pkgenv$ppm_distros$release[wdist]
       res$extra$platform <- paste0(
         current$cpu, "-", current$vendor, "-", current$os, "-",
         distro, "-", release

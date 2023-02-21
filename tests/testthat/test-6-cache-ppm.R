@@ -94,22 +94,22 @@ test_that("source expected, got binary", {
   expect_true(all(file.exists(pkgs$fullpath)))
 })
 
-test_that("update_fields_for_rspm_download edge cases", {
+test_that("update_fields_for_ppm_download edge cases", {
   path <- "foobar"
   extra <- list(foo = "bar")
 
   expect_equal(
-    update_fields_for_rspm_download(path, extra, character()),
+    update_fields_for_ppm_download(path, extra, character()),
     list(path = path, extra = extra)
   )
 
   expect_equal(
-    update_fields_for_rspm_download(path, extra, "x-package-type: binary"),
+    update_fields_for_ppm_download(path, extra, "x-package-type: binary"),
     list(path = path, extra = extra)
   )
 
   expect_equal(
-    update_fields_for_rspm_download(
+    update_fields_for_ppm_download(
       path,
       extra,
       c("x-package-type: binary", "x-package-binary-tag: 4.2-foobar")

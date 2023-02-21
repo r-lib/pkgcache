@@ -135,7 +135,7 @@ pkgenv$r_versions <- list(
   list(version = "4.2.2",  date = "2022-10-31T08:05:54.268400Z")
 )
 
-pkgenv$rspm_versions <- c(
+pkgenv$ppm_versions <- c(
   `2017-10-10T00:00:00Z` = "5", `2017-10-25T00:00:00Z` = "6",
   `2017-10-30T00:00:00Z` = "7", `2017-11-01T00:00:00Z` = "8",
   `2017-11-03T00:00:00Z` = "9", `2017-11-07T00:00:00Z` = "10",
@@ -573,7 +573,7 @@ pkgenv$rspm_versions <- c(
   `2023-02-13T00:00:00Z` = "16698644", `2023-02-14T00:00:00Z` = "16710885"
 )
 
-pkgenv$rspm_distros_cached <-
+pkgenv$ppm_distros_cached <-
   utils::read.table(header = TRUE, stringsAsFactors = FALSE, textConnection("
  name                    os      binary_url    distribution release   binaries
  centos7                 linux   centos7       centos       7         TRUE

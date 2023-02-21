@@ -1,11 +1,11 @@
 
-async_get_rspm_versions <- function(forget = FALSE, date = NULL) {
+async_get_ppm_versions <- function(forget = FALSE, date = NULL) {
   tmp1 <- tempfile()
   def <- if (forget ||
-             (!is.null(date) && date < names(pkgenv$rspm_versions[1])) ||
-             (!is.null(date) && date > last(names(pkgenv$rspm_versions)))) {
+             (!is.null(date) && date < names(pkgenv$ppm_versions[1])) ||
+             (!is.null(date) && date > last(names(pkgenv$ppm_versions)))) {
     url <- Sys.getenv(
-      "PKGCACHE_RSPM_TRANSACTIONS_URL",
+      "PKGCACHE_PPM_TRANSACTIONS_URL",
       "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
     )
     tmp <- tempfile()
@@ -16,10 +16,10 @@ async_get_rspm_versions <- function(forget = FALSE, date = NULL) {
           vcapply(resp, function(x) as.character(x$id)),
           names = vcapply(resp, function(x) as.character(x$published_to))
         )
-        pkgenv$rspm_versions <- vrs[order(as.Date(names(vrs)))]
+        pkgenv$ppm_versions <- vrs[order(as.Date(names(vrs)))]
       })$
       catch(error = function(err) {
-        warning("Failed to download RSPM versions")
+        warning("Failed to download PPM versions")
       })
 
   } else {
@@ -28,10 +28,10 @@ async_get_rspm_versions <- function(forget = FALSE, date = NULL) {
 
   def$
     finally(function() unlink(tmp1))$
-    then(function() pkgenv$rspm_versions)
+    then(function() pkgenv$ppm_versions)
 }
 
-async_get_rspm_distros <- function(forget = FALSE, distribution = NULL,
+async_get_ppm_distros <- function(forget = FALSE, distribution = NULL,
                                    release = NULL) {
   tmp2 <- tempfile()
 
@@ -39,11 +39,11 @@ async_get_rspm_distros <- function(forget = FALSE, distribution = NULL,
   known <- if (is.null(distribution)) {
     TRUE
   } else if (is.null(release)) {
-    distribution %in% pkgenv$rspm_distros_cached$distribution
+    distribution %in% pkgenv$ppm_distros_cached$distribution
   } else {
     mch <- which(
-      distribution == pkgenv$rspm_distros_cached$distribution &
-      release == pkgenv$rspm_distros_cached$release
+      distribution == pkgenv$ppm_distros_cached$distribution &
+      release == pkgenv$ppm_distros_cached$release
     )
     !is.na(mch)
   }
@@ -51,14 +51,14 @@ async_get_rspm_distros <- function(forget = FALSE, distribution = NULL,
   # can we used the cached values? Only if
   # * not a forced update, and
   # * distro is known, or we already updated.
-  updated <- !is.null(pkgenv$rspm_distros)
+  updated <- !is.null(pkgenv$ppm_distros)
   cached <- !forget && (known || updated)
   def <- if (cached) {
-    pkgenv$rspm_distros <- pkgenv$rspm_distros_cached
+    pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
     async_constant()
   } else {
     url <- Sys.getenv(
-      "PKGCACHE_RSPM_STATUS_URL",
+      "PKGCACHE_PPM_STATUS_URL",
       "https://packagemanager.posit.co/__api__/status"
     )
     download_file(url, tmp2)$
@@ -73,15 +73,15 @@ async_get_rspm_distros <- function(forget = FALSE, distribution = NULL,
           release = vcapply(stat$distros, "[[", "release"),
           binaries = vlapply(stat$distros, "[[", "binaries")
         )
-        pkgenv$rspm_distros <- dst
-        pkgenv$rspm_distros_cached <- dst
+        pkgenv$ppm_distros <- dst
+        pkgenv$ppm_distros_cached <- dst
       })$
       catch(error = function(err) {
-        warning("Failed to download RSPM status")
+        warning("Failed to download PPM status")
       })
   }
 
   def$
     finally(function() unlink(tmp2))$
-    then(function() pkgenv$rspm_distros)
+    then(function() pkgenv$ppm_distros)
 }

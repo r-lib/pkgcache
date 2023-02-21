@@ -1,4 +1,4 @@
-# async_get_rspm_versions 2
+# async_get_ppm_versions 2
 
     Code
       ret
@@ -12,7 +12,7 @@
       2021-02-05T00:00:00Z 
                  "1194160" 
 
-# async_get_rspm_distros 2
+# async_get_ppm_distros 2
 
     Code
       ret

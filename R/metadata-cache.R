@@ -446,7 +446,7 @@ cmc__get_cache_files <- function(self, private, which) {
 
   pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
   meta_path <- ifelse(
-    type == "cran" | name == "rspm",
+    type == "cran" | name == "rspm" | name == "ppm" | name == "p3m",
     file.path(root, "_metadata", repo_enc, pkgs_dirs, "METADATA2.gz"),
     NA_character_)
   meta_etag <- ifelse(
@@ -456,7 +456,7 @@ cmc__get_cache_files <- function(self, private, which) {
     paste0(cran_metadata_url(), pkgs_dirs, "/METADATA2.gz"),
     NA_character_)
 
-  bin_url <- rspm_binary_url(mirror, private$r_version)
+  bin_url <- ppm_binary_url(mirror, private$r_version)
   bin_path <- ifelse(
     is.na(bin_url),
     NA_character_,
@@ -497,11 +497,11 @@ cmc__get_cache_files <- function(self, private, which) {
   res
 }
 
-rspm_binary_url <- function(urls, r_version) {
+ppm_binary_url <- function(urls, r_version) {
   res <- rep(NA_character_, length(urls))
 
   # If multiple R versions are requested, then we give up, and pretend
-  # that RSPM binaries are source packages
+  # that PPM binaries are source packages
   if (length(r_version) != 1) return(res)
 
   # http://rspm.infra/all/__linux__/bionic/latest ->

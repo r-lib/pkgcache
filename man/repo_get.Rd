@@ -96,11 +96,11 @@ Currently supported repository specifications:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{https://cloud.r-project.org
 }\if{html}{\out{</div>}}
-\item \verb{RSPM@<date>}, RSPM (RStudio Package Manager) snapshot, at the
-specified date.
-\item \verb{RSPM@<package>-<version>} RSPM snapshot, for the day after the
+\item \verb{PPM@<date>}, PPM (Posit Package Manager, formerly RStudio Package
+Manager) snapshot, at the specified date.
+\item \verb{PPM@<package>-<version>} PPM snapshot, for the day after the
 release of \verb{<version>} of \verb{<package>}.
-\item \verb{RSPM@R-<version>} RSPM snapshot, for the day after R \verb{<version>}
+\item \verb{PPM@R-<version>} PPM snapshot, for the day after R \verb{<version>}
 was released.
 \item \verb{MRAN@<date>}, MRAN (Microsoft R Application Network) snapshot, at
 the specified date.
@@ -112,13 +112,15 @@ after R \verb{<version>} was released.
 
 Notes:
 \itemize{
-\item See more about RSPM at \url{https://packagemanager.posit.co/client/#/}.
+\item See more about PPM at \url{https://packagemanager.posit.co/client/#/}.
+\item The \verb{RSPM@} prefix is still supported and treated the same way as
+\verb{PPM@}.
 \item See more about MRAN snapshots at
 \url{https://mran.microsoft.com/timemachine}.
 \item All dates (or times) can be specified in the ISO 8601 format.
-\item If RSPM does not have a snapshot available for a date, the next
+\item If PPM does not have a snapshot available for a date, the next
 available date is used.
-\item Dates that are before the first, or after the last RSPM snapshot
+\item Dates that are before the first, or after the last PPM snapshot
 will trigger an error.
 \item Dates before the first, or after the last MRAN snapshot will trigger
 an error.
@@ -130,15 +132,15 @@ an error.
 repo_get()
 \dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 repo_resolve("MRAN@2020-01-21")
-repo_resolve("RSPM@2020-01-21")
+repo_resolve("PPM@2020-01-21")
 repo_resolve("MRAN@dplyr-1.0.0")
-repo_resolve("RSPM@dplyr-1.0.0")
+repo_resolve("PPM@dplyr-1.0.0")
 repo_resolve("MRAN@R-4.0.0")
-repo_resolve("RSPM@R-4.0.0")
+repo_resolve("PPM@R-4.0.0")
 \dontshow{\}) # examplesIf}
 \dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), repo_get())
-with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
+with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
+with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 
 with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 \dontshow{\}) # examplesIf}

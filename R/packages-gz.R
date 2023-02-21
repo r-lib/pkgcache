@@ -24,7 +24,7 @@ read_packages_file <- function(path, mirror, repodir, platform,
     pkgs <- parse_packages(path)
   }
   meta <- read_metadata_file(meta_path)
-  bin <- read_rspm_binaries(bin_path)
+  bin <- read_ppm_binaries(bin_path)
   extra <- c(
     list(repodir = repodir),
     list(...), .list)
@@ -104,7 +104,7 @@ read_packages_file <- function(path, mirror, repodir, platform,
         rep(NA_character_, nrow(pkgs))
   }
 
-  # RSPM sources are really binaries for the current platform
+  # PPM sources are really binaries for the current platform
   hasbin <- pkgs$package %in% bin$Package
   if (length(orig_r_version) == 1 && sum(hasbin) > 0) {
     plat <- current_r_platform()
@@ -154,7 +154,7 @@ read_metadata_file <- function(path) {
   }), error = function(e) NULL)
 }
 
-read_rspm_binaries <- function(path) {
+read_ppm_binaries <- function(path) {
   if (is.na(path) || !file.exists(path) || file.size(path) == 0) {
     pkgs <- data_frame()
   } else {

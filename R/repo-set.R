@@ -243,10 +243,7 @@ repo_sugar_ppm <- function(x, nm) {
   }
 
   # create repo URL
-  ppm <- Sys.getenv(
-    "PKGCACHE_PPM_URL",
-    "https://packagemanager.posit.co/cran"
-  )
+  ppm <- get_ppm_url()
 
   if (binaries) {
     structure(

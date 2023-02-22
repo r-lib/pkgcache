@@ -1,4 +1,24 @@
 
+get_ppm_url <- function() {
+  ppm_env <- Sys.getenv("PKGCACHE_PPM_URL")
+  if (ppm_env != "") {
+    paste0(
+      ppm_env,
+      "/",
+      Sys.getenv("PKGCACHE_PPM_REPO", "cran")
+    )
+  } else {
+    Sys.getenv(
+      "PKGCACHE_RSPM_URL",
+      "https://packagemanager.posit.co/cran"
+    )
+  }
+}
+
+get_ppm_base_url <- function() {
+  dirname(get_ppm_url())
+}
+
 async_get_ppm_versions <- function(forget = FALSE, date = NULL) {
   tmp1 <- tempfile()
   def <- if (forget ||
@@ -6,7 +26,7 @@ async_get_ppm_versions <- function(forget = FALSE, date = NULL) {
              (!is.null(date) && date > last(names(pkgenv$ppm_versions)))) {
     url <- Sys.getenv(
       "PKGCACHE_PPM_TRANSACTIONS_URL",
-      "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
+      paste0(get_ppm_base_url(), "/__api__/sources/1/transactions?_limit=10000")
     )
     tmp <- tempfile()
     download_file(url, tmp1)$
@@ -59,7 +79,7 @@ async_get_ppm_distros <- function(forget = FALSE, distribution = NULL,
   } else {
     url <- Sys.getenv(
       "PKGCACHE_PPM_STATUS_URL",
-      "https://packagemanager.posit.co/__api__/status"
+      paste0(get_ppm_base_url(), "/__api__/status")
     )
     download_file(url, tmp2)$
       then(function(res) {

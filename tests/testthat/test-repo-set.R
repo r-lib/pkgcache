@@ -161,10 +161,13 @@ test_that("repo_sugar_ppm", {
     c(CRAN = "https://packagemanager.posit.co/cran/298")
   )
 
-  withr::local_envvar(PKGCACHE_PPM_URL = "https://my.ppm")
+  withr::local_envvar(
+    PKGCACHE_PPM_URL = "https://my.ppm",
+    PKGCACHE_PPM_REPO = "repo"
+  )
   expect_equal(
     repo_sugar_ppm("2020-06-30", NULL),
-    c(CRAN = "https://my.ppm/298")
+    c(CRAN = "https://my.ppm/repo/298")
   )
 
   called <- FALSE

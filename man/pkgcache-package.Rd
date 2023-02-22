@@ -156,6 +156,11 @@ this can be used to force the development version of Bioconductor.
 \item The \code{R_BIOC_MIRROR} environment variable can be used to select a
 Bioconductor mirror. The \code{BioC_mirror} option takes priority over
 this, if set.
+\item \code{PKGCACHE_PPM_REPO} is the name of the Posit Package Manager
+repository to use. Defaults to \code{"cran"}.
+\item \code{PKGCACHE_PPM_URL} is the base URL of the Posit Package Manager
+instance to use. It defaults to the URL of the Posit Public Package
+Manager instance at \url{https://packagemanager.posit.co/client/#/}.
 \item \code{PKGCACHE_TIMEOUT} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
 3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}. The

@@ -93,7 +93,7 @@ make_dummy_binary <- function(data, path, platform = get_platform(),
     pkgfile <- paste0(package, "_", data$Version, ".tgz")
     utils::tar(pkgfile, package)
   } else {
-    # Other binary package, we use .tar.gz like on RSPM
+    # Other binary package, we use .tar.gz like on PPM
     pkgfile <- paste0(package, "_", data$Version, ".tar.gz")
     utils::tar(pkgfile, package)
   }

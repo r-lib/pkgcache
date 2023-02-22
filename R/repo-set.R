@@ -16,7 +16,7 @@
 #' if `bioc` is `TRUE`.
 #' @param cran_mirror The CRAN mirror to use, see
 #'   [default_cran_mirror()].
-#' 
+#'
 #' @return
 #' `repo_get()` returns a data frame with columns:
 #' * `name`: repository name. Names are informational only.
@@ -60,11 +60,11 @@ repo_get <- function(r_version = getRversion(), bioc = TRUE,
 #' @export
 #' @examplesIf pkgcache:::run_examples()
 #' repo_resolve("MRAN@2020-01-21")
-#' repo_resolve("RSPM@2020-01-21")
+#' repo_resolve("PPM@2020-01-21")
 #' repo_resolve("MRAN@dplyr-1.0.0")
-#' repo_resolve("RSPM@dplyr-1.0.0")
+#' repo_resolve("PPM@dplyr-1.0.0")
 #' repo_resolve("MRAN@R-4.0.0")
-#' repo_resolve("RSPM@R-4.0.0")
+#' repo_resolve("PPM@R-4.0.0")
 
 repo_resolve <- function(spec) {
   repo_sugar(spec, names(spec))
@@ -118,8 +118,8 @@ repo_add_internal <- function(..., .list = NULL) {
 #'   `with_repo()` returns the value of `expr`.
 #' @export
 #' @examplesIf pkgcache:::run_examples()
-#' with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), repo_get())
-#' with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
+#' with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
+#' with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #'
 #' with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 
@@ -129,14 +129,14 @@ with_repo <- function(repos, expr) {
   expr
 }
 
-# ## RSPM
+# ## PPM
 #
-# RSPM@2021-02-04T14:25:00Z
-# RSPM@2021-02-04
-# RSPM@dplyr@1.0.0
-# RSPM@dplyr-1.0.0
-# RSPM@R@4.0.1
-# RSPM@R-4.0.1
+# PPM@2021-02-04T14:25:00Z
+# PPM@2021-02-04
+# PPM@dplyr@1.0.0
+# PPM@dplyr-1.0.0
+# PPM@R@4.0.1
+# PPM@R-4.0.1
 #
 # ## MRAN
 #
@@ -165,8 +165,8 @@ repo_sugar <- function(x, nm) {
   } else if (grepl("^MRAN@", x)) {
     repo_sugar_mran(x, nm)
 
-  } else if (grepl("^RSPM@", x)) {
-    repo_sugar_rspm(x, nm)
+  } else if (grepl("^PPM@", x) || grepl("^RSPM@", x)) {
+    repo_sugar_ppm(x, nm)
 
   } else {
     repo_sugar_path(x, nm)
@@ -197,48 +197,65 @@ repo_sugar_mran <- function(x, nm) {
   structure(paste0(mran, "/", date), names = nm)
 }
 
-repo_sugar_rspm <- function(x, nm) {
+repo_sugar_ppm <- function(x, nm) {
   if (is.null(nm) || nm == "") nm <- "CRAN"
-  date <- parse_spec(sub("^RSPM@", "", x))
-  if (is.null(pkgenv$rspm_versions) ||
-      date < names(pkgenv$rspm_versions[1]) ||
-      date > last(names(pkgenv$rspm_versions))) {
-    tryCatch(
-      pkgenv$rspm_versions <- get_rspm_versions(),
-      error = function(err) warning("Failed to update list of RSPM versions")
-    )
-  }
+  x <- sub("^PPM@", "", x)
+  x <- sub("^RSPM@", "", x)
+  date <- parse_spec(x)
 
-  vers <- pkgenv$rspm_versions
-  rspm_dates <- names(vers)
-  if (date < rspm_dates[1]) {
-    stop("RSPM snapshots go back to ", as.Date(rspm_dates[1]), " only")
+  # do we potentially have binaries?
+  current <- current_r_platform_data()
+  binaries <-
+    ! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off") &&
+    current$cpu == "x86_64" &&
+    grepl("linux", current$os)
+
+  # if we may have binaries, then get the distro data as well
+  synchronise(when_all(
+    async_get_ppm_versions(date = date),
+    if (binaries) {
+      async_get_ppm_distros(
+        distribution = current$distribution,
+        release = current$release
+      )
+    } else {
+      async_constant()
+    }
+  ))
+
+  # do we really have binaries? check in PPM status
+  distros <- pkgenv$ppm_distros
+  mch <- which(
+    distros$distribution == current$distribution &
+    distros$release == current$release
+  )
+  binaries <- binaries && length(mch) == 1
+
+  # search for date
+  vers <- pkgenv$ppm_versions
+  ppm_dates <- names(vers)
+  if (date < ppm_dates[1]) {
+    stop("PPM snapshots go back to ", as.Date(ppm_dates[1]), " only")
   }
-  sel <- which(date <= rspm_dates)[1]
+  sel <- which(date <= ppm_dates)[1]
   if (is.na(sel)) {
-    stop("Cannot find matching RSPM snapshot for ", date)
+    stop("Cannot find matching PPM snapshot for ", date)
   }
 
-  rspm <- Sys.getenv(
-    "PKGCACHE_RSPM_URL",
+  # create repo URL
+  ppm <- Sys.getenv(
+    "PKGCACHE_PPM_URL",
     "https://packagemanager.posit.co/cran"
   )
-  structure(paste0(rspm, "/", vers[[sel]]), names = nm)
-}
 
-get_rspm_versions <- function() {
-  url <- Sys.getenv(
-    "PKGCACHE_RSPM_TRANSACTIONS_URL",
-    "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
-  )
-  resp <- jsonlite::fromJSON(url, simplifyVector = FALSE)
-
-  vrs <- structure(
-    vcapply(resp, function(x) as.character(x$id)),
-    names = vcapply(resp, function(x) as.character(x$published_to))
-  )
-  vrs <- vrs[order(as.Date(names(vrs)))]
-  vrs
+  if (binaries) {
+    structure(
+      paste0(ppm, "/", "__linux__/", distros$binary_url[mch], "/", vers[[sel]]),
+      names = nm
+    )
+  } else {
+    structure(paste0(ppm, "/", vers[[sel]]), names = nm)
+  }
 }
 
 parse_spec <- function(x) {
@@ -342,11 +359,11 @@ next_day <- function(x) {
 #'   ```
 #'   https://cloud.r-project.org
 #'   ```
-#' - `RSPM@<date>`, RSPM (RStudio Package Manager) snapshot, at the
-#'   specified date.
-#' - `RSPM@<package>-<version>` RSPM snapshot, for the day after the
+#' - `PPM@<date>`, PPM (Posit Package Manager, formerly RStudio Package
+#'   Manager) snapshot, at the specified date.
+#' - `PPM@<package>-<version>` PPM snapshot, for the day after the
 #'   release of `<version>` of `<package>`.
-#' - `RSPM@R-<version>` RSPM snapshot, for the day after R `<version>`
+#' - `PPM@R-<version>` PPM snapshot, for the day after R `<version>`
 #'   was released.
 #' - `MRAN@<date>`, MRAN (Microsoft R Application Network) snapshot, at
 #'   the specified date.
@@ -357,13 +374,15 @@ next_day <- function(x) {
 #'
 #'
 #' Notes:
-#' * See more about RSPM at <https://packagemanager.posit.co/client/#/>.
+#' * See more about PPM at <https://packagemanager.posit.co/client/#/>.
+#' * The `RSPM@` prefix is still supported and treated the same way as
+#'   `PPM@`.
 #' * See more about MRAN snapshots at
 #'   <https://mran.microsoft.com/timemachine>.
 #' * All dates (or times) can be specified in the ISO 8601 format.
-#' * If RSPM does not have a snapshot available for a date, the next
+#' * If PPM does not have a snapshot available for a date, the next
 #'   available date is used.
-#' * Dates that are before the first, or after the last RSPM snapshot
+#' * Dates that are before the first, or after the last PPM snapshot
 #'   will trigger an error.
 #' * Dates before the first, or after the last MRAN snapshot will trigger
 #'   an error.

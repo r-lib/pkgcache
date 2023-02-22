@@ -245,7 +245,7 @@ cranlike_metadata_cache <- R6Class(
     ## We use this to make sure that different versions of pkgcache can
     ## share the same metadata cache directory. It is used to calculate
     ## the hash of the cached RDS file.
-    cache_version = "6",
+    cache_version = "7",
 
     data = NULL,
     data_time = NULL,
@@ -446,7 +446,7 @@ cmc__get_cache_files <- function(self, private, which) {
 
   pkg_path <- file.path(root, "_metadata", repo_enc, pkgs_files)
   meta_path <- ifelse(
-    type == "cran" | name == "rspm",
+    type == "cran" | name == "rspm" | name == "ppm" | name == "p3m",
     file.path(root, "_metadata", repo_enc, pkgs_dirs, "METADATA2.gz"),
     NA_character_)
   meta_etag <- ifelse(
@@ -456,7 +456,19 @@ cmc__get_cache_files <- function(self, private, which) {
     paste0(cran_metadata_url(), pkgs_dirs, "/METADATA2.gz"),
     NA_character_)
 
-  list(
+  bin_url <- ppm_binary_url(mirror, private$r_version)
+  bin_path <- ifelse(
+    is.na(bin_url),
+    NA_character_,
+    file.path(root, "_metadata", repo_enc, pkgs_dirs, "PACKAGES2.gz")
+  )
+  bin_etag <- ifelse(
+    is.na(bin_url),
+    NA_character_,
+    paste0(bin_path, ".etag")
+  )
+
+  res <- list(
     root = root,
     meta = file.path(root, "_metadata"),
     lock = file.path(root, "_metadata.lock"),
@@ -475,10 +487,44 @@ cmc__get_cache_files <- function(self, private, which) {
       bioc_version = bioc_version,
       meta_path = meta_path,
       meta_etag = meta_etag,
-      meta_url = meta_url
+      meta_url = meta_url,
+      bin_path = bin_path,
+      bin_etag = bin_etag,
+      bin_url = bin_url
     )
   )
+
+  res
 }
+
+ppm_binary_url <- function(urls, r_version) {
+  res <- rep(NA_character_, length(urls))
+
+  # If multiple R versions are requested, then we give up, and pretend
+  # that PPM binaries are source packages
+  if (length(r_version) != 1) return(res)
+
+  # http://rspm.infra/all/__linux__/bionic/latest ->
+  # http://rspm.infra/all/latest/bin/linux/4.2-bionic/contrib/4.2/PACKAGES
+
+  has_binary <- re_match(
+    urls,
+    "^(?<base>.*/)(?<repo>cran|all)/__linux__/(?<distro>[a-zA-Z0-9]+)/(?<version>latest|[-0-9]+)$"
+  )
+  mch <- !is.na(has_binary$.match)
+
+  res[mch] <- paste0(
+    has_binary$base[mch],
+    has_binary$repo[mch], "/",
+    has_binary$version[mch], "/bin/linux/",
+    r_version, "-", has_binary$distro[mch],
+    "/contrib/", r_version, "/",
+    "PACKAGES.gz"
+  )
+
+  res
+}
+
 
 #' Load the cache, asynchronously, with as little work as possible
 #'
@@ -685,13 +731,14 @@ cmc__update_replica_pkgs <- function(self, private) {
   pkgs <- rep_files$pkgs
 
   meta <- !is.na(pkgs$meta_url)
+  bin <- !is.na(pkgs$bin_url)
   dls <- data.frame(
     stringsAsFactors = FALSE,
-    url = c(pkgs$url, pkgs$meta_url[meta]),
-    fallback_url = c(pkgs$fallback_url, rep(NA_character_, sum(meta))),
-    path = c(pkgs$path, pkgs$meta_path[meta]),
-    etag = c(pkgs$etag, pkgs$meta_etag[meta]),
-    timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta))),
+    url = c(pkgs$url, pkgs$meta_url[meta], pkgs$bin_url[bin]),
+    fallback_url = c(pkgs$fallback_url, rep(NA_character_, sum(meta) + sum(bin))),
+    path = c(pkgs$path, pkgs$meta_path[meta], pkgs$bin_path[bin]),
+    etag = c(pkgs$etag, pkgs$meta_etag[meta], pkgs$bin_path[bin]),
+    timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta) + sum(bin))),
     mayfail = TRUE
   )
 
@@ -755,7 +802,8 @@ cmc__update_replica_rds <- function(self, private, alert) {
         read_packages_file(r$path, mirror = r$mirror,
                            repodir = r$basedir, platform = r$platform,
                            rversion = rversion, type = r$type,
-                           meta_path = r$meta_path),
+                           meta_path = r$meta_path, bin_path = r$bin_path,
+                           orig_r_version = private$r_version),
         error = function(x) {
           message()
           warning(msg_wrap(

@@ -31,8 +31,21 @@ test_that("repo_resolve", {
     c(CRAN = "https://cran.microsoft.com/snapshot/2020-10-10")
   )
 
+  # PPM
+  withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
+  withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
+  expect_equal(
+    repo_resolve("PPM@2020-10-10"),
+    c(CRAN = "https://packagemanager.posit.co/cran/344")
+  )
+  expect_equal(
+    repo_resolve("PPM@2020-10-10T14:33:56"),
+    c(CRAN = "https://packagemanager.posit.co/cran/344")
+  )
+
   # RSPM
-  withr::local_envvar(PKGCACHE_RSPM_URL = NA_character_)
+  withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
+  withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
   expect_equal(
     repo_resolve("RSPM@2020-10-10"),
     c(CRAN = "https://packagemanager.posit.co/cran/344")
@@ -40,6 +53,35 @@ test_that("repo_resolve", {
   expect_equal(
     repo_resolve("RSPM@2020-10-10T14:33:56"),
     c(CRAN = "https://packagemanager.posit.co/cran/344")
+  )
+})
+
+
+test_that("repo_resolve with PPM", {
+  withr::local_envvar(
+    PKGCACHE_PPM_URL = NA_character_,
+    PKGCACHE_PPM_BINARIES = "true",
+    PKGCACHE_PPM_TRANSACTIONS_URL = repo$url("/ppmversions"),
+    PKGCACHE_PPM_STATUS_URL = repo$url("/ppmstatus")
+  )
+
+  mockery::stub(
+    repo_sugar_ppm,
+    "current_r_platform_data",
+    data.frame(
+      stringsAsFactors = FALSE,
+      cpu = "x86_64",
+      vendor = "pc",
+      os = "linux-gnu",
+      distribution = "ubuntu",
+      release = "22.04",
+      platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
+    )
+  )
+
+  expect_equal(
+    repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
+    c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
   )
 })
 
@@ -111,45 +153,36 @@ test_that("repo_sugar_mran", {
   )
 })
 
-test_that("repo_sugar_rspm", {
-  withr::local_envvar(PKGCACHE_RSPM_URL = NA_character_)
+test_that("repo_sugar_ppm", {
+  withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
+  withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
   expect_equal(
-    repo_sugar_rspm("2020-06-30", NULL),
+    repo_sugar_ppm("2020-06-30", NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/298")
   )
 
-  withr::local_envvar(PKGCACHE_RSPM_URL = "https://my.rspm")
+  withr::local_envvar(PKGCACHE_PPM_URL = "https://my.ppm")
   expect_equal(
-    repo_sugar_rspm("2020-06-30", NULL),
-    c(CRAN = "https://my.rspm/298")
+    repo_sugar_ppm("2020-06-30", NULL),
+    c(CRAN = "https://my.ppm/298")
   )
 
   called <- FALSE
-  mockery::stub(repo_sugar_rspm, "get_rspm_versions", function(...) {
+  mockery::stub(repo_sugar_ppm, "synchronise", function(...) {
     called <<- TRUE
-    pkgenv$rspm_versions
+    NULL
   })
 
   expect_error(
-    repo_sugar_rspm(as.Date(names(pkgenv$rspm_versions)[1]) - 1, NULL),
-    "RSPM snapshots go back to"
+    repo_sugar_ppm(as.Date(names(pkgenv$ppm_versions)[1]) - 1, NULL),
+    "PPM snapshots go back to"
   )
 
   expect_error(
-    repo_sugar_rspm(as.Date(last(names(pkgenv$rspm_versions))) + 1, NULL),
-    "Cannot find matching RSPM snapshot for"
+    repo_sugar_ppm(as.Date(last(names(pkgenv$ppm_versions))) + 1, NULL),
+    "Cannot find matching PPM snapshot for"
   )
   expect_true(called)
-})
-
-test_that("get_rspm_versions", {
-  testthat::local_edition(3)
-  withr::local_envvar(
-    PKGCACHE_RSPM_TRANSACTIONS_URL = repo$url("/rspmversions")
-  )
-
-  ret <- get_rspm_versions()
-  expect_snapshot(ret)
 })
 
 test_that("parse_spec", {

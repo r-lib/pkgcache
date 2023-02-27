@@ -20,5 +20,6 @@ libcurl
 lifecycle
 macOS
 pak
+pkgdepends
 tibble
 tibbles

@@ -96,6 +96,8 @@ Currently supported repository specifications:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{https://cloud.r-project.org
 }\if{html}{\out{</div>}}
+\item \code{PPM@latest}, PPM (Posit Package Manager, formerly RStudio Package
+Manager), the latest snapshot.
 \item \verb{PPM@<date>}, PPM (Posit Package Manager, formerly RStudio Package
 Manager) snapshot, at the specified date.
 \item \verb{PPM@<package>-<version>} PPM snapshot, for the day after the

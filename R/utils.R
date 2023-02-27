@@ -211,3 +211,11 @@ save_rds <- function(data, path) {
 nullfile <- function() {
   if (get_os_type() == "windows") "nul:" else "/dev/null"
 }
+
+is_rcmd_check <- function() {
+  if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+    FALSE
+  } else {
+    Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") != ""
+  }
+}

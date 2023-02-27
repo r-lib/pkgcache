@@ -29,6 +29,7 @@ These functions help to query and manipulate the repos option."><meta name="robo
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/internals.html">pkgcache internals</a>
+    <a class="dropdown-item" href="../articles/ppm.html">pkgcache and Posit Package Manager on Linux</a>
   </div>
 </li>
 <li class="nav-item">
@@ -160,6 +161,8 @@ automatically. The repository named <code>CRAN</code> is the main CRAN repositor
 but otherwise names are informational.</p>
 <p>Currently supported repository specifications:</p><ul><li><p>URL pointing to the root of the CRAN-like repository. Example:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>cloud.r<span class="sc">-</span>project.org</span></code></pre><p></p></div></li>
+<li><p><code>PPM@latest</code>, PPM (Posit Package Manager, formerly RStudio Package
+Manager), the latest snapshot.</p></li>
 <li><p><code>PPM@&lt;date&gt;</code>, PPM (Posit Package Manager, formerly RStudio Package
 Manager) snapshot, at the specified date.</p></li>
 <li><p><code>PPM@&lt;package&gt;-&lt;version&gt;</code> PPM snapshot, for the day after the
@@ -256,12 +259,12 @@ an error.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">with_repo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CRAN <span class="op">=</span> <span class="st">"MRAN@2018-06-30"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="repo_status.html">repo_status</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Repository summary:                       source<span style="color: #00BBBB;">          </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RSPM          @ packagemanager.posit.co   <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (861ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CRAN          @ cran.microsoft.com        <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (978ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCsoft      @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (843ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCann       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (842ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCexp       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (849ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCworkflows @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (855ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RSPM          @ packagemanager.posit.co   <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (805ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CRAN          @ cran.microsoft.com        <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (805ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCsoft      @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (789ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCann       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (795ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCexp       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (806ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCworkflows @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (1.1s )</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -34,6 +34,11 @@ test_that("repo_resolve", {
   # PPM
   withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
   withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
+  withr::local_options(repos = NULL)
+  expect_equal(
+    repo_resolve("PPM@latest"),
+    c(CRAN = "https://packagemanager.posit.co/cran/latest")
+  )
   expect_equal(
     repo_resolve("PPM@2020-10-10"),
     c(CRAN = "https://packagemanager.posit.co/cran/344")
@@ -64,6 +69,7 @@ test_that("repo_resolve with PPM", {
     PKGCACHE_PPM_TRANSACTIONS_URL = repo$url("/ppmversions"),
     PKGCACHE_PPM_STATUS_URL = repo$url("/ppmstatus")
   )
+  withr::local_options(repos = NULL)
 
   mockery::stub(
     repo_sugar_ppm,
@@ -156,15 +162,19 @@ test_that("repo_sugar_mran", {
 test_that("repo_sugar_ppm", {
   withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
   withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
+  withr::local_options(repos = NULL)
   expect_equal(
     repo_sugar_ppm("2020-06-30", NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/298")
   )
 
-  withr::local_envvar(PKGCACHE_PPM_URL = "https://my.ppm")
+  withr::local_envvar(
+    PKGCACHE_PPM_URL = "https://my.ppm",
+    PKGCACHE_PPM_REPO = "repo"
+  )
   expect_equal(
     repo_sugar_ppm("2020-06-30", NULL),
-    c(CRAN = "https://my.ppm/298")
+    c(CRAN = "https://my.ppm/repo/298")
   )
 
   called <- FALSE

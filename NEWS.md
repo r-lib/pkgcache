@@ -1,5 +1,11 @@
 # pkgcache (development version)
 
+* Better Posit Package Manager (PPM) support. New `+ppm_has_binaries()`,
+  `ppm_repo_url()`, `ppm_snapshots()` and `ppm_platforms()` functions to help
+  interacting with PPM. See the new 'pkgcache and Posit Package Manager
+  on Linux' article at https://r-lib.github.io/pkgcache.
+  (#47 and r-lib/pkgdepends#186).
+
 # pkgcache 2.0.4
 
 * Update R version -> Bioconductor version mapping. R 4.2.x now maps to
@@ -16,7 +22,7 @@
 
 * `cran_archive_*()` functions now only download the metadata if it is newer
   than what you have currently.
-  
+
 * `cran_archive_cleanup()` now does not ignore the `force` argument.
 
 * The `sources` column in the metadata cache now has the correct URL for

@@ -245,7 +245,7 @@ cranlike_metadata_cache <- R6Class(
     ## We use this to make sure that different versions of pkgcache can
     ## share the same metadata cache directory. It is used to calculate
     ## the hash of the cached RDS file.
-    cache_version = "7",
+    cache_version = "8",
 
     data = NULL,
     data_time = NULL,
@@ -507,10 +507,7 @@ ppm_binary_url <- function(urls, r_version) {
   # http://rspm.infra/all/__linux__/bionic/latest ->
   # http://rspm.infra/all/latest/bin/linux/4.2-bionic/contrib/4.2/PACKAGES
 
-  has_binary <- re_match(
-    urls,
-    "^(?<base>.*/)(?<repo>cran|all)/__linux__/(?<distro>[a-zA-Z0-9]+)/(?<version>latest|[-0-9]+)$"
-  )
+  has_binary <- re_match(urls, re_ppm_linux())
   mch <- !is.na(has_binary$.match)
 
   res[mch] <- paste0(
@@ -525,6 +522,21 @@ ppm_binary_url <- function(urls, r_version) {
   res
 }
 
+re_ppm_linux <- function() {
+  paste0(
+    "^",
+    "(?<base>.*/)",
+    "(?<repo>cran|all)/",
+    "__linux__/",
+    "(?<distro>[a-zA-Z0-9]+)/",
+    "(?<version>latest|[-0-9]+)",
+    "$"
+  )
+}
+
+is_ppm_linux_repo_url <- function(urls) {
+  grepl(re_ppm_linux(), urls, perl = TRUE)
+}
 
 #' Load the cache, asynchronously, with as little work as possible
 #'

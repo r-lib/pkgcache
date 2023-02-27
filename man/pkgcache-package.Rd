@@ -33,25 +33,26 @@ print nicer, similarly to tibbles.)
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
-#> # A data frame: 41,440 x 32
-#>    package  version depends  suggests  license imports  linkingto archs enhances
-#>    <chr>    <chr>   <chr>    <chr>     <chr>   <chr>    <chr>     <chr> <chr>   
-#>  1 A3       1.0.0   R (>= 2~ randomFo~ GPL (>~ <NA>     <NA>      <NA>  <NA>    
-#>  2 AATtools 0.0.1   R (>= 3~ <NA>      GPL-3   magritt~ <NA>      <NA>  <NA>    
-#>  3 ABACUS   1.0.0   R (>= 3~ rmarkdow~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
-#>  4 ABC.RAP  0.9.0   R (>= 3~ knitr, r~ GPL-3   graphic~ <NA>      <NA>  <NA>    
-#>  5 ABCanal~ 1.2.1   R (>= 2~ <NA>      GPL-3   plotrix  <NA>      <NA>  <NA>    
-#>  6 ABCoptim 0.15.0  <NA>     testthat~ MIT + ~ Rcpp, g~ Rcpp      ABCo~ <NA>    
-#>  7 ABCp2    1.2     MASS     <NA>      GPL-2   <NA>     <NA>      <NA>  <NA>    
-#>  8 ABHgeno~ 1.0.1   <NA>     knitr, r~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
-#>  9 ABPS     0.3     <NA>     testthat  GPL (>~ kernlab  <NA>      <NA>  <NA>    
-#> 10 ACA      1.1     R (>= 3~ <NA>      GPL     graphic~ <NA>      <NA>  <NA>    
-#> # ... with 41,430 more rows, and 23 more variables: os_type <chr>,
-#> #   priority <chr>, license_is_foss <chr>, license_restricts_use <chr>,
-#> #   repodir <chr>, rversion <chr>, platform <chr>, needscompilation <chr>,
-#> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
-#> #   mirror <chr>, sources <list>, filesize <dbl>, sha256 <chr>, sysreqs <chr>,
-#> #   built <chr>, published <dttm>, deps <list>, md5sum <chr>, path <chr>
+#> # A data frame: 45,961 x 32
+#>    package version depends sugge~1 license imports linki~2 archs enhan~3 licen~4
+#>    <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr> <chr>   <chr>  
+#>  1 A3      1.0.0   R (>= ~ random~ GPL (>~ <NA>    <NA>    <NA>  <NA>    <NA>   
+#>  2 AATtoo~ 0.0.2   R (>= ~ <NA>    GPL-3   magrit~ <NA>    <NA>  <NA>    <NA>   
+#>  3 ABACUS  1.0.0   R (>= ~ rmarkd~ GPL-3   ggplot~ <NA>    <NA>  <NA>    <NA>   
+#>  4 ABC.RAP 0.9.0   R (>= ~ knitr,~ GPL-3   graphi~ <NA>    <NA>  <NA>    <NA>   
+#>  5 ABCana~ 1.2.1   R (>= ~ <NA>    GPL-3   plotrix <NA>    <NA>  <NA>    <NA>   
+#>  6 ABCopt~ 0.15.0  <NA>    testth~ MIT + ~ Rcpp, ~ Rcpp    ABCo~ <NA>    <NA>   
+#>  7 ABCp2   1.2     MASS    <NA>    GPL-2   <NA>    <NA>    <NA>  <NA>    <NA>   
+#>  8 ABHgen~ 1.0.1   <NA>    knitr,~ GPL-3   ggplot~ <NA>    <NA>  <NA>    <NA>   
+#>  9 ABPS    0.3     <NA>    testth~ GPL (>~ kernlab <NA>    <NA>  <NA>    <NA>   
+#> 10 ABSurv~ 0.1.0   R (>= ~ <NA>    GPL-3   stats,~ <NA>    <NA>  <NA>    <NA>   
+#> # ... with 45,951 more rows, 22 more variables: os_type <chr>, priority <chr>,
+#> #   license_is_foss <chr>, repodir <chr>, rversion <chr>, platform <chr>,
+#> #   needscompilation <chr>, ref <chr>, type <chr>, direct <lgl>, status <chr>,
+#> #   target <chr>, mirror <chr>, sources <list>, filesize <int>, sha256 <chr>,
+#> #   sysreqs <chr>, built <chr>, published <dttm>, deps <list>, md5sum <chr>,
+#> #   path <chr>, and abbreviated variable names 1: suggests, 2: linkingto,
+#> #   3: enhances, 4: license_restricts_use
 }\if{html}{\out{</div>}}
 
 \code{meta_cache_deps()} and \code{meta_cache_revdeps()} can be used to look up
@@ -77,38 +78,41 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 1482
+#> [1] 321
 #> 
 #> $size
-#> [1] 1610749135
+#> [1] 420283448
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A data frame: 1,482 x 11
-#>    fullpath  path   package  url   etag  sha256 version platform built vignettes
-#>    <chr>     <chr>  <chr>    <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/g~ archi~ <NA>     http~ "W/\~ 96c17~ <NA>    <NA>        NA        NA
-#>  2 /Users/g~ bin/m~ plogr    http~ "\"3~ 2b195~ 0.2.0   aarch64~    NA        NA
-#>  3 /Users/g~ src/c~ RMariaDB http~ "\"d~ c9176~ 1.2.1   source      NA        NA
-#>  4 /Users/g~ bin/m~ RMariaDB http~ "\"2~ 1483f~ 1.2.0   aarch64~    NA        NA
-#>  5 /Users/g~ src/c~ remotes  <NA>   <NA> fcad1~ <NA>    <NA>         0        NA
-#>  6 /Users/g~ bin/m~ archive  http~ "\"1~ 5a6c0~ 1.1.3   aarch64~    NA        NA
-#>  7 /Users/g~ src/c~ prompt   http~ "\"2~ 13cd8~ 1.0.1   source      NA        NA
-#>  8 /Users/g~ bin/m~ assertt~ http~ "\"a~ d3c8b~ 0.2.0   x86_64-~    NA        NA
-#>  9 /Users/g~ bin/m~ cli      http~ "\"4~ 15c3c~ 1.0.0   x86_64-~    NA        NA
-#> 10 /Users/g~ bin/m~ crayon   http~ "\"a~ 1cca1~ 1.3.4   x86_64-~    NA        NA
-#> # ... with 1,472 more rows, and 1 more variable: rversion <chr>
+#> # A data frame: 321 x 11
+#>    fullpath       path  package url   etag  sha256 version platf~1 built vigne~2
+#>    <chr>          <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>   <int>   <int>
+#>  1 /Users/gaborc~ src/~ tibble  http~ "\"a~ acf30~ 3.1.8   source     NA      NA
+#>  2 /Users/gaborc~ bin/~ rmsfact http~ "\"4~ 44c34~ 0.0.3   aarch6~    NA      NA
+#>  3 /Users/gaborc~ bin/~ fortun~ http~ "\"3~ 943db~ 1.5-4   aarch6~    NA      NA
+#>  4 /Users/gaborc~ bin/~ cowsay  http~ "\"6~ 4d9c3~ 0.8.0   aarch6~    NA      NA
+#>  5 /Users/gaborc~ bin/~ multic~ http~ "\"1~ 55859~ 0.1.5   aarch6~    NA      NA
+#>  6 /Users/gaborc~ src/~ cli     <NA>   <NA> 8b0ce~ <NA>    <NA>        0      NA
+#>  7 /Users/gaborc~ src/~ cli     <NA>   <NA> 8b0ce~ 3.5.0.~ source      1       0
+#>  8 /Users/gaborc~ src/~ cli     <NA>   <NA> 8b0ce~ 3.5.0.~ aarch6~     1       0
+#>  9 /Users/gaborc~ src/~ cli     <NA>   <NA> bc503~ <NA>    <NA>        0      NA
+#> 10 /Users/gaborc~ src/~ cli     <NA>   <NA> bc503~ 3.5.0.~ source      1       0
+#> # ... with 311 more rows, 1 more variable: rversion <chr>, and abbreviated
+#> #   variable names 1: platform, 2: vignettes
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A data frame: 4 x 11
-#>   fullpath  path   package url     etag  sha256 version platform built vignettes
-#> * <chr>     <chr>  <chr>   <chr>   <chr> <chr>  <chr>   <chr>    <int>     <int>
-#> 1 /Users/g~ src/c~ dplyr   https:~ "\"d~ d2fe3~ 1.0.7   source      NA        NA
-#> 2 /Users/g~ bin/m~ dplyr   https:~ "\"5~ ae115~ 0.8.5   x86_64-~    NA        NA
-#> 3 /Users/g~ bin/m~ dplyr   https:~ "\"6~ 93f35~ 1.0.7   x86_64-~    NA        NA
-#> 4 /Users/g~ bin/m~ dplyr   https:~ "\"1~ c7fac~ 1.0.7   x86_64-~    NA        NA
-#> # ... with 1 more variable: rversion <chr>
+#> # A data frame: 5 x 11
+#>   fullp~1 path  package url   etag  sha256 version platf~2 built vigne~3 rvers~4
+#>   <chr>   <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>   <int>   <int> <chr>  
+#> 1 /Users~ bin/~ dplyr   http~ "\"6~ 162b5~ 1.0.10  aarch6~    NA      NA <NA>   
+#> 2 /Users~ bin/~ dplyr   http~ "\"6~ 9014f~ 1.0.9   aarch6~    NA      NA <NA>   
+#> 3 /Users~ src/~ dplyr   http~ "\"1~ 8cb05~ 1.1.0   source     NA      NA <NA>   
+#> 4 /Users~ bin/~ dplyr   http~ "\"6~ 54679~ 1.1.0   aarch6~    NA      NA <NA>   
+#> 5 /Users~ bin/~ dplyr   http~ "\"1~ 6ebb2~ 1.1.0   aarch6~    NA      NA <NA>   
+#> # ... with abbreviated variable names 1: fullpath, 2: platform, 3: vignettes,
+#> #   4: rversion
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,
@@ -156,6 +160,11 @@ this can be used to force the development version of Bioconductor.
 \item The \code{R_BIOC_MIRROR} environment variable can be used to select a
 Bioconductor mirror. The \code{BioC_mirror} option takes priority over
 this, if set.
+\item \code{PKGCACHE_PPM_REPO} is the name of the Posit Package Manager
+repository to use. Defaults to \code{"cran"}.
+\item \code{PKGCACHE_PPM_URL} is the base URL of the Posit Package Manager
+instance to use. It defaults to the URL of the Posit Public Package
+Manager instance at \url{https://packagemanager.posit.co/client/#/}.
 \item \code{PKGCACHE_TIMEOUT} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
 3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}. The

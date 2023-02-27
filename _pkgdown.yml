@@ -26,6 +26,10 @@ reference:
 
 - title: Repositories
   contents:
+  - ppm_has_binaries
+  - ppm_platforms
+  - ppm_repo_url
+  - ppm_snapshots
   - repo_get
   - repo_status
 

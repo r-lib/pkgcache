@@ -131,6 +131,7 @@ with_repo <- function(repos, expr) {
 
 # ## PPM
 #
+# PPM@latest
 # PPM@2021-02-04T14:25:00Z
 # PPM@2021-02-04
 # PPM@dplyr@1.0.0
@@ -212,7 +213,7 @@ repo_sugar_ppm <- function(x, nm) {
 
   # if we may have binaries, then get the distro data as well
   synchronise(when_all(
-    async_get_ppm_versions(date = date),
+    async_get_ppm_versions(date = if (as.character(date) == "latest") NULL else date),
     if (binaries) {
       async_get_ppm_distros(
         distribution = current$distribution,
@@ -229,37 +230,41 @@ repo_sugar_ppm <- function(x, nm) {
     distros$distribution == current$distribution &
     distros$release == current$release
   )
-  binaries <- binaries && length(mch) == 1
+  binaries <- binaries && length(mch) == 1 && distros$binaries[mch]
 
   # search for date
-  vers <- pkgenv$ppm_versions
-  ppm_dates <- names(vers)
-  if (date < ppm_dates[1]) {
-    stop("PPM snapshots go back to ", as.Date(ppm_dates[1]), " only")
-  }
-  sel <- which(date <= ppm_dates)[1]
-  if (is.na(sel)) {
-    stop("Cannot find matching PPM snapshot for ", date)
+  if (as.character(date) == "latest") {
+    ver <- "latest"
+  } else {
+    vers <- pkgenv$ppm_versions
+    ppm_dates <- names(vers)
+    if (date < ppm_dates[1]) {
+      stop("PPM snapshots go back to ", as.Date(ppm_dates[1]), " only")
+    }
+    sel <- which(date <= ppm_dates)[1]
+    if (is.na(sel)) {
+      stop("Cannot find matching PPM snapshot for ", date)
+    }
+    ver <- vers[[sel]]
   }
 
   # create repo URL
-  ppm <- Sys.getenv(
-    "PKGCACHE_PPM_URL",
-    "https://packagemanager.posit.co/cran"
-  )
+  ppm <- ppm_repo_url()
 
   if (binaries) {
     structure(
-      paste0(ppm, "/", "__linux__/", distros$binary_url[mch], "/", vers[[sel]]),
+      paste0(ppm, "/", "__linux__/", distros$binary_url[mch], "/", ver),
       names = nm
     )
   } else {
-    structure(paste0(ppm, "/", vers[[sel]]), names = nm)
+    structure(paste0(ppm, "/", ver), names = nm)
   }
 }
 
 parse_spec <- function(x) {
-  if (grepl("^R[-@]", x)) {
+  if (x == "latest") {
+    x
+  } else if (grepl("^R[-@]", x)) {
     parse_spec_r(sub("^R[-@]", "", x))
   } else if (!is.na(at <- parse_iso_8601(x))) {
     parse_spec_date(at)
@@ -359,6 +364,8 @@ next_day <- function(x) {
 #'   ```
 #'   https://cloud.r-project.org
 #'   ```
+#' - `PPM@latest`, PPM (Posit Package Manager, formerly RStudio Package
+#'   Manager), the latest snapshot.
 #' - `PPM@<date>`, PPM (Posit Package Manager, formerly RStudio Package
 #'   Manager) snapshot, at the specified date.
 #' - `PPM@<package>-<version>` PPM snapshot, for the day after the

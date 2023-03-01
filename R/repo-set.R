@@ -218,7 +218,7 @@ repo_sugar_ppm <- function(x, nm) {
       async_get_ppm_status(
         distribution = current$distribution,
         release = current$release
-      )$then(function(x) x$distros)
+      )
     } else {
       async_constant()
     }
@@ -226,11 +226,16 @@ repo_sugar_ppm <- function(x, nm) {
 
   # do we really have binaries? check in PPM status
   distros <- pkgenv$ppm_distros
+  rvers <- pkgenv$ppm_r_versions
   mch <- which(
     distros$distribution == current$distribution &
     distros$release == current$release
   )
-  binaries <- binaries && length(mch) == 1 && distros$binaries[mch]
+  current_rver <- get_minor_r_version(getRversion())
+  binaries <- binaries &&
+    length(mch) == 1 &&
+    distros$binaries[mch] &&
+    current_rver %in% rvers
 
   # search for date
   if (as.character(date) == "latest") {

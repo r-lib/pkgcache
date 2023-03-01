@@ -215,10 +215,10 @@ repo_sugar_ppm <- function(x, nm) {
   synchronise(when_all(
     async_get_ppm_versions(date = if (as.character(date) == "latest") NULL else date),
     if (binaries) {
-      async_get_ppm_distros(
+      async_get_ppm_status(
         distribution = current$distribution,
         release = current$release
-      )
+      )$then(function(x) x$distros)
     } else {
       async_constant()
     }

@@ -12,7 +12,7 @@
       2021-02-05T00:00:00Z 
                  "1194160" 
 
-# async_get_ppm_distros 2
+# async_get_ppm_status 2
 
     Code
       ret

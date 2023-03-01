@@ -28,6 +28,7 @@ reference:
   contents:
   - ppm_has_binaries
   - ppm_platforms
+  - ppm_r_versions
   - ppm_repo_url
   - ppm_snapshots
   - repo_get

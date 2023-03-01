@@ -165,13 +165,13 @@ async_get_ppm_versions <- function(forget = FALSE, date = NULL) {
 #' ppm_platforms()
 
 ppm_platforms <- function() {
-  plt <- synchronise(async_get_ppm_distros(forget = TRUE))
+  plt <- synchronise(async_get_ppm_status(forget = TRUE))$distros
   plt$binary_url[plt$binary_url == ""] <- NA_character_
   as_data_frame(plt)
 }
 
-async_get_ppm_distros <- function(forget = FALSE, distribution = NULL,
-                                   release = NULL) {
+async_get_ppm_status <- function(forget = FALSE, distribution = NULL,
+                                 release = NULL, r_version = NULL) {
   tmp2 <- tempfile()
 
   # is this a known distro?
@@ -187,11 +187,19 @@ async_get_ppm_distros <- function(forget = FALSE, distribution = NULL,
     !is.na(mch)
   }
 
+  rver_known <- if (is.null(r_version)) {
+    TRUE
+  } else {
+    r_version <- get_minor_r_version(r_version)
+    r_version %in% pkgenv$ppm_r_versions_cached
+  }
+
   # can we used the cached values? Only if
   # * not a forced update, and
   # * distro is known, or we already updated.
+  # * r_Version is known, or we already updated
   updated <- !is.null(pkgenv$ppm_distros)
-  cached <- !forget && (known || updated)
+  cached <- !forget && (known || updated) && (rver_known || updated)
   def <- if (cached) {
     pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
     async_constant()
@@ -214,6 +222,10 @@ async_get_ppm_distros <- function(forget = FALSE, distribution = NULL,
         )
         pkgenv$ppm_distros <- dst
         pkgenv$ppm_distros_cached <- dst
+
+        rvers <- unlist(stat$r_versions)
+        pkgenv$ppm_r_versions <- rvers
+        pkgenv$ppm_r_versions_cached <- rvers
       })$
       catch(error = function(err) {
         warning("Failed to download PPM status")
@@ -222,7 +234,12 @@ async_get_ppm_distros <- function(forget = FALSE, distribution = NULL,
 
   def$
     finally(function() unlink(tmp2))$
-    then(function() pkgenv$ppm_distros)
+    then(function() {
+      list(
+        distros = pkgenv$ppm_distros,
+        r_versions = pkgenv$ppm_r_versions
+      )
+    })
 }
 
 #' Does PPM build binary packages for the current platform?
@@ -247,7 +264,7 @@ ppm_has_binaries <- function() {
 
   if (!binaries) return(FALSE)
 
-  synchronise(async_get_ppm_distros(
+  synchronise(async_get_ppm_status(
     distribution = current$distribution,
     release = current$release
   ))
@@ -267,4 +284,22 @@ ppm_has_binaries <- function() {
   }
 
   binaries
+}
+
+#' List all R versions supported by Posit Package Manager (PPM)
+#'
+#' @return Data frame with columns:
+#' - `r_version`: minor R versions, i.e. version numbers containing the
+#'   first two components of R versions supported by this PPM instance.
+#'
+#' @seealso The 'pkgcache and Posit Package Manager on Linux'
+#'   article at <`r pkgdown_url()`>.
+#' @family PPM functions
+#' @export
+#' @examplesIf !pkgcache:::is_rcmd_check()
+#' ppm_r_versions()
+
+ppm_r_versions <- function() {
+  plt <- synchronise(async_get_ppm_status(forget = TRUE))$r_versions
+  data_frame(r_version = plt)
 }

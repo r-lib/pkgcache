@@ -32,51 +32,51 @@ test_that("async_get_ppm_versions 3", {
   )
 })
 
-test_that("async_get_ppm_distros", {
+test_that("async_get_ppm_status", {
   mockery::stub(
-    async_get_ppm_distros,
+    async_get_ppm_status,
     "download_file",
     function(...) stop("nope")
   )
 
   # uses cache by default
   pkgenv$ppm_distros <- NULL
-  expect_silent(synchronise(async_get_ppm_distros()))
+  expect_silent(synchronise(async_get_ppm_status()))
   expect_equal(pkgenv$ppm_distros, pkgenv$ppm_distros_cached)
 
   # no update needed
   pkgenv$ppm_distros <- NULL
-  expect_silent(synchronise(async_get_ppm_distros(distribution = "ubuntu")))
+  expect_silent(synchronise(async_get_ppm_status(distribution = "ubuntu")))
   expect_equal(pkgenv$ppm_distros, pkgenv$ppm_distros_cached)
 
   # no update needed
   pkgenv$ppm_distros <- NULL
-  expect_silent(synchronise(async_get_ppm_distros(
+  expect_silent(synchronise(async_get_ppm_status(
     distribution = "ubuntu",
     release = "22.04"
   )))
   expect_equal(pkgenv$ppm_distros, pkgenv$ppm_distros_cached)
 
   # forget = TRUE forces an update
-  expect_error(synchronise(async_get_ppm_distros(forget = TRUE)))
+  expect_error(synchronise(async_get_ppm_status(forget = TRUE)))
 
   # so does an unknown distro or release, if we haven't updated yet
   pkgenv$ppm_distros <- NULL
-  expect_error(synchronise(async_get_ppm_distros(distribution = "123")))
+  expect_error(synchronise(async_get_ppm_status(distribution = "123")))
   pkgenv$ppm_distros <- NULL
-  expect_error(synchronise(async_get_ppm_distros(
+  expect_error(synchronise(async_get_ppm_status(
     distribution = "ubuntu",
     release = "123"
   )))
 })
 
-test_that("async_get_ppm_distros 2", {
+test_that("async_get_ppm_status 2", {
   withr::local_envvar(
     PKGCACHE_PPM_STATUS_URL = repo$url("/ppmstatus")
   )
 
   pkgenv$ppm_distros <- NULL
-  ret <- synchronise(async_get_ppm_distros(distribution = "notreal"))
+  ret <- synchronise(async_get_ppm_status(distribution = "notreal"))$distros
   expect_snapshot(ret)
 
   withr::local_envvar(
@@ -85,7 +85,7 @@ test_that("async_get_ppm_distros 2", {
 
   pkgenv$ppm_distros <- NULL
   expect_warning(
-    synchronise(async_get_ppm_distros(distribution = "notreal")),
+    synchronise(async_get_ppm_status(distribution = "notreal")),
     "Failed to download PPM status"
   )
 })

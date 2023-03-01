@@ -1,3 +1,30 @@
+# ppm_snapshots
+
+    Code
+      ppm_snapshots()
+    Output
+      # A data frame: 6 x 2
+        date                      id
+        <dttm>                 <int>
+      1 2023-02-20 00:00:00 16856763
+      2 2023-02-21 00:00:00 16882269
+      3 2023-02-22 00:00:00 16903694
+      4 2023-02-24 00:00:00 16958782
+      5 2023-02-27 00:00:00 17028146
+      6 2023-02-28 00:00:00 17054670
+
+# ppm_platforms
+
+    Code
+      ppm_platforms()
+    Output
+      # A data frame: 3 x 6
+        name    os    binary_url distribution release binaries
+        <chr>   <chr> <chr>      <chr>        <chr>   <lgl>   
+      1 centos7 linux centos7    centos       7       TRUE    
+      2 centos8 linux centos8    centos       8       TRUE    
+      3 rhel9   linux rhel9      rockylinux   9       TRUE    
+
 # async_get_ppm_versions 2
 
     Code
@@ -42,4 +69,23 @@
       22             bullseye   linux    bullseye       debian      11    FALSE
       23              windows windows                  windows     all     TRUE
       24                macOS   macOS                    macOS     all    FALSE
+
+# async_get_ppm_status 3
+
+    Code
+      ret
+    Output
+      [1] "3.5" "3.6" "4.0" "4.1" "4.2"
+
+# ppm_r_versions
+
+    Code
+      ppm_r_versions()
+    Output
+      # A data frame: 3 x 1
+        r_version
+        <chr>    
+      1 3.5      
+      2 3.6      
+      3 4.2      
 

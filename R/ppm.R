@@ -258,9 +258,9 @@ ppm_has_binaries <- function() {
   current <- current_r_platform_data()
 
   binaries <-
-    ! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off") &&
+    (! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off")) &&
     current$cpu == "x86_64" &&
-    current$os == "windows" || grepl("linux", current$os)
+    (current$os == "mingw32" || grepl("linux", current$os))
 
   if (!binaries) return(FALSE)
 
@@ -269,18 +269,25 @@ ppm_has_binaries <- function() {
     release = current$release
   ))
   distros <- pkgenv$ppm_distros
+  rver <- pkgenv$ppm_r_versions
 
-  if (current$os == "windows") {
+  current_rver <- get_minor_r_version(getRversion())
+
+  if (current$os == "mingw32") {
     binaries <- binaries &&
       "windows" %in% distros$os &&
-      all(distros$binaries[distros$os == "windows"])
+      all(distros$binaries[distros$os == "windows"]) &&
+      current_rver %in% rver
 
   } else {
     mch <- which(
       distros$distribution == current$distribution &
       distros$release == current$release
     )
-    binaries <- binaries && length(mch) == 1 && distros$binaries[mch]
+    binaries <- binaries &&
+      length(mch) == 1 &&
+      distros$binaries[mch] &&
+      current_rver %in% rver
   }
 
   binaries

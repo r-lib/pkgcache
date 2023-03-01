@@ -749,7 +749,7 @@ cmc__update_replica_pkgs <- function(self, private) {
     url = c(pkgs$url, pkgs$meta_url[meta], pkgs$bin_url[bin]),
     fallback_url = c(pkgs$fallback_url, rep(NA_character_, sum(meta) + sum(bin))),
     path = c(pkgs$path, pkgs$meta_path[meta], pkgs$bin_path[bin]),
-    etag = c(pkgs$etag, pkgs$meta_etag[meta], pkgs$bin_path[bin]),
+    etag = c(pkgs$etag, pkgs$meta_etag[meta], pkgs$bin_etag[bin]),
     timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta) + sum(bin))),
     mayfail = TRUE
   )
@@ -878,6 +878,10 @@ cmc__update_primary <- function(self, private, rds, packages, lock) {
                         na_omit(pri_files$pkgs$meta_path))
     file_copy_with_time(na_omit(rep_files$pkgs$meta_etag),
                         na_omit(pri_files$pkgs$meta_etag))
+    file_copy_with_time(na_omit(rep_files$pkgs$bin_path),
+                        na_omit(pri_files$pkgs$bin_path))
+    file_copy_with_time(na_omit(rep_files$pkgs$bin_etag),
+                        na_omit(pri_files$pkgs$bin_etag))
   }
   invisible()
 }
@@ -904,11 +908,15 @@ cmc__copy_to_replica <- function(self, private, rds, pkgs, etags) {
     file_copy_with_time(pri_files$pkgs$path, rep_files$pkgs$path)
     file_copy_with_time(na_omit(pri_files$pkgs$meta_path),
                         na_omit(rep_files$pkgs$meta_path))
+    file_copy_with_time(na_omit(pri_files$pkgs$bin_path),
+                        na_omit(rep_files$pkgs$bin_path))
   }
   if (etags) {
     file_copy_with_time(pri_files$pkgs$etag, rep_files$pkgs$etag)
     file_copy_with_time(na_omit(pri_files$pkgs$meta_etag),
                         na_omit(rep_files$pkgs$meta_etag))
+    file_copy_with_time(na_omit(pri_files$pkgs$bin_etag),
+                        na_omit(rep_files$pkgs$bin_etag))
   }
 }
 

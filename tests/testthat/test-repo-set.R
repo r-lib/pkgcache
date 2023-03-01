@@ -85,9 +85,16 @@ test_that("repo_resolve with PPM", {
     )
   )
 
+  mockery::stub(repo_sugar_ppm, "getRversion", "4.2.2")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
+  )
+
+  mockery::stub(repo_sugar_ppm, "getRversion", "1.0.0")
+  expect_equal(
+    repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
+    c(CRAN = "https://packagemanager.posit.co/cran/1014755")
   )
 })
 

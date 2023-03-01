@@ -202,6 +202,7 @@ async_get_ppm_status <- function(forget = FALSE, distribution = NULL,
   cached <- !forget && (known || updated) && (rver_known || updated)
   def <- if (cached) {
     pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
+    pkgenv$ppm_r_versions <- pkgenv$ppm_r_versions_cached
     async_constant()
   } else {
     url <- Sys.getenv(

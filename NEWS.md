@@ -1,9 +1,9 @@
 # pkgcache (development version)
 
 * Better Posit Package Manager (PPM) support. New `+ppm_has_binaries()`,
-  `ppm_repo_url()`, `ppm_snapshots()` and `ppm_platforms()` functions to help
-  interacting with PPM. See the new 'pkgcache and Posit Package Manager
-  on Linux' article at https://r-lib.github.io/pkgcache.
+  `ppm_r_versions()`, `ppm_repo_url()`, `ppm_snapshots()` and `ppm_platforms()`
+  functions to help interacting with PPM. See the new 'pkgcache and Posit
+  Package Manager on Linux' article at https://r-lib.github.io/pkgcache.
   (#47 and r-lib/pkgdepends#186).
 
 # pkgcache 2.0.4

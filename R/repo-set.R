@@ -207,7 +207,7 @@ repo_sugar_ppm <- function(x, nm) {
   # do we potentially have binaries?
   current <- current_r_platform_data()
   binaries <-
-    ! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off") &&
+    ! is_false_env_var("PKGCACHE_PPM_BINARIES") &&
     current$cpu == "x86_64" &&
     grepl("linux", current$os)
 
@@ -226,16 +226,24 @@ repo_sugar_ppm <- function(x, nm) {
 
   # do we really have binaries? check in PPM status
   distros <- pkgenv$ppm_distros
-  rvers <- pkgenv$ppm_r_versions
   mch <- which(
     distros$distribution == current$distribution &
     distros$release == current$release
   )
+
+  rvers <- pkgenv$ppm_r_versions
   current_rver <- get_minor_r_version(getRversion())
+  version_ok <- current_rver %in% rvers
+  if (ppm_should_fallback()) {
+    if (package_version(current_rver) > max(package_version(rvers))) {
+      version_ok <- TRUE
+    }
+  }
+
   binaries <- binaries &&
     length(mch) == 1 &&
     distros$binaries[mch] &&
-    current_rver %in% rvers
+    version_ok
 
   # search for date
   if (as.character(date) == "latest") {

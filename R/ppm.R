@@ -259,7 +259,7 @@ ppm_has_binaries <- function() {
   current <- current_r_platform_data()
 
   binaries <-
-    (! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off")) &&
+    ! is_false_env_var("PKGCACHE_PPM_BINARIES") &&
     current$cpu == "x86_64" &&
     (current$os == "mingw32" || grepl("linux", current$os))
 
@@ -270,15 +270,21 @@ ppm_has_binaries <- function() {
     release = current$release
   ))
   distros <- pkgenv$ppm_distros
-  rver <- pkgenv$ppm_r_versions
+  rvers <- pkgenv$ppm_r_versions
 
   current_rver <- get_minor_r_version(getRversion())
+  version_ok <- current_rver %in% rvers
+  if (ppm_should_fallback()) {
+    if (package_version(current_rver) > max(package_version(rvers))) {
+      version_ok <- TRUE
+    }
+  }
 
   if (current$os == "mingw32") {
     binaries <- binaries &&
       "windows" %in% distros$os &&
       all(distros$binaries[distros$os == "windows"]) &&
-      current_rver %in% rver
+      version_ok
 
   } else {
     mch <- which(
@@ -288,7 +294,7 @@ ppm_has_binaries <- function() {
     binaries <- binaries &&
       length(mch) == 1 &&
       distros$binaries[mch] &&
-      current_rver %in% rver
+      version_ok
   }
 
   binaries
@@ -310,4 +316,14 @@ ppm_has_binaries <- function() {
 ppm_r_versions <- function() {
   plt <- synchronise(async_get_ppm_status(forget = TRUE))$r_versions
   data_frame(r_version = plt)
+}
+
+# The fallback can be turned on via the env var (preferred), or setting the
+# HTTPUserAgent option (for compatibility).
+
+ppm_should_fallback <- function() {
+  if (is_true_env_var("PKGCACHE_PPM_R_VERSION_FALLBACK")) return(TRUE)
+  ua <- getOption("HTTPUserAgent")
+  if (grepl("R/[0-9]+[.][0-9]+[.][0-9]+ ", ua)) return(TRUE)
+  FALSE
 }

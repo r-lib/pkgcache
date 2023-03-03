@@ -140,6 +140,22 @@ it detects from the PPM response headers whether the downloaded package
 is indeed of the expected type. If not, then pkgcache updates its knowledge
 about the package.
 
+## Supported R versions
+
+Different PPM instances may support different R versions. The public P3M
+instance supports the last five R releases. pkgcache will automatically
+check if your configured PPM instance supports your R version, and
+`ppm_has_binaries()`, `repo_set()` will act accordingly. You can use the
+`pkgcache::ppm_r_versions()` function to list the R versions supported by
+your instance:
+
+```{r}
+pkgcache::ppm_r_versions()
+```
+
+Note that these version numbers do not include the patch version.
+E.g. `4.2` means that all `4.2.x` R versions are supported.
+
 # pkgcache and PPM on Windows
 
 A PPM instance can have support for Windows binaries, the public P3M

@@ -251,6 +251,30 @@ is indeed of the expected type. If not, then pkgcache updates its
 knowledge about the package.</p>
 </div>
 </div>
+<div class="section level3">
+<h3 id="supported-r-versions">Supported R versions<a class="anchor" aria-label="anchor" href="#supported-r-versions"></a>
+</h3>
+<p>Different PPM instances may support different R versions. The public
+P3M instance supports the last five R releases. pkgcache will
+automatically check if your configured PPM instance supports your R
+version, and <code><a href="../reference/ppm_has_binaries.html">ppm_has_binaries()</a></code>, <code>repo_set()</code>
+will act accordingly. You can use the
+<code><a href="../reference/ppm_r_versions.html">pkgcache::ppm_r_versions()</a></code> function to list the R versions
+supported by your instance:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_r_versions.html">ppm_r_versions</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 5 × 1</span></span></span>
+<span><span class="co">##   r_version</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> 3.5      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> 3.6      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> 4.0      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> 4.1      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> 4.2</span></span></code></pre>
+<p>Note that these version numbers do not include the patch version.
+E.g. <code>4.2</code> means that all <code>4.2.x</code> R versions are
+supported.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="pkgcache-and-ppm-on-windows">pkgcache and PPM on Windows<a class="anchor" aria-label="anchor" href="#pkgcache-and-ppm-on-windows"></a>
@@ -261,7 +285,7 @@ instance does support them.</p>
 setting up PPM on Windows simply means setting the <code>repos</code>
 option to a PPM repository. E.g. for the public P3M this would be
 something like:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  RSPM <span class="op">=</span> <span class="st">"https://packagemanager.posit.co/cran/latest"</span>,</span>
 <span>  CRAN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"repos"</span><span class="op">)</span><span class="op">[[</span><span class="st">"CRAN"</span><span class="op">]</span><span class="op">]</span></span>

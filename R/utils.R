@@ -219,3 +219,11 @@ is_rcmd_check <- function() {
     Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") != ""
   }
 }
+
+is_true_env_var <- function(nm) {
+  tolower(Sys.getenv(nm, "")) %in% c("y", "t", "yes", "true", "1", "on")
+}
+
+is_false_env_var <- function(nm) {
+  tolower(Sys.getenv(nm, "")) %in% c("n", "f", "no", "false", "0", "off")
+}

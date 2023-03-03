@@ -50,6 +50,7 @@ snapshots.
 Other PPM functions: 
 \code{\link{ppm_has_binaries}()},
 \code{\link{ppm_platforms}()},
+\code{\link{ppm_r_versions}()},
 \code{\link{ppm_snapshots}()}
 }
 \concept{PPM functions}

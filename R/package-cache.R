@@ -373,7 +373,7 @@ update_fields_for_ppm_download <- function(path, extra, headers) {
     bin_tag <- grep("x-package-binary-tag:", headers, value = TRUE)[1]
     if (is.na(bin_tag)) return(res)
     bin_tag <- sub("x-package-binary-tag: ?", "", bin_tag)
-    synchronise(async_get_ppm_distros())
+    synchronise(async_get_ppm_status())
     rver <- strsplit(bin_tag, "-")[[1]][[1]]
     binurl <- strsplit(bin_tag, "-")[[1]][[2]]
     if (!binurl %in% pkgenv$ppm_distros$binary_url) return(res)

@@ -602,6 +602,8 @@ pkgenv$ppm_distros_cached <-
  macOS                   macOS   \"\"          macOS        all       FALSE
 "))
 
+pkgenv$ppm_r_versions_cached <- c("3.5", "3.6", "4.0", "4.1", "4.2")
+
 pkgenv$package_versions <- new.env(parent = emptyenv())
 
 onload_pkgcache <- function(libname, pkgname) {

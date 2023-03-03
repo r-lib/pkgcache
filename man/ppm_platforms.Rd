@@ -32,6 +32,7 @@ article at \url{https://r-lib.github.io/pkgcache/dev}.
 
 Other PPM functions: 
 \code{\link{ppm_has_binaries}()},
+\code{\link{ppm_r_versions}()},
 \code{\link{ppm_repo_url}()},
 \code{\link{ppm_snapshots}()}
 }

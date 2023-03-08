@@ -741,7 +741,6 @@ cmc__update_replica_pkgs <- function(self, private) {
 
   rep_files <- private$get_cache_files("replica")
   pkgs <- rep_files$pkgs
-  pkgs <- ppm_calculate_headers(pkgs)
 
   meta <- !is.na(pkgs$meta_url)
   bin <- !is.na(pkgs$bin_url)
@@ -754,64 +753,12 @@ cmc__update_replica_pkgs <- function(self, private) {
     timeout = rep(c(200, 100), c(nrow(pkgs), sum(meta) + sum(bin))),
     mayfail = TRUE
   )
-  dls$headers <- c(pkgs$headers, rep(list(NULL), sum(meta)), pkgs$headers[bin])
 
   download_files(dls)$
     then(function(result) {
       missing_pkgs_note(pkgs, result)
       result
     })
-}
-
-ppm_fallback_r_version <- function(rver) {
-  if (ppm_should_fallback()) {
-    max_rver <- as.character(max(package_version(rver)))
-    synchronise(async_get_ppm_status(r_version = max_rver))
-    ppm_rvers <- pkgenv$ppm_r_versions
-    ppm_max <- max(package_version(ppm_rvers))
-    bad <- package_version(get_minor_r_version(rver)) > ppm_max
-    rver[bad] <- as.character(ppm_max)
-  }
-  rver
-}
-
-ppm_calculate_headers <- function(pkgs) {
-  bin <- !is.na(pkgs$bin_url)
-  pkgs$headers <- rep(list(NULL), nrow(pkgs))
-  if (sum(bin) == 0) return(pkgs)
-  rver <- sub("^.*/([0-9]+[.][0-9]+)/PACKAGES.gz", "\\1", pkgs$bin_url[bin])
-  rver2 <- ppm_fallback_r_version(rver)
-
-  wbadurls <- which(rver != rver2)
-  for (i in wbadurls) {
-    major <- package_version(rver)$major
-    minor <- package_version(rver)$minor
-    badurl <- pkgs$bin_url[bin][i]
-    ptn <- sprintf(
-      "/%i[.]%i[-]([a-zA-Z0-9]+)/contrib/%i[.]%i/PACKAGES.gz$",
-      major, minor, major, minor
-    )
-    rpl <- sprintf("/%s-\\1/contrib/%s/PACKAGES.gz", rver2[i], rver2[i])
-    goodurl <- sub(ptn, rpl, badurl)
-    pkgs$bin_url[bin][i] <- goodurl
-  }
-
-  current <- as.character(getRversion())
-  rver3 <- ifelse(
-    rver2 == get_minor_r_version(current),
-    current,
-    paste0(rver2, ".0")
-  )
-
-  rv <- R.Version()
-  ua <- sprintf(
-    "R/%s R (%s %s %s %s)",
-    rver3, rver3, rv$platform, rv$arch, rv$os
-  )
-
-  pkgs$headers[bin] <- list(c("User-Agent" = ua))
-
-  pkgs
 }
 
 # E.g. "R 4.1 macos packages are missing from CRAN and Bioconductor"

@@ -35,8 +35,6 @@ test_that("repo_resolve", {
   withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
   withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
   withr::local_options(repos = NULL)
-  pkgenv$ppm_r_versions <- pkgenv$ppm_r_versions_cached
-
   expect_equal(
     repo_resolve("PPM@latest"),
     c(CRAN = "https://packagemanager.posit.co/cran/latest")
@@ -93,28 +91,10 @@ test_that("repo_resolve with PPM", {
     c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
   )
 
-  # Unsupported R version
   mockery::stub(repo_sugar_ppm, "getRversion", "1.0.0")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/1014755")
-  )
-
-  # Unsupported R version, but we fall back
-  mockery::stub(repo_sugar_ppm, "getRversion", "10.0.0")
-  withr::local_envvar(PKGCACHE_PPM_R_VERSION_FALLBACK = "true")
-  expect_equal(
-    repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
-    c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
-  )
-
-  # fall back, based on user agent option
-  mockery::stub(repo_sugar_ppm, "getRversion", "10.0.0")
-  withr::local_envvar(PKGCACHE_PPM_R_VERSION_FALLBACK = NA_character_)
-  withr::local_options(HTTPUserAgent = "R/4.2.2 blah")
-  expect_equal(
-    repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
-    c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
   )
 })
 

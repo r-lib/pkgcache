@@ -53,8 +53,9 @@ jobs:
           use-public-rspm: true
 
       - run: |
-          options()
-          Sys.getenv()
+          download.file("https://packagemanager.posit.co/cran/__linux__/jammy/latest/src/contrib/filelock_1.0.2.tar.gz", "filelock_1.0.2.tar.gz")
+          untar("filelock_1.0.2.tar.gz", list = TRUE)
+          install.packages("filelock")
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2

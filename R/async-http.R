@@ -374,9 +374,7 @@ download_files <- function(data, error_on_status = TRUE,
       row$url, row$path, row$etag,
       on_progress = prog_cb,
       error_on_status = error_on_status,
-      options = options,
-      headers = row$headers[[1]],
-      ...
+      options = options, ...
     )
 
     if ("fallback_url" %in% names(row) && !is.na(row$fallback_url)) {
@@ -384,9 +382,7 @@ download_files <- function(data, error_on_status = TRUE,
         download_if_newer(
           row$fallback_url, row$path, row$etag,
           error_on_status = error_on_status,
-          options = options,
-          headers = row$headers[[1]],
-          ...
+          options = options, ...
         )
       })
     }

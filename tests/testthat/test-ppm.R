@@ -245,31 +245,6 @@ test_that("ppm_has_binaries 2", {
   expect_false(ppm_has_binaries())
 })
 
-test_that("ppm_has_binaries 3", {
-  # Use cached values, no HTTP
-  pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
-  pkgenv$ppm_r_versions <- pkgenv$ppm_r_versions_cached
-  mockery::stub(ppm_has_binaries, "async_ppm_get_status", NULL)
-
-  mockery::stub(
-    ppm_has_binaries,
-    "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "22.04",
-      platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
-  )
-  mockery::stub(ppm_has_binaries, "getRversion", "10.0.0")
-  withr::local_envvar(PKGCACHE_PPM_R_VERSION_FALLBACK = "true")
-  expect_true(ppm_has_binaries())
-
-  mockery::stub(ppm_has_binaries, "getRversion", "10.0.0")
-  withr::local_envvar(PKGCACHE_PPM_R_VERSION_FALLBACK = NA_character_)
-  withr::local_options(HTTPUserAgent = "R/4.2.2 blah")
-  expect_true(ppm_has_binaries())
-})
-
 test_that("ppm_r_versions", {
   rver <- c("3.5", "3.6", "4.2")
   mockery::stub(

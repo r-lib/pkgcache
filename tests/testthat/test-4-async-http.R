@@ -265,12 +265,9 @@ test_that("download_files", {
   cat("foobar3\n", file = downloads$etag[3])
   cat("dummy\n", file = downloads$path[3])
 
-  downloads2 <- downloads
-  downloads2$headers <-
-    replicate(nrow(downloads2), list(c("accept-encoding" = "")))
-
   ret <- suppressMessages(synchronise(download_files(
-    downloads2
+    downloads,
+    headers = c("accept-encoding" = "")
   )))
 
   expect_equal(file.exists(downloads$path), rep(TRUE, 3))

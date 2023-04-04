@@ -1,5 +1,5 @@
 
-test_that("invalid PACKAGES file warns", {
+test_that("invalid PACKAGES file errors", {
   pri <- test_temp_dir()
   rep <- test_temp_dir()
 
@@ -14,20 +14,8 @@ test_that("invalid PACKAGES file warns", {
     writeBin(charToRaw("nope"), pgz)
   }
 
-  warn <- NULL
-  expect_error(
-    withCallingHandlers(
-      suppressMessages(get_private(cmc)$update_replica_rds()),
-      warning = function(w) {
-        warn <<- w
-        invokeRestart("muffleWarning")
-      }
-    ),
-    "No metadata available"
-  )
-
-  expect_match(
-    conditionMessage(warn),
-    "Cannot read metadata information"
+  expect_snapshot(
+    error = TRUE,
+    suppressMessages(get_private(cmc)$update_replica_rds())
   )
 })

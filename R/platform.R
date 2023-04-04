@@ -105,21 +105,18 @@ parse_platform <- function(x) {
 }
 
 get_cran_extension <- function(platform) {
-  if (platform == "source") {
-    return(".tar.gz")
-  } else if (platform %in% c("windows", "i386+x86_64-mingw32",
-                             "x86_64-w64-mingw32", "i386-w64-mingw32")) {
-    return(".zip")
-  } else if (platform == "macos") {
-    return(".tgz")
-  }
+  res <- rep(NA_character_, length(platform))
+  res[platform == "source"] <- ".tar.gz"
+  res[platform %in% c("windows", "i386+x86_64-mingw32",
+                      "x86_64-w64-mingw32", "i386-w64-mingw32")] <- ".zip"
+  res[platform == "macos"] <- ".tgz"
 
   dtl <- parse_platform(platform)
-  if (!is.na(dtl$os) && grepl("^darwin", dtl$os)) {
-    return(".tgz")
-  } else {
-    paste0("_R_", platform, ".tar.gz")
+  res[!is.na(dtl$os) & grepl("^darwin", dtl$os)] <- ".tgz"
+  if (anyNA(res)) {
+    res[is.na(res)] <- paste0("_R_", platform[is.na(res)], ".tar.gz")
   }
+  res
 }
 
 get_all_package_dirs <- function(platforms, rversions) {

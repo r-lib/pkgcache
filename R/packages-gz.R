@@ -15,7 +15,7 @@ packages_gz_cols <- function()  {
 read_packages_file <- function(path, mirror, repodir, platform,
                                type = "standard", meta_path = NA_character_,
                                bin_path = NA_character_, orig_r_version = NULL,
-                               ..., .list = list()) {
+                               rversion, ..., .list = list()) {
 
   # We might have empty PACKAGES.gz files, we treat them as empty here
   if (file.exists(path) && file.size(path) == 0) {
@@ -33,20 +33,36 @@ read_packages_file <- function(path, mirror, repodir, platform,
     if (nrow(pkgs)) extra else replicate(length(extra), character())
   names(pkgs) <- tolower(names(pkgs))
 
+  # rversion might be in PACKAGES, then we keep it as is
+  if (nrow(pkgs)) {
+    if (!"rversion" %in% names(pkgs)) {
+      pkgs$rversion <- rversion
+    } else {
+      pkgs$rversion[is.na(pkgs$rversion)] <- rversion
+    }
+  } else {
+    pkgs$rversion <- character()
+  }
+
   ## If Windows, then we need to check which binary has i386 support
   if (nrow(pkgs)) {
     if (platform %in% c("i386+x86_64-w64-mingw32",
                         "i386-w64-mingw32", "x86_64-w64-mingw32")) {
-      pkgs$platform <- "i386+x86_64-w64-mingw32"
+      xplatform <- rep("i386+x86_64-w64-mingw32", nrow(pkgs))
       if ("archs" %in% colnames(pkgs)) {
         archs <- gsub(" ", "", fixed = TRUE, pkgs$archs)
         p32 <- !is.na(archs) & archs == "i386"
-        pkgs$platform[p32] <- "i386-w64-mingw32"
+        xplatform[p32] <- "i386-w64-mingw32"
         p64 <- !is.na(archs) & archs == "x64"
-        pkgs$platform[p64] <- "x86_64-w64-mingw32"
+        xplatform[p64] <- "x86_64-w64-mingw32"
       }
     } else {
-      pkgs$platform <- if (nrow(pkgs)) platform
+      xplatform <- rep(platform, nrow(pkgs))
+    }
+    if ("platform" %in% names(pkgs)) {
+      pkgs$platform[is.na(pkgs$platform)] <- xplatform[is.na(pkgs$platform)]
+    } else {
+      pkgs$platform <- xplatform
     }
   } else {
     pkgs$platform <- character()
@@ -73,10 +89,10 @@ read_packages_file <- function(path, mirror, repodir, platform,
   pkgs$direct <- if (nrow(pkgs)) FALSE else logical()
   pkgs$status <- if (nrow(pkgs)) "OK" else character()
   pkgs$target <- packages_make_target(
-    platform, repodir, pkgs$package, pkgs$version, pkgs[["file"]], pkgs[["path"]])
+    pkgs$platform, repodir, pkgs$package, pkgs$version, pkgs[["file"]], pkgs[["path"]])
   pkgs$mirror <- if (nrow(pkgs)) mirror else character()
   pkgs$sources <- packages_make_sources(
-    mirror, platform, pkgs$target, repodir, pkgs$package, pkgs$version,
+    mirror, pkgs$platform, pkgs$target, repodir, pkgs$package, pkgs$version,
     type, pkgs$downloadurl)
 
   if (!is.null(meta)) {
@@ -203,8 +219,11 @@ packages_parse_deps <- function(pkgs) {
 packages_make_target <- function(platform, repodir, package, version,
                                  file, path) {
 
+  if (!length(platform)) return(character())
+  platform <- rep_len(platform, length(package))
+
   assert_that(
-    is_string(platform),
+    is_character(platform),
     is_string(repodir),
     is_character(package),
     is_character(version), length(version) == length(package),
@@ -218,19 +237,25 @@ packages_make_target <- function(platform, repodir, package, version,
   ## 'File' field, if present
   if (!is.null(file)) {
     wh <- !is.na(file)
-    res[wh] <- paste0(repodir, "/", file[wh])
+    if (any(wh)) {
+      res[wh] <- paste0(repodir, "/", file[wh])
+    }
   }
 
   ## 'Path' field, if present
   if (!is.null(path)) {
     wh <- is.na(res) & !is.na(path)
-    res[wh] <- paste0(repodir, "/", path[wh], "/", package[wh], "_",
-                      version[wh], ext)
+    if (any(wh)) {
+      res[wh] <- paste0(repodir, "/", path[wh], "/", package[wh], "_",
+                        version[wh], ext[wh])
+    }
   }
 
   ## Otherwise default
-  wh <- is.na(res)
-  res[wh] <- paste0(repodir, "/", package[wh], "_", version[wh], ext)
+  if (anyNA(res)) {
+    wh <- is.na(res)
+    res[wh] <- paste0(repodir, "/", package[wh], "_", version[wh], ext[wh])
+  }
 
   res
 }
@@ -240,7 +265,7 @@ packages_make_sources <- function(mirror, platform, target, repodir,
 
   assert_that(
     is_string(mirror),
-    is_string(platform),
+    is_character(platform),
     is_character(target),
     is_string(repodir),
     is_character(package),
@@ -249,28 +274,30 @@ packages_make_sources <- function(mirror, platform, target, repodir,
   )
 
   if (!length(package)) return(list())
+  platform <- rep_len(platform, length(package))
+
+  result <- replicate(length(package), NULL)
 
   url <- paste0(mirror, "/", target)
+  url2 <- paste0(mirror, "/", repodir, "/Archive/", package, "/", package, "_",
+                 version, ".tar.gz")
+  macurl <- paste0("https://mac.r-project.org/", target)
 
   os <- parse_platform(platform)$os
-  srcs <- if (type == "cran" && !is.na(os) && grepl("^darwin", os)) {
-    macurl <- paste0("https://mac.r-project.org/", target)
-    zip_vecs(url, macurl)
+  macbin <- type == "cran" & !is.na(os) & grepl("^darwin", os)
+  result[macbin] <- zip_vecs(url[macbin], macurl[macbin])
 
-  } else if (type == "cran" && platform == "source") {
-    url2 <- paste0(mirror, "/", repodir, "/Archive/", package, "/", package, "_",
-                   version, ".tar.gz")
-    zip_vecs(url, url2)
+  cransrc <- type == "cran" & platform == "source"
+  result[cransrc] <- zip_vecs(url, url2)
 
-  } else {
-    as.list(url)
-  }
+  others <- vlapply(result, is.null)
+  result[others] <- as.list(url[others])
 
   if (!is.null(downloadurl)) {
-    srcs[!is.na(downloadurl)] <- as.list(na_omit(downloadurl))
+    result[!is.na(downloadurl)] <- as.list(na_omit(downloadurl))
   }
 
-  srcs
+  result
 }
 
 merge_packages_data <- function(..., .list = list()) {

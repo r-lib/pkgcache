@@ -91,7 +91,8 @@ test_that("read_packages_file windows", {
       pkg_file,
       mirror = "m",
       repodir = "r",
-      platform = pl
+      platform = pl,
+      rversion = as.character(getRversion())
     )
     expect_snapshot({
       print(pl)
@@ -122,6 +123,21 @@ test_that("read_packages_file from PPM", {
   pkgs$pkgs$target <- fix_platform(pkgs$pkgs$target)
   expect_snapshot(pkgs$pkgs[, cols])
   expect_snapshot(pkgs$pkgs$target)
+})
+
+test_that("rversion and platform", {
+  pkgs1 <- test_path("fixtures", "PACKAGES-rhub")
+  pkgs <- read_packages_file(
+    pkgs1,
+    mirror = "mirror",
+    repodir = "src/contrib",
+    platform = "foo",
+    rversion = "*"
+  )
+
+  expect_snapshot(
+    as.list(pkgs$pkgs[, c("package", "target", "sources", "rversion", "platform")])
+  )
 })
 
 test_that("packages_parse_deps", {

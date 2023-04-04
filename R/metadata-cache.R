@@ -326,14 +326,6 @@ cmc_async_update <- function(self, private) {
     then(function() private$update_replica_rds())$
     then(function() private$update_primary())$
     then(function() private$data)$
-    catch(error = function(err) {
-      err$message <- msg_wrap(
-        conditionMessage(err), "\n\n",
-        "Could not load or update metadata cache. If you think your local ",
-        "cache is broken, try deleting it with `meta_cache_cleanup()`, or ",
-        "the `$cleanup()` method.")
-      stop(err)
-    })$
     finally(function() private$update_deferred <- NULL)$
     share()
 }
@@ -810,23 +802,13 @@ cmc__update_replica_rds <- function(self, private, alert) {
     rep_files$pkgs,
     function(r) {
       rversion <- if (r$platform == "source") "*" else private$r_version
-      tryCatch(
-        read_packages_file(r$path, mirror = r$mirror,
-                           repodir = r$basedir, platform = r$platform,
-                           rversion = rversion, type = r$type,
-                           meta_path = r$meta_path, bin_path = r$bin_path,
-                           orig_r_version = private$r_version),
-        error = function(x) {
-          message()
-          warning(msg_wrap(
-            "Cannot read metadata information from `", r$path, "`. ",
-            "The file is corrupt. Try deleting the metadata cache with ",
-            "`pkgcache::meta_cache_cleanup()` or the `$cleanup()` method"),
-            immediate. = TRUE)
-          NULL
-        }
-      )
-    })
+      read_packages_file(r$path, mirror = r$mirror,
+                         repodir = r$basedir, platform = r$platform,
+                         rversion = rversion, type = r$type,
+                         meta_path = r$meta_path, bin_path = r$bin_path,
+                         orig_r_version = private$r_version)
+    }
+  )
 
   data_list <- data_list[!vlapply(data_list, is.null)]
 

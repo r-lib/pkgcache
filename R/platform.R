@@ -107,7 +107,7 @@ parse_platform <- function(x) {
 get_cran_extension <- function(platform) {
   res <- rep(NA_character_, length(platform))
   res[platform == "source"] <- ".tar.gz"
-  res[platform %in% c("windows", "i386+x86_64-mingw32",
+  res[platform %in% c("windows", "i386+x86_64-w64-mingw32",
                       "x86_64-w64-mingw32", "i386-w64-mingw32")] <- ".zip"
   res[platform == "macos"] <- ".tgz"
 

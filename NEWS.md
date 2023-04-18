@@ -3,7 +3,7 @@
 * pkgcache now supports binary packages on x86_64 macOS and R 4.3.0 and
   later (#89).
 
-* Better Posit Package Manager (PPM) support. New `+ppm_has_binaries()`,
+* Better Posit Package Manager (PPM) support. New `ppm_has_binaries()`,
   `ppm_r_versions()`, `ppm_repo_url()`, `ppm_snapshots()` and `ppm_platforms()`
   functions to help interacting with PPM. See the new 'pkgcache and Posit
   Package Manager on Linux' article at https://r-lib.github.io/pkgcache.

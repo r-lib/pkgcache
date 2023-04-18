@@ -190,6 +190,10 @@
 <li>The <code>R_BIOC_VERSION</code> environment variable can be used to override the default Bioconductor version detection and force a given version. E.g. this can be used to force the development version of Bioconductor.</li>
 <li>The <code>R_BIOC_MIRROR</code> environment variable can be used to select a Bioconductor mirror. The <code>BioC_mirror</code> option takes priority over this, if set.</li>
 <li>
+<code>PKGCACHE_PPM_REPO</code> is the name of the Posit Package Manager repository to use. Defaults to <code>"cran"</code>.</li>
+<li>
+<code>PKGCACHE_PPM_URL</code> is the base URL of the Posit Package Manager instance to use. It defaults to the URL of the Posit Public Package Manager instance at <a href="https://packagemanager.posit.co/client/#/" class="external-link uri">https://packagemanager.posit.co/client/#/</a>.</li>
+<li>
 <code>PKGCACHE_TIMEOUT</code> is the HTTP timeout for all downloads. It is in seconds, and the limit for downloading the whole file. Defaults to 3600, one hour. It corresponds to the <a href="https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html" class="external-link"><code>TIMEOUT</code> libcurl option</a>. The <code>pkgcache_timeout</code> option has priority over this, if set.</li>
 <li>
 <code>PKGCACHE_CONNECTTIMEOUT</code> is the HTTP timeout for the connection phase. It is in seconds and defaults to 30 seconds. It corresponds to the <a href="https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html" class="external-link"><code>CONNECTTIMEOUT</code> libcurl option</a>. The <code>pkgcache_connecttimeout</code> option takes precedence over this, if set.</li>

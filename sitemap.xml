@@ -22,6 +22,9 @@
     <loc>https://r-lib.github.io/pkgcache/articles/internals.html</loc>
   </url>
   <url>
+    <loc>https://r-lib.github.io/pkgcache/articles/ppm.html</loc>
+  </url>
+  <url>
     <loc>https://r-lib.github.io/pkgcache/authors.html</loc>
   </url>
   <url>
@@ -98,6 +101,21 @@
   </url>
   <url>
     <loc>https://r-lib.github.io/pkgcache/reference/pkgcache-package.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/pkgcache/reference/ppm_has_binaries.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/pkgcache/reference/ppm_platforms.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/pkgcache/reference/ppm_r_versions.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/pkgcache/reference/ppm_repo_url.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/pkgcache/reference/ppm_snapshots.html</loc>
   </url>
   <url>
     <loc>https://r-lib.github.io/pkgcache/reference/repo_get.html</loc>

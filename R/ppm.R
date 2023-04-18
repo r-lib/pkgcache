@@ -200,7 +200,7 @@ async_get_ppm_status <- function(forget = FALSE, distribution = NULL,
   # * r_Version is known, or we already updated
   updated <- !is.null(pkgenv$ppm_distros)
   cached <- !forget && (known || updated) && (rver_known || updated)
-  def <- if (cached) {
+  def <- if (isTRUE(cached)) {
     pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
     pkgenv$ppm_r_versions <- pkgenv$ppm_r_versions_cached
     async_constant()

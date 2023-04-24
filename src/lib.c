@@ -428,7 +428,8 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
         UNPROTECT(1);
 
         /* end of package? */
-        if (*p == '\n') {
+	/* maybe it ends with \r\n but we put a \0 over the \n */
+        if (*p == '\n' || *p == '\r') {
           p++;
           npkg++;
           linum++;

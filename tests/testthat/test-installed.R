@@ -265,3 +265,11 @@ test_that("fix encodings on data frames", {
   expect_snapshot(Encoding(tbl2$Bad))
   expect_snapshot(lapply(tbl2$Bad, charToRaw))
 })
+
+test_that("parse packages with trailing whitespace (#93)", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
+
+  writeLines(c("Package: foo", "", "Package: bar", ""), tmp, sep = "\r\n")
+  expect_equal(parse_packages(tmp)$Package, c("foo", "bar"))
+})

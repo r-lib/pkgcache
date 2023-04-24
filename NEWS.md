@@ -1,5 +1,8 @@
 # pkgcache (development version)
 
+* `parse_packages()` can now parse `PACKAGES` files with trailing
+  whitespace (#93).
+
 # pkgcache 2.1.0
 
 * pkgcache now supports binary packages on x86_64 macOS and R 4.3.0 and

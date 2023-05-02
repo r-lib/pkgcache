@@ -329,23 +329,24 @@
       33         3.13       4.1 out-of-date
       34         3.14       4.1 out-of-date
       35         3.15       4.2 out-of-date
-      36         3.16       4.2     release
-      37         3.17       4.3       devel
-      38         3.17       4.4      future
+      36         3.16       4.2 out-of-date
+      37         3.17       4.3     release
+      38         3.18       4.3       devel
+      39         3.18       4.4      future
 
 # bioc_release_version, bioc_devel_version
 
     Code
       bioc_release_version(forget = TRUE)
     Output
-      [1] '3.16'
+      [1] '3.17'
 
 ---
 
     Code
       bioc_devel_version(forget = TRUE)
     Output
-      [1] '3.17'
+      [1] '3.18'
 
 # bioc_repos
 

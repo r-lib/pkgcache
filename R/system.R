@@ -3,6 +3,7 @@
 #'
 #' Packages need to be recompiled if this id changes.
 #'
+#' @export
 #' @return String, a UUID.
 #' @examples
 #' get_internals_id()
@@ -15,7 +16,8 @@ get_internals_id <- function() {
 #'
 #' A package compiled agains a certain version of the graphics API
 #' will not work with R installations that use a different version.
-#' 
+#'
+#' @export
 #' @return An integer scalar, the version of the graphics API of this
 #' R version.
 #' @examples

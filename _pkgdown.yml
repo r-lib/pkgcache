@@ -45,6 +45,11 @@ reference:
   - current_r_platform
   - default_cran_mirror
 
+- title: Utilities
+  contents:
+  - get_graphics_api_version
+  - get_internals_id
+
 - title: internal
   contents:
   - pkgcache-package

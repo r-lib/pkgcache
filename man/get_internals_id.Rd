@@ -2,7 +2,7 @@
 % Please edit documentation in R/system.R
 \name{get_internals_id}
 \alias{get_internals_id}
-\title{Query UUID identifying R's internal version ABI}
+\title{Query UUID identifying the version of the R API}
 \usage{
 get_internals_id()
 }

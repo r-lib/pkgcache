@@ -1,5 +1,5 @@
 
-#' Query UUID identifying R's internal version ABI
+#' Query UUID identifying the version of the R API
 #'
 #' Packages need to be recompiled if this id changes.
 #'
@@ -14,7 +14,7 @@ get_internals_id <- function() {
 
 #' Query the version of the graphics API
 #'
-#' A package compiled agains a certain version of the graphics API
+#' A package compiled with a certain version of the graphics API
 #' will not work with R installations that use a different version.
 #'
 #' @export

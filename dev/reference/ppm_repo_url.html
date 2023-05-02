@@ -82,8 +82,8 @@ environment variable to the base URL (e.g.
 repository.</p>
 <p>On Linux, instead of setting these environment variables, you can also
 add a PPM repository to the <code>repos</code> option, see <code><a href="https://rdrr.io/r/base/options.html" class="external-link">base::options()</a></code>.
-In the environment variables are not set, then <code>ppm_repo_url()</code> will
-try extract the PPM base URL and repository name from this option.</p>
+If the environment variables are not set, then <code>ppm_repo_url()</code> will
+try to extract the PPM base URL and repository name from this option.</p>
 <p>If the <code>PKGCACHE_PPM_URL</code> environment variable is not set, and the
 <code>repos</code> option does not contain a PPM URL (on Linux), then pkgcache
 uses the public PPM instance at <code>https://packagemanager.posit.co</code>, with

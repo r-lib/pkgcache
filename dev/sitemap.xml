@@ -79,6 +79,12 @@
     <loc>https://r-lib.github.io/pkgcache/dev/reference/get_cranlike_metadata_cache.html</loc>
   </url>
   <url>
+    <loc>https://r-lib.github.io/pkgcache/dev/reference/get_graphics_api_version.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/pkgcache/dev/reference/get_internals_id.html</loc>
+  </url>
+  <url>
     <loc>https://r-lib.github.io/pkgcache/dev/reference/index.html</loc>
   </url>
   <url>

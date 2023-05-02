@@ -287,8 +287,12 @@ packages_make_sources <- function(mirror, platform, target, repodir,
   macbin <- type == "cran" & !is.na(os) & grepl("^darwin", os)
   result[macbin] <- zip_vecs(url[macbin], macurl[macbin])
 
-  cransrc <- type == "cran" & platform == "source"
-  result[cransrc] <- zip_vecs(url, url2)
+  # We don't use Archive for recommended packages, until this is
+  # fixed in RSPM: https://github.com/rstudio/package-manager/issues/10471
+  # To work around: https://github.com/r-lib/pak/issues/467
+  recommended <- package %in% recommended_packages()
+  cransrc <- type == "cran" & platform == "source" & !recommended
+  result[cransrc] <- zip_vecs(url[cransrc], url2[cransrc])
 
   others <- vlapply(result, is.null)
   result[others] <- as.list(url[others])

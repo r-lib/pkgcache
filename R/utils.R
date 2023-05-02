@@ -120,6 +120,17 @@ base_packages <- function() {
   repoman_data$base_packages
 }
 
+recommended_packages <- function() {
+  if (is.null(repoman_data$recommended_packages)) {
+    repoman_data$recommended_packages <- c(
+      "boot", "class", "cluster", "codetools", "foreign", "KernSmooth",
+      "lattice", "MASS", "Matrix", "mgcv", "nlme", "nnet", "rpart",
+      "spatial", "survival"
+    )
+  }
+  repoman_data$recommended_packages
+}
+
 is_na_scalar <- function(x) {
   identical(x, NA_character_) ||
     identical(x, NA_integer_) ||

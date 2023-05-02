@@ -29,8 +29,8 @@ repository.
 
 On Linux, instead of setting these environment variables, you can also
 add a PPM repository to the \code{repos} option, see \code{\link[base:options]{base::options()}}.
-In the environment variables are not set, then \code{ppm_repo_url()} will
-try extract the PPM base URL and repository name from this option.
+If the environment variables are not set, then \code{ppm_repo_url()} will
+try to extract the PPM base URL and repository name from this option.
 
 If the \code{PKGCACHE_PPM_URL} environment variable is not set, and the
 \code{repos} option does not contain a PPM URL (on Linux), then pkgcache

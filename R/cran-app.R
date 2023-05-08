@@ -389,6 +389,11 @@ make_bioc_repo <- function(repo, packages, options) {
   pkg_workflows <- packages[bioc_repo == "workflows",, drop = FALSE]
   make_dummy_repo(repo, pkg_workflows, options)
 
+  # BioCbooks
+  options$repo_prefix <- sprintf("packages/%s/books", bioc_version)
+  pkg_books <- packages[bioc_repo == "books",, drop = FALSE]
+  make_dummy_repo(repo, pkg_books, options)
+
   config <- system.file("fixtures", "bioc-config.yaml", package = "pkgcache")
   if (config == "") {
     warning("Cannot find 'bioc-config.yaml' in pkgcache")

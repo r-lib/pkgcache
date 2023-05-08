@@ -22,7 +22,7 @@
 #'   of the configured repositories in `options("repos")`, or
 #'   added by pkgcache. It is typically `CRAN` for CRAN, and the
 #'   current Bioconductor repositories are `BioCsoft`, `BioCann`,
-#'   `BioCexp`, `BioCworkflows`.
+#'   `BioCexp`, `BioCworkflows`, `BioCbooks`.
 #' * `url`: base URL of the repository.
 #' * `bioc_version`: Bioconductor version, or `NA` for
 #'   non-Bioconductor repositories.

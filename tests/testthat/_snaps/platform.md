@@ -361,4 +361,6 @@
       "https://bioconductor.org/packages/3.13/data/experiment" 
                                                  BioCworkflows 
             "https://bioconductor.org/packages/3.13/workflows" 
+                                                     BioCbooks 
+                "https://bioconductor.org/packages/3.13/books" 
 

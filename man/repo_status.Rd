@@ -33,7 +33,7 @@ queried platform and R version. It has these columns:
 of the configured repositories in \code{options("repos")}, or
 added by pkgcache. It is typically \code{CRAN} for CRAN, and the
 current Bioconductor repositories are \code{BioCsoft}, \code{BioCann},
-\code{BioCexp}, \code{BioCworkflows}.
+\code{BioCexp}, \code{BioCworkflows}, \code{BioCbooks}.
 \item \code{url}: base URL of the repository.
 \item \code{bioc_version}: Bioconductor version, or \code{NA} for
 non-Bioconductor repositories.

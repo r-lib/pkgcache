@@ -65,7 +65,8 @@ See the differences below.</p>
 <span>  library <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  priority <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lowercase <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  reencode <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  reencode <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  packages <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,6 +92,11 @@ package priorities, but you may introduce others in non-CRAN packages.)</p></dd>
 encodings specified in the <code>DESCRIPTION</code> files. Re-encoding is
 somewhat costly, and sometimes it is not important (e.g. when you only
 want to extract the dependencies of the installed packages).</p></dd>
+
+
+<dt>packages</dt>
+<dd><p>If not <code>NULL</code>, then it must be a character vector,
+and only these packages will be listed.</p></dd>
 
 </dl></div>
     <div class="section level2">

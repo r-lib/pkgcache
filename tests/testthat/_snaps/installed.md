@@ -87,6 +87,13 @@
     Output
       [1] "cli"   "rlang"
 
+---
+
+    Code
+      pkgs2$Package
+    Output
+      [1] "cli"
+
 # parse_installed, DESCRIPTION with <CR><LF>
 
     Code

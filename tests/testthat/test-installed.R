@@ -148,11 +148,14 @@ test_that("somewhat weird packages files", {
 })
 
 test_that("parse_installed", {
-   testthat::local_edition(3)
+  testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
   pkgs <- parse_installed(test_path("fixtures/lib"))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
+
+  pkgs2 <- parse_installed(test_path("fixtures/lib"), packages = c("cli", "foo"))
+  expect_snapshot(pkgs2$Package)
 })
 
 test_that("parse_installed, DESCRIPTION with <CR><LF>", {

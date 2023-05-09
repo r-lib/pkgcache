@@ -226,17 +226,22 @@ guess_packages_type <- function(path) {
 #'   encodings specified in the `DESCRIPTION` files. Re-encoding is
 #'   somewhat costly, and sometimes it is not important (e.g. when you only
 #'   want to extract the dependencies of the installed packages).
+#' @param packages If not `NULL`, then it must be a character vector,
+#'   and only these packages will be listed.
 #'
 #' @export
 
 parse_installed <- function(library = .libPaths(), priority = NULL,
-                            lowercase = FALSE, reencode = TRUE) {
+                            lowercase = FALSE, reencode = TRUE,
+                            packages = NULL) {
   stopifnot(
     "`library` must be a character vector" = is.character(library),
     "`priority` must be `NULL` or a character vector" =
       is.null(priority) || is.character(priority) || identical(NA, priority),
     "`library` cannot have length zero" = length(library) > 0,
-    "`lowercase` must be a boolean flag" = is_flag(lowercase)
+    "`lowercase` must be a boolean flag" = is_flag(lowercase),
+    "`packages` must be `NULL` or a character vector" =
+      is.null(packages) || is.character(packages)
   )
 
   # Merge multiple libraries
@@ -246,7 +251,8 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
       parse_installed,
       priority = priority,
       lowercase = lowercase,
-      reencode = reencode
+      reencode = reencode,
+      packages = packages
     )
     return(rbind_expand(.list = lsts))
   }
@@ -258,7 +264,8 @@ parse_installed <- function(library = .libPaths(), priority = NULL,
   #       files and directories are ignored.
   # TODO: replace dir() with something that errors if library does not
   #       exist or we cannot get the list of directories.
-  dscs <- file.path(library, dir(library), "DESCRIPTION")
+  packages <- packages %||% dir(library)
+  dscs <- file.path(library, packages, "DESCRIPTION")
   dscs <- dscs[file.exists(dscs)]
 
   dscs <- encode_path(dscs)

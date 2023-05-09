@@ -8,7 +8,8 @@ parse_installed(
   library = .libPaths(),
   priority = NULL,
   lowercase = FALSE,
-  reencode = TRUE
+  reencode = TRUE,
+  packages = NULL
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ package priorities, but you may introduce others in non-CRAN packages.)}
 encodings specified in the \code{DESCRIPTION} files. Re-encoding is
 somewhat costly, and sometimes it is not important (e.g. when you only
 want to extract the dependencies of the installed packages).}
+
+\item{packages}{If not \code{NULL}, then it must be a character vector,
+and only these packages will be listed.}
 }
 \description{
 This function is similar to \code{\link[utils:installed.packages]{utils::installed.packages()}}.

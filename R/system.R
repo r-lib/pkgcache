@@ -12,6 +12,8 @@ get_internals_id <- function() {
   get(".Internal", baseenv())(internalsID())
 }
 
+internalsID <- function() NULL
+
 #' Query the version of the graphics API
 #'
 #' A package compiled with a certain version of the graphics API

@@ -3542,7 +3542,11 @@ async_timeout <- function(task, timeout, ...) {
         if (value[[1]] == "ok") {
           resolve(value[[2]])
         } else {
-          stop("Timed out")
+          cnd <- structure(
+            list(message = "Aync operation timed out"),
+            class = c("async_timeout", "error", "condition")
+          )
+          stop(cnd)
         }
       }
     }

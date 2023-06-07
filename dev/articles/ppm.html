@@ -81,7 +81,7 @@
                         <h4 data-toc-skip class="author">Gábor
 Csárdi</h4>
             
-            <h4 data-toc-skip class="date">2023-05-17</h4>
+            <h4 data-toc-skip class="date">2023-06-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/pkgcache/blob/HEAD/vignettes/ppm.Rmd" class="external-link"><code>vignettes/ppm.Rmd</code></a></small>
       <div class="d-none name"><code>ppm.Rmd</code></div>
@@ -126,10 +126,12 @@ specially on Linux.</p>
 builds binaries for your platform:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_has_binaries.html">ppm_has_binaries</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
 <p>You can use <code><a href="../reference/current_r_platform.html">pkgcache::current_r_platform()</a></code> to see if
 pkgcache detects your platform correctly:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/current_r_platform.html">current_r_platform</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "x86_64-pc-linux-gnu-ubuntu-22.04"</span></span></code></pre>
 <div class="section level3">
 <h3 id="setting-up-ppm">Setting up PPM<a class="anchor" aria-label="anchor" href="#setting-up-ppm"></a>
 </h3>
@@ -158,14 +160,42 @@ date) of a PPM snapshot or <code>latest</code> for the latest
 snapshot.</p>
 <p><code><a href="../reference/ppm_platforms.html">ppm_platforms()</a></code> lists platforms supported by a PPM
 instance:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_platforms.html">ppm_platforms</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 24 × 6</span></span></span>
+<span><span class="co">##    name        os    binary_url  distribution release binaries</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> centos7     linux centos7     centos       7       TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> centos8     linux centos8     centos       8       TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> rhel9       linux rhel9       rockylinux   9       TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> opensuse15  linux opensuse15  opensuse     15      TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> opensuse152 linux opensuse152 opensuse     15.2    TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> opensuse153 linux opensuse153 opensuse     15.3    TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> opensuse154 linux opensuse154 opensuse     15.4    TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> opensuse42  linux opensuse42  opensuse     42.3    TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> rhel7       linux centos7     redhat       7       TRUE    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> rhel8       linux centos8     redhat       8       TRUE    </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 14 more rows</span></span></span></code></pre>
 <p>The <code>binary_url</code> column contains the code name that you
 need to use in the repository URL.</p>
 <p><code><a href="../reference/ppm_snapshots.html">ppm_snapshots()</a></code> lists all PPM snapshot dates and
 ids:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_snapshots.html">ppm_snapshots</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 947 × 2</span></span></span>
+<span><span class="co">##    date                   id</span></span>
+<span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 2017-10-10 <span style="color: #949494;">00:00:00</span>     5</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2017-10-25 <span style="color: #949494;">00:00:00</span>     6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2017-10-30 <span style="color: #949494;">00:00:00</span>     7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2017-11-01 <span style="color: #949494;">00:00:00</span>     8</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2017-11-03 <span style="color: #949494;">00:00:00</span>     9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2017-11-07 <span style="color: #949494;">00:00:00</span>    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2017-11-08 <span style="color: #949494;">00:00:00</span>    11</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2017-11-13 <span style="color: #949494;">00:00:00</span>    12</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2017-11-15 <span style="color: #949494;">00:00:00</span>    13</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2017-11-16 <span style="color: #949494;">00:00:00</span>    14</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 937 more rows</span></span></span></code></pre>
 <p>You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are
 equivalent:</p>
@@ -178,8 +208,9 @@ https://packagemanager.posit.co/cran/__linux__/centos7/2017-10-10</code></pre>
 <p>pkgcache generalizes R’s “machine-vendor-OS” platform triplet on
 Linux to include the distribution and release as well. E.g. the platform
 of the machine building this document is:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/current_r_platform.html">current_r_platform</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "x86_64-pc-linux-gnu-ubuntu-22.04"</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="ppm-linux-binary-packages">PPM Linux binary packages<a class="anchor" aria-label="anchor" href="#ppm-linux-binary-packages"></a>
@@ -190,11 +221,24 @@ because R recognizes binary packages at installation time, and handles
 them appropriately.</p>
 <p>pkgcache detects binary PPM repositories, and constructs their
 platform string:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span></span>
 <span>  <span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/meta_cache_deps.html">meta_cache_list</a></span><span class="op">(</span>package <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, <span class="st">"pkgcache"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"package"</span>, <span class="st">"mirror"</span>, <span class="st">"platform"</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  width <span class="op">=</span> <span class="cn">Inf</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 4 × 3</span></span></span>
+<span><span class="co">##   package  mirror                                                     </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> ggplot2  https://packagemanager.posit.co/cran/__linux__/jammy/latest</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> pkgcache https://packagemanager.posit.co/cran/__linux__/jammy/latest</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> ggplot2  https://cloud.r-project.org                                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> pkgcache https://cloud.r-project.org                                </span></span>
+<span><span class="co">##   platform                        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> x86_64-pc-linux-gnu-ubuntu-22.04</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> x86_64-pc-linux-gnu-ubuntu-22.04</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> source                          </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> source</span></span></code></pre>
 <div class="section level4">
 <h4 id="metadata-discrepancies">Metadata discrepancies<a class="anchor" aria-label="anchor" href="#metadata-discrepancies"></a>
 </h4>
@@ -217,8 +261,16 @@ version, and <code><a href="../reference/ppm_has_binaries.html">ppm_has_binaries
 will act accordingly. You can use the
 <code><a href="../reference/ppm_r_versions.html">pkgcache::ppm_r_versions()</a></code> function to list the R versions
 supported by your instance:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_r_versions.html">ppm_r_versions</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 5 × 1</span></span></span>
+<span><span class="co">##   r_version</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> 4.3      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> 4.2      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> 4.1      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> 4.0      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> 3.6</span></span></code></pre>
 <p>Note that these version numbers do not include the patch version.
 E.g. <code>4.2</code> means that all <code>4.2.x</code> R versions are
 supported.</p>
@@ -233,7 +285,7 @@ instance does support them.</p>
 setting up PPM on Windows simply means setting the <code>repos</code>
 option to a PPM repository. E.g. for the public P3M this would be
 something like:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  RSPM <span class="op">=</span> <span class="st">"https://packagemanager.posit.co/cran/latest"</span>,</span>
 <span>  CRAN <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"repos"</span><span class="op">)</span><span class="op">[[</span><span class="st">"CRAN"</span><span class="op">]</span><span class="op">]</span></span>

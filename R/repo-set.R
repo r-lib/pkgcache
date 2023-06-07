@@ -206,6 +206,7 @@ repo_sugar_ppm <- function(x, nm) {
 
   # do we potentially have binaries?
   current <- current_r_platform_data()
+  current_rver <- get_minor_r_version(getRversion())
   binaries <-
     ! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off") &&
     current$cpu == "x86_64" &&
@@ -217,7 +218,8 @@ repo_sugar_ppm <- function(x, nm) {
     if (binaries) {
       async_get_ppm_status(
         distribution = current$distribution,
-        release = current$release
+        release = current$release,
+        r_version = current_rver
       )
     } else {
       async_constant()
@@ -231,7 +233,6 @@ repo_sugar_ppm <- function(x, nm) {
     distros$distribution == current$distribution &
     distros$release == current$release
   )
-  current_rver <- get_minor_r_version(getRversion())
   binaries <- binaries &&
     length(mch) == 1 &&
     distros$binaries[mch] &&

@@ -265,14 +265,14 @@ ppm_has_binaries <- function() {
 
   if (!binaries) return(FALSE)
 
+  current_rver <- get_minor_r_version(getRversion())
   synchronise(async_get_ppm_status(
     distribution = current$distribution,
-    release = current$release
+    release = current$release,
+    r_version = current_rver
   ))
   distros <- pkgenv$ppm_distros
   rver <- pkgenv$ppm_r_versions
-
-  current_rver <- get_minor_r_version(getRversion())
 
   if (current$os == "mingw32") {
     binaries <- binaries &&

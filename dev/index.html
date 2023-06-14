@@ -166,6 +166,33 @@
 <p>The <code>package_cache</code> class provides a finer API.</p>
 </div>
 <div class="section level2">
+<h2 id="installed-packages">Installed packages<a class="anchor" aria-label="anchor" href="#installed-packages"></a>
+</h2>
+<p>pkgcache contains a very fast DCF parser to parse <code>PACKAGES*</code> files, or the <code>DESCRIPTION</code> files in installed packages. <code><a href="reference/parse_packages.html">parse_packages()</a></code> parses all fields from <code>PACKAGES</code>, <code>PACKAGES.gz</code> or <code>PACKAGES.rds</code> files. <code><a href="reference/parse_installed.html">parse_installed()</a></code> reads <em>all</em> metadata from packages installed into a library:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/parse_installed.html">parse_installed</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A data frame: 329 × 97</span></span>
+<span><span class="co">#&gt;    Package    Version Title Author Maintainer Depends Imports LinkingTo Suggests</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 ade4       1.7-22  "Ana… "Stép… Aurélie S… R (&gt;= … "graph… Rcpp, Rc… "ade4Tk…</span></span>
+<span><span class="co">#&gt;  2 archive    1.1.5   "Mul… "Jim … Gábor Csá… R (&gt;= … "cli, … cli, cpp… "covr, …</span></span>
+<span><span class="co">#&gt;  3 asciicast  2.3.0.… "Cre… "Gábo… Gábor Csá… &lt;NA&gt;    "cli (… processx  "callr,…</span></span>
+<span><span class="co">#&gt;  4 AsioHeade… 1.22.1… "'As… "Dirk… Dirk Edde… &lt;NA&gt;     &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;   </span></span>
+<span><span class="co">#&gt;  5 askpass    1.1     "Saf… "Jero… Jeroen Oo… &lt;NA&gt;    "sys (… &lt;NA&gt;      "testth…</span></span>
+<span><span class="co">#&gt;  6 assertthat 0.2.1   "Eas… "Hadl… Hadley Wi… &lt;NA&gt;    "tools" &lt;NA&gt;      "testth…</span></span>
+<span><span class="co">#&gt;  7 async      0.0.0.… "Asy… "Gábo… Gábor Csá… R (&gt;= … "callr… &lt;NA&gt;      "cli, c…</span></span>
+<span><span class="co">#&gt;  8 attempt    0.3.1   "Too… "Coli… Colin Fay… &lt;NA&gt;    "rlang" &lt;NA&gt;      "testth…</span></span>
+<span><span class="co">#&gt;  9 babynames  1.0.1   "US … "Hadl… Hadley Wi… R (&gt;= … "tibbl… &lt;NA&gt;      "testth…</span></span>
+<span><span class="co">#&gt; 10 backports  1.4.1   "Rei… "Mich… Michel La… R (&gt;= …  &lt;NA&gt;   &lt;NA&gt;       &lt;NA&gt;   </span></span>
+<span><span class="co">#&gt; # ℹ 319 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 88 more variables: Description &lt;chr&gt;, License &lt;chr&gt;, URL &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   BugReports &lt;chr&gt;, Encoding &lt;chr&gt;, NeedsCompilation &lt;chr&gt;, Packaged &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   Repository &lt;chr&gt;, `Date/Publication` &lt;chr&gt;, Built &lt;chr&gt;, Archs &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   RemoteType &lt;chr&gt;, RemotePkgRef &lt;chr&gt;, RemoteRef &lt;chr&gt;, RemoteRepos &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   RemotePkgPlatform &lt;chr&gt;, RemoteSha &lt;chr&gt;, `Authors@R` &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   ByteCompile &lt;chr&gt;, RoxygenNote &lt;chr&gt;, SystemRequirements &lt;chr&gt;, …</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="bioconductor-support">Bioconductor support<a class="anchor" aria-label="anchor" href="#bioconductor-support"></a>
 </h2>
 <p>Both the metadata cache and the package cache support Bioconductor by default, automatically. See the <code>BioC_mirror</code> option and the <code>R_BIOC_MIRROR</code> and <code>R_BIOC_VERSION</code> environment variables below to configure Bioconductor support.</p>

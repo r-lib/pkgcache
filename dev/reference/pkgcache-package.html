@@ -82,26 +82,26 @@ print nicer, similarly to tibbles.)</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lib/pkgcache#readme" class="external-link">pkgcache</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pillar.r-lib.org/" class="external-link">pillar</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/meta_cache_deps.html">meta_cache_list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A data frame: 45,961 x 32</span></span>
-<span><span class="co">#&gt;    package version depends sugge~1 license imports linki~2 archs enhan~3 licen~4</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  </span></span>
-<span><span class="co">#&gt;  1 A3      1.0.0   R (&gt;= ~ random~ GPL (&gt;~ &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  2 AATtoo~ 0.0.2   R (&gt;= ~ &lt;NA&gt;    GPL-3   magrit~ &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  3 ABACUS  1.0.0   R (&gt;= ~ rmarkd~ GPL-3   ggplot~ &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  4 ABC.RAP 0.9.0   R (&gt;= ~ knitr,~ GPL-3   graphi~ &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  5 ABCana~ 1.2.1   R (&gt;= ~ &lt;NA&gt;    GPL-3   plotrix &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  6 ABCopt~ 0.15.0  &lt;NA&gt;    testth~ MIT + ~ Rcpp, ~ Rcpp    ABCo~ &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  7 ABCp2   1.2     MASS    &lt;NA&gt;    GPL-2   &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  8 ABHgen~ 1.0.1   &lt;NA&gt;    knitr,~ GPL-3   ggplot~ &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt;  9 ABPS    0.3     &lt;NA&gt;    testth~ GPL (&gt;~ kernlab &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; 10 ABSurv~ 0.1.0   R (&gt;= ~ &lt;NA&gt;    GPL-3   stats,~ &lt;NA&gt;    &lt;NA&gt;  &lt;NA&gt;    &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; # ... with 45,951 more rows, 22 more variables: os_type &lt;chr&gt;, priority &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   license_is_foss &lt;chr&gt;, repodir &lt;chr&gt;, rversion &lt;chr&gt;, platform &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   needscompilation &lt;chr&gt;, ref &lt;chr&gt;, type &lt;chr&gt;, direct &lt;lgl&gt;, status &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   target &lt;chr&gt;, mirror &lt;chr&gt;, sources &lt;list&gt;, filesize &lt;int&gt;, sha256 &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   sysreqs &lt;chr&gt;, built &lt;chr&gt;, published &lt;dttm&gt;, deps &lt;list&gt;, md5sum &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   path &lt;chr&gt;, and abbreviated variable names 1: suggests, 2: linkingto,</span></span>
-<span><span class="co">#&gt; #   3: enhances, 4: license_restricts_use</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; # A data frame: 44,780 x 32</span></span>
+<span><span class="co">#&gt;    package     version depends suggests license imports linkingto archs enhances</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 A3          1.0.0   R (&gt;= ~ randomF~ GPL (&gt;~ &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  2 AATtools    0.0.2   R (&gt;= ~ &lt;NA&gt;     GPL-3   magrit~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  3 ABACUS      1.0.0   R (&gt;= ~ rmarkdo~ GPL-3   ggplot~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  4 ABC.RAP     0.9.0   R (&gt;= ~ knitr, ~ GPL-3   graphi~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  5 ABCanalysis 1.2.1   R (&gt;= ~ &lt;NA&gt;     GPL-3   plotrix &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  6 ABCoptim    0.15.0  &lt;NA&gt;    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  7 ABCp2       1.2     MASS    &lt;NA&gt;     GPL-2   &lt;NA&gt;    &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  8 ABHgenotyp~ 1.0.1   &lt;NA&gt;    knitr, ~ GPL-3   ggplot~ &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt;  9 ABM         0.3     &lt;NA&gt;    &lt;NA&gt;     GPL (&gt;~ R6, Rc~ Rcpp      ABM.~ &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt; 10 ABPS        0.3     &lt;NA&gt;    testthat GPL (&gt;~ kernlab &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;    </span></span>
+<span><span class="co">#&gt; # i 44,770 more rows</span></span>
+<span><span class="co">#&gt; # i 23 more variables: license_restricts_use &lt;chr&gt;, priority &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   license_is_foss &lt;chr&gt;, os_type &lt;chr&gt;, repodir &lt;chr&gt;, rversion &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   platform &lt;chr&gt;, needscompilation &lt;chr&gt;, ref &lt;chr&gt;, type &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   direct &lt;lgl&gt;, status &lt;chr&gt;, target &lt;chr&gt;, mirror &lt;chr&gt;, sources &lt;list&gt;,</span></span>
+<span><span class="co">#&gt; #   filesize &lt;int&gt;, sha256 &lt;chr&gt;, sysreqs &lt;chr&gt;, built &lt;chr&gt;, published &lt;dttm&gt;,</span></span>
+<span><span class="co">#&gt; #   deps &lt;list&gt;, md5sum &lt;chr&gt;, path &lt;chr&gt;</span></span></code></pre><p></p></div>
 <p><code><a href="meta_cache_deps.html">meta_cache_deps()</a></code> and <code><a href="meta_cache_deps.html">meta_cache_revdeps()</a></code> can be used to look up
 dependencies and reverse dependencies.</p>
 <p>The metadata is updated automatically if it is older than seven days,
@@ -123,41 +123,68 @@ package files.</p>
 <span><span class="co">#&gt; [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $files</span></span>
-<span><span class="co">#&gt; [1] 321</span></span>
+<span><span class="co">#&gt; [1] 176</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $size</span></span>
-<span><span class="co">#&gt; [1] 420283448</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; [1] 204562277</span></span></code></pre><p></p></div>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/pkg_cache_api.html">pkg_cache_list</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A data frame: 321 x 11</span></span>
-<span><span class="co">#&gt;    fullpath       path  package url   etag  sha256 version platf~1 built vigne~2</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;int&gt;   &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1 /Users/gaborc~ src/~ tibble  http~ "\"a~ acf30~ 3.1.8   source     NA      NA</span></span>
-<span><span class="co">#&gt;  2 /Users/gaborc~ bin/~ rmsfact http~ "\"4~ 44c34~ 0.0.3   aarch6~    NA      NA</span></span>
-<span><span class="co">#&gt;  3 /Users/gaborc~ bin/~ fortun~ http~ "\"3~ 943db~ 1.5-4   aarch6~    NA      NA</span></span>
-<span><span class="co">#&gt;  4 /Users/gaborc~ bin/~ cowsay  http~ "\"6~ 4d9c3~ 0.8.0   aarch6~    NA      NA</span></span>
-<span><span class="co">#&gt;  5 /Users/gaborc~ bin/~ multic~ http~ "\"1~ 55859~ 0.1.5   aarch6~    NA      NA</span></span>
-<span><span class="co">#&gt;  6 /Users/gaborc~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; 8b0ce~ &lt;NA&gt;    &lt;NA&gt;        0      NA</span></span>
-<span><span class="co">#&gt;  7 /Users/gaborc~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; 8b0ce~ 3.5.0.~ source      1       0</span></span>
-<span><span class="co">#&gt;  8 /Users/gaborc~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; 8b0ce~ 3.5.0.~ aarch6~     1       0</span></span>
-<span><span class="co">#&gt;  9 /Users/gaborc~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; bc503~ &lt;NA&gt;    &lt;NA&gt;        0      NA</span></span>
-<span><span class="co">#&gt; 10 /Users/gaborc~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; bc503~ 3.5.0.~ source      1       0</span></span>
-<span><span class="co">#&gt; # ... with 311 more rows, 1 more variable: rversion &lt;chr&gt;, and abbreviated</span></span>
-<span><span class="co">#&gt; #   variable names 1: platform, 2: vignettes</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; # A data frame: 176 x 11</span></span>
+<span><span class="co">#&gt;    fullpath    path  package url   etag  sha256 version platform built vignettes</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;    &lt;int&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1 /Users/gab~ bin/~ diffvi~ http~ "\"2~ e8869~ 0.1.1   aarch64~    NA        NA</span></span>
+<span><span class="co">#&gt;  2 /Users/gab~ src/~ testth~ &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;   0.0.0.~ source       1         0</span></span>
+<span><span class="co">#&gt;  3 /Users/gab~ src/~ testth~ &lt;NA&gt;   &lt;NA&gt; &lt;NA&gt;   0.0.0.~ aarch64~     1         0</span></span>
+<span><span class="co">#&gt;  4 /Users/gab~ bin/~ DT      http~ "\"1~ 69c62~ 0.27    aarch64~    NA        NA</span></span>
+<span><span class="co">#&gt;  5 /Users/gab~ bin/~ R6      http~ "\"1~ 00398~ 2.5.1   aarch64~    NA        NA</span></span>
+<span><span class="co">#&gt;  6 /Users/gab~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; c37f3~ 3.6.1.~ source       1         0</span></span>
+<span><span class="co">#&gt;  7 /Users/gab~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; c37f3~ 3.6.1.~ aarch64~     1         0</span></span>
+<span><span class="co">#&gt;  8 /Users/gab~ bin/~ glue    http~ "\"2~ 25019~ 1.6.2   aarch64~    NA        NA</span></span>
+<span><span class="co">#&gt;  9 /Users/gab~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; f6794~ 3.1.0.~ source       1         0</span></span>
+<span><span class="co">#&gt; 10 /Users/gab~ src/~ cli     &lt;NA&gt;   &lt;NA&gt; f6794~ 3.1.0.~ aarch64~     1         0</span></span>
+<span><span class="co">#&gt; # i 166 more rows</span></span>
+<span><span class="co">#&gt; # i 1 more variable: rversion &lt;chr&gt;</span></span></code></pre><p></p></div>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/pkg_cache_api.html">pkg_cache_find</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A data frame: 5 x 11</span></span>
-<span><span class="co">#&gt;   fullp~1 path  package url   etag  sha256 version platf~2 built vigne~3 rvers~4</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;int&gt;   &lt;int&gt; &lt;chr&gt;  </span></span>
-<span><span class="co">#&gt; 1 /Users~ bin/~ dplyr   http~ "\"6~ 162b5~ 1.0.10  aarch6~    NA      NA &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; 2 /Users~ bin/~ dplyr   http~ "\"6~ 9014f~ 1.0.9   aarch6~    NA      NA &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; 3 /Users~ src/~ dplyr   http~ "\"1~ 8cb05~ 1.1.0   source     NA      NA &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; 4 /Users~ bin/~ dplyr   http~ "\"6~ 54679~ 1.1.0   aarch6~    NA      NA &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; 5 /Users~ bin/~ dplyr   http~ "\"1~ 6ebb2~ 1.1.0   aarch6~    NA      NA &lt;NA&gt;   </span></span>
-<span><span class="co">#&gt; # ... with abbreviated variable names 1: fullpath, 2: platform, 3: vignettes,</span></span>
-<span><span class="co">#&gt; #   4: rversion</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; # A data frame: 1 x 11</span></span>
+<span><span class="co">#&gt;   fullpath     path  package url   etag  sha256 version platform built vignettes</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;    &lt;int&gt;     &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 /Users/gabo~ bin/~ dplyr   http~ "\"1~ cb4f7~ 1.1.2   aarch64~    NA        NA</span></span>
+<span><span class="co">#&gt; # i 1 more variable: rversion &lt;chr&gt;</span></span></code></pre><p></p></div>
 <p><code><a href="pkg_cache_api.html">pkg_cache_add_file()</a></code> can be used to add a file,
 <code><a href="pkg_cache_api.html">pkg_cache_delete_files()</a></code> to remove files, <code>pkg_cache_get_files()</code> to
 copy files out of the cache.</p>
 <p>The <code>package_cache</code> class provides a finer API.</p>
+</div>
+
+<div class="section">
+<h3 id="installed-packages">Installed packages<a class="anchor" aria-label="anchor" href="#installed-packages"></a></h3>
+
+
+<p>pkgcache contains a very fast DCF parser to parse <code>PACKAGES*</code> files, or
+the <code>DESCRIPTION</code> files in installed packages. <code><a href="parse_packages.html">parse_packages()</a></code> parses
+all fields from <code>PACKAGES</code>, <code>PACKAGES.gz</code> or <code>PACKAGES.rds</code> files.
+<code><a href="parse_installed.html">parse_installed()</a></code> reads <em>all</em> metadata from packages installed into a
+library:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/parse_installed.html">parse_installed</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A data frame: 329 x 97</span></span>
+<span><span class="co">#&gt;    Package     Type  Title Version Date  Author Maintainer Description Copyright</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    </span></span>
+<span><span class="co">#&gt;  1 AsioHeaders Pack~ "'As~ 1.22.1~ 2022~ "Dirk~ Dirk Edde~ "'Asio' is~ file ins~</span></span>
+<span><span class="co">#&gt;  2 BiocGeneri~ &lt;NA&gt;  "S4 ~ 0.46.0  &lt;NA&gt;  "The ~ Hervé Pag~ "The packa~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  3 BiocManager &lt;NA&gt;  "Acc~ 1.30.20 &lt;NA&gt;  "Mart~ Marcel Ra~ "A conveni~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  4 Biostrings  &lt;NA&gt;  "Eff~ 2.67.2  &lt;NA&gt;  "Herv~ Hervé Pag~ "Memory ef~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  5 DBI         &lt;NA&gt;  "R D~ 1.1.3   2022~ "R Sp~ Kirill Mü~ "A databas~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  6 DBItest     &lt;NA&gt;  "Tes~ 1.7.3   2022~ "Kiri~ Kirill Mü~ "A helper ~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  7 DT          Pack~ "A W~ 0.27    &lt;NA&gt;  "Yihu~ Yihui Xie~ "Data obje~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  8 Distributi~ &lt;NA&gt;  "Dis~ 0.6-0   2018~ "Davi~ David Sco~ "Utilities~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt;  9 Formula     &lt;NA&gt;  "Ext~ 1.2-5   2023~ "Achi~ Achim Zei~ "Infrastru~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; 10 GenomeInfo~ &lt;NA&gt;  "Uti~ 1.35.17 &lt;NA&gt;  "Sona~ Hervé Pag~ "Contains ~ &lt;NA&gt;     </span></span>
+<span><span class="co">#&gt; # i 319 more rows</span></span>
+<span><span class="co">#&gt; # i 88 more variables: License &lt;chr&gt;, URL &lt;chr&gt;, BugReports &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   NeedsCompilation &lt;chr&gt;, Packaged &lt;chr&gt;, Repository &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   `Date/Publication` &lt;chr&gt;, Built &lt;chr&gt;, biocViews &lt;chr&gt;, Encoding &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   Depends &lt;chr&gt;, Imports &lt;chr&gt;, Suggests &lt;chr&gt;, Collate &lt;chr&gt;, git_url &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   git_branch &lt;chr&gt;, git_last_commit &lt;chr&gt;, git_last_commit_date &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   `Authors@R` &lt;chr&gt;, VignetteBuilder &lt;chr&gt;, RoxygenNote &lt;chr&gt;, ...</span></span></code></pre><p></p></div>
 </div>
 
 <div class="section">

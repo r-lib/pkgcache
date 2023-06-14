@@ -40,24 +40,24 @@ test_that("repo_resolve", {
     c(CRAN = "https://packagemanager.posit.co/cran/latest")
   )
   expect_equal(
-    repo_resolve("PPM@2020-10-10"),
-    c(CRAN = "https://packagemanager.posit.co/cran/344")
+    repo_resolve("PPM@2021-02-04"),
+    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
   )
   expect_equal(
-    repo_resolve("PPM@2020-10-10T14:33:56"),
-    c(CRAN = "https://packagemanager.posit.co/cran/344")
+    repo_resolve("PPM@2021-02-04T14:33:56"),
+    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
   )
 
   # RSPM
   withr::local_envvar(PKGCACHE_PPM_URL = NA_character_)
   withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
   expect_equal(
-    repo_resolve("RSPM@2020-10-10"),
-    c(CRAN = "https://packagemanager.posit.co/cran/344")
+    repo_resolve("RSPM@2021-02-04"),
+    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
   )
   expect_equal(
-    repo_resolve("RSPM@2020-10-10T14:33:56"),
-    c(CRAN = "https://packagemanager.posit.co/cran/344")
+    repo_resolve("RSPM@2021-02-04T14:33:56"),
+    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
   )
 })
 
@@ -171,8 +171,8 @@ test_that("repo_sugar_ppm", {
   withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
   withr::local_options(repos = NULL)
   expect_equal(
-    repo_sugar_ppm("2020-06-30", NULL),
-    c(CRAN = "https://packagemanager.posit.co/cran/298")
+    repo_sugar_ppm("2021-02-04", NULL),
+    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
   )
 
   withr::local_envvar(
@@ -180,8 +180,8 @@ test_that("repo_sugar_ppm", {
     PKGCACHE_PPM_REPO = "repo"
   )
   expect_equal(
-    repo_sugar_ppm("2020-06-30", NULL),
-    c(CRAN = "https://my.ppm/repo/298")
+    repo_sugar_ppm("2021-02-04", NULL),
+    c(CRAN = "https://my.ppm/repo/1175516")
   )
 
   called <- FALSE

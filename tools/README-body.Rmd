@@ -81,6 +81,19 @@ copy files out of the cache.
 
 The `package_cache` class provides a finer API.
 
+## Installed packages
+
+pkgcache contains a very fast DCF parser to parse `PACKAGES*` files,
+or the `DESCRIPTION` files in installed packages.
+`parse_packages()` parses all fields from `PACKAGES`, `PACKAGES.gz` or
+`PACKAGES.rds` files.
+`parse_installed()` reads
+_all_ metadata from packages installed into a library:
+
+```{r}
+parse_installed()
+```
+
 ## Bioconductor support
 
 Both the metadata cache and the package cache support Bioconductor by

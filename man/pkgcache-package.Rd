@@ -33,26 +33,26 @@ print nicer, similarly to tibbles.)
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
-#> # A data frame: 45,961 x 32
-#>    package version depends sugge~1 license imports linki~2 archs enhan~3 licen~4
-#>    <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr>   <chr> <chr>   <chr>  
-#>  1 A3      1.0.0   R (>= ~ random~ GPL (>~ <NA>    <NA>    <NA>  <NA>    <NA>   
-#>  2 AATtoo~ 0.0.2   R (>= ~ <NA>    GPL-3   magrit~ <NA>    <NA>  <NA>    <NA>   
-#>  3 ABACUS  1.0.0   R (>= ~ rmarkd~ GPL-3   ggplot~ <NA>    <NA>  <NA>    <NA>   
-#>  4 ABC.RAP 0.9.0   R (>= ~ knitr,~ GPL-3   graphi~ <NA>    <NA>  <NA>    <NA>   
-#>  5 ABCana~ 1.2.1   R (>= ~ <NA>    GPL-3   plotrix <NA>    <NA>  <NA>    <NA>   
-#>  6 ABCopt~ 0.15.0  <NA>    testth~ MIT + ~ Rcpp, ~ Rcpp    ABCo~ <NA>    <NA>   
-#>  7 ABCp2   1.2     MASS    <NA>    GPL-2   <NA>    <NA>    <NA>  <NA>    <NA>   
-#>  8 ABHgen~ 1.0.1   <NA>    knitr,~ GPL-3   ggplot~ <NA>    <NA>  <NA>    <NA>   
-#>  9 ABPS    0.3     <NA>    testth~ GPL (>~ kernlab <NA>    <NA>  <NA>    <NA>   
-#> 10 ABSurv~ 0.1.0   R (>= ~ <NA>    GPL-3   stats,~ <NA>    <NA>  <NA>    <NA>   
-#> # ... with 45,951 more rows, 22 more variables: os_type <chr>, priority <chr>,
-#> #   license_is_foss <chr>, repodir <chr>, rversion <chr>, platform <chr>,
-#> #   needscompilation <chr>, ref <chr>, type <chr>, direct <lgl>, status <chr>,
-#> #   target <chr>, mirror <chr>, sources <list>, filesize <int>, sha256 <chr>,
-#> #   sysreqs <chr>, built <chr>, published <dttm>, deps <list>, md5sum <chr>,
-#> #   path <chr>, and abbreviated variable names 1: suggests, 2: linkingto,
-#> #   3: enhances, 4: license_restricts_use
+#> # A data frame: 44,780 x 32
+#>    package     version depends suggests license imports linkingto archs enhances
+#>    <chr>       <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
+#>  1 A3          1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
+#>  2 AATtools    0.0.2   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA>  <NA>    
+#>  3 ABACUS      1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  4 ABC.RAP     0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA>  <NA>    
+#>  5 ABCanalysis 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA>  <NA>    
+#>  6 ABCoptim    0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
+#>  7 ABCp2       1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
+#>  8 ABHgenotyp~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  9 ABM         0.3     <NA>    <NA>     GPL (>~ R6, Rc~ Rcpp      ABM.~ <NA>    
+#> 10 ABPS        0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
+#> # i 44,770 more rows
+#> # i 23 more variables: license_restricts_use <chr>, priority <chr>,
+#> #   license_is_foss <chr>, os_type <chr>, repodir <chr>, rversion <chr>,
+#> #   platform <chr>, needscompilation <chr>, ref <chr>, type <chr>,
+#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>, sources <list>,
+#> #   filesize <int>, sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>,
+#> #   deps <list>, md5sum <chr>, path <chr>
 }\if{html}{\out{</div>}}
 
 \code{meta_cache_deps()} and \code{meta_cache_revdeps()} can be used to look up
@@ -78,41 +78,36 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 321
+#> [1] 176
 #> 
 #> $size
-#> [1] 420283448
+#> [1] 204562277
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A data frame: 321 x 11
-#>    fullpath       path  package url   etag  sha256 version platf~1 built vigne~2
-#>    <chr>          <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>   <int>   <int>
-#>  1 /Users/gaborc~ src/~ tibble  http~ "\"a~ acf30~ 3.1.8   source     NA      NA
-#>  2 /Users/gaborc~ bin/~ rmsfact http~ "\"4~ 44c34~ 0.0.3   aarch6~    NA      NA
-#>  3 /Users/gaborc~ bin/~ fortun~ http~ "\"3~ 943db~ 1.5-4   aarch6~    NA      NA
-#>  4 /Users/gaborc~ bin/~ cowsay  http~ "\"6~ 4d9c3~ 0.8.0   aarch6~    NA      NA
-#>  5 /Users/gaborc~ bin/~ multic~ http~ "\"1~ 55859~ 0.1.5   aarch6~    NA      NA
-#>  6 /Users/gaborc~ src/~ cli     <NA>   <NA> 8b0ce~ <NA>    <NA>        0      NA
-#>  7 /Users/gaborc~ src/~ cli     <NA>   <NA> 8b0ce~ 3.5.0.~ source      1       0
-#>  8 /Users/gaborc~ src/~ cli     <NA>   <NA> 8b0ce~ 3.5.0.~ aarch6~     1       0
-#>  9 /Users/gaborc~ src/~ cli     <NA>   <NA> bc503~ <NA>    <NA>        0      NA
-#> 10 /Users/gaborc~ src/~ cli     <NA>   <NA> bc503~ 3.5.0.~ source      1       0
-#> # ... with 311 more rows, 1 more variable: rversion <chr>, and abbreviated
-#> #   variable names 1: platform, 2: vignettes
+#> # A data frame: 176 x 11
+#>    fullpath    path  package url   etag  sha256 version platform built vignettes
+#>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+#>  1 /Users/gab~ bin/~ diffvi~ http~ "\"2~ e8869~ 0.1.1   aarch64~    NA        NA
+#>  2 /Users/gab~ src/~ testth~ <NA>   <NA> <NA>   0.0.0.~ source       1         0
+#>  3 /Users/gab~ src/~ testth~ <NA>   <NA> <NA>   0.0.0.~ aarch64~     1         0
+#>  4 /Users/gab~ bin/~ DT      http~ "\"1~ 69c62~ 0.27    aarch64~    NA        NA
+#>  5 /Users/gab~ bin/~ R6      http~ "\"1~ 00398~ 2.5.1   aarch64~    NA        NA
+#>  6 /Users/gab~ src/~ cli     <NA>   <NA> c37f3~ 3.6.1.~ source       1         0
+#>  7 /Users/gab~ src/~ cli     <NA>   <NA> c37f3~ 3.6.1.~ aarch64~     1         0
+#>  8 /Users/gab~ bin/~ glue    http~ "\"2~ 25019~ 1.6.2   aarch64~    NA        NA
+#>  9 /Users/gab~ src/~ cli     <NA>   <NA> f6794~ 3.1.0.~ source       1         0
+#> 10 /Users/gab~ src/~ cli     <NA>   <NA> f6794~ 3.1.0.~ aarch64~     1         0
+#> # i 166 more rows
+#> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A data frame: 5 x 11
-#>   fullp~1 path  package url   etag  sha256 version platf~2 built vigne~3 rvers~4
-#>   <chr>   <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>   <int>   <int> <chr>  
-#> 1 /Users~ bin/~ dplyr   http~ "\"6~ 162b5~ 1.0.10  aarch6~    NA      NA <NA>   
-#> 2 /Users~ bin/~ dplyr   http~ "\"6~ 9014f~ 1.0.9   aarch6~    NA      NA <NA>   
-#> 3 /Users~ src/~ dplyr   http~ "\"1~ 8cb05~ 1.1.0   source     NA      NA <NA>   
-#> 4 /Users~ bin/~ dplyr   http~ "\"6~ 54679~ 1.1.0   aarch6~    NA      NA <NA>   
-#> 5 /Users~ bin/~ dplyr   http~ "\"1~ 6ebb2~ 1.1.0   aarch6~    NA      NA <NA>   
-#> # ... with abbreviated variable names 1: fullpath, 2: platform, 3: vignettes,
-#> #   4: rversion
+#> # A data frame: 1 x 11
+#>   fullpath     path  package url   etag  sha256 version platform built vignettes
+#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+#> 1 /Users/gabo~ bin/~ dplyr   http~ "\"1~ cb4f7~ 1.1.2   aarch64~    NA        NA
+#> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,
@@ -120,6 +115,38 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 copy files out of the cache.
 
 The \code{package_cache} class provides a finer API.
+}
+
+\subsection{Installed packages}{
+
+pkgcache contains a very fast DCF parser to parse \verb{PACKAGES*} files, or
+the \code{DESCRIPTION} files in installed packages. \code{parse_packages()} parses
+all fields from \code{PACKAGES}, \code{PACKAGES.gz} or \code{PACKAGES.rds} files.
+\code{parse_installed()} reads \emph{all} metadata from packages installed into a
+library:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{parse_installed()
+#> # A data frame: 329 x 97
+#>    Package     Type  Title Version Date  Author Maintainer Description Copyright
+#>    <chr>       <chr> <chr> <chr>   <chr> <chr>  <chr>      <chr>       <chr>    
+#>  1 AsioHeaders Pack~ "'As~ 1.22.1~ 2022~ "Dirk~ Dirk Edde~ "'Asio' is~ file ins~
+#>  2 BiocGeneri~ <NA>  "S4 ~ 0.46.0  <NA>  "The ~ Hervé Pag~ "The packa~ <NA>     
+#>  3 BiocManager <NA>  "Acc~ 1.30.20 <NA>  "Mart~ Marcel Ra~ "A conveni~ <NA>     
+#>  4 Biostrings  <NA>  "Eff~ 2.67.2  <NA>  "Herv~ Hervé Pag~ "Memory ef~ <NA>     
+#>  5 DBI         <NA>  "R D~ 1.1.3   2022~ "R Sp~ Kirill Mü~ "A databas~ <NA>     
+#>  6 DBItest     <NA>  "Tes~ 1.7.3   2022~ "Kiri~ Kirill Mü~ "A helper ~ <NA>     
+#>  7 DT          Pack~ "A W~ 0.27    <NA>  "Yihu~ Yihui Xie~ "Data obje~ <NA>     
+#>  8 Distributi~ <NA>  "Dis~ 0.6-0   2018~ "Davi~ David Sco~ "Utilities~ <NA>     
+#>  9 Formula     <NA>  "Ext~ 1.2-5   2023~ "Achi~ Achim Zei~ "Infrastru~ <NA>     
+#> 10 GenomeInfo~ <NA>  "Uti~ 1.35.17 <NA>  "Sona~ Hervé Pag~ "Contains ~ <NA>     
+#> # i 319 more rows
+#> # i 88 more variables: License <chr>, URL <chr>, BugReports <chr>,
+#> #   NeedsCompilation <chr>, Packaged <chr>, Repository <chr>,
+#> #   `Date/Publication` <chr>, Built <chr>, biocViews <chr>, Encoding <chr>,
+#> #   Depends <chr>, Imports <chr>, Suggests <chr>, Collate <chr>, git_url <chr>,
+#> #   git_branch <chr>, git_last_commit <chr>, git_last_commit_date <chr>,
+#> #   `Authors@R` <chr>, VignetteBuilder <chr>, RoxygenNote <chr>, ...
+}\if{html}{\out{</div>}}
 }
 
 \subsection{Bioconductor support}{

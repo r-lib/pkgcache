@@ -126,6 +126,38 @@ copy files out of the cache.
 
 The `package_cache` class provides a finer API.
 
+## Installed packages
+
+pkgcache contains a very fast DCF parser to parse `PACKAGES*` files, or
+the `DESCRIPTION` files in installed packages. `parse_packages()` parses
+all fields from `PACKAGES`, `PACKAGES.gz` or `PACKAGES.rds` files.
+`parse_installed()` reads *all* metadata from packages installed into a
+library:
+
+``` r
+parse_installed()
+#> # A data frame: 329 × 97
+#>    Package    Version Title Author Maintainer Depends Imports LinkingTo Suggests
+#>    <chr>      <chr>   <chr> <chr>  <chr>      <chr>   <chr>   <chr>     <chr>   
+#>  1 ade4       1.7-22  "Ana… "Stép… Aurélie S… R (>= … "graph… Rcpp, Rc… "ade4Tk…
+#>  2 archive    1.1.5   "Mul… "Jim … Gábor Csá… R (>= … "cli, … cli, cpp… "covr, …
+#>  3 asciicast  2.3.0.… "Cre… "Gábo… Gábor Csá… <NA>    "cli (… processx  "callr,…
+#>  4 AsioHeade… 1.22.1… "'As… "Dirk… Dirk Edde… <NA>     <NA>   <NA>       <NA>   
+#>  5 askpass    1.1     "Saf… "Jero… Jeroen Oo… <NA>    "sys (… <NA>      "testth…
+#>  6 assertthat 0.2.1   "Eas… "Hadl… Hadley Wi… <NA>    "tools" <NA>      "testth…
+#>  7 async      0.0.0.… "Asy… "Gábo… Gábor Csá… R (>= … "callr… <NA>      "cli, c…
+#>  8 attempt    0.3.1   "Too… "Coli… Colin Fay… <NA>    "rlang" <NA>      "testth…
+#>  9 babynames  1.0.1   "US … "Hadl… Hadley Wi… R (>= … "tibbl… <NA>      "testth…
+#> 10 backports  1.4.1   "Rei… "Mich… Michel La… R (>= …  <NA>   <NA>       <NA>   
+#> # ℹ 319 more rows
+#> # ℹ 88 more variables: Description <chr>, License <chr>, URL <chr>,
+#> #   BugReports <chr>, Encoding <chr>, NeedsCompilation <chr>, Packaged <chr>,
+#> #   Repository <chr>, `Date/Publication` <chr>, Built <chr>, Archs <chr>,
+#> #   RemoteType <chr>, RemotePkgRef <chr>, RemoteRef <chr>, RemoteRepos <chr>,
+#> #   RemotePkgPlatform <chr>, RemoteSha <chr>, `Authors@R` <chr>,
+#> #   ByteCompile <chr>, RoxygenNote <chr>, SystemRequirements <chr>, …
+```
+
 ## Bioconductor support
 
 Both the metadata cache and the package cache support Bioconductor by

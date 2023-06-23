@@ -1,5 +1,8 @@
 # pkgcache (development version)
 
+* New `pkg.current_platform` option and `PKG_CURRENT_PLATFORM` environment
+  variable to override the detected platform.
+
 # pkgcache 2.1.1
 
 * `parse_installed()` now has a `packages` argument, to list only a subset

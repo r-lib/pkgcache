@@ -60,10 +60,6 @@ add_attr <- function(x, attr, value) {
   x
 }
 
-get_platform <- function() {
-  R.version$platform
-}
-
 # Why are we using this?
 # AFAICT the only difference is that if `getOption("encoding")` is set,
 # then it is observed in `file()` and then `readLines()` converts the

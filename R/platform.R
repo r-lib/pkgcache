@@ -76,6 +76,33 @@ current_r_platform_data <- function() {
   platform
 }
 
+valid_platform_string <- function(x) {
+  grepl("^[^-].*[-][^-].*[-][^-].*$", x)
+}
+
+get_platform <- function() {
+  opt <- getOption("pkg.current_platform")
+  if (!is.null(opt)) {
+    if (!is_string(opt)) {
+      stop("The `pkg.current_platform` option must be a string scalar.")
+    }
+    if (!valid_platform_string(opt)) {
+      stop("The pkg.current_platform` option must be a valid platform
+            triple: `cpu-vendor-os`. \"", opt, "\" is not.")
+    }
+    return(opt)
+  }
+  env <- Sys.getenv("PKG_CURRENT_PLATFORM")
+  if (env != "") {
+    if (is.na(env) || !valid_platform_string(env)) {
+      stop("The PKG_CURRENT_PLATFORM` environment variable must be a valid
+            platform triple: \"cpu-vendor-os\". \"", env, "\" is not.")
+    }
+    return(env)
+  }
+  R.version$platform
+}
+
 #' @details
 #' `default_platfoms()` returns the default platforms for the current R
 #' session. These typically consist of the detected platform of the current

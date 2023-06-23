@@ -218,3 +218,25 @@ test_that("bioc_repos", {
     bioc_repos("3.13")
   )
 })
+
+test_that("valid_platform_string", {
+  expect_true(valid_platform_string("a-b-c"))
+  expect_true(valid_platform_string("a-b-c-"))
+  expect_true(valid_platform_string("a-b-c-d"))
+  expect_true(valid_platform_string("foo-bar-cup"))
+  expect_true(valid_platform_string("foo-bar-cup-boo"))
+
+  expect_false(valid_platform_string("-a-b-c"))
+  expect_false(valid_platform_string("a---c"))
+  expect_false(valid_platform_string("foo-bar"))
+  expect_false(valid_platform_string("foobar"))
+})
+
+test_that("option, env var", {
+  withr::local_options(pkg.current_platform = "foo-bar-foobar")
+  expect_equal(current_r_platform(), "foo-bar-foobar")
+
+  withr::local_options(pkg.current_platform = NULL)
+  withr::local_envvar(PKG_CURRENT_PLATFORM = "foobar-foo-bar")
+  expect_equal(current_r_platform(), "foobar-foo-bar")
+})

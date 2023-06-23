@@ -385,3 +385,20 @@
     Error <simpleError>
       The `PKG_CURRENT_PLATFORM` environment variable must be a valid platform triple: "cpu-vendor-os". "foobar" is not.
 
+# platform with flavors
+
+    Code
+      current_r_platform_data()
+    Output
+           cpu vendor                            os
+      1 x86_64     pc linux-gnu-ubuntu-22.04-libc++
+                                       platform
+      1 x86_64-pc-linux-gnu-ubuntu-22.04-libc++
+
+---
+
+    Code
+      current_r_platform()
+    Output
+      [1] "x86_64-pc-linux-gnu-ubuntu-22.04-libc++"
+

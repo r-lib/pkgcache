@@ -257,3 +257,11 @@ test_that("option, env var", {
     current_r_platform()
   )
 })
+
+test_that("platform with flavors", {
+  withr::local_options(
+    pkg.current_platform = "x86_64-pc-linux-gnu-ubuntu-22.04-libc++"
+  )
+  expect_snapshot(current_r_platform_data())
+  expect_snapshot(current_r_platform())
+})

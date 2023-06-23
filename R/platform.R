@@ -66,10 +66,15 @@ current_r_platform <- function() {
 #' @rdname current_r_platform
 
 current_r_platform_data <- function() {
-  raw <- get_platform()
-  platform <- parse_platform(raw)
-  if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
-    platform <- current_r_platform_data_linux(platform)
+  forced <- forced_platform()
+  if (!is.null(forced)) {
+    platform <- parse_platform(forced)
+  } else {
+    raw <- get_platform(forced = FALSE)
+    platform <- parse_platform(raw)
+    if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
+      platform <- current_r_platform_data_linux(platform)
+    }
   }
 
   platform$platform <- apply(platform, 1, paste, collapse = "-")
@@ -80,7 +85,7 @@ valid_platform_string <- function(x) {
   grepl("^[^-].*[-][^-].*[-][^-].*$", x)
 }
 
-get_platform <- function() {
+forced_platform <- function() {
   opt <- getOption("pkg.current_platform")
   if (!is.null(opt)) {
     if (!is_string(opt)) {
@@ -100,7 +105,12 @@ get_platform <- function() {
     }
     return(env)
   }
-  R.version$platform
+
+  NULL
+}
+
+get_platform <- function(forced = TRUE) {
+  (if (forced) forced_platform()) %||% R.version$platform
 }
 
 #' @details

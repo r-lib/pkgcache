@@ -120,6 +120,16 @@ read_packages_file <- function(path, mirror, repodir, platform,
         rep(NA_character_, nrow(pkgs))
   }
 
+  # If it was explicitly in the metadata, keep it
+  if ("systemrequirements" %in% names(pkgs)) {
+    pkgs$sysreqs <- ifelse(
+      !is.na(pkgs$systemrequirements),
+      pkgs$systemrequirements,
+      pkgs$sysreqs
+    )
+    pkgs$systemrequirements <- NULL
+  }
+
   # PPM sources are really binaries for the current platform
   hasbin <- pkgs$package %in% bin$Package
   if (length(orig_r_version) == 1 && sum(hasbin) > 0) {

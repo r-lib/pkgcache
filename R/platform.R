@@ -87,16 +87,16 @@ get_platform <- function() {
       stop("The `pkg.current_platform` option must be a string scalar.")
     }
     if (!valid_platform_string(opt)) {
-      stop("The pkg.current_platform` option must be a valid platform
-            triple: `cpu-vendor-os`. \"", opt, "\" is not.")
+      stop("The pkg.current_platform` option must be a valid platform ",
+           "triple: `cpu-vendor-os`. \"", opt, "\" is not.")
     }
     return(opt)
   }
   env <- Sys.getenv("PKG_CURRENT_PLATFORM")
   if (env != "") {
     if (is.na(env) || !valid_platform_string(env)) {
-      stop("The PKG_CURRENT_PLATFORM` environment variable must be a valid
-            platform triple: \"cpu-vendor-os\". \"", env, "\" is not.")
+      stop("The `PKG_CURRENT_PLATFORM` environment variable must be a valid ",
+           "platform triple: \"cpu-vendor-os\". \"", env, "\" is not.")
     }
     return(env)
   }

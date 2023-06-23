@@ -236,7 +236,24 @@ test_that("option, env var", {
   withr::local_options(pkg.current_platform = "foo-bar-foobar")
   expect_equal(current_r_platform(), "foo-bar-foobar")
 
+  withr::local_options(pkg.current_platform = 1:10)
+  expect_snapshot(
+    error = TRUE,
+    current_r_platform()
+  )
+  withr::local_options(pkg.current_platform = "foobar")
+  expect_snapshot(
+    error = TRUE,
+    current_r_platform()
+  )
+
   withr::local_options(pkg.current_platform = NULL)
   withr::local_envvar(PKG_CURRENT_PLATFORM = "foobar-foo-bar")
   expect_equal(current_r_platform(), "foobar-foo-bar")
+
+  withr::local_envvar(PKG_CURRENT_PLATFORM = "foobar")
+  expect_snapshot(
+    error = TRUE,
+    current_r_platform()
+  )
 })

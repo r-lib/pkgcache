@@ -364,3 +364,24 @@
                                                      BioCbooks 
                 "https://bioconductor.org/packages/3.13/books" 
 
+# option, env var
+
+    Code
+      current_r_platform()
+    Error <simpleError>
+      The `pkg.current_platform` option must be a string scalar.
+
+---
+
+    Code
+      current_r_platform()
+    Error <simpleError>
+      The pkg.current_platform` option must be a valid platform triple: `cpu-vendor-os`. "foobar" is not.
+
+---
+
+    Code
+      current_r_platform()
+    Error <simpleError>
+      The `PKG_CURRENT_PLATFORM` environment variable must be a valid platform triple: "cpu-vendor-os". "foobar" is not.
+

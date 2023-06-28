@@ -186,29 +186,82 @@ test_that("bioc_version", {
 })
 
 test_that("bioc_version_map", {
+  on.exit(bioconductor$.internal$clear_cache())
+  bioconductor$.internal$clear_cache()
   # This does need the internet, because we use it to check that our
   # bioc metadata snapshot is current
   skip_if_offline()
   local_edition(3)
   withr::local_options(useFancyQuotes = FALSE)
-  expect_snapshot(as.data.frame(bioc_version_map()))
+  expect_snapshot(as.data.frame(bioc_version_map(forget = TRUE)))
 })
 
 test_that("bioc_release_version, bioc_devel_version", {
   # This will fail when a new bioc devel version is out
+  on.exit(bioconductor$.internal$clear_cache())
+  bioconductor$.internal$clear_cache()
   skip_on_cran()
   skip_if_offline()
   local_edition(3)
   withr::local_options(useFancyQuotes = FALSE)
-  expect_snapshot(bioc_release_version())
-  expect_snapshot(bioc_devel_version())
+  expect_snapshot(bioc_release_version(forget = TRUE))
+  expect_snapshot(bioc_devel_version(forget = TRUE))
 })
 
 test_that("bioc_repos", {
+  on.exit(bioconductor$.internal$clear_cache())
+  bioconductor$.internal$clear_cache()
   local_edition(3)
   withr::local_options(useFancyQuotes = FALSE)
   withr::local_envvar(c(R_BIOC_MIRROR = "https://bioconductor.org"))
   expect_snapshot(
     bioc_repos("3.13")
   )
+})
+
+test_that("valid_platform_string", {
+  expect_true(valid_platform_string("a-b-c"))
+  expect_true(valid_platform_string("a-b-c-"))
+  expect_true(valid_platform_string("a-b-c-d"))
+  expect_true(valid_platform_string("foo-bar-cup"))
+  expect_true(valid_platform_string("foo-bar-cup-boo"))
+
+  expect_false(valid_platform_string("-a-b-c"))
+  expect_false(valid_platform_string("a---c"))
+  expect_false(valid_platform_string("foo-bar"))
+  expect_false(valid_platform_string("foobar"))
+})
+
+test_that("option, env var", {
+  withr::local_options(pkg.current_platform = "foo-bar-foobar")
+  expect_equal(current_r_platform(), "foo-bar-foobar")
+
+  withr::local_options(pkg.current_platform = 1:10)
+  expect_snapshot(
+    error = TRUE,
+    current_r_platform()
+  )
+  withr::local_options(pkg.current_platform = "foobar")
+  expect_snapshot(
+    error = TRUE,
+    current_r_platform()
+  )
+
+  withr::local_options(pkg.current_platform = NULL)
+  withr::local_envvar(PKG_CURRENT_PLATFORM = "foobar-foo-bar")
+  expect_equal(current_r_platform(), "foobar-foo-bar")
+
+  withr::local_envvar(PKG_CURRENT_PLATFORM = "foobar")
+  expect_snapshot(
+    error = TRUE,
+    current_r_platform()
+  )
+})
+
+test_that("platform with flavors", {
+  withr::local_options(
+    pkg.current_platform = "x86_64-pc-linux-gnu-ubuntu-22.04-libc++"
+  )
+  expect_snapshot(current_r_platform_data())
+  expect_snapshot(current_r_platform())
 })

@@ -1,6 +1,6 @@
 Package: pkgcache
 Title: Cache 'CRAN'-Like Metadata and R Packages
-Version: 2.0.4.9000
+Version: 2.1.1.9000
 Authors@R: c(
     person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
     person("RStudio", role = c("cph", "fnd"))
@@ -43,7 +43,7 @@ Suggests:
     zip
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE, r6 = FALSE)
-RoxygenNote: 7.2.1.9000
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3
 Config/Needs/website: tidyverse/tidytemplate
 Language: en-US

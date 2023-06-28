@@ -148,11 +148,14 @@ test_that("somewhat weird packages files", {
 })
 
 test_that("parse_installed", {
-   testthat::local_edition(3)
+  testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)
   pkgs <- parse_installed(test_path("fixtures/lib"))
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
+
+  pkgs2 <- parse_installed(test_path("fixtures/lib"), packages = c("cli", "foo"))
+  expect_snapshot(pkgs2$Package)
 })
 
 test_that("parse_installed, DESCRIPTION with <CR><LF>", {
@@ -264,4 +267,12 @@ test_that("fix encodings on data frames", {
   expect_snapshot(lapply(tbl2$Maintainer, charToRaw))
   expect_snapshot(Encoding(tbl2$Bad))
   expect_snapshot(lapply(tbl2$Bad, charToRaw))
+})
+
+test_that("parse packages with trailing whitespace (#93)", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
+
+  writeLines(c("Package: foo", "", "Package: bar", ""), tmp, sep = "\r\n")
+  expect_equal(parse_packages(tmp)$Package, c("foo", "bar"))
 })

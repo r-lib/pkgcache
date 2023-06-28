@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <ctype.h>
 
+#include <R_ext/GraphicsEngine.h>
+
 #define STR1(x) STRING_ELT(x, 0)
 #define HASH_SIZE 256
 #define MAX_COLL 10
@@ -428,7 +430,8 @@ SEXP pkgcache_parse_packages_raw(SEXP raw) {
         UNPROTECT(1);
 
         /* end of package? */
-        if (*p == '\n') {
+	/* maybe it ends with \r\n but we put a \0 over the \n */
+        if (*p == '\n' || *p == '\r') {
           p++;
           npkg++;
           linum++;
@@ -687,4 +690,8 @@ SEXP pkgcache_parse_descriptions(SEXP paths, SEXP lowercase) {
 
   UNPROTECT(5);
   return final;
+}
+
+SEXP pkgcache_graphics_api_version(void) {
+    return ScalarInteger(R_GE_getVersion());
 }

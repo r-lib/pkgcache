@@ -67,6 +67,7 @@
 #' * 2020-03-22 get_matching_bioc_version() is now correct if the current
 #'              R version is not in the builtin mapping.
 #' * 2020-11-21 Update internal map for 3.12.
+#' * 2023-05-08 Add 'books' repo.
 #'
 #' @name bioconductor
 #' @keywords internal
@@ -112,7 +113,8 @@ bioconductor <- local({
     "4.0"  = package_version("3.12"),
     "4.1"  = package_version("3.14"),
     "4.2"  = package_version("3.16"),
-    "4.3"  = package_version("3.17")
+    "4.3"  = package_version("3.17"),
+    "4.4"  = package_version("3.18")
   )
 
   # -------------------------------------------------------------------
@@ -122,6 +124,13 @@ bioconductor <- local({
   release_version <- NULL
   version_map <- NULL
   yaml_config <- NULL
+
+  clear_cache <- function() {
+    devel_version <<- NULL
+    release_version <<- NULL
+    version_map <<- NULL
+    yaml_config <<- NULL
+  }
 
   # -------------------------------------------------------------------
   # API
@@ -263,7 +272,9 @@ bioconductor <- local({
       BioCworkflows =
         if (bioc_version >= "3.7") "{mirror}/packages/{bv}/workflows",
       BioCextra     =
-        if (bioc_version <= "3.5") "{mirror}/packages/{bv}/extra"
+        if (bioc_version <= "3.5") "{mirror}/packages/{bv}/extra",
+      BioCbooks     =
+        if (bioc_version >= "3.12") "{mirror}/packages/{bv}/books"
     )
 
     ## It seems that if a repo is not available yet for bioc-devel,

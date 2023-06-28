@@ -126,6 +126,38 @@ copy files out of the cache.
 
 The `package_cache` class provides a finer API.
 
+## Installed packages
+
+pkgcache contains a very fast DCF parser to parse `PACKAGES*` files, or
+the `DESCRIPTION` files in installed packages. `parse_packages()` parses
+all fields from `PACKAGES`, `PACKAGES.gz` or `PACKAGES.rds` files.
+`parse_installed()` reads *all* metadata from packages installed into a
+library:
+
+``` r
+parse_installed()
+#> # A data frame: 329 × 97
+#>    Package    Version Title Author Maintainer Depends Imports LinkingTo Suggests
+#>    <chr>      <chr>   <chr> <chr>  <chr>      <chr>   <chr>   <chr>     <chr>   
+#>  1 ade4       1.7-22  "Ana… "Stép… Aurélie S… R (>= … "graph… Rcpp, Rc… "ade4Tk…
+#>  2 archive    1.1.5   "Mul… "Jim … Gábor Csá… R (>= … "cli, … cli, cpp… "covr, …
+#>  3 asciicast  2.3.0.… "Cre… "Gábo… Gábor Csá… <NA>    "cli (… processx  "callr,…
+#>  4 AsioHeade… 1.22.1… "'As… "Dirk… Dirk Edde… <NA>     <NA>   <NA>       <NA>   
+#>  5 askpass    1.1     "Saf… "Jero… Jeroen Oo… <NA>    "sys (… <NA>      "testth…
+#>  6 assertthat 0.2.1   "Eas… "Hadl… Hadley Wi… <NA>    "tools" <NA>      "testth…
+#>  7 async      0.0.0.… "Asy… "Gábo… Gábor Csá… R (>= … "callr… <NA>      "cli, c…
+#>  8 attempt    0.3.1   "Too… "Coli… Colin Fay… <NA>    "rlang" <NA>      "testth…
+#>  9 babynames  1.0.1   "US … "Hadl… Hadley Wi… R (>= … "tibbl… <NA>      "testth…
+#> 10 backports  1.4.1   "Rei… "Mich… Michel La… R (>= …  <NA>   <NA>       <NA>   
+#> # ℹ 319 more rows
+#> # ℹ 88 more variables: Description <chr>, License <chr>, URL <chr>,
+#> #   BugReports <chr>, Encoding <chr>, NeedsCompilation <chr>, Packaged <chr>,
+#> #   Repository <chr>, `Date/Publication` <chr>, Built <chr>, Archs <chr>,
+#> #   RemoteType <chr>, RemotePkgRef <chr>, RemoteRef <chr>, RemoteRepos <chr>,
+#> #   RemotePkgPlatform <chr>, RemoteSha <chr>, `Authors@R` <chr>,
+#> #   ByteCompile <chr>, RoxygenNote <chr>, SystemRequirements <chr>, …
+```
+
 ## Bioconductor support
 
 Both the metadata cache and the package cache support Bioconductor by
@@ -135,69 +167,72 @@ configure Bioconductor support.
 
 ## Package Options
 
--   The `BioC_mirror` option can be used to select a Bioconductor
-    mirror. This takes priority over the `R_BIOC_MIRROR` environment
-    variable.
--   `pkgcache_timeout` is the HTTP timeout for all downloads. It is in
-    seconds, and the limit for downloading the whole file. Defaults to
-    3600, one hour. It corresponds to the [`TIMEOUT` libcurl
-    option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html).
--   `pkgcache_connecttimeout` is the HTTP timeout for the connection
-    phase. It is in seconds and defaults to 30 seconds. It corresponds
-    to the [`CONNECTTIMEOUT` libcurl
-    option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
--   `pkgcache_low_speed_limit` and `pkgcache_low_speed_time` are used
-    for a more sensible HTTP timeout. If the download speed is less than
-    `pkgcache_low_speed_limit` bytes per second for at least
-    `pkgcache_low_speed_time` seconds, the download errors. They
-    correspond to the
-    [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
-    and
-    [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
-    curl options.
+- The `BioC_mirror` option can be used to select a Bioconductor mirror.
+  This takes priority over the `R_BIOC_MIRROR` environment variable.
+- `pkgcache_timeout` is the HTTP timeout for all downloads. It is in
+  seconds, and the limit for downloading the whole file. Defaults to
+  3600, one hour. It corresponds to the [`TIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html).
+- `pkgcache_connecttimeout` is the HTTP timeout for the connection
+  phase. It is in seconds and defaults to 30 seconds. It corresponds to
+  the [`CONNECTTIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
+- `pkgcache_low_speed_limit` and `pkgcache_low_speed_time` are used for
+  a more sensible HTTP timeout. If the download speed is less than
+  `pkgcache_low_speed_limit` bytes per second for at least
+  `pkgcache_low_speed_time` seconds, the download errors. They
+  correspond to the
+  [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+  and
+  [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+  curl options.
 
 ## Package environment variables
 
--   The `R_BIOC_VERSION` environment variable can be used to override
-    the default Bioconductor version detection and force a given
-    version. E.g. this can be used to force the development version of
-    Bioconductor.
--   The `R_BIOC_MIRROR` environment variable can be used to select a
-    Bioconductor mirror. The `BioC_mirror` option takes priority over
-    this, if set.
--   `PKGCACHE_TIMEOUT` is the HTTP timeout for all downloads. It is in
-    seconds, and the limit for downloading the whole file. Defaults to
-    3600, one hour. It corresponds to the [`TIMEOUT` libcurl
-    option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html). The
-    `pkgcache_timeout` option has priority over this, if set.
--   `PKGCACHE_CONNECTTIMEOUT` is the HTTP timeout for the connection
-    phase. It is in seconds and defaults to 30 seconds. It corresponds
-    to the [`CONNECTTIMEOUT` libcurl
-    option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html). The
-    `pkgcache_connecttimeout` option takes precedence over this, if set.
--   `PKGCACHE_LOW_SPEED_LIMIT` and `PKGCACHE_LOW_SPEED_TIME` are used
-    for a more sensible HTTP timeout. If the download speed is less than
-    `PKGCACHE_LOW_SPEED_LIMIT` bytes per second for at least
-    `PKGCACHE_LOW_SPEED_TIME` seconds, the download errors. They
-    correspond to the
-    [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
-    and
-    [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
-    curl options. The `pkgcache_low_speed_time` and
-    `pkgcache_low_speed_limit` options have priority over these
-    environment variables, if they are set.
--   `R_PKG_CACHE_DIR` is used for the cache directory, if set.
-    (Otherwise `rappdirs::user_cache_dir()` is used, see also
-    `meta_cache_summary()` and `pkg_cache_summary()`).
+- The `R_BIOC_VERSION` environment variable can be used to override the
+  default Bioconductor version detection and force a given version. E.g.
+  this can be used to force the development version of Bioconductor.
+- The `R_BIOC_MIRROR` environment variable can be used to select a
+  Bioconductor mirror. The `BioC_mirror` option takes priority over
+  this, if set.
+- `PKGCACHE_PPM_REPO` is the name of the Posit Package Manager
+  repository to use. Defaults to `"cran"`.
+- `PKGCACHE_PPM_URL` is the base URL of the Posit Package Manager
+  instance to use. It defaults to the URL of the Posit Public Package
+  Manager instance at <https://packagemanager.posit.co/client/#/>.
+- `PKGCACHE_TIMEOUT` is the HTTP timeout for all downloads. It is in
+  seconds, and the limit for downloading the whole file. Defaults to
+  3600, one hour. It corresponds to the [`TIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html). The
+  `pkgcache_timeout` option has priority over this, if set.
+- `PKGCACHE_CONNECTTIMEOUT` is the HTTP timeout for the connection
+  phase. It is in seconds and defaults to 30 seconds. It corresponds to
+  the [`CONNECTTIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html). The
+  `pkgcache_connecttimeout` option takes precedence over this, if set.
+- `PKGCACHE_LOW_SPEED_LIMIT` and `PKGCACHE_LOW_SPEED_TIME` are used for
+  a more sensible HTTP timeout. If the download speed is less than
+  `PKGCACHE_LOW_SPEED_LIMIT` bytes per second for at least
+  `PKGCACHE_LOW_SPEED_TIME` seconds, the download errors. They
+  correspond to the
+  [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+  and
+  [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+  curl options. The `pkgcache_low_speed_time` and
+  `pkgcache_low_speed_limit` options have priority over these
+  environment variables, if they are set.
+- `R_PKG_CACHE_DIR` is used for the cache directory, if set. (Otherwise
+  `rappdirs::user_cache_dir()` is used, see also `meta_cache_summary()`
+  and `pkg_cache_summary()`).
 
 ## Using pkgcache in CRAN packages
 
 If you use pkgcache in your CRAN package, please make sure that
 
--   you don’t use pkgcache in your examples, and
--   you set the `R_USER_CACHE_DIR` environment variable to a temporary
-    directory (e.g. via `tempfile()`) during test cases. See the
-    `tests/testthat/setup.R` file in pkgcache for an example.
+- you don’t use pkgcache in your examples, and
+- you set the `R_USER_CACHE_DIR` environment variable to a temporary
+  directory (e.g. via `tempfile()`) during test cases. See the
+  `tests/testthat/setup.R` file in pkgcache for an example.
 
 This is to make sure that pkgcache does not modify the user’s files
 while running `R CMD check`.

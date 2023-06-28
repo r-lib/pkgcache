@@ -91,13 +91,53 @@ test_that("read_packages_file windows", {
       pkg_file,
       mirror = "m",
       repodir = "r",
-      platform = pl
+      platform = pl,
+      rversion = as.character(getRversion())
     )
     expect_snapshot({
       print(pl)
       pkgs$pkgs[, c("package", "platform")]
     })
   }
+})
+
+test_that("read_packages_file from PPM", {
+  pkgs1 <- test_path("fixtures", "PACKAGES-ppm1.gz")
+  pkgs2 <- test_path("fixtures", "PACKAGES-ppm2.gz")
+
+  pkgs <- read_packages_file(
+    pkgs1,
+    mirror = "mirror",
+    repodir = "src/contrib",
+    platform = "source",
+    rversion = "*",
+    bin_path = pkgs2,
+    orig_r_version = "4.2",
+  )
+
+  cols <- c("package", "platform", "rversion")
+  fix_platform <- function(x) {
+    sub(current_r_platform(), "<current-platform>", fixed = TRUE, x)
+  }
+  pkgs$pkgs$platform <- fix_platform(pkgs$pkgs$platform)
+  pkgs$pkgs$target <- fix_platform(pkgs$pkgs$target)
+  expect_snapshot(pkgs$pkgs[, cols])
+  expect_snapshot(pkgs$pkgs$target)
+})
+
+test_that("rversion and platform", {
+  pkgs1 <- test_path("fixtures", "PACKAGES-rhub")
+  pkgs <- read_packages_file(
+    pkgs1,
+    mirror = "mirror",
+    repodir = "src/contrib",
+    platform = "foo",
+    rversion = "*"
+  )
+
+  expect_snapshot(
+    as.list(pkgs$pkgs[, c("package", "target", "sources", "rversion", "platform")])
+  )
 })
 
 test_that("packages_parse_deps", {

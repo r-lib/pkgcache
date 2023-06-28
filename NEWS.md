@@ -1,5 +1,34 @@
 # pkgcache (development version)
 
+* New `pkg.current_platform` option and `PKG_CURRENT_PLATFORM` environment
+  variable to override the detected platform.
+
+* In `repo_add()` and `repo_resolve()` the `MRAN@` prefix is now deprecated
+  and resolves to PPM, because MRAN will be retired soon. See more at
+  <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
+
+# pkgcache 2.1.1
+
+* `parse_installed()` now has a `packages` argument, to list only a subset
+  of all packages.
+
+* `parse_packages()` can now parse `PACKAGES` files with trailing
+  whitespace (#93).
+
+* The Bioconductor repositories now include the 'books' repository,
+  available since Bioconductor 3.12.
+
+# pkgcache 2.1.0
+
+* pkgcache now supports binary packages on x86_64 macOS and R 4.3.0 and
+  later (#89).
+
+* Better Posit Package Manager (PPM) support. New `ppm_has_binaries()`,
+  `ppm_r_versions()`, `ppm_repo_url()`, `ppm_snapshots()` and `ppm_platforms()`
+  functions to help interacting with PPM. See the new 'pkgcache and Posit
+  Package Manager on Linux' article at https://r-lib.github.io/pkgcache.
+  (#47 and r-lib/pkgdepends#186).
+
 # pkgcache 2.0.4
 
 * Update R version -> Bioconductor version mapping. R 4.2.x now maps to
@@ -16,7 +45,7 @@
 
 * `cran_archive_*()` functions now only download the metadata if it is newer
   than what you have currently.
-  
+
 * `cran_archive_cleanup()` now does not ignore the `force` argument.
 
 * The `sources` column in the metadata cache now has the correct URL for

@@ -16,7 +16,7 @@
 #' if `bioc` is `TRUE`.
 #' @param cran_mirror The CRAN mirror to use, see
 #'   [default_cran_mirror()].
-#' 
+#'
 #' @return
 #' `repo_get()` returns a data frame with columns:
 #' * `name`: repository name. Names are informational only.
@@ -59,12 +59,9 @@ repo_get <- function(r_version = getRversion(), bioc = TRUE,
 #'
 #' @export
 #' @examplesIf pkgcache:::run_examples()
-#' repo_resolve("MRAN@2020-01-21")
-#' repo_resolve("RSPM@2020-01-21")
-#' repo_resolve("MRAN@dplyr-1.0.0")
-#' repo_resolve("RSPM@dplyr-1.0.0")
-#' repo_resolve("MRAN@R-4.0.0")
-#' repo_resolve("RSPM@R-4.0.0")
+#' repo_resolve("PPM@2020-01-21")
+#' #' repo_resolve("PPM@dplyr-1.0.0")
+#' #' repo_resolve("PPM@R-4.0.0")
 
 repo_resolve <- function(spec) {
   repo_sugar(spec, names(spec))
@@ -118,8 +115,8 @@ repo_add_internal <- function(..., .list = NULL) {
 #'   `with_repo()` returns the value of `expr`.
 #' @export
 #' @examplesIf pkgcache:::run_examples()
-#' with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), repo_get())
-#' with_repo(c(CRAN = "RSPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
+#' with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
+#' with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #'
 #' with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 
@@ -129,14 +126,15 @@ with_repo <- function(repos, expr) {
   expr
 }
 
-# ## RSPM
+# ## PPM
 #
-# RSPM@2021-02-04T14:25:00Z
-# RSPM@2021-02-04
-# RSPM@dplyr@1.0.0
-# RSPM@dplyr-1.0.0
-# RSPM@R@4.0.1
-# RSPM@R-4.0.1
+# PPM@latest
+# PPM@2021-02-04T14:25:00Z
+# PPM@2021-02-04
+# PPM@dplyr@1.0.0
+# PPM@dplyr-1.0.0
+# PPM@R@4.0.1
+# PPM@R-4.0.1
 #
 # ## MRAN
 #
@@ -165,8 +163,8 @@ repo_sugar <- function(x, nm) {
   } else if (grepl("^MRAN@", x)) {
     repo_sugar_mran(x, nm)
 
-  } else if (grepl("^RSPM@", x)) {
-    repo_sugar_rspm(x, nm)
+  } else if (grepl("^PPM@", x) || grepl("^RSPM@", x)) {
+    repo_sugar_ppm(x, nm)
 
   } else {
     repo_sugar_path(x, nm)
@@ -186,63 +184,90 @@ repo_sugar_path <- function(x, nm) {
 repo_sugar_mran <- function(x, nm) {
   if (is.null(nm) || nm == "") nm <- "CRAN"
   date <- parse_spec(sub("^MRAN@", "", x))
-  if (date < "2015-02-01") {
-    stop("MRAN snapshots go back to 2015-02-01 only")
+  if (date < "2017-10-10") {
+    stop("PPM snapshots go back to 2017-10-10 only")
   }
 
   mran <- Sys.getenv(
     "PKGCACHE_MRAN_URL",
-    "https://cran.microsoft.com/snapshot"
+    "https://packagemanager.posit.co/cran"
   )
   structure(paste0(mran, "/", date), names = nm)
 }
 
-repo_sugar_rspm <- function(x, nm) {
+repo_sugar_ppm <- function(x, nm) {
   if (is.null(nm) || nm == "") nm <- "CRAN"
-  date <- parse_spec(sub("^RSPM@", "", x))
-  if (is.null(pkgenv$rspm_versions) ||
-      date < names(pkgenv$rspm_versions[1]) ||
-      date > last(names(pkgenv$rspm_versions))) {
-    tryCatch(
-      pkgenv$rspm_versions <- get_rspm_versions(),
-      error = function(err) warning("Failed to update list of RSPM versions")
+  x <- sub("^PPM@", "", x)
+  x <- sub("^RSPM@", "", x)
+  date <- parse_spec(x)
+
+  # do we potentially have binaries?
+  current <- current_r_platform_data()
+  current_rver <- get_minor_r_version(getRversion())
+  binaries <-
+    ! tolower(Sys.getenv("PKGCACHE_PPM_BINARIES")) %in% c("no", "false", "0", "off") &&
+    current$cpu == "x86_64" &&
+    grepl("linux", current$os)
+
+  # if we may have binaries, then get the distro data as well
+  synchronise(when_all(
+    async_get_ppm_versions(date = if (as.character(date) == "latest") NULL else date),
+    if (binaries) {
+      async_get_ppm_status(
+        distribution = current$distribution,
+        release = current$release,
+        r_version = current_rver
+      )
+    } else {
+      async_constant()
+    }
+  ))
+
+  # do we really have binaries? check in PPM status
+  distros <- pkgenv$ppm_distros
+  rvers <- pkgenv$ppm_r_versions
+  mch <- which(
+    distros$distribution == current$distribution &
+    distros$release == current$release
+  )
+  binaries <- binaries &&
+    length(mch) == 1 &&
+    distros$binaries[mch] &&
+    current_rver %in% rvers
+
+  # search for date
+  if (as.character(date) == "latest") {
+    ver <- "latest"
+  } else {
+    vers <- pkgenv$ppm_versions
+    ppm_dates <- names(vers)
+    if (date < ppm_dates[1]) {
+      stop("PPM snapshots go back to ", as.Date(ppm_dates[1]), " only")
+    }
+    sel <- which(date <= ppm_dates)[1]
+    if (is.na(sel)) {
+      stop("Cannot find matching PPM snapshot for ", date)
+    }
+    ver <- vers[[sel]]
+  }
+
+  # create repo URL
+  ppm <- ppm_repo_url()
+
+  if (binaries) {
+    structure(
+      paste0(ppm, "/", "__linux__/", distros$binary_url[mch], "/", ver),
+      names = nm
     )
+  } else {
+    structure(paste0(ppm, "/", ver), names = nm)
   }
-
-  vers <- pkgenv$rspm_versions
-  rspm_dates <- names(vers)
-  if (date < rspm_dates[1]) {
-    stop("RSPM snapshots go back to ", as.Date(rspm_dates[1]), " only")
-  }
-  sel <- which(date <= rspm_dates)[1]
-  if (is.na(sel)) {
-    stop("Cannot find matching RSPM snapshot for ", date)
-  }
-
-  rspm <- Sys.getenv(
-    "PKGCACHE_RSPM_URL",
-    "https://packagemanager.posit.co/cran"
-  )
-  structure(paste0(rspm, "/", vers[[sel]]), names = nm)
-}
-
-get_rspm_versions <- function() {
-  url <- Sys.getenv(
-    "PKGCACHE_RSPM_TRANSACTIONS_URL",
-    "https://packagemanager.posit.co/__api__/sources/1/transactions?_limit=10000"
-  )
-  resp <- jsonlite::fromJSON(url, simplifyVector = FALSE)
-
-  vrs <- structure(
-    vcapply(resp, function(x) as.character(x$id)),
-    names = vcapply(resp, function(x) as.character(x$published_to))
-  )
-  vrs <- vrs[order(as.Date(names(vrs)))]
-  vrs
 }
 
 parse_spec <- function(x) {
-  if (grepl("^R[-@]", x)) {
+  if (x == "latest") {
+    x
+  } else if (grepl("^R[-@]", x)) {
     parse_spec_r(sub("^R[-@]", "", x))
   } else if (!is.na(at <- parse_iso_8601(x))) {
     parse_spec_date(at)
@@ -342,12 +367,17 @@ next_day <- function(x) {
 #'   ```
 #'   https://cloud.r-project.org
 #'   ```
-#' - `RSPM@<date>`, RSPM (RStudio Package Manager) snapshot, at the
-#'   specified date.
-#' - `RSPM@<package>-<version>` RSPM snapshot, for the day after the
+#' - `PPM@latest`, PPM (Posit Package Manager, formerly RStudio Package
+#'   Manager), the latest snapshot.
+#' - `PPM@<date>`, PPM (Posit Package Manager, formerly RStudio Package
+#'   Manager) snapshot, at the specified date.
+#' - `PPM@<package>-<version>` PPM snapshot, for the day after the
 #'   release of `<version>` of `<package>`.
-#' - `RSPM@R-<version>` RSPM snapshot, for the day after R `<version>`
+#' - `PPM@R-<version>` PPM snapshot, for the day after R `<version>`
 #'   was released.
+#'
+#' Still works for dates starting from 2017-10-10, but now deprecated,
+#' because MRAN is discontinued:
 #' - `MRAN@<date>`, MRAN (Microsoft R Application Network) snapshot, at
 #'   the specified date.
 #' - `MRAN@<package>-<version>` MRAN snapshot, for the
@@ -355,18 +385,21 @@ next_day <- function(x) {
 #' - `MRAN@R-<version>` MRAN snapshot, for the day
 #'   after R `<version>` was released.
 #'
-#'
 #' Notes:
-#' * See more about RSPM at <https://packagemanager.posit.co/client/#/>.
-#' * See more about MRAN snapshots at
-#'   <https://mran.microsoft.com/timemachine>.
+#' * See more about PPM at <https://packagemanager.posit.co/client/#/>.
+#' * The `RSPM@` prefix is still supported and treated the same way as
+#'   `PPM@`.
+#' * The MRAN service is now retired, see
+#'   <https://techcommunity.microsoft.com/t5/azure-sql-blog/microsoft-r-application-network-retirement/ba-p/3707161>
+#'   for details.
+#' * `MRAN@...` repository specifications now resolve to PPM, but note that
+#'   PPM snapshots are only available from 2017-10-10. See more about this
+#'   at <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
 #' * All dates (or times) can be specified in the ISO 8601 format.
-#' * If RSPM does not have a snapshot available for a date, the next
+#' * If PPM does not have a snapshot available for a date, the next
 #'   available date is used.
-#' * Dates that are before the first, or after the last RSPM snapshot
+#' * Dates that are before the first, or after the last PPM snapshot
 #'   will trigger an error.
-#' * Dates before the first, or after the last MRAN snapshot will trigger
-#'   an error.
 #' * Unknown R or package versions will trigger an error.
 #'
 NULL

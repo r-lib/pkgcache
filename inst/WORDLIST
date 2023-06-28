@@ -12,6 +12,7 @@ README
 RSPM
 SHA
 Sur
+UUID
 archs
 async
 funder
@@ -19,5 +20,6 @@ libcurl
 lifecycle
 macOS
 pak
+pkgdepends
 tibble
 tibbles

@@ -93,7 +93,7 @@ make_dummy_binary <- function(data, path, platform = get_platform(),
     pkgfile <- paste0(package, "_", data$Version, ".tgz")
     utils::tar(pkgfile, package)
   } else {
-    # Other binary package, we use .tar.gz like on RSPM
+    # Other binary package, we use .tar.gz like on PPM
     pkgfile <- paste0(package, "_", data$Version, ".tar.gz")
     utils::tar(pkgfile, package)
   }
@@ -388,6 +388,11 @@ make_bioc_repo <- function(repo, packages, options) {
   options$repo_prefix <- sprintf("packages/%s/workflows", bioc_version)
   pkg_workflows <- packages[bioc_repo == "workflows",, drop = FALSE]
   make_dummy_repo(repo, pkg_workflows, options)
+
+  # BioCbooks
+  options$repo_prefix <- sprintf("packages/%s/books", bioc_version)
+  pkg_books <- packages[bioc_repo == "books",, drop = FALSE]
+  make_dummy_repo(repo, pkg_books, options)
 
   config <- system.file("fixtures", "bioc-config.yaml", package = "pkgcache")
   if (config == "") {

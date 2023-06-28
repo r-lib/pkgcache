@@ -26,6 +26,11 @@ reference:
 
 - title: Repositories
   contents:
+  - ppm_has_binaries
+  - ppm_platforms
+  - ppm_r_versions
+  - ppm_repo_url
+  - ppm_snapshots
   - repo_get
   - repo_status
 
@@ -39,6 +44,11 @@ reference:
   - bioc_version
   - current_r_platform
   - default_cran_mirror
+
+- title: Utilities
+  contents:
+  - get_graphics_api_version
+  - get_internals_id
 
 - title: internal
   contents:

@@ -2679,6 +2679,24 @@ http_post <- function(url, data, headers = character(), file = NULL,
 
 http_post <- mark_as_async(http_post)
 
+http_delete <- function(url, headers = character(), file = NULL,
+                        options = list()) {
+  url; headers; options;
+
+  make_deferred_http(
+    function() {
+      assert_that(is_string(url))
+      handle <- new_handle(url = url)
+      handle_setheaders(handle, .list = headers)
+      handle_setopt(handle, customrequest = "DELETE", .list = options)
+      list(handle = handle, options = options)
+    },
+    file
+  )
+}
+
+http_delete <- mark_as_async(http_delete)
+
 #' @importFrom utils modifyList
 
 get_default_curl_options <- function(options) {
@@ -3542,7 +3560,11 @@ async_timeout <- function(task, timeout, ...) {
         if (value[[1]] == "ok") {
           resolve(value[[2]])
         } else {
-          stop("Timed out")
+          cnd <- structure(
+            list(message = "Aync operation timed out"),
+            class = c("async_timeout", "error", "condition")
+          )
+          stop(cnd)
         }
       }
     }

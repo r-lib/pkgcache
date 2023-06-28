@@ -6,9 +6,15 @@ http <- webfakes::new_app_process(
 repo_app <- function() {
   app <- webfakes::new_app()
 
-  app$get("/rspmversions", function(req, res) {
+  app$get("/ppmversions", function(req, res) {
     res$send_json(
-      text = readLines(testthat::test_path("fixtures/rspm-versions.json"))
+      text = readLines(testthat::test_path("fixtures/ppm-versions.json"))
+    )
+  })
+
+  app$get("/ppmstatus", function(req, res) {
+    res$send_json(
+      text = readLines(testthat::test_path("fixtures/ppm-status.json"))
     )
   })
 

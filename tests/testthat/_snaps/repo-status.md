@@ -223,7 +223,7 @@
       stat$ping[stat$ok] <- 0.1
       stat
     Output
-      # A data frame: 5 x 10
+      # A data frame: 6 x 10
         name          url                                                   type  bioc_version platform path        r_version ok     ping error 
         <chr>         <chr>                                                 <chr> <chr>        <chr>    <chr>       <chr>     <lgl> <dbl> <list>
       1 CRAN          http://127.0.0.1:3000/                               cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
@@ -231,6 +231,7 @@
       3 BioCann       http://127.0.0.1:3000//packages/3.16/data/annotation bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
       4 BioCexp       http://127.0.0.1:3000//packages/3.16/data/experiment bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
       5 BioCworkflows http://127.0.0.1:3000//packages/3.16/workflows       bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      6 BioCbooks     http://127.0.0.1:3000//packages/3.16/books           bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
     Code
       summary(stat)
     Output
@@ -240,6 +241,7 @@
       BioCann       @ 127.0.0.1:3000     OK     (100ms)
       BioCexp       @ 127.0.0.1:3000     OK     (100ms)
       BioCworkflows @ 127.0.0.1:3000     OK     (100ms)
+      BioCbooks     @ 127.0.0.1:3000     OK     (100ms)
 
 # repo with binary packages
 

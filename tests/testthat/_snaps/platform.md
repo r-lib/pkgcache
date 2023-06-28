@@ -95,6 +95,10 @@
         raw distribution release
       1 foo       debian      11
       
+      $`fixtures/linux/debian/unstable`
+        raw distribution  release
+      1 foo       debian unstable
+      
 
 ---
 
@@ -287,7 +291,7 @@
 # bioc_version_map
 
     Code
-      as.data.frame(bioc_version_map())
+      as.data.frame(bioc_version_map(forget = TRUE))
     Output
          bioc_version r_version bioc_status
       1           1.6       2.1 out-of-date
@@ -324,23 +328,25 @@
       32         3.12       4.0 out-of-date
       33         3.13       4.1 out-of-date
       34         3.14       4.1 out-of-date
-      35         3.15       4.2     release
-      36         3.16       4.2       devel
-      37         3.16       4.3      future
+      35         3.15       4.2 out-of-date
+      36         3.16       4.2 out-of-date
+      37         3.17       4.3     release
+      38         3.18       4.3       devel
+      39         3.18       4.4      future
 
 # bioc_release_version, bioc_devel_version
 
     Code
-      bioc_release_version()
+      bioc_release_version(forget = TRUE)
     Output
-      [1] '3.15'
+      [1] '3.17'
 
 ---
 
     Code
-      bioc_devel_version()
+      bioc_devel_version(forget = TRUE)
     Output
-      [1] '3.16'
+      [1] '3.18'
 
 # bioc_repos
 
@@ -355,4 +361,44 @@
       "https://bioconductor.org/packages/3.13/data/experiment" 
                                                  BioCworkflows 
             "https://bioconductor.org/packages/3.13/workflows" 
+                                                     BioCbooks 
+                "https://bioconductor.org/packages/3.13/books" 
+
+# option, env var
+
+    Code
+      current_r_platform()
+    Error <simpleError>
+      The `pkg.current_platform` option must be a string scalar.
+
+---
+
+    Code
+      current_r_platform()
+    Error <simpleError>
+      The pkg.current_platform` option must be a valid platform triple: `cpu-vendor-os`. "foobar" is not.
+
+---
+
+    Code
+      current_r_platform()
+    Error <simpleError>
+      The `PKG_CURRENT_PLATFORM` environment variable must be a valid platform triple: "cpu-vendor-os". "foobar" is not.
+
+# platform with flavors
+
+    Code
+      current_r_platform_data()
+    Output
+           cpu vendor                            os
+      1 x86_64     pc linux-gnu-ubuntu-22.04-libc++
+                                       platform
+      1 x86_64-pc-linux-gnu-ubuntu-22.04-libc++
+
+---
+
+    Code
+      current_r_platform()
+    Output
+      [1] "x86_64-pc-linux-gnu-ubuntu-22.04-libc++"
 

@@ -33,25 +33,26 @@ print nicer, similarly to tibbles.)
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
-#> # A data frame: 41,440 x 32
-#>    package  version depends  suggests  license imports  linkingto archs enhances
-#>    <chr>    <chr>   <chr>    <chr>     <chr>   <chr>    <chr>     <chr> <chr>   
-#>  1 A3       1.0.0   R (>= 2~ randomFo~ GPL (>~ <NA>     <NA>      <NA>  <NA>    
-#>  2 AATtools 0.0.1   R (>= 3~ <NA>      GPL-3   magritt~ <NA>      <NA>  <NA>    
-#>  3 ABACUS   1.0.0   R (>= 3~ rmarkdow~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
-#>  4 ABC.RAP  0.9.0   R (>= 3~ knitr, r~ GPL-3   graphic~ <NA>      <NA>  <NA>    
-#>  5 ABCanal~ 1.2.1   R (>= 2~ <NA>      GPL-3   plotrix  <NA>      <NA>  <NA>    
-#>  6 ABCoptim 0.15.0  <NA>     testthat~ MIT + ~ Rcpp, g~ Rcpp      ABCo~ <NA>    
-#>  7 ABCp2    1.2     MASS     <NA>      GPL-2   <NA>     <NA>      <NA>  <NA>    
-#>  8 ABHgeno~ 1.0.1   <NA>     knitr, r~ GPL-3   ggplot2~ <NA>      <NA>  <NA>    
-#>  9 ABPS     0.3     <NA>     testthat  GPL (>~ kernlab  <NA>      <NA>  <NA>    
-#> 10 ACA      1.1     R (>= 3~ <NA>      GPL     graphic~ <NA>      <NA>  <NA>    
-#> # ... with 41,430 more rows, and 23 more variables: os_type <chr>,
-#> #   priority <chr>, license_is_foss <chr>, license_restricts_use <chr>,
-#> #   repodir <chr>, rversion <chr>, platform <chr>, needscompilation <chr>,
-#> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
-#> #   mirror <chr>, sources <list>, filesize <dbl>, sha256 <chr>, sysreqs <chr>,
-#> #   built <chr>, published <dttm>, deps <list>, md5sum <chr>, path <chr>
+#> # A data frame: 44,780 x 32
+#>    package     version depends suggests license imports linkingto archs enhances
+#>    <chr>       <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
+#>  1 A3          1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
+#>  2 AATtools    0.0.2   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA>  <NA>    
+#>  3 ABACUS      1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  4 ABC.RAP     0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA>  <NA>    
+#>  5 ABCanalysis 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA>  <NA>    
+#>  6 ABCoptim    0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
+#>  7 ABCp2       1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
+#>  8 ABHgenotyp~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
+#>  9 ABM         0.3     <NA>    <NA>     GPL (>~ R6, Rc~ Rcpp      ABM.~ <NA>    
+#> 10 ABPS        0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
+#> # i 44,770 more rows
+#> # i 23 more variables: license_restricts_use <chr>, priority <chr>,
+#> #   license_is_foss <chr>, os_type <chr>, repodir <chr>, rversion <chr>,
+#> #   platform <chr>, needscompilation <chr>, ref <chr>, type <chr>,
+#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>, sources <list>,
+#> #   filesize <int>, sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>,
+#> #   deps <list>, md5sum <chr>, path <chr>
 }\if{html}{\out{</div>}}
 
 \code{meta_cache_deps()} and \code{meta_cache_revdeps()} can be used to look up
@@ -77,38 +78,36 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 1482
+#> [1] 176
 #> 
 #> $size
-#> [1] 1610749135
+#> [1] 204562277
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A data frame: 1,482 x 11
-#>    fullpath  path   package  url   etag  sha256 version platform built vignettes
-#>    <chr>     <chr>  <chr>    <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/g~ archi~ <NA>     http~ "W/\~ 96c17~ <NA>    <NA>        NA        NA
-#>  2 /Users/g~ bin/m~ plogr    http~ "\"3~ 2b195~ 0.2.0   aarch64~    NA        NA
-#>  3 /Users/g~ src/c~ RMariaDB http~ "\"d~ c9176~ 1.2.1   source      NA        NA
-#>  4 /Users/g~ bin/m~ RMariaDB http~ "\"2~ 1483f~ 1.2.0   aarch64~    NA        NA
-#>  5 /Users/g~ src/c~ remotes  <NA>   <NA> fcad1~ <NA>    <NA>         0        NA
-#>  6 /Users/g~ bin/m~ archive  http~ "\"1~ 5a6c0~ 1.1.3   aarch64~    NA        NA
-#>  7 /Users/g~ src/c~ prompt   http~ "\"2~ 13cd8~ 1.0.1   source      NA        NA
-#>  8 /Users/g~ bin/m~ assertt~ http~ "\"a~ d3c8b~ 0.2.0   x86_64-~    NA        NA
-#>  9 /Users/g~ bin/m~ cli      http~ "\"4~ 15c3c~ 1.0.0   x86_64-~    NA        NA
-#> 10 /Users/g~ bin/m~ crayon   http~ "\"a~ 1cca1~ 1.3.4   x86_64-~    NA        NA
-#> # ... with 1,472 more rows, and 1 more variable: rversion <chr>
+#> # A data frame: 176 x 11
+#>    fullpath    path  package url   etag  sha256 version platform built vignettes
+#>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+#>  1 /Users/gab~ bin/~ diffvi~ http~ "\"2~ e8869~ 0.1.1   aarch64~    NA        NA
+#>  2 /Users/gab~ src/~ testth~ <NA>   <NA> <NA>   0.0.0.~ source       1         0
+#>  3 /Users/gab~ src/~ testth~ <NA>   <NA> <NA>   0.0.0.~ aarch64~     1         0
+#>  4 /Users/gab~ bin/~ DT      http~ "\"1~ 69c62~ 0.27    aarch64~    NA        NA
+#>  5 /Users/gab~ bin/~ R6      http~ "\"1~ 00398~ 2.5.1   aarch64~    NA        NA
+#>  6 /Users/gab~ src/~ cli     <NA>   <NA> c37f3~ 3.6.1.~ source       1         0
+#>  7 /Users/gab~ src/~ cli     <NA>   <NA> c37f3~ 3.6.1.~ aarch64~     1         0
+#>  8 /Users/gab~ bin/~ glue    http~ "\"2~ 25019~ 1.6.2   aarch64~    NA        NA
+#>  9 /Users/gab~ src/~ cli     <NA>   <NA> f6794~ 3.1.0.~ source       1         0
+#> 10 /Users/gab~ src/~ cli     <NA>   <NA> f6794~ 3.1.0.~ aarch64~     1         0
+#> # i 166 more rows
+#> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A data frame: 4 x 11
-#>   fullpath  path   package url     etag  sha256 version platform built vignettes
-#> * <chr>     <chr>  <chr>   <chr>   <chr> <chr>  <chr>   <chr>    <int>     <int>
-#> 1 /Users/g~ src/c~ dplyr   https:~ "\"d~ d2fe3~ 1.0.7   source      NA        NA
-#> 2 /Users/g~ bin/m~ dplyr   https:~ "\"5~ ae115~ 0.8.5   x86_64-~    NA        NA
-#> 3 /Users/g~ bin/m~ dplyr   https:~ "\"6~ 93f35~ 1.0.7   x86_64-~    NA        NA
-#> 4 /Users/g~ bin/m~ dplyr   https:~ "\"1~ c7fac~ 1.0.7   x86_64-~    NA        NA
-#> # ... with 1 more variable: rversion <chr>
+#> # A data frame: 1 x 11
+#>   fullpath     path  package url   etag  sha256 version platform built vignettes
+#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+#> 1 /Users/gabo~ bin/~ dplyr   http~ "\"1~ cb4f7~ 1.1.2   aarch64~    NA        NA
+#> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,
@@ -116,6 +115,38 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 copy files out of the cache.
 
 The \code{package_cache} class provides a finer API.
+}
+
+\subsection{Installed packages}{
+
+pkgcache contains a very fast DCF parser to parse \verb{PACKAGES*} files, or
+the \code{DESCRIPTION} files in installed packages. \code{parse_packages()} parses
+all fields from \code{PACKAGES}, \code{PACKAGES.gz} or \code{PACKAGES.rds} files.
+\code{parse_installed()} reads \emph{all} metadata from packages installed into a
+library:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{parse_installed()
+#> # A data frame: 329 x 97
+#>    Package     Type  Title Version Date  Author Maintainer Description Copyright
+#>    <chr>       <chr> <chr> <chr>   <chr> <chr>  <chr>      <chr>       <chr>    
+#>  1 AsioHeaders Pack~ "'As~ 1.22.1~ 2022~ "Dirk~ Dirk Edde~ "'Asio' is~ file ins~
+#>  2 BiocGeneri~ <NA>  "S4 ~ 0.46.0  <NA>  "The ~ Hervé Pag~ "The packa~ <NA>     
+#>  3 BiocManager <NA>  "Acc~ 1.30.20 <NA>  "Mart~ Marcel Ra~ "A conveni~ <NA>     
+#>  4 Biostrings  <NA>  "Eff~ 2.67.2  <NA>  "Herv~ Hervé Pag~ "Memory ef~ <NA>     
+#>  5 DBI         <NA>  "R D~ 1.1.3   2022~ "R Sp~ Kirill Mü~ "A databas~ <NA>     
+#>  6 DBItest     <NA>  "Tes~ 1.7.3   2022~ "Kiri~ Kirill Mü~ "A helper ~ <NA>     
+#>  7 DT          Pack~ "A W~ 0.27    <NA>  "Yihu~ Yihui Xie~ "Data obje~ <NA>     
+#>  8 Distributi~ <NA>  "Dis~ 0.6-0   2018~ "Davi~ David Sco~ "Utilities~ <NA>     
+#>  9 Formula     <NA>  "Ext~ 1.2-5   2023~ "Achi~ Achim Zei~ "Infrastru~ <NA>     
+#> 10 GenomeInfo~ <NA>  "Uti~ 1.35.17 <NA>  "Sona~ Hervé Pag~ "Contains ~ <NA>     
+#> # i 319 more rows
+#> # i 88 more variables: License <chr>, URL <chr>, BugReports <chr>,
+#> #   NeedsCompilation <chr>, Packaged <chr>, Repository <chr>,
+#> #   `Date/Publication` <chr>, Built <chr>, biocViews <chr>, Encoding <chr>,
+#> #   Depends <chr>, Imports <chr>, Suggests <chr>, Collate <chr>, git_url <chr>,
+#> #   git_branch <chr>, git_last_commit <chr>, git_last_commit_date <chr>,
+#> #   `Authors@R` <chr>, VignetteBuilder <chr>, RoxygenNote <chr>, ...
+}\if{html}{\out{</div>}}
 }
 
 \subsection{Bioconductor support}{
@@ -130,6 +161,11 @@ configure Bioconductor support.
 \itemize{
 \item The \code{BioC_mirror} option can be used to select a Bioconductor mirror.
 This takes priority over the \code{R_BIOC_MIRROR} environment variable.
+\item You can use the \code{pkg.current_platform} option to set the platform
+string for the current platform for the \code{current_r_platform()}
+function. This is useful if pkgcache didn’t detect the platform
+correctly. Alternatively, you can use the \code{PKG_CURRENT_PLATFORM}
+environment variable. The option takes priority.
 \item \code{pkgcache_timeout} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
 3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}.
@@ -156,6 +192,17 @@ this can be used to force the development version of Bioconductor.
 \item The \code{R_BIOC_MIRROR} environment variable can be used to select a
 Bioconductor mirror. The \code{BioC_mirror} option takes priority over
 this, if set.
+\item You can use the \code{PKG_CURRENT_PLATFORM} environment variable to set the
+platform string for the current platform for the
+\code{current_r_platform()} function. This is useful if pkgcache didn’t
+detect the platform correctly. Alternatively, you can use the
+\code{pkg.current_platofrm} option, which takes. priority over the
+environment variable.
+\item \code{PKGCACHE_PPM_REPO} is the name of the Posit Package Manager
+repository to use. Defaults to \code{"cran"}.
+\item \code{PKGCACHE_PPM_URL} is the base URL of the Posit Package Manager
+instance to use. It defaults to the URL of the Posit Public Package
+Manager instance at \url{https://packagemanager.posit.co/client/#/}.
 \item \code{PKGCACHE_TIMEOUT} is the HTTP timeout for all downloads. It is in
 seconds, and the limit for downloading the whole file. Defaults to
 3600, one hour. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html}{\code{TIMEOUT} libcurl option}. The

@@ -1,5 +1,6 @@
 
 test_that("bioconductor$get_repos", {
+  on.exit(bioconductor$.internal$clear_cache())
   setup_fake_apps()
   bioc_version <- bioconductor$get_bioc_version("3.3.0")
   repos <- bioconductor$get_repos(bioc_version)
@@ -10,6 +11,7 @@ test_that("bioconductor$get_repos", {
 })
 
 test_that("bioconductor$.internal$get_matching_bioc_version", {
+  on.exit(bioconductor$.internal$clear_cache())
   setup_fake_apps()
   rvers <- c("2.15", "2.16", "3.1.0", "3.1.1", "3.2.0", "3.3.1", "3.4.0",
              "3.5.1")

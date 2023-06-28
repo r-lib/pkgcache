@@ -141,7 +141,8 @@ package_cache <- R6Class(
       res
     },
 
-    add = function(file, path, sha256 = shasum256(file), ..., .list = NULL) {
+    add = function(file, path, sha256 = shasum256(file), ..., .list = NULL,
+                   .headers = NULL) {
       assert_that(is_existing_file(file))
 
       l <- private$lock(exclusive = TRUE)
@@ -149,15 +150,27 @@ package_cache <- R6Class(
       dbfile <- get_db_file(private$path)
       db <- readRDS(dbfile)
 
+      extra <- c(list(...), .list)
+
+      # updates for unexpected PPM binaries and sources
+      # need to update 'path', 'platform', 'sha256'
+      if (is.list(.headers)) .headers <- .headers[[1]]
+      .headers <- tolower(.headers)
+      if ("x-repository-type: rspm" %in% .headers) {
+        fields <- update_fields_for_ppm_download(path, extra, .headers)
+        path <- fields$path
+        extra <- fields$extra
+      }
+
       idx <- find_in_data_frame(
-        db, path = path, sha256 = sha256, ..., .list = .list)
+        db, path = path, sha256 = sha256, .list = extra)
 
       target <- file.path(private$path, path)
       mkdirp(dirname(target))
       file.copy(file, target, overwrite = TRUE)
       db <- append_to_data_frame(
-        db, fullpath = target, path = path, ..., sha256 = null2na(sha256),
-        .list = .list)
+        db, fullpath = target, path = path, sha256 = null2na(sha256),
+        .list = extra)
       save_rds(db, dbfile)
       db[nrow(db), ]
     },
@@ -171,8 +184,10 @@ package_cache <- R6Class(
       download_file(url, target, on_progress = on_progress,
                     headers = http_headers)$
         then(function(res) {
+          headers <- curl::parse_headers(res$response$headers, multiple = TRUE)
           self$add(target, path, url = url, etag = res$etag, ...,
-                   sha256 = shasum256(target), .list = .list)
+                   sha256 = shasum256(target), .list = .list,
+                   .headers = headers)
         })$
         finally(function(x) unlink(target, recursive = TRUE))
     },
@@ -197,9 +212,11 @@ package_cache <- R6Class(
             download_one_of(urls, target, on_progress = on_progress,
                             headers = http_headers)$
               then(function(d) {
+                headers <- curl::parse_headers(d$response$headers, multiple = TRUE)
                 sha256 <- shasum256(target)
                 self$add(target, path, url = d$url, etag = d$etag,
-                         sha256 = null2na(sha256), ..., .list = .list)
+                         sha256 = null2na(sha256), ..., .list = .list,
+                         .headers = headers)
               })$
               then(function(x) add_attr(x, "action", "Got"))
           } else {
@@ -235,9 +252,11 @@ package_cache <- R6Class(
             download_one_of(urls, target, on_progress = on_progress,
                             headers = http_headers)$
               then(function(d) {
+                headers <- curl::parse_headers(d$response$headers, multiple = TRUE)
                 sha256 <- shasum256(target)
                 self$add(target, path, url = d$url, etag = d$etag,
-                         sha256 = null2na(sha256), ..., .list = .list)
+                         sha256 = null2na(sha256), ..., .list = .list,
+                         .headers = headers)
               })$
               then(function(x) add_attr(x, "action", "Got"))
           } else {
@@ -249,10 +268,11 @@ package_cache <- R6Class(
               then(function(d) {
                 if (d$response$status_code != 304) {
                   ## No current, update it
+                  headers <- curl::parse_headers(d$response$headers, multiple = TRUE)
                   sha256 <- shasum256(target)
                   x <- self$add(target, path, url = d$url,
                                 etag = d$etag, sha256 = null2na(sha256), ...,
-                                .list = .list)
+                                .list = .list, .headers = headers)
                   add_attr(x, "action", "Got")
                 } else {
                   ## Current, nothing to do
@@ -340,4 +360,56 @@ make_empty_db_data_frame <- function() {
     etag     = character(),
     sha256   = character()
   )
+}
+
+update_fields_for_ppm_download <- function(path, extra, headers) {
+  res <- list(path = path, extra = extra)
+  pkg_type <- grep("^x-package-type:", headers, value = TRUE)[1]
+  if (is.na(pkg_type)) return(res)
+  pkg_type <- sub("^x-package-type: ?", "", pkg_type)
+
+  if (pkg_type == "binary") {
+    # Got a binary package, check what kind
+    bin_tag <- grep("x-package-binary-tag:", headers, value = TRUE)[1]
+    if (is.na(bin_tag)) return(res)
+    bin_tag <- sub("x-package-binary-tag: ?", "", bin_tag)
+    synchronise(async_get_ppm_status())
+    rver <- strsplit(bin_tag, "-")[[1]][[1]]
+    binurl <- strsplit(bin_tag, "-")[[1]][[2]]
+    if (!binurl %in% pkgenv$ppm_distros$binary_url) return(res)
+
+    # fix platform if neeeded
+    if (!is.null(extra$platform) && extra$platform == "source") {
+      current <- current_r_platform_data()
+      wdist <- match(binurl, pkgenv$ppm_distros$binary_url)
+      distro <- pkgenv$ppm_distros$distribution[wdist]
+      release <- pkgenv$ppm_distros$release[wdist]
+      res$extra$platform <- paste0(
+        current$cpu, "-", current$vendor, "-", current$os, "-",
+        distro, "-", release
+      )
+    }
+
+    # fix path if needed
+    if (dirname(path) == "src/contrib") {
+      res$path <- paste0(
+        "src/contrib/", res$extra$platform %||% current$platform, "/",
+        rver, "/", basename(path)
+      )
+    }
+
+  } else {
+    # Got a source package
+    # Fix platform if needed
+    if (!is.null(extra$platform) && extra$platform != "source") {
+      res$extra$platform <- "source"
+    }
+
+    # Fix path if needed
+    if (dirname(path) != "src/contrib") {
+      res$path <- paste0("src/contrib/", basename(path))
+    }
+  }
+
+  res
 }

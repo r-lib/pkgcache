@@ -66,14 +66,51 @@ current_r_platform <- function() {
 #' @rdname current_r_platform
 
 current_r_platform_data <- function() {
-  raw <- get_platform()
-  platform <- parse_platform(raw)
-  if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
-    platform <- current_r_platform_data_linux(platform)
+  forced <- forced_platform()
+  if (!is.null(forced)) {
+    platform <- parse_platform(forced)
+  } else {
+    raw <- get_platform(forced = FALSE)
+    platform <- parse_platform(raw)
+    if (platform$os == "linux" || substr(platform$os, 1, 6) == "linux-") {
+      platform <- current_r_platform_data_linux(platform)
+    }
   }
 
   platform$platform <- apply(platform, 1, paste, collapse = "-")
   platform
+}
+
+valid_platform_string <- function(x) {
+  grepl("^[^-].*[-][^-].*[-][^-].*$", x)
+}
+
+forced_platform <- function() {
+  opt <- getOption("pkg.current_platform")
+  if (!is.null(opt)) {
+    if (!is_string(opt)) {
+      stop("The `pkg.current_platform` option must be a string scalar.")
+    }
+    if (!valid_platform_string(opt)) {
+      stop("The pkg.current_platform` option must be a valid platform ",
+           "triple: `cpu-vendor-os`. \"", opt, "\" is not.")
+    }
+    return(opt)
+  }
+  env <- Sys.getenv("PKG_CURRENT_PLATFORM")
+  if (env != "") {
+    if (is.na(env) || !valid_platform_string(env)) {
+      stop("The `PKG_CURRENT_PLATFORM` environment variable must be a valid ",
+           "platform triple: \"cpu-vendor-os\". \"", env, "\" is not.")
+    }
+    return(env)
+  }
+
+  NULL
+}
+
+get_platform <- function(forced = TRUE) {
+  (if (forced) forced_platform()) %||% R.version$platform
 }
 
 #' @details
@@ -105,21 +142,18 @@ parse_platform <- function(x) {
 }
 
 get_cran_extension <- function(platform) {
-  if (platform == "source") {
-    return(".tar.gz")
-  } else if (platform %in% c("windows", "i386+x86_64-mingw32",
-                             "x86_64-w64-mingw32", "i386-w64-mingw32")) {
-    return(".zip")
-  } else if (platform == "macos") {
-    return(".tgz")
-  }
+  res <- rep(NA_character_, length(platform))
+  res[platform == "source"] <- ".tar.gz"
+  res[platform %in% c("windows", "i386+x86_64-w64-mingw32",
+                      "x86_64-w64-mingw32", "i386-w64-mingw32")] <- ".zip"
+  res[platform == "macos"] <- ".tgz"
 
   dtl <- parse_platform(platform)
-  if (!is.na(dtl$os) && grepl("^darwin", dtl$os)) {
-    return(".tgz")
-  } else {
-    paste0("_R_", platform, ".tar.gz")
+  res[!is.na(dtl$os) & grepl("^darwin", dtl$os)] <- ".tgz"
+  if (anyNA(res)) {
+    res[is.na(res)] <- paste0("_R_", platform[is.na(res)], ".tar.gz")
   }
+  res
 }
 
 get_all_package_dirs <- function(platforms, rversions) {
@@ -261,8 +295,10 @@ macos_cran_platforms <- read.table(
      4.1.1 aarch64-apple-darwin20    big-sur-arm64
      4.2.0 x86_64-apple-darwin17.0   ''
      4.2.0 aarch64-apple-darwin20    big-sur-arm64
-     4.3.0 x86_64-apple-darwin17.0   ''
+     4.3.0 x86_64-apple-darwin20     big-sur-x86_64
      4.3.0 aarch64-apple-darwin20    big-sur-arm64
+     4.4.0 x86_64-apple-darwin20     big-sur-x86_64
+     4.4.0 aarch64-apple-darwin20    big-sur-arm64
 "))
 
 # For now we only use the minor version number, because the CRAN OS version

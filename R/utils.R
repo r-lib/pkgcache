@@ -60,10 +60,6 @@ add_attr <- function(x, attr, value) {
   x
 }
 
-get_platform <- function() {
-  R.version$platform
-}
-
 # Why are we using this?
 # AFAICT the only difference is that if `getOption("encoding")` is set,
 # then it is observed in `file()` and then `readLines()` converts the
@@ -118,6 +114,17 @@ base_packages <- function() {
       parse_installed(.Library, priority="base")$Package
   }
   repoman_data$base_packages
+}
+
+recommended_packages <- function() {
+  if (is.null(repoman_data$recommended_packages)) {
+    repoman_data$recommended_packages <- c(
+      "boot", "class", "cluster", "codetools", "foreign", "KernSmooth",
+      "lattice", "MASS", "Matrix", "mgcv", "nlme", "nnet", "rpart",
+      "spatial", "survival"
+    )
+  }
+  repoman_data$recommended_packages
 }
 
 is_na_scalar <- function(x) {
@@ -210,4 +217,12 @@ save_rds <- function(data, path) {
 
 nullfile <- function() {
   if (get_os_type() == "windows") "nul:" else "/dev/null"
+}
+
+is_rcmd_check <- function() {
+  if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+    FALSE
+  } else {
+    Sys.getenv("_R_CHECK_PACKAGE_NAME_", "") != ""
+  }
 }

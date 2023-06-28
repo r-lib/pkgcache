@@ -3,6 +3,10 @@
 * New `pkg.current_platform` option and `PKG_CURRENT_PLATFORM` environment
   variable to override the detected platform.
 
+* In `repo_add()` and `repo_resolve()` the `MRAN@` prefix is now deprecated
+  and resolves to PPM, because MRAN will be retired soon. See more at
+  <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
+
 # pkgcache 2.1.1
 
 * `parse_installed()` now has a `packages` argument, to list only a subset

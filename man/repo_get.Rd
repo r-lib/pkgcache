@@ -104,6 +104,11 @@ Manager) snapshot, at the specified date.
 release of \verb{<version>} of \verb{<package>}.
 \item \verb{PPM@R-<version>} PPM snapshot, for the day after R \verb{<version>}
 was released.
+}
+
+Still works for dates starting from 2017-10-10, but now deprecated,
+because MRAN is discontinued:
+\itemize{
 \item \verb{MRAN@<date>}, MRAN (Microsoft R Application Network) snapshot, at
 the specified date.
 \item \verb{MRAN@<package>-<version>} MRAN snapshot, for the
@@ -117,15 +122,17 @@ Notes:
 \item See more about PPM at \url{https://packagemanager.posit.co/client/#/}.
 \item The \verb{RSPM@} prefix is still supported and treated the same way as
 \verb{PPM@}.
-\item See more about MRAN snapshots at
-\url{https://mran.microsoft.com/timemachine}.
+\item The MRAN service is now retired, see
+\url{https://techcommunity.microsoft.com/t5/azure-sql-blog/microsoft-r-application-network-retirement/ba-p/3707161}
+for details.
+\item \code{MRAN@...} repository specifications now resolve to PPM, but note that
+PPM snapshots are only available from 2017-10-10. See more about this
+at \url{https://posit.co/blog/migrating-from-mran-to-posit-package-manager/}.
 \item All dates (or times) can be specified in the ISO 8601 format.
 \item If PPM does not have a snapshot available for a date, the next
 available date is used.
 \item Dates that are before the first, or after the last PPM snapshot
 will trigger an error.
-\item Dates before the first, or after the last MRAN snapshot will trigger
-an error.
 \item Unknown R or package versions will trigger an error.
 }
 }
@@ -133,12 +140,9 @@ an error.
 \examples{
 repo_get()
 \dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-repo_resolve("MRAN@2020-01-21")
 repo_resolve("PPM@2020-01-21")
-repo_resolve("MRAN@dplyr-1.0.0")
-repo_resolve("PPM@dplyr-1.0.0")
-repo_resolve("MRAN@R-4.0.0")
-repo_resolve("PPM@R-4.0.0")
+#' repo_resolve("PPM@dplyr-1.0.0")
+#' repo_resolve("PPM@R-4.0.0")
 \dontshow{\}) # examplesIf}
 \dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())

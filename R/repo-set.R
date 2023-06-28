@@ -59,12 +59,9 @@ repo_get <- function(r_version = getRversion(), bioc = TRUE,
 #'
 #' @export
 #' @examplesIf pkgcache:::run_examples()
-#' repo_resolve("MRAN@2020-01-21")
 #' repo_resolve("PPM@2020-01-21")
-#' repo_resolve("MRAN@dplyr-1.0.0")
-#' repo_resolve("PPM@dplyr-1.0.0")
-#' repo_resolve("MRAN@R-4.0.0")
-#' repo_resolve("PPM@R-4.0.0")
+#' #' repo_resolve("PPM@dplyr-1.0.0")
+#' #' repo_resolve("PPM@R-4.0.0")
 
 repo_resolve <- function(spec) {
   repo_sugar(spec, names(spec))
@@ -187,13 +184,13 @@ repo_sugar_path <- function(x, nm) {
 repo_sugar_mran <- function(x, nm) {
   if (is.null(nm) || nm == "") nm <- "CRAN"
   date <- parse_spec(sub("^MRAN@", "", x))
-  if (date < "2015-02-01") {
-    stop("MRAN snapshots go back to 2015-02-01 only")
+  if (date < "2017-10-10") {
+    stop("PPM snapshots go back to 2017-10-10 only")
   }
 
   mran <- Sys.getenv(
     "PKGCACHE_MRAN_URL",
-    "https://cran.microsoft.com/snapshot"
+    "https://packagemanager.posit.co/cran"
   )
   structure(paste0(mran, "/", date), names = nm)
 }
@@ -378,6 +375,9 @@ next_day <- function(x) {
 #'   release of `<version>` of `<package>`.
 #' - `PPM@R-<version>` PPM snapshot, for the day after R `<version>`
 #'   was released.
+#'
+#' Still works for dates starting from 2017-10-10, but now deprecated,
+#' because MRAN is discontinued:
 #' - `MRAN@<date>`, MRAN (Microsoft R Application Network) snapshot, at
 #'   the specified date.
 #' - `MRAN@<package>-<version>` MRAN snapshot, for the
@@ -385,20 +385,21 @@ next_day <- function(x) {
 #' - `MRAN@R-<version>` MRAN snapshot, for the day
 #'   after R `<version>` was released.
 #'
-#'
 #' Notes:
 #' * See more about PPM at <https://packagemanager.posit.co/client/#/>.
 #' * The `RSPM@` prefix is still supported and treated the same way as
 #'   `PPM@`.
-#' * See more about MRAN snapshots at
-#'   <https://mran.microsoft.com/timemachine>.
+#' * The MRAN service is now retired, see
+#'   <https://techcommunity.microsoft.com/t5/azure-sql-blog/microsoft-r-application-network-retirement/ba-p/3707161>
+#'   for details.
+#' * `MRAN@...` repository specifications now resolve to PPM, but note that
+#'   PPM snapshots are only available from 2017-10-10. See more about this
+#'   at <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
 #' * All dates (or times) can be specified in the ISO 8601 format.
 #' * If PPM does not have a snapshot available for a date, the next
 #'   available date is used.
 #' * Dates that are before the first, or after the last PPM snapshot
 #'   will trigger an error.
-#' * Dates before the first, or after the last MRAN snapshot will trigger
-#'   an error.
 #' * Unknown R or package versions will trigger an error.
 #'
 NULL

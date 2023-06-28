@@ -24,11 +24,11 @@ test_that("repo_resolve", {
   withr::local_envvar(PKGCACHE_MRAN_URL = NA_character_)
   expect_equal(
     repo_resolve("MRAN@2020-10-10"),
-    c(CRAN = "https://cran.microsoft.com/snapshot/2020-10-10")
+    c(CRAN = "https://packagemanager.posit.co/cran/2020-10-10")
   )
   expect_equal(
     repo_resolve("MRAN@2020-10-10T14:33:56"),
-    c(CRAN = "https://cran.microsoft.com/snapshot/2020-10-10")
+    c(CRAN = "https://packagemanager.posit.co/cran/2020-10-10")
   )
 
   # PPM
@@ -150,13 +150,13 @@ test_that("repo_sugar_path", {
 test_that("repo_sugar_mran", {
   withr::local_envvar(PKGCACHE_MRAN_URL = NA_character_)
   expect_error(
-    repo_sugar_mran("2015-01-31", NULL),
-    "MRAN snapshots go back to 2015-02-01 only"
+    repo_sugar_mran("2017-01-31", NULL),
+    "PPM snapshots go back to 2017-10-10 only"
   )
 
   expect_equal(
     repo_sugar_mran("2020-01-21", NULL),
-    c(CRAN = "https://cran.microsoft.com/snapshot/2020-01-21")
+    c(CRAN = "https://packagemanager.posit.co/cran/2020-01-21")
   )
 
   withr::local_envvar(PKGCACHE_MRAN_URL = "https://my.mran")

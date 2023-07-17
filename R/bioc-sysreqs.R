@@ -78,4 +78,6 @@ get_all_bioc_sysreqs <- function(ref = "HEAD") {
   )
   sq <- sq[!is.na(sq$SystemRequirements), ]
   write.dcf(sq, "inst/bioc-sysreqs.dcf")
+  system("gzip inst/bioc-sysreqs.dcf")
+  writeLines(format(start_at), "inst/bioc-sysreqs.ts")
 }

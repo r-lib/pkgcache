@@ -82,7 +82,18 @@ get_all_bioc_sysreqs <- function(ref = "HEAD") {
   writeLines(format(start_at), "inst/bioc-sysreqs.ts")
 }
 
+bioc_sysreqs_cached <- function() {
+  file.path(get_user_cache_dir()$root, "bioc-sysreqs.dcf.gz")
+}
+
 load_bioc_sysreqs <- function(path = NULL) {
-  path <- path %||% system.file("bioc-sysreqs.dcf.gz", package = "pkgcache")
-  parse_packages(path, type = "gzip")
+  if (is.null(path)) {
+    cached <- bioc_sysreqs_cached()
+    if (file.exists(cached) && file.size(cached) != 0) {
+      path <- cached
+    } else {
+      path <- system.file("bioc-sysreqs.dcf.gz", package = "pkgcache")
+    }
+  }
+  pkgenv$bioc_sysreqs <- parse_packages(path, type = "gzip")
 }

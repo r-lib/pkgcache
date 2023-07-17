@@ -614,11 +614,8 @@ onload_pkgcache <- function(libname, pkgname) {
   }
   pkgenv$global_metadata_cache <- new.env(parent = emptyenv())
   pkgenv$archive_cache <- new.env(parent = emptyenv())
-  pkgenv$bioc_sysreqs <- parse_packages(system.file(
-    "bioc-sysreqs.dcf.gz",
-    package = "pkgcache"
-  ), type = "gzip")
   err$onload_hook()
+  pkgenv$bioc_sysreqs <- load_bioc_sysreqs()
 }
 
 if (exists(".onLoad", inherits = FALSE)) {

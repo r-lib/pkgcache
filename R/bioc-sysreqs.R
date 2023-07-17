@@ -81,3 +81,8 @@ get_all_bioc_sysreqs <- function(ref = "HEAD") {
   system("gzip inst/bioc-sysreqs.dcf")
   writeLines(format(start_at), "inst/bioc-sysreqs.ts")
 }
+
+load_bioc_sysreqs <- function(path = NULL) {
+  path <- path %||% system.file("bioc-sysreqs.dcf.gz", package = "pkgcache")
+  parse_packages(path, type = "gzip")
+}

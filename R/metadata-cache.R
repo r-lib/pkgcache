@@ -148,9 +148,10 @@ cmc__data <- new.env(parent = emptyenv())
 #' * `priority`: "optional", "recommended" or `NA`. (Base packages are
 #'   normally not included in the list, so "base" should not appear here.)
 #' * `md5sum`: MD5 sum, if available, may be `NA`.
-#' * `sysreqs`: For CRAN packages, the `SystemRequirements` field, the
-#'   required system libraries or other software for the package. For
-#'   non-CRAN packages it is `NA`.
+#' * `sysreqs`: The `SystemRequirements` field, if available. This lists the
+#'   required system libraries or other software for the package. This is
+#'   usually available for CRAN and Bioconductor package and when it is
+#'   explicitly available in the repository metadata.
 #' * `published`: The time the package was published at, in GMT,
 #'   `POSIXct` class.
 #'

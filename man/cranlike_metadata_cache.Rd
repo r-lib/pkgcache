@@ -164,9 +164,10 @@ archived since the metadata was cached.
 \item \code{priority}: "optional", "recommended" or \code{NA}. (Base packages are
 normally not included in the list, so "base" should not appear here.)
 \item \code{md5sum}: MD5 sum, if available, may be \code{NA}.
-\item \code{sysreqs}: For CRAN packages, the \code{SystemRequirements} field, the
-required system libraries or other software for the package. For
-non-CRAN packages it is \code{NA}.
+\item \code{sysreqs}: The \code{SystemRequirements} field, if available. This lists the
+required system libraries or other software for the package. This is
+usually available for CRAN and Bioconductor package and when it is
+explicitly available in the repository metadata.
 \item \code{published}: The time the package was published at, in GMT,
 \code{POSIXct} class.
 }

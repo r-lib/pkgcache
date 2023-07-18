@@ -169,6 +169,11 @@ configure Bioconductor support.
 
 - The `BioC_mirror` option can be used to select a Bioconductor mirror.
   This takes priority over the `R_BIOC_MIRROR` environment variable.
+- You can use the `pkg.current_platform` option to set the platform
+  string for the current platform for the `current_r_platform()`
+  function. This is useful if pkgcache didn’t detect the platform
+  correctly. Alternatively, you can use the `PKG_CURRENT_PLATFORM`
+  environment variable. The option takes priority.
 - `pkgcache_timeout` is the HTTP timeout for all downloads. It is in
   seconds, and the limit for downloading the whole file. Defaults to
   3600, one hour. It corresponds to the [`TIMEOUT` libcurl
@@ -195,6 +200,12 @@ configure Bioconductor support.
 - The `R_BIOC_MIRROR` environment variable can be used to select a
   Bioconductor mirror. The `BioC_mirror` option takes priority over
   this, if set.
+- You can use the `PKG_CURRENT_PLATFORM` environment variable to set the
+  platform string for the current platform for the
+  `current_r_platform()` function. This is useful if pkgcache didn’t
+  detect the platform correctly. Alternatively, you can use the
+  `pkg.current_platofrm` option, which takes. priority over the
+  environment variable.
 - `PKGCACHE_PPM_REPO` is the name of the Posit Package Manager
   repository to use. Defaults to `"cran"`.
 - `PKGCACHE_PPM_URL` is the base URL of the Posit Package Manager

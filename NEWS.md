@@ -7,6 +7,9 @@
   and resolves to PPM, because MRAN will be retired soon. See more at
   <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
 
+* The metadata cache now has `SystemRequirements` information for Bioconductor
+  packages.
+
 # pkgcache 2.1.1
 
 * `parse_installed()` now has a `packages` argument, to list only a subset

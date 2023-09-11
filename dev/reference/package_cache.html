@@ -153,29 +153,29 @@ avoid unnecessary downloads.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"bar\n"</span>, file <span class="op">=</span> <span class="va">f2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">f1</span>, <span class="st">"/f1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpVSIfzD/file172552789636//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpXTecz6/file189c4d77b76d//f1  /f1      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">add</span><span class="op">(</span><span class="va">f2</span>, <span class="st">"/f2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpVSIfzD/file172552789636//f2  /f2      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpXTecz6/file189c4d77b76d//f2  /f2      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">list</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpVSIfzD/file172552789636//f1  /f1      NA  NA   NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpVSIfzD/file172552789636//f2  /f2      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpXTecz6/file189c4d77b76d//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 /tmp/RtmpXTecz6/file189c4d77b76d//f2  /f2      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">find</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"/f1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpVSIfzD/file172552789636//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpXTecz6/file189c4d77b76d//f1  /f1      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-in"><span><span class="va">pc</span><span class="op">$</span><span class="fu">copy_to</span><span class="op">(</span>target <span class="op">=</span> <span class="va">f3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>, path <span class="op">=</span> <span class="st">"/f1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               fullpath path package url etag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpVSIfzD/file172552789636//f1  /f1      NA  NA   NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 /tmp/RtmpXTecz6/file189c4d77b76d//f1  /f1      NA  NA   NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             sha256</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="va">f3</span><span class="op">)</span></span></span>

@@ -81,7 +81,7 @@
                         <h4 data-toc-skip class="author">Gábor
 Csárdi</h4>
             
-            <h4 data-toc-skip class="date">2023-07-18</h4>
+            <h4 data-toc-skip class="date">2023-09-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/pkgcache/blob/HEAD/vignettes/ppm.Rmd" class="external-link"><code>vignettes/ppm.Rmd</code></a></small>
       <div class="d-none name"><code>ppm.Rmd</code></div>
@@ -162,7 +162,7 @@ snapshot.</p>
 instance:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_platforms.html">ppm_platforms</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 24 × 6</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 25 × 6</span></span></span>
 <span><span class="co">##    name        os    binary_url  distribution release binaries</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> centos7     linux centos7     centos       7       TRUE    </span></span>
@@ -175,27 +175,27 @@ instance:</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> opensuse42  linux opensuse42  opensuse     42.3    TRUE    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> rhel7       linux centos7     redhat       7       TRUE    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> rhel8       linux centos8     redhat       8       TRUE    </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 14 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 15 more rows</span></span></span></code></pre>
 <p>The <code>binary_url</code> column contains the code name that you
 need to use in the repository URL.</p>
 <p><code><a href="../reference/ppm_snapshots.html">ppm_snapshots()</a></code> lists all PPM snapshot dates and
 ids:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_snapshots.html">ppm_snapshots</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 971 × 2</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 1,000 × 2</span></span></span>
 <span><span class="co">##    date                   id</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 2017-10-10 <span style="color: #949494;">00:00:00</span>     5</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2017-10-25 <span style="color: #949494;">00:00:00</span>     6</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2017-10-30 <span style="color: #949494;">00:00:00</span>     7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2017-11-01 <span style="color: #949494;">00:00:00</span>     8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2017-11-03 <span style="color: #949494;">00:00:00</span>     9</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2017-11-07 <span style="color: #949494;">00:00:00</span>    10</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2017-11-08 <span style="color: #949494;">00:00:00</span>    11</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2017-11-13 <span style="color: #949494;">00:00:00</span>    12</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2017-11-15 <span style="color: #949494;">00:00:00</span>    13</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2017-11-16 <span style="color: #949494;">00:00:00</span>    14</span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 961 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 2017-11-01 <span style="color: #949494;">00:00:00</span>     8</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2017-11-03 <span style="color: #949494;">00:00:00</span>     9</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2017-11-07 <span style="color: #949494;">00:00:00</span>    10</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2017-11-08 <span style="color: #949494;">00:00:00</span>    11</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2017-11-13 <span style="color: #949494;">00:00:00</span>    12</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2017-11-15 <span style="color: #949494;">00:00:00</span>    13</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2017-11-16 <span style="color: #949494;">00:00:00</span>    14</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2017-11-17 <span style="color: #949494;">00:00:00</span>    15</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2017-11-20 <span style="color: #949494;">00:00:00</span>    16</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2017-11-22 <span style="color: #949494;">00:00:00</span>    17</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 990 more rows</span></span></span></code></pre>
 <p>You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are
 equivalent:</p>

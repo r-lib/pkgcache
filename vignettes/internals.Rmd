@@ -35,6 +35,7 @@ architectures, when installing from source.
 (64 bit R-devel does the same currently, but this might change.)
 
 In light of these, this is what we do:
+
 - The default platform is `x86_64-w64-mingw32` on 64 bit R from R 4.2.
   It is `i386+x86_64-mingw32` on 64 bit R before R 4.2.
 - The default platform is `i386+x86_64-w64-mingw32` on 32 bit R.

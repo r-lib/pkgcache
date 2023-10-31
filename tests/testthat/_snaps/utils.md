@@ -6,8 +6,9 @@
         "cache is broken, try deleting it with `cran_archive_cleanup()` or ",
         "the `$cleanup()` method.")
       stop(msg)
-    Error <simpleError>
-      
+    Condition
+      Error:
+      ! 
       some error message
       
       Could not load or update archive cache. If you think your local cache

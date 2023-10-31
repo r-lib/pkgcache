@@ -37,7 +37,7 @@ Suggests:
     rprojroot,
     sessioninfo,
     spelling,
-    testthat (>= 3.0.0),
+    testthat (>= 3.2.0),
     webfakes (>= 1.1.5),
     withr,
     zip

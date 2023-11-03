@@ -19,6 +19,12 @@ You can install the released version of pkgcache from
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{install.packages("pkgcache")
 }\if{html}{\out{</div>}}
+
+If you need the development version, you can install it from
+\href{https://github.com}{GitHub} with:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{pak::pak("r-lib/pkgcache")
+}\if{html}{\out{</div>}}
 }
 
 \subsection{Metadata cache}{

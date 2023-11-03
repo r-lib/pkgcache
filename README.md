@@ -28,6 +28,13 @@ You can install the released version of pkgcache from
 install.packages("pkgcache")
 ```
 
+If you need the development version, you can install it from
+[GitHub](https://github.com) with:
+
+``` r
+pak::pak("r-lib/pkgcache")
+```
+
 ## Metadata cache
 
 `meta_cache_list()` lists all packages in the metadata cache. It

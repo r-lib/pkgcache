@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 URL: https://github.com/r-lib/pkgcache#readme,
     https://r-lib.github.io/pkgcache/
 BugReports: https://github.com/r-lib/pkgcache/issues
-Depends: 
+Depends:
     R (>= 3.4)
 Imports:
     callr (>= 2.0.4.9000),
@@ -20,7 +20,6 @@ Imports:
     curl (>= 3.2),
     filelock,
     jsonlite,
-    prettyunits,
     processx (>= 3.3.0.9001),
     R6,
     rappdirs,

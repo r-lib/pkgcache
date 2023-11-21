@@ -267,8 +267,8 @@ curl options. The <code>pkgcache_low_speed_time</code> and
 <code>pkgcache_low_speed_limit</code> options have priority over these
 environment variables, if they are set.</p></li>
 <li><p><code>R_PKG_CACHE_DIR</code> is used for the cache directory, if set. (Otherwise
-<code><a href="https://rappdirs.r-lib.org/reference/user_cache_dir.html" class="external-link">rappdirs::user_cache_dir()</a></code> is used, see also <code><a href="meta_cache_deps.html">meta_cache_summary()</a></code>
-and <code><a href="pkg_cache_api.html">pkg_cache_summary()</a></code>).</p></li>
+<code>tools::R_user_dir("pkgcache", "cache")</code> is used, see also
+<code><a href="meta_cache_deps.html">meta_cache_summary()</a></code> and <code><a href="pkg_cache_api.html">pkg_cache_summary()</a></code>).</p></li>
 </ul></div>
 
 <div class="section">

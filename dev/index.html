@@ -232,7 +232,7 @@
 <li>
 <code>PKGCACHE_LOW_SPEED_LIMIT</code> and <code>PKGCACHE_LOW_SPEED_TIME</code> are used for a more sensible HTTP timeout. If the download speed is less than <code>PKGCACHE_LOW_SPEED_LIMIT</code> bytes per second for at least <code>PKGCACHE_LOW_SPEED_TIME</code> seconds, the download errors. They correspond to the <a href="https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html" class="external-link"><code>LOW_SPEED_LIMIT</code></a> and <a href="https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html" class="external-link"><code>LOW_SPEED_TIME</code></a> curl options. The <code>pkgcache_low_speed_time</code> and <code>pkgcache_low_speed_limit</code> options have priority over these environment variables, if they are set.</li>
 <li>
-<code>R_PKG_CACHE_DIR</code> is used for the cache directory, if set. (Otherwise <code><a href="https://rappdirs.r-lib.org/reference/user_cache_dir.html" class="external-link">rappdirs::user_cache_dir()</a></code> is used, see also <code><a href="reference/meta_cache_deps.html">meta_cache_summary()</a></code> and <code><a href="reference/pkg_cache_api.html">pkg_cache_summary()</a></code>).</li>
+<code>R_PKG_CACHE_DIR</code> is used for the cache directory, if set. (Otherwise <code>tools::R_user_dir("pkgcache", "cache")</code> is used, see also <code><a href="reference/meta_cache_deps.html">meta_cache_summary()</a></code> and <code><a href="reference/pkg_cache_api.html">pkg_cache_summary()</a></code>).</li>
 </ul>
 </div>
 <div class="section level2">

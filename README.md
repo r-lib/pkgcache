@@ -240,7 +240,7 @@ configure Bioconductor support.
   `pkgcache_low_speed_limit` options have priority over these
   environment variables, if they are set.
 - `R_PKG_CACHE_DIR` is used for the cache directory, if set. (Otherwise
-  `rappdirs::user_cache_dir()` is used, see also `meta_cache_summary()`
+  `tools::R_user_dir("pkgcache", "cache")` is used, see also `meta_cache_summary()`
   and `pkg_cache_summary()`).
 
 ## Using pkgcache in CRAN packages

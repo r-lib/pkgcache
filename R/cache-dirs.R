@@ -49,7 +49,7 @@ my_R_user_dir <- function(package, which = "cache") {
   } else if (Sys.info()[["sysname"]] == "Darwin") {
     path.expand(file.path(user_cache_dir(), "org.R-project.R", "R", package))
   } else if (.Platform$OS.type == "windows") {
-    path.expand(file.path(dirname(user_cache_dir()), "R", "cache", "R", package))
+    path.expand(file.path(user_cache_dir(), "R", "cache", "R", package))
   } else {
     path.expand(file.path(user_cache_dir(), "R", package))
   }

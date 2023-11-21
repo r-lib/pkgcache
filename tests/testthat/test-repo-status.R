@@ -29,6 +29,8 @@ test_that("repo_status", {
 })
 
 test_that("bioc repo status", {
+  if (getRversion() < "4.2.0") skip("Need R 4.2.x")
+
   setup_fake_apps()
   withr::local_options(width = 1000)
 

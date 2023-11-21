@@ -22,7 +22,6 @@ Imports:
     jsonlite,
     processx (>= 3.3.0.9001),
     R6,
-    rappdirs,
     tools,
     utils
 Suggests:

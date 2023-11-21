@@ -70,7 +70,8 @@ test_that("cleanup_old_cache_dir", {
   mockery::stub(cleanup_old_cache_dir, "user_cache_dir", function(...) tmp)
   expect_message(cleanup_old_cache_dir(), "nothing to do")
 
-  mkdirp(tmp)
+  cachedir <- file.path(tmp, "R-pkg")
+  mkdirp(cachedir)
   mockery::stub(cleanup_old_cache_dir, "interactive", FALSE)
   expect_error(cleanup_old_cache_dir(), "non-interactive session")
 
@@ -78,8 +79,8 @@ test_that("cleanup_old_cache_dir", {
   mockery::stub(cleanup_old_cache_dir, "readline", "n")
   expect_error(cleanup_old_cache_dir(), "Aborted")
 
-  expect_true(file.exists(tmp))
+  expect_true(file.exists(cachedir))
   mockery::stub(cleanup_old_cache_dir, "readline", "y")
   expect_message(cleanup_old_cache_dir(), "Cleaned up cache")
-  expect_false(file.exists(tmp))
+  expect_false(file.exists(cachedir))
 })

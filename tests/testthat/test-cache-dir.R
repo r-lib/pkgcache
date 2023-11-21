@@ -48,7 +48,7 @@ test_that("fall back to R_USER_CACHE_DIR via R_user_dir()", {
   args <- NULL
   mockery::stub(
     get_user_cache_dir,
-    "R_user_dir",
+    "tools::R_user_dir",
     function(...) {
       args <<- list(...)
       stop("wait")

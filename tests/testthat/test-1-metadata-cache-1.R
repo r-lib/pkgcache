@@ -133,12 +133,12 @@ test_that("locking failures", {
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
-  mockery::stub(cmc__load_primary_rds, "lock", function(...) NULL)
+  mockery::stub(cmc__load_primary_rds, "filelock::lock", function(...) NULL)
   expect_error(
     cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
     "Cannot acquire lock to copy RDS")
 
-  mockery::stub(cmc__load_primary_pkgs, "lock", function(...) NULL)
+  mockery::stub(cmc__load_primary_pkgs, "filelock::lock", function(...) NULL)
   expect_error(
     cmc__load_primary_pkgs(cmc, get_private(cmc), oneday()),
     "Cannot acquire lock to copy PACKAGES")
@@ -291,7 +291,7 @@ test_that("update_primary 2", {
   cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
                                      bioc = FALSE)
 
-  mockery::stub(cmc__update_primary, "lock", function(...) NULL)
+  mockery::stub(cmc__update_primary, "filelock::lock", function(...) NULL)
   expect_error(
     cmc__update_primary(cmc, get_private(cmc), TRUE, TRUE, TRUE),
     "Cannot acquire lock to update primary cache")

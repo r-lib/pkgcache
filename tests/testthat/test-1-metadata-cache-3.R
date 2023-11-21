@@ -106,7 +106,7 @@ test_that("update_memory_cache", {
   cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
                                      bioc = FALSE)
 
-  mockery::stub(cmc__copy_to_replica, "lock", function(...) NULL)
+  mockery::stub(cmc__copy_to_replica, "filelock::lock", function(...) NULL)
   expect_error(
     cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE),
     "Cannot acquire lock to copy primary cache")

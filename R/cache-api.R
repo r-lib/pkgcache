@@ -6,7 +6,7 @@
 #'
 #' @param cachepath Path of the cache. By default the cache directory is in
 #'   `R-pkg`, within the user's cache directory.
-#'   See [tools::R_user_dir()].
+#'   See `tools::R_user_dir()`.
 #'
 #' @seealso The [package_cache] R6 class for a more flexible API.
 #' @rdname pkg_cache_api

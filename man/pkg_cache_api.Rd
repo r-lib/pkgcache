@@ -24,7 +24,7 @@ pkg_cache_add_file(cachepath = NULL, file, relpath = dirname(file), ...)
 \arguments{
 \item{cachepath}{Path of the cache. By default the cache directory is in
 \code{R-pkg}, within the user's cache directory.
-See \code{\link[tools:userdir]{tools::R_user_dir()}}.}
+See \code{tools::R_user_dir()}.}
 
 \item{...}{Extra named arguments to select the package file.}
 

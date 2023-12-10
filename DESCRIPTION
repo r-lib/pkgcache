@@ -9,8 +9,7 @@ Description: Metadata and package cache for CRAN-like repositories.  This
     is a utility package to be used by package management tools that want
     to take advantage of caching.
 License: MIT + file LICENSE
-URL: https://github.com/r-lib/pkgcache#readme,
-    https://r-lib.github.io/pkgcache/
+URL: https://r-lib.github.io/pkgcache/, https://github.com/r-lib/pkgcache
 BugReports: https://github.com/r-lib/pkgcache/issues
 Depends:
     R (>= 3.4)

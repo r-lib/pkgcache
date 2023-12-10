@@ -262,8 +262,8 @@ MIT (c) \href{https://posit.co}{Posit Software, PBC}
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/r-lib/pkgcache#readme}
   \item \url{https://r-lib.github.io/pkgcache/}
+  \item \url{https://github.com/r-lib/pkgcache}
   \item Report bugs at \url{https://github.com/r-lib/pkgcache/issues}
 }
 

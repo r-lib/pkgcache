@@ -9,9 +9,9 @@
 ">
 <title>pkgcache internals • pkgcache</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.7/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.7/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.8/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.8/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="pkgcache internals">
@@ -30,7 +30,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgcache</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Gábor
 Csárdi</h4>
             
-            <h4 data-toc-skip class="date">2023-11-03</h4>
+            <h4 data-toc-skip class="date">2023-12-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/pkgcache/blob/HEAD/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
       <div class="d-none name"><code>internals.Rmd</code></div>
@@ -121,36 +121,48 @@ Csárdi</h4>
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
 </h4>
 <p>Windows is special, because the same repository is used for multiple
-architectures. Probably most people us 64 bit R on Windows, because
+architectures. Probably most people use 64 bit R on Windows, because
 that’s what RStudio starts by default. But we also need to make sure
 that people who need 32 bit R will have a way to install packages,
 without ruining the 64 bit installation.</p>
-<p>Luckily, there are no packages on CRAN and Bioconductor currently
-that are 32 bit only. (There are a few that are 64 bit only.) In
-addition, 32 bit R currently installs the package both both
-architectures, when installing for source. (64 bit R-devel does the same
-currently, but this might change.)</p>
-<p>In light of these, this is what we do: - The default platform is
-<code>x86_64-w64-mingw32</code> on 64 bit R from R 4.2. It is
-<code>i386+x86_64-mingw32</code> on 64 bit R before R 4.2. - The default
-platform is <code>i386+x86_64-w64-mingw32</code> on 32 bit R. - The
-<code>windows</code> platform name is an alias to
-<code>i386+x86_64-w64-mingw32</code>. - When compiling a package from
-source, we’ll observe the requested platform name: - For
-<code>x86_64-w64-mingw32</code> on 64 bit R, we compile 64 bit only. -
-For <code>i386-w64-mingw32</code> on 64 bit R, we compile for both 32
-bit and 64 bit. (There is probably no way to avoid using the current
-arch.) - For <code>i386+x86_64-w64-mingw32</code> on 64 bit R, we
-compile for both 32 bit and 64. - For <code>i386-w64-mingw32</code> on
-32 bit R, we compile for both 32 bit and 64 bit. This is to avoid
-mistakenly messing up a 64 bit library. - For
-<code>x86_64-w64-mingw32</code> on 32 bit R, we compile for both 32 bit
-and 64 bit. (There is probably no way to avoid using the current arch.)
-- For <code>i386+x86_64-w64-mingw32</code> on 32 bit R, we compile for
-both 32 bit and 64.</p>
+<p>Luckily, there are no packages on CRAN or Bioconductor currently that
+are 32 bit only. (There are a few that are 64 bit only.) In addition, 32
+bit R currently installs the package for both architectures, when
+installing from source. (64 bit R-devel does the same currently, but
+this might change.)</p>
+<p>In light of these, this is what we do:</p>
+<ul>
+<li>The default platform is <code>x86_64-w64-mingw32</code> on 64 bit R
+from R 4.2. It is <code>i386+x86_64-mingw32</code> on 64 bit R before R
+4.2.</li>
+<li>The default platform is <code>i386+x86_64-w64-mingw32</code> on 32
+bit R.</li>
+<li>The <code>windows</code> platform name is an alias to
+<code>i386+x86_64-w64-mingw32</code>.</li>
+<li>When compiling a package from source, we’ll observe the requested
+platform name:
+<ul>
+<li>For <code>x86_64-w64-mingw32</code> on 64 bit R, we compile 64 bit
+only.</li>
+<li>For <code>i386-w64-mingw32</code> on 64 bit R, we compile for both
+32 bit and 64 bit. (There is probably no way to avoid using the current
+arch.)</li>
+<li>For <code>i386+x86_64-w64-mingw32</code> on 64 bit R, we compile for
+both 32 bit and 64.</li>
+<li>For <code>i386-w64-mingw32</code> on 32 bit R, we compile for both
+32 bit and 64 bit. This is to avoid mistakenly messing up a 64 bit
+library.</li>
+<li>For <code>x86_64-w64-mingw32</code> on 32 bit R, we compile for both
+32 bit and 64 bit. (There is probably no way to avoid using the current
+arch.)</li>
+<li>For <code>i386+x86_64-w64-mingw32</code> on 32 bit R, we compile for
+both 32 bit and 64 bit.</li>
+</ul>
+</li>
+</ul>
 <p>In summary, when compiling packages, we compile for both archs,
-unless the platform is <code>x86_64-w64-mingw32</code> and we are in a
-64 bit R session.</p>
+except if we are in a 64 bit R session and the platform is
+<code>x86_64-w64-mingw32</code>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

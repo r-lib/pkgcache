@@ -160,7 +160,7 @@ character scalar. If the name is missing, pkgcache adds a name
 automatically. The repository named <code>CRAN</code> is the main CRAN repository,
 but otherwise names are informational.</p>
 <p>Currently supported repository specifications:</p><ul><li><p>URL pointing to the root of the CRAN-like repository. Example:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>cloud.r<span class="sc">-</span>project.org</span></code></pre><p></p></div></li>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>cloud.r<span class="sc">-</span>project.org</span></code></pre><p></p></div></li>
 <li><p><code>PPM@latest</code>, PPM (Posit Package Manager, formerly RStudio Package
 Manager), the latest snapshot.</p></li>
 <li><p><code>PPM@&lt;date&gt;</code>, PPM (Posit Package Manager, formerly RStudio Package
@@ -206,11 +206,11 @@ will trigger an error.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> RSPM          https://packagemanager.posit… cran… *         <span style="color: #BB0000;">NA</span>          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> CRAN          https://cran.rstudio.com      cran  *         <span style="color: #BB0000;">NA</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> BioCsoft      https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> BioCann       https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> BioCexp       https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> BioCworkflows https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> BioCbooks     https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> BioCsoft      https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> BioCann       https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> BioCexp       https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> BioCworkflows https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> BioCbooks     https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
 <span class="r-in"><span><span class="fu">repo_resolve</span><span class="op">(</span><span class="st">"PPM@2020-01-21"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                       CRAN </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "https://packagemanager.posit.co/cran/__linux__/jammy/245" </span>
@@ -222,14 +222,14 @@ will trigger an error.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> RSPM          https://packagemanager.posit… cran… *         <span style="color: #BB0000;">NA</span>          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> CRAN          https://packagemanager.posit… cran  *         <span style="color: #BB0000;">NA</span>          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> BioCsoft      https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> BioCann       https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> BioCexp       https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> BioCworkflows https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> BioCbooks     https://bioconductor.org/pac… bioc  4.3.2     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> BioCsoft      https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> BioCann       https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> BioCexp       https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> BioCworkflows https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> BioCbooks     https://bioconductor.org/pac… bioc  4.3.3     3.18        </span>
 <span class="r-in"><span><span class="fu">with_repo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CRAN <span class="op">=</span> <span class="st">"PPM@dplyr-1.0.0"</span><span class="op">)</span>, <span class="fu"><a href="meta_cache_deps.html">meta_cache_list</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Updated metadata database: 6.19 MB in 5 files.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Updated metadata database: 6.30 MB in 5 files.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Updating metadata database</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Updating metadata database ... done</span>
@@ -249,13 +249,13 @@ will trigger an error.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">with_repo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CRAN <span class="op">=</span> <span class="st">"MRAN@2018-06-30"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="repo_status.html">repo_status</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Repository summary:                       source<span style="color: #00BBBB;">          </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RSPM          @ packagemanager.posit.co   <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (468ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CRAN          @ packagemanager.posit.co   <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (528ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCsoft      @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (449ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCann       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (448ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCexp       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (466ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCworkflows @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (460ms)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BioCbooks     @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (471ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RSPM          @ packagemanager.posit.co   <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (510ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CRAN          @ packagemanager.posit.co   <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (620ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCsoft      @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (322ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCann       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (322ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCexp       @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (440ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCworkflows @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (496ms)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BioCbooks     @ bioconductor.org          <span style="color: #00BB00;">  ✔   </span><span style="color: #00BBBB;">   (328ms)</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

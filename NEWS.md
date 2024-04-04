@@ -1,5 +1,8 @@
 # pkgcache (development version)
 
+* pkgcache now treats R 4.5.x (current R-devel) macOS binaries
+  correctly. It is also more robust to changes the in macOS platform.
+
 # pkgcache 2.2.1
 
 * pkgcache now does a better job when matching the R version to a

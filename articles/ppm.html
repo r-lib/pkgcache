@@ -10,8 +10,8 @@
 <title>pkgcache and Posit Package Manager on Linux • pkgcache</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.8/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.8/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="pkgcache and Posit Package Manager on Linux">
@@ -30,7 +30,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">pkgcache</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@
                         <h4 data-toc-skip class="author">Gábor
 Csárdi</h4>
             
-            <h4 data-toc-skip class="date">2023-12-10</h4>
+            <h4 data-toc-skip class="date">2024-04-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/pkgcache/blob/HEAD/vignettes/ppm.Rmd" class="external-link"><code>vignettes/ppm.Rmd</code></a></small>
       <div class="d-none name"><code>ppm.Rmd</code></div>
@@ -184,16 +184,16 @@ ids:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 1,000 × 2</span></span></span>
 <span><span class="co">##    date                   id</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 2018-06-11 <span style="color: #949494;">00:00:00</span>    67</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2018-06-15 <span style="color: #949494;">00:00:00</span>    68</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2018-06-18 <span style="color: #949494;">00:00:00</span>    69</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2018-06-21 <span style="color: #949494;">00:00:00</span>    70</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2018-06-25 <span style="color: #949494;">00:00:00</span>    71</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2018-06-28 <span style="color: #949494;">00:00:00</span>    72</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2018-07-02 <span style="color: #949494;">00:00:00</span>    73</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2018-07-05 <span style="color: #949494;">00:00:00</span>    74</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2018-07-09 <span style="color: #949494;">00:00:00</span>    75</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2018-07-13 <span style="color: #949494;">00:00:00</span>    76</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 2019-02-28 <span style="color: #949494;">00:00:00</span>   148</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2019-03-04 <span style="color: #949494;">00:00:00</span>   149</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2019-03-07 <span style="color: #949494;">00:00:00</span>   150</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 2019-03-11 <span style="color: #949494;">00:00:00</span>   151</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 2019-03-14 <span style="color: #949494;">00:00:00</span>   152</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 2019-03-18 <span style="color: #949494;">00:00:00</span>   153</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 2019-03-21 <span style="color: #949494;">00:00:00</span>   154</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2019-03-25 <span style="color: #949494;">00:00:00</span>   155</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2019-03-28 <span style="color: #949494;">00:00:00</span>   156</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 2019-04-01 <span style="color: #949494;">00:00:00</span>   157</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 990 more rows</span></span></span></code></pre>
 <p>You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are

@@ -185,6 +185,13 @@ test_that("bioc_version", {
   })
 })
 
+# If this or the next test fails, that means that we potentially
+# need to update our Bioc metadata. If the R version -> Bioc version
+# mapping is final, then we update it. Otherwise we don't. E.g.
+# R 4.4 uses Bioc 3.19 right now, but eventually will use Bioc 3.20,
+# so we don't update for Bioc 3.19, only for Bioc 3.20.
+# If we don't update the metadata, we just update the test snapshots.
+
 test_that("bioc_version_map", {
   on.exit(bioconductor$.internal$clear_cache())
   bioconductor$.internal$clear_cache()

@@ -59,7 +59,7 @@ repo_get <- function(r_version = getRversion(), bioc = TRUE,
 #'
 #' @export
 #' @examplesIf pkgcache:::run_examples()
-#' repo_resolve("PPM@2020-01-21")
+#' repo_resolve("PPM@2021-01-21")
 #' #' repo_resolve("PPM@dplyr-1.0.0")
 #' #' repo_resolve("PPM@R-4.0.0")
 

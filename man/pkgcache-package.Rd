@@ -39,7 +39,7 @@ print nicer, similarly to tibbles.)
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
-#> # A data frame: 44,780 x 32
+#> # A data frame: 48,094 x 32
 #>    package     version depends suggests license imports linkingto archs enhances
 #>    <chr>       <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
 #>  1 A3          1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
@@ -50,9 +50,9 @@ meta_cache_list()
 #>  6 ABCoptim    0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
 #>  7 ABCp2       1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
 #>  8 ABHgenotyp~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
-#>  9 ABM         0.3     <NA>    <NA>     GPL (>~ R6, Rc~ Rcpp      ABM.~ <NA>    
+#>  9 ABM         0.4.1   <NA>    <NA>     GPL (>~ R6, Rc~ Rcpp      ABM.~ <NA>    
 #> 10 ABPS        0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
-#> # i 44,770 more rows
+#> # i 48,084 more rows
 #> # i 23 more variables: license_restricts_use <chr>, priority <chr>,
 #> #   license_is_foss <chr>, os_type <chr>, repodir <chr>, rversion <chr>,
 #> #   platform <chr>, needscompilation <chr>, ref <chr>, type <chr>,
@@ -84,36 +84,35 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 176
+#> [1] 40
 #> 
 #> $size
-#> [1] 204562277
+#> [1] 61300737
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A data frame: 176 x 11
+#> # A data frame: 40 x 11
 #>    fullpath    path  package url   etag  sha256 version platform built vignettes
 #>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/gab~ bin/~ diffvi~ http~ "\"2~ e8869~ 0.1.1   aarch64~    NA        NA
-#>  2 /Users/gab~ src/~ testth~ <NA>   <NA> <NA>   0.0.0.~ source       1         0
-#>  3 /Users/gab~ src/~ testth~ <NA>   <NA> <NA>   0.0.0.~ aarch64~     1         0
-#>  4 /Users/gab~ bin/~ DT      http~ "\"1~ 69c62~ 0.27    aarch64~    NA        NA
-#>  5 /Users/gab~ bin/~ R6      http~ "\"1~ 00398~ 2.5.1   aarch64~    NA        NA
-#>  6 /Users/gab~ src/~ cli     <NA>   <NA> c37f3~ 3.6.1.~ source       1         0
-#>  7 /Users/gab~ src/~ cli     <NA>   <NA> c37f3~ 3.6.1.~ aarch64~     1         0
-#>  8 /Users/gab~ bin/~ glue    http~ "\"2~ 25019~ 1.6.2   aarch64~    NA        NA
-#>  9 /Users/gab~ src/~ cli     <NA>   <NA> f6794~ 3.1.0.~ source       1         0
-#> 10 /Users/gab~ src/~ cli     <NA>   <NA> f6794~ 3.1.0.~ aarch64~     1         0
-#> # i 166 more rows
+#>  1 /Users/gab~ arch~ <NA>    http~ "\"1~ 9da51~ <NA>    <NA>        NA        NA
+#>  2 /Users/gab~ bin/~ cli     http~ "\"1~ b24b4~ 3.6.2   x86_64-~    NA        NA
+#>  3 /Users/gab~ bin/~ jose    http~ "\"7~ b1bac~ 1.2.0   aarch64~    NA        NA
+#>  4 /Users/gab~ src/~ gh      <NA>   <NA> <NA>   1.4.0.~ source       1         0
+#>  5 /Users/gab~ src/~ gh      <NA>   <NA> <NA>   1.4.0.~ aarch64~     1         0
+#>  6 /Users/gab~ bin/~ gh      http~ "\"1~ f5daf~ 1.4.0   aarch64~    NA        NA
+#>  7 /Users/gab~ src/~ tic     <NA>   <NA> 11103~ <NA>    <NA>         0        NA
+#>  8 /Users/gab~ src/~ tic     <NA>   <NA> 11103~ 0.14.0  source       1         0
+#>  9 /Users/gab~ src/~ tic     <NA>   <NA> 11103~ 0.14.0  aarch64~     1         0
+#> 10 /Users/gab~ bin/~ rhub    http~ "\"f~ af2d6~ 1.1.2   aarch64~    NA        NA
+#> # i 30 more rows
 #> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A data frame: 1 x 11
-#>   fullpath     path  package url   etag  sha256 version platform built vignettes
-#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#> 1 /Users/gabo~ bin/~ dplyr   http~ "\"1~ cb4f7~ 1.1.2   aarch64~    NA        NA
-#> # i 1 more variable: rversion <chr>
+#> # A data frame: 0 x 11
+#> # i 11 variables: fullpath <chr>, path <chr>, package <chr>, url <chr>,
+#> #   etag <chr>, sha256 <chr>, version <chr>, platform <chr>, built <int>,
+#> #   vignettes <int>, rversion <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,
@@ -132,26 +131,26 @@ all fields from \code{PACKAGES}, \code{PACKAGES.gz} or \code{PACKAGES.rds} files
 library:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{parse_installed()
-#> # A data frame: 329 x 97
-#>    Package     Type  Title Version Date  Author Maintainer Description Copyright
-#>    <chr>       <chr> <chr> <chr>   <chr> <chr>  <chr>      <chr>       <chr>    
-#>  1 AsioHeaders Pack~ "'As~ 1.22.1~ 2022~ "Dirk~ Dirk Edde~ "'Asio' is~ file ins~
-#>  2 BiocGeneri~ <NA>  "S4 ~ 0.46.0  <NA>  "The ~ Hervé Pag~ "The packa~ <NA>     
-#>  3 BiocManager <NA>  "Acc~ 1.30.20 <NA>  "Mart~ Marcel Ra~ "A conveni~ <NA>     
-#>  4 Biostrings  <NA>  "Eff~ 2.67.2  <NA>  "Herv~ Hervé Pag~ "Memory ef~ <NA>     
-#>  5 DBI         <NA>  "R D~ 1.1.3   2022~ "R Sp~ Kirill Mü~ "A databas~ <NA>     
-#>  6 DBItest     <NA>  "Tes~ 1.7.3   2022~ "Kiri~ Kirill Mü~ "A helper ~ <NA>     
-#>  7 DT          Pack~ "A W~ 0.27    <NA>  "Yihu~ Yihui Xie~ "Data obje~ <NA>     
-#>  8 Distributi~ <NA>  "Dis~ 0.6-0   2018~ "Davi~ David Sco~ "Utilities~ <NA>     
-#>  9 Formula     <NA>  "Ext~ 1.2-5   2023~ "Achi~ Achim Zei~ "Infrastru~ <NA>     
-#> 10 GenomeInfo~ <NA>  "Uti~ 1.35.17 <NA>  "Sona~ Hervé Pag~ "Contains ~ <NA>     
-#> # i 319 more rows
-#> # i 88 more variables: License <chr>, URL <chr>, BugReports <chr>,
-#> #   NeedsCompilation <chr>, Packaged <chr>, Repository <chr>,
-#> #   `Date/Publication` <chr>, Built <chr>, biocViews <chr>, Encoding <chr>,
-#> #   Depends <chr>, Imports <chr>, Suggests <chr>, Collate <chr>, git_url <chr>,
-#> #   git_branch <chr>, git_last_commit <chr>, git_last_commit_date <chr>,
-#> #   `Authors@R` <chr>, VignetteBuilder <chr>, RoxygenNote <chr>, ...
+#> # A data frame: 888 x 128
+#>    Package  Type  Title Version Date  `Authors@R` Maintainer Description Imports
+#>    <chr>    <chr> <chr> <chr>   <chr> <chr>       <chr>      <chr>       <chr>  
+#>  1 AdaptGa~ Pack~ Gaus~ 1.6     2024~ "c(person(~ Michael T~ "Multimoda~ "Rcpp,~
+#>  2 Annotat~ <NA>  Mani~ 1.64.1  <NA>   <NA>       Bioconduc~ "Implement~ "DBI, ~
+#>  3 Annotat~ <NA>  Tool~ 1.42.2  <NA>   <NA>       Bioconduc~ "Provides ~ "DBI, ~
+#>  4 AsioHea~ Pack~ 'Asi~ 1.22.1~ 2022~  <NA>       Dirk Edde~ "'Asio' is~  <NA>  
+#>  5 AutoQua~ <NA>  Auto~ 1.0.1   2023~ "\n    c(p~ Adrian An~ "R package~ "bit64~
+#>  6 BH       Pack~ Boos~ 1.81.0~ 2023~  <NA>       Dirk Edde~ "Boost pro~  <NA>  
+#>  7 BayesFa~ Pack~ Comp~ 0.9.12~ 2022~ "c(person(~ Richard D~ "A suite o~ "pbapp~
+#>  8 Biobase  <NA>  Biob~ 2.62.0  <NA>  "c(\n    p~ Bioconduc~ "Functions~ "metho~
+#>  9 BiocBas~ <NA>  Gene~ 1.4.0   <NA>  "c(\n  per~ Marcel Ra~ "The packa~ "metho~
+#> 10 BiocFil~ <NA>  Mana~ 2.10.1  <NA>  "c(person(~ Lori Shep~ "This pack~ "metho~
+#> # i 878 more rows
+#> # i 119 more variables: Suggests <chr>, LinkingTo <chr>, Depends <chr>,
+#> #   License <chr>, LazyLoad <chr>, URL <chr>, Encoding <chr>,
+#> #   NeedsCompilation <chr>, VignetteBuilder <chr>, BugReports <chr>,
+#> #   Packaged <chr>, Author <chr>, Repository <chr>, `Date/Publication` <chr>,
+#> #   Built <chr>, Archs <chr>, RemoteType <chr>, RemotePkgRef <chr>,
+#> #   RemoteRef <chr>, RemoteRepos <chr>, RemotePkgPlatform <chr>, ...
 }\if{html}{\out{</div>}}
 }
 

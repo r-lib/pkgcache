@@ -140,7 +140,7 @@ will trigger an error.
 \examples{
 repo_get()
 \dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-repo_resolve("PPM@2020-01-21")
+repo_resolve("PPM@2021-01-21")
 #' repo_resolve("PPM@dplyr-1.0.0")
 #' repo_resolve("PPM@R-4.0.0")
 \dontshow{\}) # examplesIf}

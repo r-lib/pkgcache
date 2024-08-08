@@ -239,16 +239,10 @@ repo_sugar_ppm <- function(x, nm) {
   if (as.character(date) == "latest") {
     ver <- "latest"
   } else {
-    vers <- pkgenv$ppm_versions
-    ppm_dates <- names(vers)
-    if (date < ppm_dates[1]) {
-      stop("PPM snapshots go back to ", as.Date(ppm_dates[1]), " only")
+    if (date < "2017-10-10") {
+      stop("PPM snapshots go back to 2017-10-10 only")
     }
-    sel <- which(date <= ppm_dates)[1]
-    if (is.na(sel)) {
-      stop("Cannot find matching PPM snapshot for ", date)
-    }
-    ver <- vers[[sel]]
+    ver <- as.character(date)
   }
 
   # create repo URL

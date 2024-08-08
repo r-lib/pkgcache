@@ -41,11 +41,11 @@ test_that("repo_resolve", {
   )
   expect_equal(
     repo_resolve("PPM@2021-02-04"),
-    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
+    c(CRAN = "https://packagemanager.posit.co/cran/2021-02-04")
   )
   expect_equal(
     repo_resolve("PPM@2021-02-04T14:33:56"),
-    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
+    c(CRAN = "https://packagemanager.posit.co/cran/2021-02-04")
   )
 
   # RSPM
@@ -53,11 +53,11 @@ test_that("repo_resolve", {
   withr::local_envvar(PKGCACHE_PPM_BINARIES = "false")
   expect_equal(
     repo_resolve("RSPM@2021-02-04"),
-    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
+    c(CRAN = "https://packagemanager.posit.co/cran/2021-02-04")
   )
   expect_equal(
     repo_resolve("RSPM@2021-02-04T14:33:56"),
-    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
+    c(CRAN = "https://packagemanager.posit.co/cran/2021-02-04")
   )
 })
 
@@ -88,13 +88,13 @@ test_that("repo_resolve with PPM", {
   mockery::stub(repo_sugar_ppm, "getRversion", "4.2.2")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
-    c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/1014755")
+    c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/2021-01-26")
   )
 
   mockery::stub(repo_sugar_ppm, "getRversion", "1.0.0")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
-    c(CRAN = "https://packagemanager.posit.co/cran/1014755")
+    c(CRAN = "https://packagemanager.posit.co/cran/2021-01-26")
   )
 })
 
@@ -172,7 +172,7 @@ test_that("repo_sugar_ppm", {
   withr::local_options(repos = NULL)
   expect_equal(
     repo_sugar_ppm("2021-02-04", NULL),
-    c(CRAN = "https://packagemanager.posit.co/cran/1175516")
+    c(CRAN = "https://packagemanager.posit.co/cran/2021-02-04")
   )
 
   withr::local_envvar(
@@ -181,7 +181,7 @@ test_that("repo_sugar_ppm", {
   )
   expect_equal(
     repo_sugar_ppm("2021-02-04", NULL),
-    c(CRAN = "https://my.ppm/repo/1175516")
+    c(CRAN = "https://my.ppm/repo/2021-02-04")
   )
 
   called <- FALSE
@@ -191,13 +191,8 @@ test_that("repo_sugar_ppm", {
   })
 
   expect_error(
-    repo_sugar_ppm(as.Date(names(pkgenv$ppm_versions)[1]) - 1, NULL),
-    "PPM snapshots go back to"
-  )
-
-  expect_error(
-    repo_sugar_ppm(as.Date(last(names(pkgenv$ppm_versions))) + 1, NULL),
-    "Cannot find matching PPM snapshot for"
+    repo_sugar_ppm(as.Date("2017-10-01"), NULL),
+    "PPM snapshots go back to 2017-10-10"
   )
   expect_true(called)
 })

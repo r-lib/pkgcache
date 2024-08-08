@@ -147,6 +147,15 @@ test_that("somewhat weird packages files", {
   expect_equal(pkgs, pkgs2)
 })
 
+test_that("parse_packages empty file", {
+  # cf. https://github.com/r-lib/pkgcache/issues/107
+  tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
+  file.create(tmp)
+  expect_silent(parse_packages(tmp))
+  expect_snapshot(parse_packages(tmp))
+})
+
 test_that("parse_installed", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)

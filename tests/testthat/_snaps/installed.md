@@ -80,6 +80,13 @@
     Output
       [1] "A3"    "aaSEA"
 
+# parse_packages empty file
+
+    Code
+      parse_packages(tmp)
+    Output
+      # A data frame: 0 x 0
+
 # parse_installed
 
     Code

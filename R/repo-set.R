@@ -211,7 +211,7 @@ repo_sugar_ppm <- function(x, nm) {
 
   # if we may have binaries, then get the distro data as well
   synchronise(when_all(
-    async_get_ppm_versions(date = if (as.character(date) == "latest") NULL else date),
+    ppm_snapshots(),
     if (binaries) {
       async_get_ppm_status(
         distribution = current$distribution,

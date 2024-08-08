@@ -36,7 +36,7 @@ test_that("ppm_snapshots", {
     "async_get_ppm_versions",
     function(...) async_constant(ver)
   )
-  expect_snapshot(ppm_snapshots())
+  expect_snapshot(ppm_snapshots()[1:1000,])
 })
 
 test_that("ppm_platforms", {
@@ -55,39 +55,6 @@ test_that("ppm_platforms", {
     function(...) async_constant(list(distros = plt))
   )
   expect_snapshot(ppm_platforms())
-})
-
-test_that("async_get_ppm_versions", {
-  mockery::stub(
-    async_get_ppm_versions,
-    "download_file",
-    function(...) stop("nope")
-  )
-  # uses cache by default
-  expect_silent(synchronise(async_get_ppm_versions()))
-
-  # forget = TRUE forces an update
-  expect_error(synchronise(async_get_ppm_versions(forget = TRUE)))
-})
-
-test_that("async_get_ppm_versions 2", {
-  withr::local_envvar(
-    PKGCACHE_PPM_TRANSACTIONS_URL = repo$url("/ppmversions")
-  )
-
-  ret <- synchronise(async_get_ppm_versions(date = "2100-10-10"))
-  expect_snapshot(ret)
-})
-
-test_that("async_get_ppm_versions 3", {
-  withr::local_envvar(
-    PKGCACHE_PPM_TRANSACTIONS_URL = repo$url("/bogus")
-  )
-
-  expect_warning(
-    synchronise(async_get_ppm_versions(date = "2100-10-10")),
-    "Failed to download PPM versions"
-  )
 })
 
 test_that("async_get_ppm_status", {

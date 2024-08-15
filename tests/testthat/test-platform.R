@@ -1,17 +1,17 @@
 
 test_that("current_r_platform_data", {
-  mockery::stub(current_r_platform_data, "get_platform", "x86_64-apple-darwin17.0")
+  local_mocked_bindings(get_platform = function(...) "x86_64-apple-darwin17.0")
   expect_equal(current_r_platform_data()$platform, "x86_64-apple-darwin17.0")
 })
 
 test_that("default_platforms", {
-  mockery::stub(default_platforms, "current_r_platform", "macos")
+  local_mocked_bindings(current_r_platform = function() "macos")
   expect_equal(default_platforms(), c("macos", "source"))
 
-  mockery::stub(default_platforms, "current_r_platform", "windows")
+  local_mocked_bindings(current_r_platform = function() "windows")
   expect_equal(default_platforms(), c("windows", "source"))
 
-  mockery::stub(default_platforms, "current_r_platform", "source")
+  local_mocked_bindings(current_r_platform = function() "source")
   expect_equal(default_platforms(), "source")
 })
 
@@ -101,11 +101,11 @@ test_that("current_r_platform_data_linux", {
 })
 
 test_that("linux", {
-  mockery::stub(current_r_platform_data, "get_platform", "x86_64-pc-linux-gnu")
-  mockery::stub(
-    current_r_platform_data,
-    "current_r_platform_data_linux",
-    data.frame(stringsAsFactors = FALSE, x = "boo")
+  local_mocked_bindings(
+    get_platform = function(...) "x86_64-pc-linux-gnu",
+    current_r_platform_data_linux = function(...) {
+      data.frame(stringsAsFactors = FALSE, x = "boo")
+    }
   )
   expect_equal(current_r_platform_data()$platform, "boo")
 })

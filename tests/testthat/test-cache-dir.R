@@ -46,10 +46,8 @@ test_that("error in R CMD check", {
 
 test_that("fall back to R_USER_CACHE_DIR via R_user_dir()", {
   args <- NULL
-  mockery::stub(
-    get_user_cache_dir,
-    "R_user_dir",
-    function(...) {
+  local_mocked_bindings(
+    R_user_dir = function(...) {
       args <<- list(...)
       stop("wait")
     }
@@ -65,22 +63,23 @@ test_that("fall back to R_USER_CACHE_DIR via R_user_dir()", {
 })
 
 test_that("cleanup_old_cache_dir", {
-  tmp <- tempfile()
-  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
-  mockery::stub(cleanup_old_cache_dir, "user_cache_dir", function(...) tmp)
+  tmp <- withr::local_tempdir()
+  local_mocked_bindings(user_cache_dir = function(...) tmp)
   expect_message(cleanup_old_cache_dir(), "nothing to do")
 
   cachedir <- file.path(tmp, "R-pkg")
   mkdirp(cachedir)
-  mockery::stub(cleanup_old_cache_dir, "interactive", FALSE)
+  local_mocked_bindings(interactive = function() FALSE)
   expect_error(cleanup_old_cache_dir(), "non-interactive session")
 
-  mockery::stub(cleanup_old_cache_dir, "interactive", TRUE)
-  mockery::stub(cleanup_old_cache_dir, "readline", "n")
+  local_mocked_bindings(
+    interactive = function() TRUE,
+    readline = function(...) "n"
+  )
   expect_error(cleanup_old_cache_dir(), "Aborted")
 
   expect_true(file.exists(cachedir))
-  mockery::stub(cleanup_old_cache_dir, "readline", "y")
+  local_mocked_bindings(readline = function(...) "y")
   expect_message(cleanup_old_cache_dir(), "Cleaned up cache")
   expect_false(file.exists(cachedir))
 })

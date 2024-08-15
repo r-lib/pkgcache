@@ -31,11 +31,6 @@ test_that("ppm_snapshots", {
     `2023-02-27T00:00:00Z` = "17028146",
     `2023-02-28T00:00:00Z` = "17054670"
   )
-  mockery::stub(
-    ppm_snapshots,
-    "async_get_ppm_versions",
-    function(...) async_constant(ver)
-  )
   expect_snapshot(ppm_snapshots()[1:1000,])
 })
 
@@ -49,19 +44,15 @@ test_that("ppm_platforms", {
     binaries = c(TRUE, TRUE, TRUE)
   ), row.names = c(NA, 3L), class = "data.frame")
 
-  mockery::stub(
-    ppm_platforms,
-    "async_get_ppm_status",
-    function(...) async_constant(list(distros = plt))
+  local_mocked_bindings(
+    async_get_ppm_status = function(...) async_constant(list(distros = plt))
   )
   expect_snapshot(ppm_platforms())
 })
 
 test_that("async_get_ppm_status", {
-  mockery::stub(
-    async_get_ppm_status,
-    "download_file",
-    function(...) stop("nope")
+  local_mocked_bindings(
+    download_file = function(...) stop("nope")
   )
 
   # uses cache by default
@@ -143,81 +134,80 @@ test_that("ppm_has_binaries", {
 
 test_that("ppm_has_binaries 2", {
   withr::local_envvar(PKGCACHE_PPM_BINARIES = NA_character_)
-  mockery::stub(
-    ppm_has_binaries,
-    "current_r_platform_data",
-    structure(list(
-      cpu = "aarch64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "22.04",
-      platform = "aarch64-pc-linux-gnu-ubuntu-22.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
+  local_mocked_bindings(
+    current_r_platform_data = function(...) {
+      structure(list(
+        cpu = "aarch64", vendor = "pc", os = "linux-gnu",
+        distribution = "ubuntu", release = "22.04",
+        platform = "aarch64-pc-linux-gnu-ubuntu-22.04"
+      ), row.names = c(NA, -1L), class = "data.frame")
+    }
   )
   expect_false(ppm_has_binaries())
 
-  mockery::stub(
-    ppm_has_binaries,
-    "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "apple", os = "darwin20",
-      platform = "x86_64-apple-darwin20"
-    ), row.names = c(NA, -1L), class = "data.frame")
+  local_mocked_bindings(
+    current_r_platform_data = function(...) {
+      structure(list(
+        cpu = "x86_64", vendor = "apple", os = "darwin20",
+        platform = "x86_64-apple-darwin20"
+      ), row.names = c(NA, -1L), class = "data.frame")
+    }
   )
   expect_false(ppm_has_binaries())
 
   # Use cached values, no HTTP
   pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
   pkgenv$ppm_r_versions <- pkgenv$ppm_r_versions_cached
-  mockery::stub(ppm_has_binaries, "async_ppm_get_status", NULL)
 
   # Windows
-  mockery::stub(
-    ppm_has_binaries,
-    "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "w64", os = "mingw32",
-      platform = "x86_64-w64-mingw32"
-    ), row.names = c(NA, -1L), class = "data.frame")
+  local_mocked_bindings(
+    current_r_platform_data = function(...) {
+      structure(list(
+        cpu = "x86_64", vendor = "w64", os = "mingw32",
+        platform = "x86_64-w64-mingw32"
+      ), row.names = c(NA, -1L), class = "data.frame")
+    },
+    getRversion = function() "4.2.2"
   )
-  mockery::stub(ppm_has_binaries, "getRversion", "4.2.2")
   expect_true(ppm_has_binaries())
 
   # Not supported Linux
-  mockery::stub(
-    ppm_has_binaries,
-    "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "14.04",
-      platform = "x86_64-pc-linux-gnu-ubuntu-14.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
+  local_mocked_bindings(
+    current_r_platform_data = function(...) {
+      structure(list(
+        cpu = "x86_64", vendor = "pc", os = "linux-gnu",
+        distribution = "ubuntu", release = "14.04",
+        platform = "x86_64-pc-linux-gnu-ubuntu-14.04"
+      ), row.names = c(NA, -1L), class = "data.frame")
+    },
+    getRversion = function() "4.2.2"
   )
-  mockery::stub(ppm_has_binaries, "getRversion", "4.2.2")
   expect_false(ppm_has_binaries())
 
   # Supported Linux
-  mockery::stub(
-    ppm_has_binaries,
-    "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "22.04",
-      platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
+  local_mocked_bindings(
+    current_r_platform_data = function(...) {
+      structure(list(
+        cpu = "x86_64", vendor = "pc", os = "linux-gnu",
+        distribution = "ubuntu", release = "22.04",
+        platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
+      ), row.names = c(NA, -1L), class = "data.frame")
+    },
+    getRversion = function() "4.2.2"
   )
-  mockery::stub(ppm_has_binaries, "getRversion", "4.2.2")
   expect_true(ppm_has_binaries())
 
   # Not supported R version
-  mockery::stub(ppm_has_binaries, "getRversion", "1.0.0")
+  local_mocked_bindings(getRversion = function() "1.0.0")
   expect_false(ppm_has_binaries())
 })
 
 test_that("ppm_r_versions", {
   rver <- c("3.5", "3.6", "4.2")
-  mockery::stub(
-    ppm_r_versions,
-    "async_get_ppm_status",
-    function(...) async_constant(list(r_versions = rver))
+  local_mocked_bindings(
+    async_get_ppm_status = function(...) {
+      async_constant(list(r_versions = rver))
+    }
   )
   expect_snapshot(ppm_r_versions())
 })

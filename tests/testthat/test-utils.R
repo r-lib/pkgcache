@@ -128,7 +128,7 @@ test_that("zip_vecs", {
     zip_vecs(1:2, 3:4, 5:6),
     list(c(1L, 3L, 5L), c(2L, 4L, 6L))
   )
-  
+
   expect_equal(
     zip_vecs(1:2, 3L),
     list(c(1L, 3L), c(2L, 3L))
@@ -196,7 +196,7 @@ test_that("is_na_scalar", {
     NA
   )
   for (c in good) expect_true(is_na_scalar(c), info = c)
-  
+
   bad <- list(
     NULL,
     c(NA, NA),
@@ -309,16 +309,16 @@ test_that("get_os_type", {
 })
 
 test_that("encode_path", {
-  # To test this properly properlt, we would need to be able to create and
+  # To test this properly properly, we would need to be able to create and
   # delete files non-ascii names. But this is very buggy in base R,
   # so we do it with our own C code. In addition, we would also need to
   # craete file with names that are in the current locale, and are
   # supported by the file system. So it is a bit cumbersome to test this
   # currently....
-  mockery::stub(encode_path, "get_os_type", "windows")
+  local_mocked_bindings(get_os_type = function() "windows")
   expect_silent(encode_path("G\u00e1bor"))
 
-  mockery::stub(encode_path, "get_os_type", "unix")
+  local_mocked_bindings(get_os_type = function() "unix")
   expect_silent(encode_path("G\u00e1bor"))
 })
 

@@ -103,6 +103,8 @@ win_path_local <- function() {
 
 if (getRversion() < "4.0.0") {
   R_user_dir <- my_R_user_dir
+} else {
+  R_user_dir <- tools::R_user_dir
 }
 
 cleanup_old_cache_dir <- function(force = FALSE) {

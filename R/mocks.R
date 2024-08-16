@@ -1,11 +1,9 @@
 # Define these objects so they can be mocked in tests.
-interactive <- interactive
+interactive <- base::interactive
 readline <- function(prompt = "") {
-  readline
+  base::readline(prompt = prompt)
 }
-length <- length
 Sys.info <- function() {
-  Sys.info
+  base::Sys.info()
 }
-R_user_dir <- R_user_dir
-getRversion <- getRversion
+getRversion <- base::getRversion

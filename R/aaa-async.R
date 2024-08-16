@@ -310,7 +310,7 @@ async_env <- new.env(parent = emptyenv())
 async_env$loops <- list()
 
 get_default_event_loop <- function() {
-  num_loops <- length(async_env$loops)
+  num_loops <- length2(async_env$loops)
   if (num_loops == 0) {
     err <- make_error(
       "You can only call async functions from an async context",
@@ -320,6 +320,10 @@ get_default_event_loop <- function() {
   }
 
   async_env$loops[[num_loops]]
+}
+# Mockable version of length.
+length2 <- function(x) {
+  length(x)
 }
 
 push_event_loop <- function() {

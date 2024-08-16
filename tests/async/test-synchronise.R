@@ -1,7 +1,7 @@
 
 test_that("error if async function is called from sync context", {
 
-  local_mocked_bindings(length = function(...) 0)
+  local_mocked_bindings(length2 = function(x) 0)
   expect_error(
     get_default_event_loop(),
     class = "async_synchronization_barrier_error")

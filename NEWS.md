@@ -1,4 +1,4 @@
-# pkgcache (development version)
+# pkgcache 2.2.3
 
 * The metadata cache now does not use source URLs for packages in `Archive`
   on Posit Package Manager repositories. This URLs may serve a different

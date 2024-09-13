@@ -1,11 +1,10 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   internals: internals.html
   ppm: ppm.html
-last_built: 2024-04-04T09:46Z
+last_built: 2024-09-13T07:57Z
 urls:
   reference: https://r-lib.github.io/pkgcache/reference
   article: https://r-lib.github.io/pkgcache/articles
-

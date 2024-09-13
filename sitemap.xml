@@ -1,132 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/404.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/articles/internals.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/articles/ppm.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/bioc_version.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/call_with_callback.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__async_ensure_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__load_primary_pkgs.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__load_primary_rds.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__load_replica_rds.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__update_primary.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__update_replica_pkgs.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cmc__update_replica_rds.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cran_archive_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cran_archive_list.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/cranlike_metadata_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/current_r_platform.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/def__make_error_object.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/default_cran_mirror.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/get_cranlike_metadata_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/get_graphics_api_version.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/get_internals_id.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/meta_cache_deps.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/package_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/parse_installed.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/parse_packages.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/pkg_cache_api.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/pkgcache-package.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/ppm_has_binaries.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/ppm_platforms.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/ppm_r_versions.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/ppm_repo_url.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/ppm_snapshots.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/repo_get.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/pkgcache/reference/repo_status.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://r-lib.github.io/pkgcache/404.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/CONTRIBUTING.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/LICENSE-text.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/LICENSE.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/articles/index.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/articles/internals.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/articles/ppm.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/authors.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/index.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/news/index.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/bioc_version.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/call_with_callback.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__async_ensure_cache.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__load_primary_pkgs.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__load_primary_rds.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__load_replica_rds.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__update_primary.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__update_replica_pkgs.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cmc__update_replica_rds.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cran_archive_cache.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cran_archive_list.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/cranlike_metadata_cache.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/current_r_platform.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/def__make_error_object.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/default_cran_mirror.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/get_cranlike_metadata_cache.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/get_graphics_api_version.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/get_internals_id.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/index.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/meta_cache_deps.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/package_cache.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/parse_installed.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/parse_packages.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/pkg_cache_api.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/pkgcache-package.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/ppm_has_binaries.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/ppm_platforms.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/ppm_r_versions.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/ppm_repo_url.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/ppm_snapshots.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/repo_get.html</loc></url>
+<url><loc>https://r-lib.github.io/pkgcache/reference/repo_status.html</loc></url>
 </urlset>
+

@@ -412,10 +412,10 @@ test_that("update_async_timeouts", {
 })
 
 test_that("default_http_version", {
-  mockery::stub(default_http_version, "Sys.info", c(sysname = "Darwin"))
+  local_mocked_bindings(Sys.info = function() c(sysname = "Darwin"))
   expect_equal(default_http_version(), 2)
-  mockery::stub(default_http_version, "Sys.info", c(sysname = "Linux"))
+  local_mocked_bindings(Sys.info = function() c(sysname = "Linux"))
   expect_equal(default_http_version(), 2)
-  mockery::stub(default_http_version, "Sys.info", c(sysname = "Windows"))
+  local_mocked_bindings(Sys.info = function() c(sysname = "Windows"))
   expect_equal(default_http_version(), 0)
 })

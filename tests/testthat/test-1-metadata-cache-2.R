@@ -119,7 +119,7 @@ test_that("deps, extract_deps", {
   deps <- extract_deps(pkgs, "abc", TRUE, FALSE)
   expect_identical(deps$package, c("abc", "abc.data", "MASS", "nnet"))
   expect_identical(attr(deps, "base"), character())
-  expect_identical(attr(deps, "unknown"), c("quantreg", "locfit"))
+  expect_identical(attr(deps, "unknown"), c("locfit", "quantreg"))
   deps2 <- extract_deps(pkgs, "abc", TRUE, FALSE)
   expect_identical(deps, deps2)
 
@@ -128,7 +128,7 @@ test_that("deps, extract_deps", {
   expect_identical(
     sort(attr(deps, "base")),
     sort(c("grDevices", "graphics", "stats", "utils", "methods")))
-  expect_identical(attr(deps, "unknown"), c("quantreg", "locfit"))
+  expect_identical(attr(deps, "unknown"), c("locfit", "quantreg"))
   deps2 <- extract_deps(pkgs, "abc", TRUE, TRUE)
   expect_identical(deps, deps2)
 

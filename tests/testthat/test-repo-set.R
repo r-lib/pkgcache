@@ -71,27 +71,27 @@ test_that("repo_resolve with PPM", {
   )
   withr::local_options(repos = NULL)
 
-  mockery::stub(
-    repo_sugar_ppm,
-    "current_r_platform_data",
-    data.frame(
-      stringsAsFactors = FALSE,
-      cpu = "x86_64",
-      vendor = "pc",
-      os = "linux-gnu",
-      distribution = "ubuntu",
-      release = "22.04",
-      platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
-    )
+  local_mocked_bindings(
+    current_r_platform_data = function() {
+      data.frame(
+        stringsAsFactors = FALSE,
+        cpu = "x86_64",
+        vendor = "pc",
+        os = "linux-gnu",
+        distribution = "ubuntu",
+        release = "22.04",
+        platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
+      )
+    }
   )
 
-  mockery::stub(repo_sugar_ppm, "getRversion", "4.2.2")
+  local_mocked_bindings(getRversion = function() "4.2.2")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/2021-01-26")
   )
 
-  mockery::stub(repo_sugar_ppm, "getRversion", "1.0.0")
+  local_mocked_bindings(getRversion = function() "1.0.0")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/2021-01-26")
@@ -185,7 +185,7 @@ test_that("repo_sugar_ppm", {
   )
 
   called <- FALSE
-  mockery::stub(repo_sugar_ppm, "synchronise", function(...) {
+  local_mocked_bindings(synchronise = function(...) {
     called <<- TRUE
     NULL
   })
@@ -208,7 +208,7 @@ test_that("parse_spec", {
     as.Date("2019-11-19")
   )
 
-  mockery::stub(parse_spec, "parse_spec_pkg", TRUE)
+  local_mocked_bindings(parse_spec_pkg = function(...) TRUE)
   expect_equal(
     parse_spec("dplyr-1.0.0"),
     TRUE
@@ -217,7 +217,7 @@ test_that("parse_spec", {
 
 test_that("parse_spec_r", {
   called <- FALSE
-  mockery::stub(parse_spec_r, "get_r_versions", function(...) {
+  local_mocked_bindings(get_r_versions = function(...) {
     called <<- TRUE
     pkgenv$r_versions
   })

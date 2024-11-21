@@ -28,7 +28,6 @@ Suggests:
     debugme,
     desc,
     fs,
-    mockery,
     pillar,
     pingr,
     rprojroot,

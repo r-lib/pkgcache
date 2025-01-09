@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Gábor
 Csárdi</h4>
             
-            <h4 data-toc-skip class="date">2024-12-09</h4>
+            <h4 data-toc-skip class="date">2025-01-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/pkgcache/blob/main/vignettes/ppm.Rmd" class="external-link"><code>vignettes/ppm.Rmd</code></a></small>
       <div class="d-none name"><code>ppm.Rmd</code></div>
@@ -150,7 +150,7 @@ snapshot.</p>
 instance:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_platforms.html">ppm_platforms</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 30 × 6</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 31 × 6</span></span></span>
 <span><span class="co">##    name        os    binary_url  distribution release binaries</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> centos7     linux centos7     centos       7       TRUE    </span></span>
@@ -163,14 +163,14 @@ instance:</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> opensuse155 linux opensuse155 opensuse     15.5    TRUE    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> opensuse156 linux opensuse156 opensuse     15.6    TRUE    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> opensuse42  linux opensuse42  opensuse     42.3    TRUE    </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 20 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 21 more rows</span></span></span></code></pre>
 <p>The <code>binary_url</code> column contains the code name that you
 need to use in the repository URL.</p>
 <p><code><a href="../reference/ppm_snapshots.html">ppm_snapshots()</a></code> lists all PPM snapshot dates and
 ids:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pkgcache</span><span class="fu">::</span><span class="fu"><a href="../reference/ppm_snapshots.html">ppm_snapshots</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 2,617 × 2</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A data frame: 2,648 × 2</span></span></span>
 <span><span class="co">##    date       id        </span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 2017-10-10 2017-10-10</span></span>
@@ -183,7 +183,7 @@ ids:</p>
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2017-10-17 2017-10-17</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2017-10-18 2017-10-18</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> 2017-10-19 2017-10-19</span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 2,607 more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># ℹ 2,638 more rows</span></span></span></code></pre>
 <p>You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are
 equivalent:</p>

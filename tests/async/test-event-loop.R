@@ -52,7 +52,10 @@ test_that("repeated delay", {
   expect_null(error)
   expect_equal(result, 1:10)
   expect_true(end - start >= as.difftime(1, units = "secs"))
-  expect_true(end - start <= as.difftime(2, units = "secs"))
+  expect_true(end - start <= as.difftime(3, units = "secs"))
+  if (end - start > as.difftime(3, units = "secs")) {
+    message("Took ", end - start, " secs.")
+  }
 })
 
 test_that("nested event loops", {

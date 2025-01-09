@@ -65,6 +65,8 @@ jobs:
           if (.Platform$OS.type == "windows") cat("CURL_SSL_BACKEND=openssl\n", file = Sys.getenv("GITHUB_ENV"), append = TRUE)
         shell: Rscript {0}
 
+      - uses: r-hub/actions/debug-shell@v1
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true

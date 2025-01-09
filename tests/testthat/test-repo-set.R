@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("repo_get", {
   withr::local_options(repos = character())
   rps <- repo_get()

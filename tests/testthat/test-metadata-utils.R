@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("bioconductor$get_repos", {
   on.exit(bioconductor$.internal$clear_cache())
   setup_fake_apps()

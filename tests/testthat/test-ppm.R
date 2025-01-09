@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("ppm_repo_url", {
   withr::local_envvar(
     PKGCACHE_PPM_URL = NA_character_,

@@ -156,6 +156,27 @@ test_that("parse_packages empty file", {
   expect_snapshot(parse_packages(tmp))
 })
 
+# https://github.com/r-lib/pkgcache/issues/122
+test_that("parse_packages edge case (#122)", {
+  res <- list(Package = "foo")
+  do <- function(cnt) {
+    .Call(pkgcache_parse_packages_raw, charToRaw(cnt))
+  }
+  expect_equal(do("Package: foo"), res)
+  expect_equal(do("Package: foo\n"), res)
+  expect_equal(do("Package: foo\n\n"), res)
+  expect_equal(do("Package: foo\n\n\n"), res)
+  expect_equal(do("Package: foo\n\n\n\n"), res)
+  expect_equal(do("Package: foo\n\n\n\n\n"), res)
+  expect_equal(do("Package: foo\n\n\n\n\n\n"), res)
+
+  res2 <- list(Package = "foo\r")
+  expect_equal(do("Package: foo\r\n"), res2)
+  expect_equal(do("Package: foo\r\n\r\n"), res2)
+  expect_equal(do("Package: foo\r\n\r\n\r\n"), res2)
+  expect_equal(do("Package: foo\r\n\r\n\r\n\r\n"), res2)
+})
+
 test_that("parse_installed", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)

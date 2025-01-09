@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("current_r_platform_data", {
   mockery::stub(current_r_platform_data, "get_platform", "x86_64-apple-darwin17.0")
   expect_equal(current_r_platform_data()$platform, "x86_64-apple-darwin17.0")

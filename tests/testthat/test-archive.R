@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("API", {
   setup_fake_apps()
   withr::local_options(

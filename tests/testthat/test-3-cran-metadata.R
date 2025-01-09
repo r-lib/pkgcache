@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("what if cran.r-pkg.org is down?", {
   setup_fake_apps()
 

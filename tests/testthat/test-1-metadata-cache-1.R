@@ -1,4 +1,8 @@
 
+if (Sys.getenv("R_COVR") == "true") {
+  return()
+}
+
 test_that("get_cache_files", {
   dir.create(pri <- fs::path_norm(tempfile()))
   on.exit(unlink(pri, recursive = TRUE), add = TRUE)

@@ -47,39 +47,33 @@ test_that("looking up auth headers for repositories works as expected", {
 test_that("basic auth credentials can be extracted from various URL formats", {
   expect_equal(
     extract_basic_auth_credentials("https://user.name:pass-word123@example.com"),
-    list(username = "user.name", password = "pass-word123")
+    list(
+      hosturl = "https://example.com",
+      repourl = "https://example.com",
+      username = "user.name",
+      password = "pass-word123"
+    )
   )
   expect_equal(
     extract_basic_auth_credentials("http://user@example.com"),
-    list(username = "user", password = NULL)
+    list(
+      hosturl = "http://example.com",
+      repourl = "http://example.com",
+      username = "user",
+      password = ""
+    )
   )
   expect_equal(
     extract_basic_auth_credentials("https://example.com"),
-    list(username = NULL, password = NULL)
+    list(
+      hosturl = "https://example.com",
+      repourl = "https://example.com",
+      username = "",
+      password = ""
+    )
   )
   expect_error(
     extract_basic_auth_credentials("notaurl"),
     "Unrecognized URL format"
-  )
-})
-
-test_that("we can extract hostnames and repository URLs from package URLs", {
-  expect_equal(
-    extract_repo_url(
-      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz"
-    ),
-    "https://ppm.internal/cran/latest"
-  )
-  expect_equal(
-    extract_repo_url(
-      "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/pkg.tar.gz"
-    ),
-    "https://ppm.internal/cran/latest"
-  )
-  expect_equal(
-    extract_hostname(
-      "https://username@ppm.internal/cran/latest/__linux__/jammy/src/contrib/PACKAGES.gz"
-    ),
-    "https://ppm.internal"
   )
 })

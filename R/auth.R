@@ -5,7 +5,7 @@ repo_auth_headers <- function(url, allow_prompt = interactive()) {
     # Not a package or package index URL.
     return(NULL)
   }
-  if (!rlang::is_installed("keyring")) {
+  if (!requireNamespace("keyring", quietly = TRUE)) {
     return(NULL)
   }
   creds <- extract_basic_auth_credentials(url)

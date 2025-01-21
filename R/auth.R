@@ -51,7 +51,7 @@ repo_auth_headers <- function(url, allow_prompt = interactive()) {
   }
 
   auth <- paste(creds$username, pwd, sep = ":")
-  c("Authorization" = paste("Basic", openssl::base64_encode(auth)))
+  c("Authorization" = paste("Basic", processx::base64_encode(auth)))
 }
 
 extract_basic_auth_credentials <- function(url) {

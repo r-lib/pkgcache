@@ -31,7 +31,6 @@ Suggests:
     fs,
     keyring,
     mockery,
-    openssl,
     pillar,
     pingr,
     rprojroot,

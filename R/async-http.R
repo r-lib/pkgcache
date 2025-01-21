@@ -356,7 +356,7 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
 }
 
 download_files <- function(data, error_on_status = TRUE,
-                           options = list(), ...) {
+                           options = list(), headers = NULL, ...) {
 
   if (any(dup <- duplicated(data$path))) {
     stop("Duplicate target paths in download_files: ",
@@ -371,6 +371,7 @@ download_files <- function(data, error_on_status = TRUE,
     row <- data[idx, ]
     dx <- download_if_newer(
       row$url, row$path, row$etag,
+      headers = c(headers, row$headers[[1L]]),
       on_progress = prog_cb,
       error_on_status = error_on_status,
       options = options, ...
@@ -380,6 +381,7 @@ download_files <- function(data, error_on_status = TRUE,
       dx <- dx$catch(error = function(err) {
         download_if_newer(
           row$fallback_url, row$path, row$etag,
+          headers = c(headers, row$headers[[1L]]),
           error_on_status = error_on_status,
           options = options, ...
         )

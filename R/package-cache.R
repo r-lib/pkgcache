@@ -181,7 +181,7 @@ package_cache <- R6Class(
       self; private; url; path; list(...); .list; on_progress; http_headers
       target <- tempfile()
       download_file(url, target, on_progress = on_progress,
-                    headers = http_headers)$
+                    headers = c(http_headers, repo_auth_headers(url)))$
         then(function(res) {
           headers <- curl::parse_headers(res$response$headers, multiple = TRUE)
           self$add(target, path, url = url, etag = res$etag, ...,
@@ -209,7 +209,7 @@ package_cache <- R6Class(
         then(function(res) {
           if (! nrow(res)) {
             download_one_of(urls, target, on_progress = on_progress,
-                            headers = http_headers)$
+                            headers = c(http_headers, repo_auth_headers(urls[1])))$
               then(function(d) {
                 headers <- curl::parse_headers(d$response$headers, multiple = TRUE)
                 sha256 <- shasum256(target)
@@ -249,7 +249,7 @@ package_cache <- R6Class(
           if (! nrow(res)) {
             ## Not in the cache, download and add it
             download_one_of(urls, target, on_progress = on_progress,
-                            headers = http_headers)$
+                            headers = c(http_headers, repo_auth_headers(urls[1])))$
               then(function(d) {
                 headers <- curl::parse_headers(d$response$headers, multiple = TRUE)
                 sha256 <- shasum256(target)
@@ -263,7 +263,7 @@ package_cache <- R6Class(
             cat(res$etag, file = etag <- tempfile())
             download_one_of(urls, target, etag_file = etag,
                             on_progress = on_progress,
-                            headers = http_headers)$
+                            headers = c(http_headers, repo_auth_headers(urls[1])))$
               then(function(d) {
                 if (d$response$status_code != 304) {
                   ## No current, update it

@@ -14,12 +14,21 @@ repo_auth_headers <- function(
     return(NULL)
   }
 
+  # Try URLs in this order:
+  # - repo URL with username
+  # - repo URL w/o username
+  # - host URL with username
+  # - host URL w/o username
+  # We try each with and without a keyring username
+  urls <- unique(unlist(
+    creds[c("repouserurl", "repourl", "hostuserurl", "hosturl")]
+  ))
+
   if (use_cache) {
-    if (creds$repourl %in% names(pkgenv$credentials)) {
-      return(pkgenv$credentials[[creds$repourl]])
-    }
-    if (creds$hosturl %in% names(pkgenv$credentials)) {
-      return(pkgenv$credentials[[creds$hosturl]])
+    for (u in urls) {
+      if (u %in% names(pkgenv$credentials)) {
+        return(pkgenv$credentials[[u]])
+      }
     }
   }
 
@@ -35,14 +44,11 @@ repo_auth_headers <- function(
     keyring::backend_env$new()
   }
 
-  # First use the repo URL without the username as the keyring "service".
-  auth_domain <- creds$repourl
-  pwd <- try_catch_null(kb$get(creds$repourl, creds$username))
-
-  # Check whether we have one for the hostname as well.
-  if (is.null(pwd)) {
-    auth_domain <- creds$hosturl
-    pwd <- try_catch_null(kb$get(creds$hosturl, creds$username))
+  for (u in urls) {
+    auth_domain <- u
+    pwd <- try_catch_null(kb$get(u, creds$username)) %||%
+      try_catch_null(kb$get(u))
+    if (!is.null(pwd)) break
   }
 
   res <- if (!is.null(pwd)) {
@@ -92,13 +98,19 @@ extract_basic_auth_credentials <- function(url) {
   }
   # ideally we would work with the repo URL, and not the final download URL
   # until then, we strip the download URL to get the repo URL
-  repo <- paste0(psd$protocol, "://", psd$host, psd$path)
+  userat <- if (nchar(psd$username)) paste0(psd$username, "@") else ""
+  repo <- c(
+    paste0(psd$protocol, "://", psd$host, psd$path),
+    paste0(psd$protocol, "://", userat, psd$host, psd$path)
+  )
   repo <- sub("(/(src|bin)/)(.*)$", "", repo)
   # Lop off any /__linux__/ subdirectories, too.
   repo <- sub("^(.*)/__linux__/[^/]+(/.*)$", "\\1\\2", repo, perl = TRUE)
   list(
     hosturl = paste0(psd$protocol, "://", psd$host),
-    repourl = repo,
+    hostuserurl = paste0(psd$protocol, "://", userat, psd$host),
+    repourl = repo[1],
+    repouserurl = repo[2],
     username = psd$username,
     password = psd$password
   )

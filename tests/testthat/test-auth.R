@@ -26,7 +26,10 @@ test_that("looking up auth headers for repositories works as expected", {
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
         allow_prompt = FALSE
       ),
-      c("Authorization" = "Basic dXNlcm5hbWU6dG9rZW4=")
+      list(
+        headers = c("Authorization" = "Basic dXNlcm5hbWU6dG9rZW4="),
+        auth_domain = "https://ppm.internal/cran/latest"
+      )
     )
   )
 
@@ -39,7 +42,10 @@ test_that("looking up auth headers for repositories works as expected", {
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
         allow_prompt = FALSE
       ),
-      c("Authorization" = "Basic dXNlcm5hbWU6dG9rZW4=")
+      list(
+        headers = c("Authorization" = "Basic dXNlcm5hbWU6dG9rZW4="),
+        auth_domain = "https://ppm.internal"
+      )
     )
   )
 })

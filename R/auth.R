@@ -1,13 +1,6 @@
 # Returns a set of HTTP headers for the given URL if (1) it belongs to a
 # package repository; and (2) has credentials stored in the keyring.
 repo_auth_headers <- function(url, allow_prompt = interactive()) {
-  if (!grepl("/(src|bin)/", url)) {
-    # Not a package or package index URL.
-    return(NULL)
-  }
-  if (!requireNamespace("keyring", quietly = TRUE)) {
-    return(NULL)
-  }
   creds <- extract_basic_auth_credentials(url)
   if (length(creds$password) > 0 && nchar(creds$password) != 0) {
     # The URL already contains a password. This is pretty poor practice, maybe
@@ -19,37 +12,37 @@ repo_auth_headers <- function(url, allow_prompt = interactive()) {
     return(NULL)
   }
 
+  if (!requireNamespace("keyring", quietly = TRUE)) {
+    return(NULL)
+  }
+
   # In non-interactive contexts, force the use of the environment variable
   # backend so that we never hang but can still support CI setups.
-  backend <- keyring::backend_env
-  if (allow_prompt) {
-    backend <- keyring::default_backend()
+  kb <- if (allow_prompt) {
+    keyring::default_backend()
+  } else {
+    keyring::backend_env$new()
   }
-  kb <- backend$new()
 
-  # Use the repo URL without the username as the keyring "service".
-  pwd <- NULL
-  tryCatch(
-    {
-      pwd <- kb$get(creds$repourl, creds$username)
-    },
-    error = function(e) NULL
-  )
-
+  # First use the repo URL without the username as the keyring "service".
   # Check whether we have one for the hostname as well.
-  tryCatch(
-    {
-      pwd <- kb$get(creds$hosturl, creds$username)
-    },
-    error = function(e) NULL
-  )
+  auth_domain <- creds$repourl
+  pwd <- try_catch_null(kb$get(creds$repourl, creds$username))
+
+  if (is.null(pwd)) {
+    auth_domain <- creds$hosturl
+    pwd <- try_catch_null(kb$get(creds$hosturl, creds$username))
+  }
 
   if (is.null(pwd)) {
     return(NULL)
   }
 
   auth <- paste(creds$username, pwd, sep = ":")
-  c("Authorization" = paste("Basic", base64_encode(auth)))
+  list(
+    headers = c("Authorization" = paste("Basic", base64_encode(auth))),
+    auth_domain = auth_domain
+  )
 }
 
 base64_encode <- function(x) {

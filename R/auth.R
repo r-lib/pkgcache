@@ -3,6 +3,11 @@
 repo_auth_headers <- function(
   url, allow_prompt = interactive(), use_cache = TRUE, set_cache = TRUE) {
 
+  # shortcut to speed up the common case of no credentials
+  if (!grepl("@", url)) {
+    return(NULL)
+  }
+
   creds <- extract_basic_auth_credentials(url)
   if (length(creds$password) > 0 && nchar(creds$password) != 0) {
     # The URL already contains a password. This is pretty poor practice, maybe

@@ -752,7 +752,11 @@ cmc__update_replica_pkgs <- function(self, private) {
     mayfail = TRUE
   )
 
-  download_files(dls)$
+  key <- random_key()
+  async_constant()$
+    finally(function() clear_auth_cache(key))$
+    then(function() start_auth_cache(key))$
+    then(function() download_files(dls))$
     then(function(result) {
       missing_pkgs_note(pkgs, result)
       load_bioc_sysreqs()

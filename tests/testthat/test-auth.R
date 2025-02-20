@@ -2,19 +2,27 @@ test_that("looking up auth headers for repositories works as expected", {
   skip_if_not_installed("keyring")
 
   # No package directory in the URL.
-  expect_null(repo_auth_headers("https://username@ppm.internal/healthz"))
+  expect_null(repo_auth_headers(
+    "https://username@ppm.internal/healthz",
+    use_cache = FALSE,
+    set_cache = FALSE
+  ))
 
   # The URL already contains a password.
   expect_null(
     repo_auth_headers(
-      "https://username:password@ppm.internal/cran/latest/src/contrib/PACKAGES.gz"
+      "https://username:password@ppm.internal/cran/latest/src/contrib/PACKAGES.gz",
+      use_cache = FALSE,
+      set_cache = FALSE
     )
   )
 
   # No username in the repo URL.
   expect_null(
     repo_auth_headers(
-      "https://ppm.internal/cran/latest/src/contrib/PACKAGES.gz"
+      "https://ppm.internal/cran/latest/src/contrib/PACKAGES.gz",
+      use_cache = FALSE,
+      set_cache = FALSE
     )
   )
 

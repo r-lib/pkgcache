@@ -60,11 +60,20 @@ repo_auth_headers <- function(
   res
 }
 
-clear_auth_cache <- function() {
-  rm(
-    list = ls(pkgenv$credentials, all.names = TRUE),
-    envir = pkgenv$credentials
-  )
+clear_auth_cache <- function(key = NULL) {
+  if (is.null(key) ||
+    identical(pkgenv$credentials[[".exit_handler"]], key)) {
+    rm(
+      list = ls(pkgenv$credentials, all.names = TRUE),
+      envir = pkgenv$credentials
+    )
+  }
+}
+
+start_auth_cache <- function(key) {
+  if (! ".exit_handler" %in% names(pkgenv$credentials)) {
+    assign(".exit_handler", key, envir = pkgenv$credentials)
+  }
 }
 
 base64_encode <- function(x) {

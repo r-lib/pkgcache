@@ -24,7 +24,9 @@ test_that("looking up auth headers for repositories works as expected", {
     expect_equal(
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-        allow_prompt = FALSE
+        allow_prompt = FALSE,
+        use_cache = FALSE,
+        set_cache = FALSE
       ),
       list(
         headers = c("Authorization" = "Basic dXNlcm5hbWU6dG9rZW4="),
@@ -40,7 +42,9 @@ test_that("looking up auth headers for repositories works as expected", {
     expect_equal(
       repo_auth_headers(
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-        allow_prompt = FALSE
+        allow_prompt = FALSE,
+        use_cache = FALSE,
+        set_cache = FALSE
       ),
       list(
         headers = c("Authorization" = "Basic dXNlcm5hbWU6dG9rZW4="),

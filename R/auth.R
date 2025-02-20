@@ -1,6 +1,8 @@
 # Returns a set of HTTP headers for the given URL if (1) it belongs to a
 # package repository; and (2) has credentials stored in the keyring.
-repo_auth_headers <- function(url, allow_prompt = interactive()) {
+repo_auth_headers <- function(
+  url, allow_prompt = interactive(), use_cache = TRUE, set_cache = TRUE) {
+
   creds <- extract_basic_auth_credentials(url)
   if (length(creds$password) > 0 && nchar(creds$password) != 0) {
     # The URL already contains a password. This is pretty poor practice, maybe
@@ -10,6 +12,15 @@ repo_auth_headers <- function(url, allow_prompt = interactive()) {
   if (length(creds$username) == 0 || nchar(creds$username) == 0) {
     # No username to key the lookup in the keyring with.
     return(NULL)
+  }
+
+  if (use_cache) {
+    if (creds$repourl %in% names(pkgenv$credentials)) {
+      return(pkgenv$credentials[[creds$repourl]])
+    }
+    if (creds$hosturl %in% names(pkgenv$credentials)) {
+      return(pkgenv$credentials[[creds$hosturl]])
+    }
   }
 
   if (!requireNamespace("keyring", quietly = TRUE)) {
@@ -25,23 +36,34 @@ repo_auth_headers <- function(url, allow_prompt = interactive()) {
   }
 
   # First use the repo URL without the username as the keyring "service".
-  # Check whether we have one for the hostname as well.
   auth_domain <- creds$repourl
   pwd <- try_catch_null(kb$get(creds$repourl, creds$username))
 
+  # Check whether we have one for the hostname as well.
   if (is.null(pwd)) {
     auth_domain <- creds$hosturl
     pwd <- try_catch_null(kb$get(creds$hosturl, creds$username))
   }
 
-  if (is.null(pwd)) {
-    return(NULL)
+  res <- if (!is.null(pwd)) {
+    auth <- paste(creds$username, pwd, sep = ":")
+    list(
+      headers = c("Authorization" = paste("Basic", base64_encode(auth))),
+      auth_domain = auth_domain
+    )
   }
 
-  auth <- paste(creds$username, pwd, sep = ":")
-  list(
-    headers = c("Authorization" = paste("Basic", base64_encode(auth))),
-    auth_domain = auth_domain
+  if (set_cache) {
+    pkgenv$credentials[[auth_domain]] <- res
+  }
+
+  res
+}
+
+clear_auth_cache <- function() {
+  rm(
+    list = ls(pkgenv$credentials, all.names = TRUE),
+    envir = pkgenv$credentials
   )
 }
 

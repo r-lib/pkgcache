@@ -35,6 +35,17 @@ update_async_timeouts <- function(options) {
   )
 }
 
+add_auth_header <- function(headers, auth_domain) {
+  if (!is.null(auth_domain) &&
+      !is.na(auth_domain) &&
+      auth_domain %in% names(pkgenv$credentials) &&
+      ! "Authorization" %in% names(headers)) {
+    c(headers, c(Authorization = pkgenv$credentials[[auth_domain]]))
+  } else {
+    headers
+  }
+}
+
 #' Download a file, asynchronously
 #'
 #' This is the asynchronous version of [utils::download.file()].
@@ -58,6 +69,7 @@ update_async_timeouts <- function(options) {
 #'   than or equal to 400. If this is `FALSE`, then an error object is
 #'   returned for these status codes.
 #' @param options Curl options.
+#' @param auth_domain Authentication domain for `url`.
 #' @param ... Additional arguments are passed to [http_get()].
 #' @return A [deferred] object. It resolves to a list with entries:
 #'   * `url`: The URL in the request.
@@ -100,7 +112,8 @@ update_async_timeouts <- function(options) {
 download_file <- function(url, destfile, etag_file = NULL,
                           tmp_destfile = paste0(destfile, ".tmp"),
                           error_on_status = TRUE,
-                          options = list(), ...) {
+                          options = list(), headers = character(),
+                          auth_domain = NULL, ...) {
   "!DEBUG downloading `url`"
   assert_that(
     is_string(url),
@@ -115,6 +128,8 @@ download_file <- function(url, destfile, etag_file = NULL,
   destfile <- normalizePath(destfile, mustWork = FALSE)
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
   mkdirp(dirname(tmp_destfile))
+
+  headers <- add_auth_header(headers, auth_domain)
 
   http_get(url, file = tmp_destfile, options = options, ...)$
     then(http_stop_for_status)$
@@ -213,7 +228,8 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
                               headers = NULL,
                               tmp_destfile = paste0(destfile, ".tmp"),
                               error_on_status = TRUE,
-                              options = list(), ...) {
+                              options = list(),
+                              auth_domain = NULL, ...) {
   "!DEBUG download if newer `url`"
   headers <- headers %||% structure(character(), names = character())
   assert_that(
@@ -229,6 +245,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
   options <- update_async_timeouts(options)
   etag_old <- get_etag_header_from_file(destfile, etag_file)
   headers <- c(headers, etag_old)
+  headers <- add_auth_header(headers, auth_domain)
 
   destfile <- normalizePath(destfile, mustWork = FALSE)
   tmp_destfile <- normalizePath(tmp_destfile, mustWork = FALSE)
@@ -327,7 +344,7 @@ download_if_newer <- function(url, destfile, etag_file = NULL,
 
 download_one_of <- function(urls, destfile, etag_file = NULL,
                             headers = NULL, error_on_status = TRUE,
-                            options = list(), ...) {
+                            options = list(), auth_domains = NULL, ...) {
   "!DEBUG trying multiple URLs"
   headers <- headers %||% structure(character(), names = character())
   assert_that(
@@ -342,7 +359,10 @@ download_one_of <- function(urls, destfile, etag_file = NULL,
   options <- update_async_timeouts(options)
   tmps <- paste0(destfile, ".tmp.", seq_along(urls))
   dls <- mapply(
-    download_if_newer, url = urls, tmp_destfile = tmps,
+    download_if_newer,
+    url = urls,
+    tmp_destfile = tmps,
+    auth_domain = auth_domains %||% NA_character_,
     MoreArgs = list(destfile = destfile, etag_file = etag_file,
                     headers = headers, options = options, ...),
     SIMPLIFY = FALSE)
@@ -371,6 +391,7 @@ download_files <- function(data, error_on_status = TRUE,
     row <- data[idx, ]
     dx <- download_if_newer(
       row$url, row$path, row$etag,
+      auth_domain = row$auth_domain,
       headers = c(headers, row$headers[[1L]]),
       on_progress = prog_cb,
       error_on_status = error_on_status,
@@ -381,6 +402,7 @@ download_files <- function(data, error_on_status = TRUE,
       dx <- dx$catch(error = function(err) {
         download_if_newer(
           row$fallback_url, row$path, row$etag,
+          auth_domain = row$auth_domain,
           headers = c(headers, row$headers[[1L]]),
           error_on_status = error_on_status,
           options = options, ...

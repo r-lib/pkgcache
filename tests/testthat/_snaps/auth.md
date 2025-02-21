@@ -33,7 +33,19 @@
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-        allow_prompt = FALSE, use_cache = TRUE, set_cache = TRUE)
+        allow_prompt = FALSE)
+    Output
+      $headers
+                     Authorization 
+      "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domain
+      [1] "https://ppm.internal/cran/latest"
+      
+    Code
+      repo_auth_headers(
+        "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
+        allow_prompt = FALSE)
     Output
       $headers
                      Authorization 
@@ -58,7 +70,19 @@
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-        allow_prompt = FALSE, use_cache = TRUE, set_cache = TRUE)
+        allow_prompt = FALSE)
+    Output
+      $headers
+                     Authorization 
+      "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domain
+      [1] "https://ppm.internal"
+      
+    Code
+      repo_auth_headers(
+        "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
+        allow_prompt = FALSE)
     Output
       $headers
                      Authorization 
@@ -77,6 +101,43 @@
       $auth_domain
       [1] "https://ppm.internal"
       
+
+# http requests with auth
+
+    Code
+      readLines(tmp, warn = FALSE)
+    Output
+      [1] "{\"authenticated\":true,\"user\":\"username\"}"
+
+---
+
+    Code
+      readLines(tmp, warn = FALSE)
+    Output
+      [1] "{\"authenticated\":true,\"user\":\"username\"}"
+
+---
+
+    Code
+      readLines(tmp2, warn = FALSE)
+    Output
+      [1] "{\"authenticated\":true,\"user\":\"username\"}"
+
+---
+
+    Code
+      synchronise(download_file(url2, tmp3))
+    Condition
+      Error in `stop()`:
+      ! Unauthorized (HTTP 401).
+
+---
+
+    Code
+      synchronise(download_if_newer(url2, tmp3))
+    Condition
+      Error in `stop()`:
+      ! Unauthorized (HTTP 401).
 
 # basic auth credentials can be extracted from various URL formats
 

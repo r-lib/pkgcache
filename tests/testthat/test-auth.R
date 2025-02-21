@@ -1,6 +1,4 @@
 test_that("looking up auth headers for repositories works as expected", {
-  skip_if_not_installed("keyring")
-
   # No package directory in the URL.
   expect_null(repo_auth_headers(
     "https://username@ppm.internal/healthz",
@@ -21,6 +19,14 @@ test_that("looking up auth headers for repositories works as expected", {
   expect_null(
     repo_auth_headers(
       "https://ppm.internal/cran/latest/src/contrib/PACKAGES.gz",
+      use_cache = FALSE,
+      set_cache = FALSE
+    )
+  )
+
+  expect_null(
+    repo_auth_headers(
+      "https://@ppm.internal/cran/latest/src/contrib/PACKAGES.gz",
       use_cache = FALSE,
       set_cache = FALSE
     )
@@ -50,6 +56,19 @@ test_that("looking up auth headers for repositories works as expected", {
   )
 })
 
+test_that("without keyring", {
+  fake(repo_auth_headers, "requireNamespace", FALSE)
+  withr::local_envvar(c("https://ppm.internal/cran/latest:username" = "token"))
+  expect_null(
+    repo_auth_headers(
+      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
+      allow_prompt = FALSE,
+      use_cache = FALSE,
+      set_cache = FALSE
+    )
+  )
+})
+
 test_that("caching", {
   on.exit(clear_auth_cache(), add = TRUE)
 
@@ -58,9 +77,11 @@ test_that("caching", {
   expect_snapshot({
     repo_auth_headers(
       "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-      allow_prompt = FALSE,
-      use_cache = TRUE,
-      set_cache = TRUE
+      allow_prompt = FALSE
+    )
+    repo_auth_headers(
+      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
+      allow_prompt = FALSE
     )
     pkgenv$credentials[["https://ppm.internal/cran/latest"]]
   })
@@ -73,11 +94,47 @@ test_that("caching", {
   expect_snapshot({
     repo_auth_headers(
       "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-      allow_prompt = FALSE,
-      use_cache = TRUE,
-      set_cache = TRUE
+      allow_prompt = FALSE
+    )
+    repo_auth_headers(
+      "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
+      allow_prompt = FALSE
     )
     pkgenv$credentials[["https://ppm.internal"]]
+  })
+})
+
+test_that("http requests with auth", {
+  withr::local_options(keyring_backend = "env")
+
+  # with password
+  tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
+  url <- http$url("/basic-auth/username/token")
+  url2 <- set_user_in_url(url)
+  authurls <- extract_basic_auth_credentials(url2)
+  keyring::key_set_with_value(authurls$hosturl, "username", "token")
+  synchronise(download_file(url2, tmp))
+  expect_snapshot(readLines(tmp, warn = FALSE))
+
+  synchronise(download_if_newer(url2, tmp))
+  expect_snapshot(readLines(tmp, warn = FALSE))
+
+  tmp2 <- tempfile()
+  on.exit(unlink(tmp2), add = TRUE)
+  synchronise(download_if_newer(url2, tmp2))
+  expect_snapshot(readLines(tmp2, warn = FALSE))
+
+  # without password
+  clear_auth_cache()
+  keyring::key_delete(authurls$hosturl, "username")
+  tmp3 <- tempfile()
+  on.exit(unlink(tmp3), add = TRUE)
+  expect_snapshot(error = TRUE, {
+    synchronise(download_file(url2, tmp3))
+  })
+  expect_snapshot(error = TRUE, {
+    synchronise(download_if_newer(url2, tmp3))
   })
 })
 

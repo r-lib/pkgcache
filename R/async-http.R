@@ -122,7 +122,7 @@ download_file <- function(url, destfile, etag_file = NULL,
 
   headers <- add_auth_header(url, headers)
 
-  http_get(url, file = tmp_destfile, options = options, ...)$
+  http_get(url, file = tmp_destfile, options = options, headers = headers, ...)$
     then(http_stop_for_status)$
     then(function(resp) {
       "!DEBUG downloaded `url`"

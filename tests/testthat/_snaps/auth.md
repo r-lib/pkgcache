@@ -145,7 +145,7 @@
       cmc$update()
     Message
       
-      v Updated metadata database: <size> <unit> in <num> files.
+      v Updated metadata database: <size> <unit> in <num> file<s>.
       
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
       i Updating metadata database
@@ -172,7 +172,7 @@
       cmc$update()
     Message
       
-      v Updated metadata database: <size> B in 1 file.
+      v Updated metadata database: <size> <unit> in <num> file<s>.
       
       i Updating metadata database
       v Updating metadata database ... done

@@ -165,8 +165,8 @@ test_that("repo with basic auth", {
     cmc$update(),
     transform = function(x) {
       x <- sub(
-        "Updated metadata database: [0-9.]+ .*B in [0-9]+ files.",
-        "Updated metadata database: <size> <unit> in <num> files.",
+        "Updated metadata database: [0-9.]+ .*B in [0-9]+ files?.",
+        "Updated metadata database: <size> <unit> in <num> file<s>.",
         x
       )
       x
@@ -181,8 +181,8 @@ test_that("repo with basic auth", {
     transform = function(x) {
       x <- sub(" [a-f0-9]{10}~ ", " <md5sum> ", x)
       x <- sub(
-        "Updated metadata database: [0-9]+ ",
-        "Updated metadata database: <size> ",
+        "Updated metadata database: [0-9.]+ .*B in [0-9]+ files?.",
+        "Updated metadata database: <size> <unit> in <num> file<s>.",
         x
       )
       x

@@ -446,4 +446,23 @@ make_bioc_repo <- function(repo, packages, options) {
   invisible()
 }
 
+auth_proxy_app <- function(repo_url = NULL, username = "username",
+                           password = "token") {
+  repo_url <- repo_url %||% "https://cloud.r-project.org"
+  webfakes::new_app()$get(
+    webfakes::new_regexp(""), function(req, res) {
+      exp <- paste("Basic", base64_encode(paste0(username, ":", password)))
+      hdr <- req$get_header("Authorization") %||% ""
+      if (exp != hdr) {
+        res$
+          set_header("WWW-Authenticate", "Basic realm=\"CRAN with auth\"")$
+          send_status(401L)
+      } else {
+        res$
+          redirect(sprintf("%s/%s", repo_url, req$path))
+      }
+    }
+  )
+}
+
 # nocov end

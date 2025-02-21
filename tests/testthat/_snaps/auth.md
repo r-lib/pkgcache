@@ -139,6 +139,64 @@
       Error in `stop()`:
       ! Unauthorized (HTTP 401).
 
+# repo with basic auth
+
+    Code
+      cmc$update()
+    Message
+      [K
+      v Updated metadata database: <size> <unit> in <num> files.[K
+      
+      i source packages are missing from CRAN: Unauthorized (HTTP 401).
+      i Updating metadata database[K
+      v Updating metadata database ... done[K
+      
+    Output
+      $pkgs
+      # A data frame: 0 x 20
+      # i 20 variables: repodir <chr>, rversion <chr>, platform <chr>,
+      #   needscompilation <chr>, priority <chr>, package <chr>, version <chr>,
+      #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
+      #   mirror <chr>, sources <list>, filesize <lgl>, sha256 <chr>, sysreqs <lgl>,
+      #   built <chr>, published <dttm>, deps <list>
+      
+      $deps
+      # A data frame: 0 x 7
+      # i 7 variables: upstream <chr>, idx <int>, ref <chr>, type <chr>,
+      #   package <chr>, version <chr>, op <chr>
+      
+
+---
+
+    Code
+      cmc$update()
+    Message
+      [K
+      v Updated metadata database: <size> B in 1 file.[K
+      
+      i Updating metadata database[K
+      v Updating metadata database ... done[K
+      
+    Output
+      $pkgs
+      # A data frame: 3 x 22
+        package version md5sum      needscompilation depends repodir rversion platform
+        <chr>   <chr>   <chr>       <chr>            <chr>   <chr>   <chr>    <chr>   
+      1 pkg1    1.0.0   <md5sum> no               <NA>    src/co~ *        source  
+      2 pkg2    1.0.0   <md5sum> no               pkg1    src/co~ *        source  
+      3 pkg3    1.0.0   <md5sum> no               pkg2    src/co~ *        source  
+      # i 14 more variables: priority <chr>, ref <chr>, type <chr>, direct <lgl>,
+      #   status <chr>, target <chr>, mirror <chr>, sources <list>, filesize <int>,
+      #   sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>, deps <list>
+      
+      $deps
+      # A data frame: 2 x 7
+        upstream   idx ref   type    package op    version
+        <chr>    <int> <chr> <chr>   <chr>   <chr> <chr>  
+      1 pkg2         2 pkg1  depends pkg1    ""    ""     
+      2 pkg3         3 pkg2  depends pkg2    ""    ""     
+      
+
 # basic auth credentials can be extracted from various URL formats
 
     Code

@@ -138,6 +138,54 @@ test_that("http requests with auth", {
   })
 })
 
+test_that("repo with basic auth", {
+  withr::local_options(keyring_backend = "env")
+
+  fake_cran_auth <- webfakes::local_app_process(
+    cran_app(
+      cran_app_pkgs,
+      basic_auth = c(username = "username", password = "token")
+    ),
+    opts = webfakes::server_opts(num_threads = 5)
+  )
+  withr::local_options(
+    repos = c(CRAN = set_user_in_url(fake_cran_auth$url()))
+  )
+
+  # no password
+  authurls <- extract_basic_auth_credentials(getOption("repos")[["CRAN"]])
+  clear_auth_cache()
+  keyring::key_delete(authurls$hosturl, "username")
+  cmc <- cranlike_metadata_cache$new(platforms = "source", bioc = FALSE)
+  expect_snapshot(
+    cmc$update(),
+    transform = function(x) {
+      x <- sub(
+        "Updated metadata database: [0-9.]+ .*B in [0-9]+ files.",
+        "Updated metadata database: <size> <unit> in <num> files.",
+        x
+      )
+      x
+    }
+  )
+
+  # password
+  clear_auth_cache()
+  keyring::key_set_with_value(authurls$hosturl, "username", "token")
+  expect_snapshot(
+    cmc$update(),
+    transform = function(x) {
+      x <- sub(" [a-f0-9]{10}~ ", " <md5sum> ", x)
+      x <- sub(
+        "Updated metadata database: [0-9]+ ",
+        "Updated metadata database: <size> ",
+        x
+      )
+      x
+    }
+  )
+})
+
 test_that("basic auth credentials can be extracted from various URL formats", {
   expect_snapshot({
     extract_basic_auth_credentials("https://user.name:pass-word123@example.com")

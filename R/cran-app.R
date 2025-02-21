@@ -322,6 +322,28 @@ dcf <- function(txt) {
   as.data.frame(read.dcf(textConnection(txt)), stringsAsFactors = FALSE)
 }
 
+cran_app_pkgs <- dcf("
+  Package: pkg1
+  Version: 1.0.0
+
+  Package: pkg1
+  Version: 0.9.0
+
+  Package: pkg1
+  Version: 0.8.0
+
+  Package: pkg2
+  Version: 1.0.0
+  Depends: pkg1
+
+  Package: pkg3
+  Version: 1.0.0
+  Depends: pkg2
+
+  Package: pkg3
+  Version: 0.9.9
+")
+
 fix_port <- function(x) {
   gsub("http://127[.]0[.]0[.]1:[0-9]+", "http://127.0.0.1:<port>", x)
 }

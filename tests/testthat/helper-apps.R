@@ -41,28 +41,6 @@ repo_app <- function() {
 
 repo <- webfakes::local_app_process(repo_app())
 
-cran_app_pkgs <- dcf("
-  Package: pkg1
-  Version: 1.0.0
-
-  Package: pkg1
-  Version: 0.9.0
-
-  Package: pkg1
-  Version: 0.8.0
-
-  Package: pkg2
-  Version: 1.0.0
-  Depends: pkg1
-
-  Package: pkg3
-  Version: 1.0.0
-  Depends: pkg2
-
-  Package: pkg3
-  Version: 0.9.9
-")
-
 fake_cran <- webfakes::local_app_process(
   cran_app(cran_app_pkgs),
   opts = webfakes::server_opts(num_threads = 3)

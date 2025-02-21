@@ -28,6 +28,7 @@ Suggests:
     debugme,
     desc,
     fs,
+    keyring,
     mockery,
     pillar,
     pingr,

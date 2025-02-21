@@ -67,3 +67,14 @@ fix_mtime <- function(x) {
     x
   )
 }
+
+set_user_in_url <- function(url, username = "username", password = NULL) {
+  psd <- parse_url(url)
+  paste0(psd$protocol, "://",
+    username,
+    if (!is.null(password)) paste0(":", password),
+    "@",
+    psd$host,
+    psd$path
+  )
+}

@@ -144,12 +144,12 @@
     Code
       cmc$update()
     Message
-      [K
-      v Updated metadata database: <size> <unit> in <num> files.[K
+      
+      v Updated metadata database: <size> <unit> in <num> files.
       
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
-      i Updating metadata database[K
-      v Updating metadata database ... done[K
+      i Updating metadata database
+      v Updating metadata database ... done
       
     Output
       $pkgs
@@ -171,11 +171,11 @@
     Code
       cmc$update()
     Message
-      [K
-      v Updated metadata database: <size> B in 1 file.[K
       
-      i Updating metadata database[K
-      v Updating metadata database ... done[K
+      v Updated metadata database: <size> B in 1 file.
+      
+      i Updating metadata database
+      v Updating metadata database ... done
       
     Output
       $pkgs

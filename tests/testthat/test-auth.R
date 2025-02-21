@@ -139,7 +139,11 @@ test_that("http requests with auth", {
 })
 
 test_that("repo with basic auth", {
-  withr::local_options(keyring_backend = "env")
+  withr::local_options(
+    keyring_backend = "env",
+    cli.dynamic = FALSE,
+    cli.ansi = FALSE
+  )
 
   fake_cran_auth <- webfakes::local_app_process(
     cran_app(

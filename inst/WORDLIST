@@ -21,6 +21,7 @@ keyring
 libcurl
 lifecycle
 macos
+macOS
 pak
 pkgdepends
 repo

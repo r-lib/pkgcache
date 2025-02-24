@@ -133,7 +133,7 @@ test_that("http requests with auth", {
   on.exit(unlink(tmp3), add = TRUE)
   expect_snapshot(error = TRUE, {
     synchronise(download_file(url2, tmp3))
-  })
+  }, transform = fix_port_number)
   expect_snapshot(error = TRUE, {
     synchronise(download_if_newer(url2, tmp3))
   })
@@ -171,6 +171,7 @@ test_that("repo with basic auth", {
         x
       )
       x <- x[!grepl("^\\s*$", x)]
+      x <- fix_port_number(x)
       x
     }
   )

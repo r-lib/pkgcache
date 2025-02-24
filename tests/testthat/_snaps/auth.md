@@ -3,6 +3,9 @@
     Code
       repo_auth_headers("https://username@ppm.internal/healthz", use_cache = FALSE,
         set_cache = FALSE)
+    Message
+      ! Cannot find credentials for URL <https://username@ppm.internal/healthz>, credential lookup
+      failed. Keyring backend: "env".
     Output
       $found
       [1] FALSE
@@ -26,7 +29,7 @@
       NULL
       
       $error
-      [1] "keyring lookup failed"
+      [1] "keyring lookup failed (env backend)"
       
 
 ---
@@ -101,6 +104,9 @@
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
         allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
+    Message
+      ! Cannot find credentials for URL <https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz>, the keyring package
+      is not installed.
     Output
       $found
       [1] FALSE
@@ -334,6 +340,9 @@
 
     Code
       synchronise(download_file(url2, tmp3))
+    Message
+      ! Cannot find credentials for URL <http://username@127.0.0.1:3000/basic-auth/username/token>, credential lookup
+      failed. Keyring backend: "env".
     Condition
       Error in `stop()`:
       ! Unauthorized (HTTP 401).
@@ -351,6 +360,8 @@
     Code
       cmc$update()
     Message
+      ! Cannot find credentials for URL <http://username@127.0.0.1:3000//src/contrib/PACKAGES.gz>, credential lookup
+      failed. Keyring backend: "env".
       v Updated metadata database: <size> <unit> in <num> file<s>.
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
       i Updating metadata database

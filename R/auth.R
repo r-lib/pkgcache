@@ -91,6 +91,7 @@ repo_auth <- function(r_version = getRversion(), bioc = TRUE,
 #'   credential cache.
 #' @param set_cache Whether to save the retrieved credentials in the
 #'   credential cache.
+#' @param warn Whether to warn if the function cannot find credentials.
 #' @return
 #'   - `NULL` if the `url`` does not have authentication, e.g. if it does
 #'     not include a (non-empty) username. It is also `NULL` if the `url`
@@ -117,7 +118,8 @@ repo_auth_headers <- function(
   url,
   allow_prompt = interactive(),
   use_cache = TRUE,
-  set_cache = TRUE) {
+  set_cache = TRUE,
+  warn = TRUE) {
 
   # shortcut to speed up the common case of no credentials
   if (!grepl("@", url)) {
@@ -168,6 +170,12 @@ repo_auth_headers <- function(
   if (!requireNamespace("keyring", quietly = TRUE)) {
     res$found <- FALSE
     res$error <- "keyring not installed"
+    if (warn) {
+      cli::cli_alert_warning(
+        "Cannot find credentials for URL {.url {url}}, the keyring package
+         is not installed."
+      )
+    }
     return(res)
   }
 
@@ -193,7 +201,13 @@ repo_auth_headers <- function(
     res$source <- paste0("keyring:", kb$name)
     res$headers <- c("Authorization" = paste("Basic", base64_encode(auth)))
   } else {
-    res$error <- "keyring lookup failed"
+    if (warn) {
+      cli::cli_alert_warning(
+        "Cannot find credentials for URL {.url {url}}, credential lookup
+         failed. Keyring backend: {.val {kb$name}}."
+      )
+    }
+    res$error <- paste0("keyring lookup failed (", kb$name, " backend)")
   }
 
   if (set_cache) {

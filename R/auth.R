@@ -1,3 +1,83 @@
+#' Authenticated repositories
+#'
+#' pkgcache supports HTTP basic authentication when interacting with
+#' CRAN-like repositories. To user authentication, include a username
+#' in the repo URL:
+#' ```
+#' https://<username>@<repo-host>/<repo-path>
+#' ```
+#'
+#' pkgcache will look up password for this url and username from the
+#' system credential store using the keyring package. For the URL above
+#' it tries the following keyring keys, in this order:
+#' ```
+#' https://<username>@repo-host/<repo-path>
+#' https://repo-host/<repo-path>
+#' https://<username>@repo-host
+#' https://repo-host
+#' ```
+#'
+#' To add an authenticated repository use [repo_add()] with the `username`
+#' argument. Alternatively, you can set the `repos` option directly using
+#' [base::options()] and including the username in the repository URL.
+#'
+#' `repo_auth()` lists authentication information for all configured
+#' repositories.
+#'
+#' @inheritParams repo_get
+#' @param check_credentials Whether to check that credentials are
+#'   available for authenticated repositories.
+#' @return Data frame with columns:
+#'   - all columns from the output of [repo_get()],
+#'   - `auth_domains`: authentication domains. pkgcache tries to find a
+#'     credential for these domains, until the search is successful or all
+#'     domains fail.
+#'   - `auth_domain`: if the credential lookup is successful, then this is
+#'     the authentication domain that was used to get the credential.
+#'   - `auth_source`: where the credential was found. E.g.
+#'     `keyring:<backend>` means it was in the default macos keyring.
+#'   - `auth_error`: for failed credential searches this is the description
+#'     of why the search failed. E.g. maybe the keyring package is not
+#'     installed, or pkgcache found no credentials for any of the
+#'     authentication domains.
+#'
+#' @export
+
+repo_auth <- function(r_version = getRversion(), bioc = TRUE,
+                      cran_mirror = default_cran_mirror(),
+                      check_credentials = TRUE) {
+  res <- cmc__get_repos(
+    getOption("repos"),
+    bioc = bioc,
+    cran_mirror = cran_mirror,
+    as.character(r_version),
+    auth = FALSE
+  )
+
+  res$username <- rep(NA_character_, nrow(res))
+  res$has_password <- rep(NA, nrow(res))
+  res$auth_domains <- I(replicate(nrow(res), NULL))
+  res$auth_domain <- rep(NA_character_, nrow(res))
+  res$auth_source <- rep(NA_character_, nrow(res))
+  res$auth_error <- rep(NA_character_, nrow(res))
+  for (w in seq_len(nrow(res))) {
+    url <- res$url[w]
+    cred <- repo_auth_headers(url, warn = FALSE)
+    if (is.null(cred)) next
+    res$username[w] <- cred$username
+    res$has_password[w] <- cred$found
+    res$auth_domains[w] <- list(cred$auth_domains)
+    if (cred$found) {
+      res$auth_source[w] <- cred$source
+      res$auth_domain[w] <- cred$auth_domain
+    } else {
+      res$auth_error[w] <- cred$error
+    }
+  }
+
+  res
+}
+
 #' Retrieve credentials for CRAN-like repos
 #'
 #' Returns a set of HTTP headers for the given URL if (1) it belongs to a
@@ -21,7 +101,8 @@
 #'       otherwise.
 #'     * `headers`: character vector, the headers to add to the HTTP
 #'       request.
-#'     * `auth_domain`: the domain that was used to (try to) retrieve the
+#'     * `auth_domains`: all possible authentication domains.
+#'     * `auth_domain`: the domain that was used to retrieve the
 #'       credentials. This can be full path to the repository, with or
 #'       without the username, or the hostname URL, with or without the
 #'       username.
@@ -77,7 +158,8 @@ repo_auth_headers <- function(
   res <- list(
     found = FALSE,
     headers = character(),
-    auth_domain = urls[1],
+    auth_domains = urls,
+    auth_domain = NA_character_,
     username = parsed_url$username,
     source = NULL,
     error = NULL
@@ -165,4 +247,25 @@ parse_url_basic_auth <- function(url) {
     username = psd$username,
     password = psd$password
   )
+}
+
+add_auth_status <- function(repos) {
+  maybe_has_auth <- grepl("^https?://[^/]*@", repos$url)
+  if (!any(maybe_has_auth)) return(repos)
+
+  key <- random_key()
+  on.exit(clear_auth_cache(key), add = TRUE)
+  start_auth_cache(key)
+
+  repos$username <- rep(NA_character_, nrow(repos))
+  repos$has_password <- rep(NA, nrow(repos))
+  for (w in which(maybe_has_auth)) {
+    url <- repos$url[w]
+    creds <- repo_auth_headers(url, warn = FALSE)
+    if (is.null(creds)) next
+    repos$username[w] <- creds$username
+    repos$has_password[w] <- creds$found
+  }
+
+  repos
 }

@@ -10,8 +10,14 @@
       $headers
       character(0)
       
-      $auth_domain
+      $auth_domains
       [1] "https://username@ppm.internal/healthz"
+      [2] "https://ppm.internal/healthz"         
+      [3] "https://username@ppm.internal"        
+      [4] "https://ppm.internal"                 
+      
+      $auth_domain
+      [1] NA
       
       $username
       [1] "username"
@@ -36,6 +42,12 @@
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -63,6 +75,12 @@
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -90,8 +108,14 @@
       $headers
       character(0)
       
-      $auth_domain
+      $auth_domains
       [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
+      $auth_domain
+      [1] NA
       
       $username
       [1] "username"
@@ -117,6 +141,12 @@
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
@@ -141,6 +171,12 @@
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
@@ -162,6 +198,12 @@
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -190,6 +232,12 @@
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal"
       
@@ -214,6 +262,12 @@
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal"
       
@@ -235,6 +289,12 @@
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
       
       $auth_domain
       [1] "https://ppm.internal"

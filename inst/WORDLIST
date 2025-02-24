@@ -17,10 +17,12 @@ UUID
 archs
 async
 funder
+keyring
 libcurl
 lifecycle
-macOS
+macos
 pak
 pkgdepends
+repo
 tibble
 tibbles

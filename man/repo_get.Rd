@@ -13,9 +13,9 @@ repo_get(
   cran_mirror = default_cran_mirror()
 )
 
-repo_resolve(spec)
+repo_resolve(spec, username = NULL)
 
-repo_add(..., .list = NULL)
+repo_add(..., .list = NULL, username = NULL)
 
 with_repo(repos, expr)
 }
@@ -31,6 +31,9 @@ are not configured in the \code{repos} option.}
 
 \item{spec}{A single repository specification, a possibly named
 character scalar. See details below.}
+
+\item{username}{User name to set, for authenticated repositories, see
+\code{\link[=repo_auth]{repo_auth()}}.}
 
 \item{...}{Repository specifications. See details below.}
 
@@ -55,6 +58,10 @@ for others. This is also informational, and not used when retrieving
 the package metadata.
 \item \code{bioc_version}: Bioconductor version. Only set for Bioconductor
 repositories, and it is \code{NA} for others.
+\item \code{username}: user name, for authenticated repositories.
+\item \code{has_password}: whether \code{repo_get()} could find the password for
+this repository. Call \code{\link[=repo_auth]{repo_auth()}} for more information if the
+credential lookup failed.
 }
 
 \code{repo_resolve()} returns a named character vector, with the URL(s) of

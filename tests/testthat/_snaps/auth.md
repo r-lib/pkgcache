@@ -1,16 +1,68 @@
 # looking up auth headers for repositories works as expected
 
     Code
+      repo_auth_headers("https://username@ppm.internal/healthz", use_cache = FALSE,
+        set_cache = FALSE)
+    Message
+      ! Cannot find credentials for URL <https://username@ppm.internal/healthz>, credential lookup
+      failed. Keyring backend: "env".
+    Output
+      $found
+      [1] FALSE
+      
+      $headers
+      character(0)
+      
+      $auth_domains
+      [1] "https://username@ppm.internal/healthz"
+      [2] "https://ppm.internal/healthz"         
+      [3] "https://username@ppm.internal"        
+      [4] "https://ppm.internal"                 
+      
+      $auth_domain
+      [1] NA
+      
+      $username
+      [1] "username"
+      
+      $source
+      NULL
+      
+      $error
+      [1] "keyring lookup failed (env backend)"
+      
+
+---
+
+    Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
         allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env"
+      
+      $error
+      NULL
       
 
 ---
@@ -20,12 +72,65 @@
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
         allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env"
+      
+      $error
+      NULL
+      
+
+# without keyring
+
+    Code
+      repo_auth_headers(
+        "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
+        allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
+    Message
+      ! Cannot find credentials for URL <https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz>, the keyring package
+      is not installed.
+    Output
+      $found
+      [1] FALSE
+      
+      $headers
+      character(0)
+      
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
+      $auth_domain
+      [1] NA
+      
+      $username
+      [1] "username"
+      
+      $source
+      NULL
+      
+      $error
+      [1] "keyring not installed"
       
 
 # caching
@@ -35,34 +140,88 @@
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
         allow_prompt = FALSE)
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env"
+      
+      $error
+      NULL
       
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
         allow_prompt = FALSE)
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env:cached"
+      
+      $error
+      NULL
       
     Code
       pkgenv$credentials[["https://ppm.internal/cran/latest"]]
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env"
+      
+      $error
+      NULL
       
 
 ---
@@ -72,34 +231,88 @@
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
         allow_prompt = FALSE)
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env"
+      
+      $error
+      NULL
       
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
         allow_prompt = FALSE)
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env:cached"
+      
+      $error
+      NULL
       
     Code
       pkgenv$credentials[["https://ppm.internal"]]
     Output
+      $found
+      [1] TRUE
+      
       $headers
                      Authorization 
       "Basic dXNlcm5hbWU6dG9rZW4=" 
       
+      $auth_domains
+      [1] "https://username@ppm.internal/cran/latest"
+      [2] "https://ppm.internal/cran/latest"         
+      [3] "https://username@ppm.internal"            
+      [4] "https://ppm.internal"                     
+      
       $auth_domain
       [1] "https://ppm.internal"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] "keyring:env"
+      
+      $error
+      NULL
       
 
 # http requests with auth
@@ -127,6 +340,9 @@
 
     Code
       synchronise(download_file(url2, tmp3))
+    Message
+      ! Cannot find credentials for URL <http://username@127.0.0.1:3000/basic-auth/username/token>, credential lookup
+      failed. Keyring backend: "env".
     Condition
       Error in `stop()`:
       ! Unauthorized (HTTP 401).
@@ -144,13 +360,12 @@
     Code
       cmc$update()
     Message
-      
+      ! Cannot find credentials for URL <http://username@127.0.0.1:3000//src/contrib/PACKAGES.gz>, credential lookup
+      failed. Keyring backend: "env".
       v Updated metadata database: <size> <unit> in <num> file<s>.
-      
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
       i Updating metadata database
       v Updating metadata database ... done
-      
     Output
       $pkgs
       # A data frame: 0 x 20
@@ -159,24 +374,19 @@
       #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
       #   mirror <chr>, sources <list>, filesize <lgl>, sha256 <chr>, sysreqs <lgl>,
       #   built <chr>, published <dttm>, deps <list>
-      
       $deps
       # A data frame: 0 x 7
       # i 7 variables: upstream <chr>, idx <int>, ref <chr>, type <chr>,
       #   package <chr>, version <chr>, op <chr>
-      
 
 ---
 
     Code
       cmc$update()
     Message
-      
       v Updated metadata database: <size> <unit> in <num> file<s>.
-      
       i Updating metadata database
       v Updating metadata database ... done
-      
     Output
       $pkgs
       # A data frame: 3 x 22
@@ -188,19 +398,17 @@
       # i 14 more variables: priority <chr>, ref <chr>, type <chr>, direct <lgl>,
       #   status <chr>, target <chr>, mirror <chr>, sources <list>, filesize <int>,
       #   sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>, deps <list>
-      
       $deps
       # A data frame: 2 x 7
         upstream   idx ref   type    package op    version
         <chr>    <int> <chr> <chr>   <chr>   <chr> <chr>  
       1 pkg2         2 pkg1  depends pkg1    ""    ""     
       2 pkg3         3 pkg2  depends pkg2    ""    ""     
-      
 
 # basic auth credentials can be extracted from various URL formats
 
     Code
-      extract_basic_auth_credentials("https://user.name:pass-word123@example.com")
+      parse_url_basic_auth("https://user.name:pass-word123@example.com")
     Output
       $hosturl
       [1] "https://example.com"
@@ -221,7 +429,7 @@
       [1] "pass-word123"
       
     Code
-      extract_basic_auth_credentials("http://user@example.com")
+      parse_url_basic_auth("http://user@example.com")
     Output
       $hosturl
       [1] "http://example.com"
@@ -242,7 +450,7 @@
       [1] ""
       
     Code
-      extract_basic_auth_credentials("https://example.com")
+      parse_url_basic_auth("https://example.com")
     Output
       $hosturl
       [1] "https://example.com"
@@ -262,12 +470,4 @@
       $password
       [1] ""
       
-
----
-
-    Code
-      extract_basic_auth_credentials("notaurl")
-    Condition
-      Error:
-      ! Unrecognized URL format: `notaurl`.
 

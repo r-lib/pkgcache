@@ -11,9 +11,6 @@
 #'   credential cache.
 #' @param set_cache Whether to save the retrieved credentials in the
 #'   credential cache.
-#' @param parsed_url A shortcut for an already parsed URL. If not `NULL`
-#'   then it should be the output of a `parse_url_basic_auth()` call.
-#'   `url` is ignored in this case.
 #' @return
 #'   - `NULL` if the `url`` does not have authentication, e.g. if it does
 #'     not include a (non-empty) username. It is also `NULL` if the `url`
@@ -28,6 +25,7 @@
 #'       credentials. This can be full path to the repository, with or
 #'       without the username, or the hostname URL, with or without the
 #'       username.
+#'     * `username`: user name, from the URL.
 #'     * `source`: if the function found the credentials, then it is a
 #'       short description about where the credencials were found.
 #'     * `error`: if the function did not find the credentials, then it is
@@ -38,15 +36,14 @@ repo_auth_headers <- function(
   url,
   allow_prompt = interactive(),
   use_cache = TRUE,
-  set_cache = TRUE,
-  parsed_url = NULL) {
+  set_cache = TRUE) {
 
   # shortcut to speed up the common case of no credentials
   if (!grepl("@", url)) {
     return(NULL)
   }
 
-  parsed_url <- parsed_url %||% parse_url_basic_auth(url)
+  parsed_url <- parse_url_basic_auth(url)
   if (length(parsed_url$password) > 0 && nchar(parsed_url$password) != 0) {
     # The URL already contains a password. This is pretty poor practice, maybe
     # we should issue a warning pointing users to the keyring package instead.
@@ -81,7 +78,7 @@ repo_auth_headers <- function(
     found = FALSE,
     headers = character(),
     auth_domain = urls[1],
-    user = parsed_url$username,
+    username = parsed_url$username,
     source = NULL,
     error = NULL
   )

@@ -13,7 +13,7 @@
       $auth_domain
       [1] "https://username@ppm.internal/healthz"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -40,7 +40,7 @@
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -67,7 +67,7 @@
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -93,7 +93,7 @@
       $auth_domain
       [1] "https://username@ppm.internal/cran/latest"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -120,7 +120,7 @@
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -144,7 +144,7 @@
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -166,7 +166,7 @@
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -193,7 +193,7 @@
       $auth_domain
       [1] "https://ppm.internal"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -217,7 +217,7 @@
       $auth_domain
       [1] "https://ppm.internal"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -239,7 +239,7 @@
       $auth_domain
       [1] "https://ppm.internal"
       
-      $user
+      $username
       [1] "username"
       
       $source
@@ -291,13 +291,10 @@
     Code
       cmc$update()
     Message
-      
       v Updated metadata database: <size> <unit> in <num> file<s>.
-      
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
       i Updating metadata database
       v Updating metadata database ... done
-      
     Output
       $pkgs
       # A data frame: 0 x 20
@@ -306,24 +303,19 @@
       #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
       #   mirror <chr>, sources <list>, filesize <lgl>, sha256 <chr>, sysreqs <lgl>,
       #   built <chr>, published <dttm>, deps <list>
-      
       $deps
       # A data frame: 0 x 7
       # i 7 variables: upstream <chr>, idx <int>, ref <chr>, type <chr>,
       #   package <chr>, version <chr>, op <chr>
-      
 
 ---
 
     Code
       cmc$update()
     Message
-      
       v Updated metadata database: <size> <unit> in <num> file<s>.
-      
       i Updating metadata database
       v Updating metadata database ... done
-      
     Output
       $pkgs
       # A data frame: 3 x 22
@@ -335,14 +327,12 @@
       # i 14 more variables: priority <chr>, ref <chr>, type <chr>, direct <lgl>,
       #   status <chr>, target <chr>, mirror <chr>, sources <list>, filesize <int>,
       #   sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>, deps <list>
-      
       $deps
       # A data frame: 2 x 7
         upstream   idx ref   type    package op    version
         <chr>    <int> <chr> <chr>   <chr>   <chr> <chr>  
       1 pkg2         2 pkg1  depends pkg1    ""    ""     
       2 pkg3         3 pkg2  depends pkg2    ""    ""     
-      
 
 # basic auth credentials can be extracted from various URL formats
 

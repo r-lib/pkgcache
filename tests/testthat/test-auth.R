@@ -170,6 +170,7 @@ test_that("repo with basic auth", {
         "Updated metadata database: <size> <unit> in <num> file<s>.",
         x
       )
+      x <- x[!grepl("^\\s*$", x)]
       x
     }
   )
@@ -186,6 +187,7 @@ test_that("repo with basic auth", {
         "Updated metadata database: <size> <unit> in <num> file<s>.",
         x
       )
+      x <- x[!grepl("^\\s*$", x)]
       x
     }
   )

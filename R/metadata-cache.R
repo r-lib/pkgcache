@@ -742,12 +742,6 @@ cmc__update_replica_pkgs <- function(self, private) {
     fallback_url = c(pkgs$fallback_url, rep(NA_character_, sum(meta) + sum(bin)), NA_character_),
     path = c(pkgs$path, pkgs$meta_path[meta], pkgs$bin_path[bin], bsq_path),
     etag = c(pkgs$etag, pkgs$meta_etag[meta], pkgs$bin_etag[bin], bsq_etag),
-    headers = c(
-      lapply(pkgs$url, function(x) repo_auth_headers(x)$headers),
-      vector("list", length = sum(meta)),
-      lapply(pkgs$bin_url[bin], function(x) repo_auth_headers(x)$headers),
-      vector("list", length = 1)
-    ),
     timeout = c(rep(c(200, 100), c(nrow(pkgs), sum(meta) + sum(bin))), 5),
     mayfail = TRUE
   )

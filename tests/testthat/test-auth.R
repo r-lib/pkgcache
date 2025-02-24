@@ -1,6 +1,7 @@
 test_that("looking up auth headers for repositories works as expected", {
+  withr::local_options(keyring_backend = "env")
   # No package directory in the URL.
-  expect_null(repo_auth_headers(
+  expect_snapshot(repo_auth_headers(
     "https://username@ppm.internal/healthz",
     use_cache = FALSE,
     set_cache = FALSE
@@ -59,7 +60,7 @@ test_that("looking up auth headers for repositories works as expected", {
 test_that("without keyring", {
   fake(repo_auth_headers, "requireNamespace", FALSE)
   withr::local_envvar(c("https://ppm.internal/cran/latest:username" = "token"))
-  expect_null(
+  expect_snapshot(
     repo_auth_headers(
       "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
       allow_prompt = FALSE,
@@ -112,7 +113,7 @@ test_that("http requests with auth", {
   on.exit(unlink(tmp), add = TRUE)
   url <- http$url("/basic-auth/username/token")
   url2 <- set_user_in_url(url)
-  authurls <- extract_basic_auth_credentials(url2)
+  authurls <- parse_url_basic_auth(url2)
   keyring::key_set_with_value(authurls$hosturl, "username", "token")
   synchronise(download_file(url2, tmp))
   expect_snapshot(readLines(tmp, warn = FALSE))
@@ -157,7 +158,7 @@ test_that("repo with basic auth", {
   )
 
   # no password
-  authurls <- extract_basic_auth_credentials(getOption("repos")[["CRAN"]])
+  authurls <- parse_url_basic_auth(getOption("repos")[["CRAN"]])
   clear_auth_cache()
   keyring::key_delete(authurls$hosturl, "username")
   cmc <- cranlike_metadata_cache$new(platforms = "source", bioc = FALSE)
@@ -192,11 +193,9 @@ test_that("repo with basic auth", {
 
 test_that("basic auth credentials can be extracted from various URL formats", {
   expect_snapshot({
-    extract_basic_auth_credentials("https://user.name:pass-word123@example.com")
-    extract_basic_auth_credentials("http://user@example.com")
-    extract_basic_auth_credentials("https://example.com")
+    parse_url_basic_auth("https://user.name:pass-word123@example.com")
+    parse_url_basic_auth("http://user@example.com")
+    parse_url_basic_auth("https://example.com")
   })
-  expect_snapshot(error = TRUE, {
-    extract_basic_auth_credentials("notaurl")
-  })
+  expect_null(parse_url_basic_auth("notaurl"))
 })

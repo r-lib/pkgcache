@@ -202,3 +202,128 @@ test_that("basic auth credentials can be extracted from various URL formats", {
   })
   expect_null(parse_url_basic_auth("notaurl"))
 })
+
+test_that("repo_auth_netrc", {
+  tmp <- tempfile()
+  withr::local_envvar(PKG_NETRC_PATH = tmp)
+  on.exit(unlink(tmp), add = TRUE)
+  # for predictable transform in snapshots
+  withr::local_options(cli.width = 500)
+
+  netrc <- "machine myhost login myuser password mysecret"
+  writeLines(netrc, tmp)
+  expect_snapshot({
+    repo_auth_netrc("myhost", "myuser")
+    repo_auth_netrc("myhost", "bad")
+    repo_auth_netrc("bad", "myuser")
+  })
+
+  netrc <- c("machine myhost", "login myuser", "password mysecret")
+  writeLines(netrc, tmp)
+  expect_snapshot(repo_auth_netrc("myhost", "myuser"))
+
+  netrc <- c("machine myhost", "login myuser", "", "", "password mysecret")
+  writeLines(netrc, tmp)
+  expect_snapshot(repo_auth_netrc("myhost", "myuser"))
+
+  netrc <- c(
+    "machine another", "login", "another",
+    "machine myhost", "login myuser", "", "", "password mysecret"
+  )
+  writeLines(netrc, tmp)
+  expect_snapshot(repo_auth_netrc("myhost", "myuser"))
+
+  netrc <- c(
+    "machine another", "login", "another",
+    "macdef", "foo", "bar", "foobar", "",
+    "machine myhost", "login myuser", "", "", "password mysecret"
+  )
+  writeLines(netrc, tmp)
+  expect_snapshot(repo_auth_netrc("myhost", "myuser"))
+
+  netrc <- "default login myuser password mysecret"
+  writeLines(netrc, tmp)
+  expect_snapshot(repo_auth_netrc("myhost", "myuser"))
+
+  netrc <- c("machine")
+  writeLines(netrc, tmp)
+  expect_snapshot(
+    repo_auth_netrc("myhost", "myuser"),
+    transform = fix_temp_path
+  )
+
+  netrc <- c("machine myhost login")
+  writeLines(netrc, tmp)
+  expect_snapshot(
+    repo_auth_netrc("myhost", "myuser"),
+    transform = fix_temp_path
+  )
+
+  netrc <- c("machine myhost login myuser password")
+  writeLines(netrc, tmp)
+  expect_snapshot(
+    repo_auth_netrc("myhost", "myuser"),
+    transform = fix_temp_path
+  )
+
+  netrc <- c("login myuser password mysecret")
+  writeLines(netrc, tmp)
+  expect_snapshot(
+    repo_auth_netrc("myhost", "myuser"),
+    transform = fix_temp_path
+  )
+
+  netrc <- c("machine myhost password mysecret")
+  writeLines(netrc, tmp)
+  expect_snapshot(
+    repo_auth_netrc("myhost", "myuser"),
+    transform = fix_temp_path
+  )
+
+  netrc <- c("machine myhost badtoken")
+  writeLines(netrc, tmp)
+  expect_snapshot(
+    repo_auth_netrc("myhost", "myuser"),
+    transform = fix_temp_path
+  )
+})
+
+test_that("repo_auth_headers w/ netrc", {
+  netrc <- tempfile()
+  withr::local_envvar(PKG_NETRC_PATH = netrc)
+  on.exit(unlink(netrc), add = TRUE)
+
+  writeLines(c(
+    "machine foo.bar.com",
+    "login username",
+    "password token"
+  ), netrc)
+
+  expect_snapshot({
+    repo_auth_headers("http://username@foo.bar.com/path")
+  })
+})
+
+test_that("http requests with auth from netrc", {
+  netrc <- tempfile()
+  withr::local_envvar(PKG_NETRC_PATH = netrc)
+  on.exit(unlink(netrc), add = TRUE)
+
+  # with password
+  tmp <- tempfile()
+  on.exit(unlink(tmp), add = TRUE)
+  url <- http$url("/basic-auth/username/token")
+  url2 <- set_user_in_url(url)
+  authurls <- parse_url_basic_auth(url2)
+  writeLines(c(
+    paste0("machine ", authurls$host),
+    "login username",
+    "password token"
+  ), netrc)
+
+  synchronise(download_file(url2, tmp))
+  expect_snapshot(readLines(tmp, warn = FALSE))
+
+  synchronise(download_if_newer(url2, tmp))
+  expect_snapshot(readLines(tmp, warn = FALSE))
+})

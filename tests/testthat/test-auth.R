@@ -38,7 +38,6 @@ test_that("looking up auth headers for repositories works as expected", {
   expect_snapshot(
     repo_auth_headers(
       "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-      allow_prompt = FALSE,
       use_cache = FALSE,
       set_cache = FALSE
     )
@@ -50,7 +49,6 @@ test_that("looking up auth headers for repositories works as expected", {
   expect_snapshot(
     repo_auth_headers(
       "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-      allow_prompt = FALSE,
       use_cache = FALSE,
       set_cache = FALSE
     )
@@ -63,7 +61,6 @@ test_that("without keyring", {
   expect_snapshot(
     repo_auth_headers(
       "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-      allow_prompt = FALSE,
       use_cache = FALSE,
       set_cache = FALSE
     )
@@ -72,17 +69,16 @@ test_that("without keyring", {
 
 test_that("caching", {
   on.exit(clear_auth_cache(), add = TRUE)
+  withr::local_options(keyring_backend = "env")
 
   clear_auth_cache()
   withr::local_envvar(c("https://ppm.internal/cran/latest:username" = "token"))
   expect_snapshot({
     repo_auth_headers(
-      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-      allow_prompt = FALSE
+      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz"
     )
     repo_auth_headers(
-      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-      allow_prompt = FALSE
+      "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz"
     )
     pkgenv$credentials[["https://ppm.internal/cran/latest"]]
   })
@@ -94,12 +90,10 @@ test_that("caching", {
   ))
   expect_snapshot({
     repo_auth_headers(
-      "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-      allow_prompt = FALSE
+      "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz"
     )
     repo_auth_headers(
-      "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-      allow_prompt = FALSE
+      "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz"
     )
     pkgenv$credentials[["https://ppm.internal"]]
   })

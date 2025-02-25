@@ -37,7 +37,7 @@
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-        allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
+        use_cache = FALSE, set_cache = FALSE)
     Output
       $found
       [1] TRUE
@@ -70,7 +70,7 @@
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-        allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
+        use_cache = FALSE, set_cache = FALSE)
     Output
       $found
       [1] TRUE
@@ -103,7 +103,7 @@
     Code
       repo_auth_headers(
         "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-        allow_prompt = FALSE, use_cache = FALSE, set_cache = FALSE)
+        use_cache = FALSE, set_cache = FALSE)
     Message
       ! Cannot find credentials for URL <https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz>, the keyring package
       is not installed.
@@ -137,8 +137,7 @@
 
     Code
       repo_auth_headers(
-        "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-        allow_prompt = FALSE)
+        "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz")
     Output
       $found
       [1] TRUE
@@ -167,8 +166,7 @@
       
     Code
       repo_auth_headers(
-        "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz",
-        allow_prompt = FALSE)
+        "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz")
     Output
       $found
       [1] TRUE
@@ -228,8 +226,7 @@
 
     Code
       repo_auth_headers(
-        "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-        allow_prompt = FALSE)
+        "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz")
     Output
       $found
       [1] TRUE
@@ -258,8 +255,7 @@
       
     Code
       repo_auth_headers(
-        "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz",
-        allow_prompt = FALSE)
+        "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz")
     Output
       $found
       [1] TRUE

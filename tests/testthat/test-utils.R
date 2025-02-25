@@ -315,10 +315,10 @@ test_that("encode_path", {
   # craete file with names that are in the current locale, and are
   # supported by the file system. So it is a bit cumbersome to test this
   # currently....
-  mockery::stub(encode_path, "get_os_type", "windows")
+  fake(encode_path, "get_os_type", "windows")
   expect_silent(encode_path("G\u00e1bor"))
 
-  mockery::stub(encode_path, "get_os_type", "unix")
+  fake(encode_path, "get_os_type", "unix")
   expect_silent(encode_path("G\u00e1bor"))
 })
 

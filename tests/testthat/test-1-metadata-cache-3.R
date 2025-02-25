@@ -65,7 +65,7 @@ test_that("cmc__get_repos", {
 })
 
 test_that("cleanup", {
-  mockery::stub(cmc_cleanup, "interactive", FALSE)
+  fake(cmc_cleanup, "interactive", FALSE)
   expect_error(cmc_cleanup(NULL, NULL, FALSE), "Not cleaning up cache")
 })
 
@@ -77,8 +77,8 @@ test_that("cleanup", {
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
 
-  mockery::stub(cmc_cleanup, "interactive", TRUE)
-  mockery::stub(cmc_cleanup, "readline", "")
+  fake(cmc_cleanup, "interactive", TRUE)
+  fake(cmc_cleanup, "readline", "")
   expect_error(cmc_cleanup(cmc, get_private(cmc), FALSE), "Aborted")
 })
 
@@ -110,7 +110,7 @@ test_that("update_memory_cache", {
   cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
                                      bioc = FALSE)
 
-  mockery::stub(cmc__copy_to_replica, "filelock::lock", function(...) NULL)
+  fake(cmc__copy_to_replica, "filelock::lock", function(...) NULL)
   expect_error(
     cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE),
     "Cannot acquire lock to copy primary cache")

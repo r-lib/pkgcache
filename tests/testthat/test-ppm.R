@@ -35,7 +35,7 @@ test_that("ppm_snapshots", {
     `2023-02-27T00:00:00Z` = "17028146",
     `2023-02-28T00:00:00Z` = "17054670"
   )
-  mockery::stub(
+  fake(
     ppm_snapshots,
     "async_get_ppm_versions",
     function(...) async_constant(ver)
@@ -53,7 +53,7 @@ test_that("ppm_platforms", {
     binaries = c(TRUE, TRUE, TRUE)
   ), row.names = c(NA, 3L), class = "data.frame")
 
-  mockery::stub(
+  fake(
     ppm_platforms,
     "async_get_ppm_status",
     function(...) async_constant(list(distros = plt))
@@ -62,7 +62,7 @@ test_that("ppm_platforms", {
 })
 
 test_that("async_get_ppm_status", {
-  mockery::stub(
+  fake(
     async_get_ppm_status,
     "download_file",
     function(...) stop("nope")
@@ -147,7 +147,7 @@ test_that("ppm_has_binaries", {
 
 test_that("ppm_has_binaries 2", {
   withr::local_envvar(PKGCACHE_PPM_BINARIES = NA_character_)
-  mockery::stub(
+  fake(
     ppm_has_binaries,
     "current_r_platform_data",
     structure(list(
@@ -158,7 +158,7 @@ test_that("ppm_has_binaries 2", {
   )
   expect_false(ppm_has_binaries())
 
-  mockery::stub(
+  fake(
     ppm_has_binaries,
     "current_r_platform_data",
     structure(list(
@@ -171,10 +171,10 @@ test_that("ppm_has_binaries 2", {
   # Use cached values, no HTTP
   pkgenv$ppm_distros <- pkgenv$ppm_distros_cached
   pkgenv$ppm_r_versions <- pkgenv$ppm_r_versions_cached
-  mockery::stub(ppm_has_binaries, "async_ppm_get_status", NULL)
+  fake(ppm_has_binaries, "async_ppm_get_status", NULL)
 
   # Windows
-  mockery::stub(
+  fake(
     ppm_has_binaries,
     "current_r_platform_data",
     structure(list(
@@ -182,11 +182,11 @@ test_that("ppm_has_binaries 2", {
       platform = "x86_64-w64-mingw32"
     ), row.names = c(NA, -1L), class = "data.frame")
   )
-  mockery::stub(ppm_has_binaries, "getRversion", "4.2.2")
+  fake(ppm_has_binaries, "getRversion", "4.2.2")
   expect_true(ppm_has_binaries())
 
   # Not supported Linux
-  mockery::stub(
+  fake(
     ppm_has_binaries,
     "current_r_platform_data",
     structure(list(
@@ -195,11 +195,11 @@ test_that("ppm_has_binaries 2", {
       platform = "x86_64-pc-linux-gnu-ubuntu-14.04"
     ), row.names = c(NA, -1L), class = "data.frame")
   )
-  mockery::stub(ppm_has_binaries, "getRversion", "4.2.2")
+  fake(ppm_has_binaries, "getRversion", "4.2.2")
   expect_false(ppm_has_binaries())
 
   # Supported Linux
-  mockery::stub(
+  fake(
     ppm_has_binaries,
     "current_r_platform_data",
     structure(list(
@@ -208,17 +208,17 @@ test_that("ppm_has_binaries 2", {
       platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
     ), row.names = c(NA, -1L), class = "data.frame")
   )
-  mockery::stub(ppm_has_binaries, "getRversion", "4.2.2")
+  fake(ppm_has_binaries, "getRversion", "4.2.2")
   expect_true(ppm_has_binaries())
 
   # Not supported R version
-  mockery::stub(ppm_has_binaries, "getRversion", "1.0.0")
+  fake(ppm_has_binaries, "getRversion", "1.0.0")
   expect_false(ppm_has_binaries())
 })
 
 test_that("ppm_r_versions", {
   rver <- c("3.5", "3.6", "4.2")
-  mockery::stub(
+  fake(
     ppm_r_versions,
     "async_get_ppm_status",
     function(...) async_constant(list(r_versions = rver))

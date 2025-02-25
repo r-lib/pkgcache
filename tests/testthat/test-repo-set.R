@@ -75,7 +75,7 @@ test_that("repo_resolve with PPM", {
   )
   withr::local_options(repos = NULL)
 
-  mockery::stub(
+  fake(
     repo_sugar_ppm,
     "current_r_platform_data",
     data.frame(
@@ -89,13 +89,13 @@ test_that("repo_resolve with PPM", {
     )
   )
 
-  mockery::stub(repo_sugar_ppm, "getRversion", "4.2.2")
+  fake(repo_sugar_ppm, "getRversion", "4.2.2")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/2021-01-26")
   )
 
-  mockery::stub(repo_sugar_ppm, "getRversion", "1.0.0")
+  fake(repo_sugar_ppm, "getRversion", "1.0.0")
   expect_equal(
     repo_sugar_ppm("PPM@2021-01-26", nm = NULL),
     c(CRAN = "https://packagemanager.posit.co/cran/2021-01-26")
@@ -189,7 +189,7 @@ test_that("repo_sugar_ppm", {
   )
 
   called <- FALSE
-  mockery::stub(repo_sugar_ppm, "synchronise", function(...) {
+  fake(repo_sugar_ppm, "synchronise", function(...) {
     called <<- TRUE
     NULL
   })
@@ -212,7 +212,7 @@ test_that("parse_spec", {
     as.Date("2019-11-19")
   )
 
-  mockery::stub(parse_spec, "parse_spec_pkg", TRUE)
+  fake(parse_spec, "parse_spec_pkg", TRUE)
   expect_equal(
     parse_spec("dplyr-1.0.0"),
     TRUE
@@ -221,7 +221,7 @@ test_that("parse_spec", {
 
 test_that("parse_spec_r", {
   called <- FALSE
-  mockery::stub(parse_spec_r, "get_r_versions", function(...) {
+  fake(parse_spec_r, "get_r_versions", function(...) {
     called <<- TRUE
     pkgenv$r_versions
   })

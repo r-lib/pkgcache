@@ -29,7 +29,6 @@ Suggests:
     desc,
     fs,
     keyring,
-    mockery,
     pillar,
     pingr,
     rprojroot,

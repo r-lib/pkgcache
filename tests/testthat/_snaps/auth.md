@@ -410,6 +410,9 @@
     Code
       parse_url_basic_auth("https://user.name:pass-word123@example.com")
     Output
+      $host
+      [1] "example.com"
+      
       $hosturl
       [1] "https://example.com"
       
@@ -431,6 +434,9 @@
     Code
       parse_url_basic_auth("http://user@example.com")
     Output
+      $host
+      [1] "example.com"
+      
       $hosturl
       [1] "http://example.com"
       
@@ -452,6 +458,9 @@
     Code
       parse_url_basic_auth("https://example.com")
     Output
+      $host
+      [1] "example.com"
+      
       $hosturl
       [1] "https://example.com"
       
@@ -470,4 +479,158 @@
       $password
       [1] ""
       
+
+# repo_auth_netrc
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Output
+      [1] "mysecret"
+    Code
+      repo_auth_netrc("myhost", "bad")
+    Output
+      NULL
+    Code
+      repo_auth_netrc("bad", "myuser")
+    Output
+      NULL
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Output
+      [1] "mysecret"
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Output
+      [1] "mysecret"
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Output
+      [1] "mysecret"
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Output
+      [1] "mysecret"
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Output
+      [1] "mysecret"
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Message
+      ! Invalid netrc file at '<tempdir>/<tempfile>': ended while
+      parsing a `machine` token.
+    Output
+      NULL
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Message
+      ! Invalid netrc file at '<tempdir>/<tempfile>': ended while
+      parsing `login` token.
+    Output
+      NULL
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Message
+      ! Invalid netrc file at '<tempdir>/<tempfile>': ended while
+      parsing `password` token.
+    Output
+      NULL
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Message
+      ! Invalid netrc file at '<tempdir>/<tempfile>': found a
+      `login` token without a `machine` token.
+    Output
+      NULL
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Message
+      ! Invalid netrc file at '<tempdir>/<tempfile>': `password`
+      token must come after `machine` (or `default`)
+      and `login`.
+    Output
+      NULL
+
+---
+
+    Code
+      repo_auth_netrc("myhost", "myuser")
+    Message
+      ! Invalid netrc file at '<tempdir>/<tempfile>': unknown token:
+      `badtoken`.
+    Output
+      NULL
+
+# repo_auth_headers w/ netrc
+
+    Code
+      repo_auth_headers("http://username@foo.bar.com/path")
+    Output
+      $found
+      [1] TRUE
+      
+      $headers
+                     Authorization 
+      "Basic dXNlcm5hbWU6dG9rZW4=" 
+      
+      $auth_domains
+      [1] "http://username@foo.bar.com/path" "http://foo.bar.com/path"         
+      [3] "http://username@foo.bar.com"      "http://foo.bar.com"              
+      
+      $auth_domain
+      [1] "foo.bar.com"
+      
+      $username
+      [1] "username"
+      
+      $source
+      [1] ".netrc"
+      
+      $error
+      NULL
+      
+
+# http requests with auth from netrc
+
+    Code
+      readLines(tmp, warn = FALSE)
+    Output
+      [1] "{\"authenticated\":true,\"user\":\"username\"}"
+
+---
+
+    Code
+      readLines(tmp, warn = FALSE)
+    Output
+      [1] "{\"authenticated\":true,\"user\":\"username\"}"
 

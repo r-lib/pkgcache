@@ -51,8 +51,9 @@ in the repo URL:
 }
 \details{
 pkgcache will look up password for this url and username from the
-system credential store using the keyring package. For the URL above
-it tries the following keyring keys, in this order:
+the user's \code{.netrc} file and from the system credential store using
+the keyring package. For the URL above it tries the following keyring
+keys, in this order:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{https://<username>@repo-host/<repo-path>
 https://repo-host/<repo-path>

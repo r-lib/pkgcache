@@ -74,9 +74,9 @@ test_that("caching", {
   clear_auth_cache()
   withr::local_envvar(c("https://ppm.internal/cran/latest:username" = "token"))
   expect_snapshot({
-    repo_auth_headers(
+    suppressMessages(repo_auth_headers(
       "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz"
-    )
+    ))
     repo_auth_headers(
       "https://username@ppm.internal/cran/__linux__/jammy/latest/src/contrib/PACKAGES.gz"
     )
@@ -109,7 +109,7 @@ test_that("http requests with auth", {
   url2 <- set_user_in_url(url)
   authurls <- parse_url_basic_auth(url2)
   keyring::key_set_with_value(authurls$hosturl, "username", "token")
-  synchronise(download_file(url2, tmp))
+  suppressMessages(synchronise(download_file(url2, tmp)))
   expect_snapshot(readLines(tmp, warn = FALSE))
 
   synchronise(download_if_newer(url2, tmp))
@@ -183,6 +183,7 @@ test_that("repo with basic auth", {
         x
       )
       x <- x[!grepl("^\\s*$", x)]
+      x <- fix_port_number(x)
       x
     }
   )
@@ -315,9 +316,9 @@ test_that("http requests with auth from netrc", {
     "password token"
   ), netrc)
 
-  synchronise(download_file(url2, tmp))
+  suppressMessages(synchronise(download_file(url2, tmp)))
   expect_snapshot(readLines(tmp, warn = FALSE))
 
-  synchronise(download_if_newer(url2, tmp))
+  suppressMessages(synchronise(download_if_newer(url2, tmp)))
   expect_snapshot(readLines(tmp, warn = FALSE))
 })

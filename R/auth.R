@@ -230,6 +230,19 @@ repo_auth_headers <- function(
     # we also cache negative results, to avoid many lookups and warnings
     key <- if (res$found) res$auth_domain else urls[1]
     pkgenv$credentials[[key]] <- res
+    if (res$found) {
+      cli::cli_alert_success(
+        wrap = TRUE,
+        "Logged in to repo {.url {parsed_url$repouserurl}}
+         ({res$source})."
+      )
+    } else {
+      cli::cli_alert_danger(
+        wrap = TRUE,
+        "Failed to log in to repo {.url {parsed_url$repouserurl}},
+         {res$error}."
+      )
+    }
   }
 
   res

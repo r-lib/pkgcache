@@ -90,12 +90,12 @@ available for authenticated repositories.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Data frame with columns:</p><ul><li><p>all columns from the output of <code><a href="repo_get.html">repo_get()</a></code>,</p></li>
-<li><p><code>auth_domains</code>: authentication domains. pkgcache tries to find a
-credential for these domains, until the search is successful or all
+<li><p><code>auth_domains</code>: authentication domains. pkgcache tries to find the
+credentials for these domains, until the search is successful or all
 domains fail.</p></li>
 <li><p><code>auth_domain</code>: if the credential lookup is successful, then this is
-the authentication domain that was used to get the credential.</p></li>
-<li><p><code>auth_source</code>: where the credential was found. E.g.
+the authentication domain that was used to get the credentials.</p></li>
+<li><p><code>auth_source</code>: where the credentials were found. E.g.
 <code>keyring:&lt;backend&gt;</code> means it was in the default macos keyring.</p></li>
 <li><p><code>auth_error</code>: for failed credential searches this is the description
 of why the search failed. E.g. maybe the keyring package is not

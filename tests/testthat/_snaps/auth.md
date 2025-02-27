@@ -228,7 +228,8 @@
       repo_auth_headers(
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz")
     Message
-      v Logged in to repo <https://username@ppm.internal/cran/latest> (keyring:env).
+      v Found credential for repo <https://username@ppm.internal/cran/latest>
+      (keyring:env).
     Output
       $found
       [1] TRUE
@@ -341,7 +342,7 @@
     Message
       ! Cannot find credentials for URL <http://username@127.0.0.1:3000/basic-auth/username/token>, credential lookup
       failed. Keyring backend: "env".
-      x Failed to log in to repo
+      x Did not find credentials for repo
       <http://username@127.0.0.1:3000/basic-auth/username/token>, keyring lookup
       failed (env backend).
     Condition
@@ -363,8 +364,8 @@
     Message
       ! Cannot find credentials for URL <http://username@127.0.0.1:3000//src/contrib/PACKAGES.gz>, credential lookup
       failed. Keyring backend: "env".
-      x Failed to log in to repo <http://username@127.0.0.1:3000/>, keyring lookup
-      failed (env backend).
+      x Did not find credentials for repo <http://username@127.0.0.1:3000/>, keyring
+      lookup failed (env backend).
       v Updated metadata database: <size> <unit> in <num> file<s>.
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
       i Updating metadata database
@@ -387,7 +388,7 @@
     Code
       cmc$update()
     Message
-      v Logged in to repo <http://username@127.0.0.1:3000/> (keyring:env).
+      v Found credential for repo <http://username@127.0.0.1:3000/> (keyring:env).
       v Updated metadata database: <size> <unit> in <num> file<s>.
       i Updating metadata database
       v Updating metadata database ... done
@@ -600,7 +601,7 @@
     Code
       repo_auth_headers("http://username@foo.bar.com/path")
     Message
-      v Logged in to repo <http://username@foo.bar.com/path> (.netrc).
+      v Found credential for repo <http://username@foo.bar.com/path> (.netrc).
     Output
       $found
       [1] TRUE

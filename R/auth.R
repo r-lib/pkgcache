@@ -55,6 +55,10 @@ repo_auth <- function(r_version = getRversion(), bioc = TRUE,
     auth = FALSE
   )
 
+  key <- random_key()
+  on.exit(clear_auth_cache(key), add = TRUE)
+  start_auth_cache(key)
+
   res$username <- rep(NA_character_, nrow(res))
   res$has_password <- rep(NA, nrow(res))
   res$auth_domains <- I(replicate(nrow(res), NULL))

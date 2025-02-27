@@ -228,7 +228,7 @@
       repo_auth_headers(
         "https://username@ppm.internal/cran/latest/bin/linux/4.4-jammy/contrib/4.4/PACKAGES.gz")
     Message
-      v Found credential for repo <https://username@ppm.internal/cran/latest>
+      v Found credentials for repo <https://username@ppm.internal/cran/latest>
       (keyring:env).
     Output
       $found
@@ -388,7 +388,7 @@
     Code
       cmc$update()
     Message
-      v Found credential for repo <http://username@127.0.0.1:3000/> (keyring:env).
+      v Found credentials for repo <http://username@127.0.0.1:3000/> (keyring:env).
       v Updated metadata database: <size> <unit> in <num> file<s>.
       i Updating metadata database
       v Updating metadata database ... done
@@ -601,7 +601,7 @@
     Code
       repo_auth_headers("http://username@foo.bar.com/path")
     Message
-      v Found credential for repo <http://username@foo.bar.com/path> (.netrc).
+      v Found credentials for repo <http://username@foo.bar.com/path> (.netrc).
     Output
       $found
       [1] TRUE

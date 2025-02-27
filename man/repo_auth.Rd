@@ -28,12 +28,12 @@ available for authenticated repositories.}
 Data frame with columns:
 \itemize{
 \item all columns from the output of \code{\link[=repo_get]{repo_get()}},
-\item \code{auth_domains}: authentication domains. pkgcache tries to find a
-credential for these domains, until the search is successful or all
+\item \code{auth_domains}: authentication domains. pkgcache tries to find the
+credentials for these domains, until the search is successful or all
 domains fail.
 \item \code{auth_domain}: if the credential lookup is successful, then this is
-the authentication domain that was used to get the credential.
-\item \code{auth_source}: where the credential was found. E.g.
+the authentication domain that was used to get the credentials.
+\item \code{auth_source}: where the credentials were found. E.g.
 \verb{keyring:<backend>} means it was in the default macos keyring.
 \item \code{auth_error}: for failed credential searches this is the description
 of why the search failed. E.g. maybe the keyring package is not

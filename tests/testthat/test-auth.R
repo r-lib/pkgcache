@@ -311,7 +311,7 @@ test_that("http requests with auth from netrc", {
   url2 <- set_user_in_url(url)
   authurls <- parse_url_basic_auth(url2)
   writeLines(c(
-    paste0("machine ", authurls$host),
+    paste0("machine ", sub(":[0-9]+$", "", authurls$host)),
     "login username",
     "password token"
   ), netrc)

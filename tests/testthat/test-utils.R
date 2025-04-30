@@ -1,4 +1,3 @@
-
 test_that("%||%", {
   expect_equal(NULL %||% 100, 100)
   expect_equal(100 %||% 1000, 100)
@@ -128,7 +127,7 @@ test_that("zip_vecs", {
     zip_vecs(1:2, 3:4, 5:6),
     list(c(1L, 3L, 5L), c(2L, 4L, 6L))
   )
-  
+
   expect_equal(
     zip_vecs(1:2, 3L),
     list(c(1L, 3L), c(2L, 3L))
@@ -196,7 +195,7 @@ test_that("is_na_scalar", {
     NA
   )
   for (c in good) expect_true(is_na_scalar(c), info = c)
-  
+
   bad <- list(
     NULL,
     c(NA, NA),
@@ -234,8 +233,21 @@ test_that("na_omit", {
 })
 
 test_that("shasum256", {
-  hello <- as.raw(c(0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72,
-                    0x6c, 0x64, 0x21, 0x0a))
+  hello <- as.raw(c(
+    0x48,
+    0x65,
+    0x6c,
+    0x6c,
+    0x6f,
+    0x20,
+    0x77,
+    0x6f,
+    0x72,
+    0x6c,
+    0x64,
+    0x21,
+    0x0a
+  ))
   tmp <- tempfile("pkgcache-test-shasum256")
   on.exit(unlink(tmp), add = TRUE)
   file.create(tmp)
@@ -255,7 +267,8 @@ test_that("msg_wrap", {
   local_edition(3)
   expect_snapshot(error = TRUE, {
     msg <- msg_wrap(
-      "some error message", "\n\n",
+      "some error message",
+      "\n\n",
       "Could not load or update archive cache. If you think your local ",
       "cache is broken, try deleting it with `cran_archive_cleanup()` or ",
       "the `$cleanup()` method."
@@ -332,7 +345,7 @@ test_that("gzip_decompress", {
 test_that("interpret_dependencies", {
   dp <- interpret_dependencies(TRUE)
   expect_equal(names(dp), c("direct", "indirect"))
-  expect_equal(interpret_dependencies(dp),  dp)
+  expect_equal(interpret_dependencies(dp), dp)
 
   expect_equal(
     interpret_dependencies(FALSE),

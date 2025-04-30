@@ -1,4 +1,3 @@
-
 test_that("tools vs rappdirs", {
   skip_on_cran()
   if (getRversion() < "4.0.0") skip("Needs newer R")

@@ -125,9 +125,13 @@ test_that("http requests with auth", {
   keyring::key_delete(authurls$hosturl, "username")
   tmp3 <- tempfile()
   on.exit(unlink(tmp3), add = TRUE)
-  expect_snapshot(error = TRUE, {
-    synchronise(download_file(url2, tmp3))
-  }, transform = fix_port_number)
+  expect_snapshot(
+    error = TRUE,
+    {
+      synchronise(download_file(url2, tmp3))
+    },
+    transform = fix_port_number
+  )
   expect_snapshot(error = TRUE, {
     synchronise(download_if_newer(url2, tmp3))
   })
@@ -222,16 +226,32 @@ test_that("repo_auth_netrc", {
   expect_snapshot(repo_auth_netrc("myhost", "myuser"))
 
   netrc <- c(
-    "machine another", "login", "another",
-    "machine myhost", "login myuser", "", "", "password mysecret"
+    "machine another",
+    "login",
+    "another",
+    "machine myhost",
+    "login myuser",
+    "",
+    "",
+    "password mysecret"
   )
   writeLines(netrc, tmp)
   expect_snapshot(repo_auth_netrc("myhost", "myuser"))
 
   netrc <- c(
-    "machine another", "login", "another",
-    "macdef", "foo", "bar", "foobar", "",
-    "machine myhost", "login myuser", "", "", "password mysecret"
+    "machine another",
+    "login",
+    "another",
+    "macdef",
+    "foo",
+    "bar",
+    "foobar",
+    "",
+    "machine myhost",
+    "login myuser",
+    "",
+    "",
+    "password mysecret"
   )
   writeLines(netrc, tmp)
   expect_snapshot(repo_auth_netrc("myhost", "myuser"))
@@ -288,11 +308,14 @@ test_that("repo_auth_headers w/ netrc", {
   withr::local_envvar(PKG_NETRC_PATH = netrc)
   on.exit(unlink(netrc), add = TRUE)
 
-  writeLines(c(
-    "machine foo.bar.com",
-    "login username",
-    "password token"
-  ), netrc)
+  writeLines(
+    c(
+      "machine foo.bar.com",
+      "login username",
+      "password token"
+    ),
+    netrc
+  )
 
   expect_snapshot({
     repo_auth_headers("http://username@foo.bar.com/path")
@@ -310,11 +333,14 @@ test_that("http requests with auth from netrc", {
   url <- http$url("/basic-auth/username/token")
   url2 <- set_user_in_url(url)
   authurls <- parse_url_basic_auth(url2)
-  writeLines(c(
-    paste0("machine ", sub(":[0-9]+$", "", authurls$host)),
-    "login username",
-    "password token"
-  ), netrc)
+  writeLines(
+    c(
+      paste0("machine ", sub(":[0-9]+$", "", authurls$host)),
+      "login username",
+      "password token"
+    ),
+    netrc
+  )
 
   suppressMessages(synchronise(download_file(url2, tmp)))
   expect_snapshot(readLines(tmp, warn = FALSE))

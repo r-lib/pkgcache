@@ -1,4 +1,3 @@
-
 test_that("pkgcache_read_raw", {
   # cannot open file
   expect_match(
@@ -59,7 +58,9 @@ test_that("parse_description encoding", {
   d <- parse_description(test_path("fixtures/description/pkgcache/DESCRIPTION"))
   expect_equal(Encoding(d[["Authors@R"]]), "UTF-8")
 
-  d2 <- parse_description(test_path("fixtures/description/pkgcachel1/DESCRIPTION"))
+  d2 <- parse_description(test_path(
+    "fixtures/description/pkgcachel1/DESCRIPTION"
+  ))
   expect_equal(Encoding(d2[["Authors@R"]]), "UTF-8")
 })
 
@@ -84,11 +85,11 @@ test_that("parse_packages, RDS", {
 })
 
 test_that("parse_packages, compressed", {
-  p0      <- parse_packages(test_path("fixtures/packages/PACKAGES"))
-  p_gz    <- parse_packages(test_path("fixtures/packages/PACKAGES.gz"))
-  p_bz2   <- parse_packages(test_path("fixtures/packages/PACKAGES.bz2"))
+  p0 <- parse_packages(test_path("fixtures/packages/PACKAGES"))
+  p_gz <- parse_packages(test_path("fixtures/packages/PACKAGES.gz"))
+  p_bz2 <- parse_packages(test_path("fixtures/packages/PACKAGES.bz2"))
   p_bzip2 <- parse_packages(test_path("fixtures/packages/PACKAGES.bzip2"))
-  p_xz    <- parse_packages(test_path("fixtures/packages/PACKAGES.xz"))
+  p_xz <- parse_packages(test_path("fixtures/packages/PACKAGES.xz"))
   expect_equal(p0, p_gz)
   expect_equal(p0, p_bz2)
   expect_equal(p0, p_bzip2)
@@ -96,12 +97,12 @@ test_that("parse_packages, compressed", {
 })
 
 test_that("parse_packages, <CR><LF>", {
-  p0      <- parse_packages(test_path("fixtures/packages/PACKAGES"))
-  p       <- parse_packages(test_path("fixtures/packages/PACKAGES2"))
-  p_gz    <- parse_packages(test_path("fixtures/packages/PACKAGES2.gz"))
-  p_bz2   <- parse_packages(test_path("fixtures/packages/PACKAGES2.bz2"))
+  p0 <- parse_packages(test_path("fixtures/packages/PACKAGES"))
+  p <- parse_packages(test_path("fixtures/packages/PACKAGES2"))
+  p_gz <- parse_packages(test_path("fixtures/packages/PACKAGES2.gz"))
+  p_bz2 <- parse_packages(test_path("fixtures/packages/PACKAGES2.bz2"))
   p_bzip2 <- parse_packages(test_path("fixtures/packages/PACKAGES2.bzip2"))
-  p_xz    <- parse_packages(test_path("fixtures/packages/PACKAGES2.xz"))
+  p_xz <- parse_packages(test_path("fixtures/packages/PACKAGES2.xz"))
   expect_equal(p0, p)
   expect_equal(p0, p_gz)
   expect_equal(p0, p_bz2)
@@ -184,7 +185,10 @@ test_that("parse_installed", {
   expect_snapshot(pkgs$Package)
   expect_true("LibPath" %in% names(pkgs))
 
-  pkgs2 <- parse_installed(test_path("fixtures/lib"), packages = c("cli", "foo"))
+  pkgs2 <- parse_installed(
+    test_path("fixtures/lib"),
+    packages = c("cli", "foo")
+  )
   expect_snapshot(pkgs2$Package)
 })
 
@@ -237,7 +241,6 @@ test_that("parse_installed, more errors", {
   out <- .Call(pkgcache_parse_descriptions, tmp, FALSE)
   expect_true(out[[3]])
   expect_match(out[[2]], "Line 2 is invalid")
-
 })
 
 test_that("parse_installed priority", {
@@ -247,7 +250,9 @@ test_that("parse_installed priority", {
   expect_snapshot(parse_installed(lib5, priority = "base")$Package)
   expect_snapshot(parse_installed(lib5, priority = "recommended")$Package)
   expect_snapshot(parse_installed(lib5, priority = NA)$Package)
-  expect_snapshot(parse_installed(lib5, priority = c("base", "recommended"))$Package)
+  expect_snapshot(
+    parse_installed(lib5, priority = c("base", "recommended"))$Package
+  )
   expect_snapshot(parse_installed(lib5, priority = c("base", NA))$Package)
 })
 
@@ -258,7 +263,10 @@ test_that("parse_installed lowercase", {
 })
 
 as_bytes <- function(l) {
-  lapply(l, function(x) { Encoding(x) <- "bytes"; x })
+  lapply(l, function(x) {
+    Encoding(x) <- "bytes"
+    x
+  })
 }
 
 test_that("fix_encodings", {
@@ -267,7 +275,11 @@ test_that("fix_encodings", {
   lst <- as_bytes(list(
     Package = c("foo", "bar", "foobar"),
     Encoding = c(NA_character_, "UTF-8", "latin1"),
-    Maintainer = c("Gabor", "G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1")),
+    Maintainer = c(
+      "Gabor",
+      "G\u00e1bor",
+      iconv("G\u00e1bor", "UTF-8", "latin1")
+    ),
     Bad = c("G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1"), "Gabor")
   ))
   lst2 <- fix_encodings(lst)
@@ -285,7 +297,11 @@ test_that("fix encodings on data frames", {
   lst <- as_bytes(list(
     Package = c("foo", "bar", "foobar"),
     Encoding = c(NA_character_, "UTF-8", "latin1"),
-    Maintainer = c("Gabor", "G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1")),
+    Maintainer = c(
+      "Gabor",
+      "G\u00e1bor",
+      iconv("G\u00e1bor", "UTF-8", "latin1")
+    ),
     Bad = c("G\u00e1bor", iconv("G\u00e1bor", "UTF-8", "latin1"), "Gabor")
   ))
   tbl <- as_data_frame(lst)

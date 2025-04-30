@@ -1,4 +1,3 @@
-
 test_that("handle local time zone", {
   expect_equal(
     parse_iso_8601("2021-10-19 12:30:00", default_tz = ""),

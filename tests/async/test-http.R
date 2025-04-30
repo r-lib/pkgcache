@@ -1,19 +1,17 @@
-
 test_that("GET", {
   do <- async(function() {
-    http_get(http$url("/get", query = list(q = 42)))$
-      then(function(.) rawToChar(.$content))$
-      then(function(.) expect_match(., "\"q\":[ ]*\"42\""))
+    http_get(http$url("/get", query = list(q = 42)))$then(
+      function(.) rawToChar(.$content)
+    )$then(function(.) expect_match(., "\"q\":[ ]*\"42\""))
   })
   synchronise(do())
 })
 
 test_that("HEAD", {
   do <- async(function() {
-    http_head(http$url("/"))$
-      then(function(value) {
-        expect_equal(value$status_code, 200)
-      })
+    http_head(http$url("/"))$then(function(value) {
+      expect_equal(value$status_code, 200)
+    })
   })
   synchronise(do())
 })
@@ -22,9 +20,10 @@ test_that("headers", {
   xx <- NULL
   do <- async(function() {
     headers = c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
-    http_get(http$url("/headers"), headers = headers)$
-      then(function(.) jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE))$
-      then(function(x) xx <<- x)
+    http_get(http$url("/headers"), headers = headers)$then(
+      function(.)
+        jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE)
+    )$then(function(x) xx <<- x)
   })
   synchronise(do())
   expect_equal(xx$headers$`X-Header-Test`, "foobar")
@@ -33,8 +32,7 @@ test_that("headers", {
 
 test_that("304 is not an error", {
   do <- async(function() {
-    http_get(http$url("/status/304"))$
-      then(http_stop_for_status)
+    http_get(http$url("/status/304"))$then(http_stop_for_status)
   })
   expect_silent(synchronise(do()))
 })
@@ -80,10 +78,12 @@ test_that("http progress bar, remove callback", {
     hx <- http_get(
       http$url("/image/jpeg"),
       file = tmp <<- tempfile(),
-      on_progress = progress_callback)
+      on_progress = progress_callback
+    )
 
     rm(progress_callback)
-    gc(); gc()
+    gc()
+    gc()
 
     hx$then(function(x) xx <<- x)
   })
@@ -125,13 +125,14 @@ test_that("http progress bars & etags", {
 })
 
 test_that("progress bar for in-memory data", {
-  u1 <- http$url("/stream-bytes/2048", c(chunk_size=1024))
+  u1 <- http$url("/stream-bytes/2048", c(chunk_size = 1024))
 
   called <- 0L
   bytes <- 0L
   do <- async(function() {
     http_get(
-      u1, options = list(buffersize = 1100),
+      u1,
+      options = list(buffersize = 1100),
       on_progress = function(data) {
         called <<- called + 1L
         if (length(data$current)) bytes <<- data$current
@@ -147,7 +148,6 @@ test_that("progress bar for in-memory data", {
 })
 
 test_that("error, invalid arg", {
-
   do <- function() {
     dx <- http_get(12123)
   }
@@ -159,10 +159,12 @@ test_that("error, invalid arg", {
 test_that("automatic cancellation", {
   called <- 0L
   do <- function() {
-    r1 <- http_get(http$url("/delay/5"), options = list(http_version = 2))$
-      then(function() called <<- called + 1L)
-    r2 <- http_get(http$url("/get"), options = list(http_version = 2))$
-      then(function() called <<- called + 1L)
+    r1 <- http_get(http$url("/delay/5"), options = list(http_version = 2))$then(
+      function() called <<- called + 1L
+    )
+    r2 <- http_get(http$url("/get"), options = list(http_version = 2))$then(
+      function() called <<- called + 1L
+    )
     when_any(r1, r2)
   }
 
@@ -174,7 +176,7 @@ test_that("automatic cancellation", {
   expect_true(toc - tic < as.difftime(4, units = "secs"))
 })
 
-test_that("http_status",  {
+test_that("http_status", {
   expect_error(
     http_status(0),
     "Unknown http status code"
@@ -230,8 +232,7 @@ test_that("more sophisticated timeouts", {
 
 test_that("errors contain the response", {
   do <- function() {
-    http_get(http$url("/status/418"))$
-      then(http_stop_for_status)
+    http_get(http$url("/status/418"))$then(http_stop_for_status)
   }
 
   err <- tryCatch(synchronise(do()), error = identity)
@@ -243,8 +244,7 @@ test_that("errors contain the response", {
 test_that("errors contain the response if 'file' arg given", {
   tmp <- tempfile()
   do <- function() {
-    http_get(http$url("/status/418"), file = tmp)$
-      then(http_stop_for_status)
+    http_get(http$url("/status/418"), file = tmp)$then(http_stop_for_status)
   }
 
   err <- tryCatch(synchronise(do()), error = identity)
@@ -260,9 +260,9 @@ test_that("http_post", {
 
   do <- function() {
     headers <- c("content-type" = "application/json")
-    http_post(http$url("/post"), data = data, headers = headers)$
-      then(http_stop_for_status)$
-      then(function(x) resp <<- x)
+    http_post(http$url("/post"), data = data, headers = headers)$then(
+      http_stop_for_status
+    )$then(function(x) resp <<- x)
   }
 
   synchronise(do())
@@ -281,9 +281,9 @@ test_that("http_post file", {
 
   do <- function() {
     headers <- c("content-type" = "application/json")
-    http_post(http$url("/post"), data_file = tmp, headers = headers)$
-      then(http_stop_for_status)$
-      then(function(x) resp <<- x)
+    http_post(http$url("/post"), data_file = tmp, headers = headers)$then(
+      http_stop_for_status
+    )$then(function(x) resp <<- x)
   }
 
   synchronise(do())
@@ -304,16 +304,15 @@ test_that("http_post form", {
       foo = curl::form_data("bar"),
       baz = curl::form_file(tmp, type = "text/plain", name = "mrfile")
     )
-    http_post(http$url("/post"), data_form = form)$
-      then(http_stop_for_status)$
-      then(function(x) resp <<- x)
+    http_post(http$url("/post"), data_form = form)$then(
+      http_stop_for_status
+    )$then(function(x) resp <<- x)
   }
 
   resp <- synchronise(do())
   obj <- jsonlite::fromJSON(rawToChar(resp$content))
   expect_snapshot(obj$files)
   expect_snapshot(obj$form)
-
 })
 
 test_that("curl multi options", {

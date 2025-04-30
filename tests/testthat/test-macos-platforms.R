@@ -13,7 +13,7 @@ test_that("macos platforms", {
   # error if we don't know the platform
   # we do this so we can detect the failure on the CI and update
   # the platform
-  v <- paste0(getRversion()[,1:2])
+  v <- paste0(getRversion()[, 1:2])
   expect_true(v %in% macos_cran_platforms$rversion)
 
   # In case CRAN changes the platform for R-devel

@@ -1,6 +1,4 @@
-
 test_that("auto-cancellation", {
-
   httpx <- NULL
   idx <- 0
 
@@ -10,11 +8,12 @@ test_that("auto-cancellation", {
     response_time <- async(function(url) {
       idx <<- idx + 1
       httpx[[idx]] <<- http_head(url, options = list(http_version = 2))
-      httpx[[idx]]$
-        then(function(x) { req_done <<- req_done + 1L ; x })$
-        then(http_stop_for_status)$
-        then(function() setNames(.[["times"]][["total"]], url))$
-        catch(error = function(.) setNames(Inf, url))
+      httpx[[idx]]$then(function(x) {
+        req_done <<- req_done + 1L
+        x
+      })$then(http_stop_for_status)$then(
+        function() setNames(.[["times"]][["total"]], url)
+      )$catch(error = function(.) setNames(Inf, url))
     })
 
     urls <- http$url(c("/delay/5", "/get"))
@@ -35,13 +34,13 @@ test_that("detect, if one is done", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() TRUE)
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() TRUE
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_detect(c(1/1000, 5), f)
+    async_detect(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -53,19 +52,19 @@ test_that("detect, if one is done", {
   expect_true(toc - tic < as.difftime(4.5, units = "secs"))
 })
 
-test_that("detect, if one errors",  {
+test_that("detect, if one errors", {
   pinged <- 0L
   dx <- list()
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_detect(c(1/1000, 5), f)
+    async_detect(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -81,17 +80,17 @@ test_that("detect, if one errors",  {
 
 test_that("every, if one is FALSE", {
   pinged <- 0L
-  dx <-  list()
+  dx <- list()
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() FALSE)
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() FALSE
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_every(c(1/1000, 5), f)
+    async_every(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -108,13 +107,13 @@ test_that("every, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_every(c(1/1000, 5), f)
+    async_every(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -134,13 +133,13 @@ test_that("filter, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_filter(c(1/1000, 5), f)
+    async_filter(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -160,13 +159,13 @@ test_that("map, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_map(c(1/1000, 5), f)
+    async_map(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -186,13 +185,13 @@ test_that("some, if one is TRUE", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() TRUE)
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() TRUE
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_some(c(1/1000, 5), f)
+    async_some(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -209,13 +208,13 @@ test_that("every, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    async_some(c(1/1000, 5), f)
+    async_some(c(1 / 1000, 5), f)
   }
 
   tic <- Sys.time()
@@ -235,13 +234,13 @@ test_that("when_all, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    defs <- lapply(c(1/1000, 5, 5), f)
+    defs <- lapply(c(1 / 1000, 5, 5), f)
     when_all(.list = defs)
   }
 
@@ -263,13 +262,13 @@ test_that("when_some, if enough are done", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() "yep")
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() "yep"
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    defs <- lapply(c(1/1000, 5, 1/1000, 5), f)
+    defs <- lapply(c(1 / 1000, 5, 1 / 1000, 5), f)
     when_some(2, .list = defs)
   }
 
@@ -290,13 +289,13 @@ test_that("when_some, if some error", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() stop("foobar"))
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() stop("foobar")
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    defs <- lapply(c(5, 1/1000, 1/1000, 5), f)
+    defs <- lapply(c(5, 1 / 1000, 1 / 1000, 5), f)
     when_some(3, .list = defs)
   }
 
@@ -321,13 +320,13 @@ test_that("when_any, if one is done", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$
-        then(function() pinged <<- pinged + 1)$
-        then(function() "yep")
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
+        function() "yep"
+      )
       dx <<- c(dx, list(nx))
       nx
     }
-    defs <- lapply(c(5, 5, 1/1000, 5), f)
+    defs <- lapply(c(5, 5, 1 / 1000, 5), f)
     when_any(.list = defs)
   }
 

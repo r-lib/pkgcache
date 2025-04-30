@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -28,7 +27,8 @@ test_that("get_all_package_dirs", {
   expect_s3_class(res, "tbl")
   expect_equal(
     colnames(res),
-    c("platform", "rversion", "contriburl"))
+    c("platform", "rversion", "contriburl")
+  )
   expect_gte(nrow(res), 1)
   expect_true(all(sapply(res, is.character)))
   expect_error(get_all_package_dirs("source", "3.1"), "R versions before")

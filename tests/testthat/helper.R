@@ -1,4 +1,3 @@
-
 check_packages_data <- function(pkgs) {
   cols <- packages_gz_cols()
   p_cols <- cols$pkgs
@@ -27,15 +26,20 @@ oneday <- function() as.difftime(1, units = "days")
 
 oneminute <- function() as.difftime(1, units = "mins")
 
-test_temp_file <- function(fileext = "", pattern = "test-file-",
-                           envir = parent.frame(), create = TRUE) {
+test_temp_file <- function(
+  fileext = "",
+  pattern = "test-file-",
+  envir = parent.frame(),
+  create = TRUE
+) {
   tmp <- tempfile(pattern = pattern, fileext = fileext)
   if (identical(envir, .GlobalEnv)) {
     message("Temporary files will _not_ be cleaned up")
   } else {
     withr::defer(
       try(unlink(tmp, recursive = TRUE, force = TRUE), silent = TRUE),
-      envir = envir)
+      envir = envir
+    )
   }
   if (create) {
     cat("", file = tmp)
@@ -73,7 +77,8 @@ fix_temp_path <- function(x) {
   x <- sub(normalizePath(tempdir()), "<tempdir>", x, fixed = TRUE)
   x <- sub(
     normalizePath(tempdir(), winslash = "/"),
-    "<tempdir>", x,
+    "<tempdir>",
+    x,
     fixed = TRUE
   )
   x <- sub("\\R\\", "/R/", x, fixed = TRUE)
@@ -84,7 +89,9 @@ fix_temp_path <- function(x) {
 
 set_user_in_url <- function(url, username = "username", password = NULL) {
   psd <- parse_url(url)
-  paste0(psd$protocol, "://",
+  paste0(
+    psd$protocol,
+    "://",
     username,
     if (!is.null(password)) paste0(":", password),
     "@",

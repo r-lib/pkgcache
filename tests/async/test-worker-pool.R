@@ -1,4 +1,3 @@
-
 test_that("simple CRUD", {
   skip_on_cran()
 
@@ -40,7 +39,8 @@ test_that("simple CRUD", {
     ## Results are in, four more tasks should be queued
     expect_equal(
       sort(wp$notify_event(pids = pids, event_loop = 42)),
-      as.character(1:4))
+      as.character(1:4)
+    )
     res <- lapply(as.character(1:4), function(i) wp$get_result(i))
     pids <- viapply(res, "[[", "result")
     expect_equal(pids, wp$list_workers()$pid)

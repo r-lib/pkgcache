@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -114,7 +113,7 @@ test_that("repo_add", {
   expect_equal(repo_get(), before)
 
   repo_add(URL = "https://my.url", .list = c(PATH = "/foo/bar"))
-  expect_snapshot(repo_get()[1:3,])
+  expect_snapshot(repo_get()[1:3, ])
 })
 
 test_that("with_repo", {
@@ -125,7 +124,7 @@ test_that("with_repo", {
     cli.unicode = FALSE
   )
   expect_snapshot(
-    with_repo(c(URL = "https://my.url"), repo_get()[1,])
+    with_repo(c(URL = "https://my.url"), repo_get()[1, ])
   )
 })
 

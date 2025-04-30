@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -16,14 +15,20 @@ test_that("API", {
     transform = trfm
   )
 
-  expect_snapshot({
-    cran_archive_update()
-    cran_archive_list()
-  }, transform = trfm)
+  expect_snapshot(
+    {
+      cran_archive_update()
+      cran_archive_list()
+    },
+    transform = trfm
+  )
 
-  expect_snapshot({
-    cran_archive_list(packages = "pkg1")
-  }, transform = trfm)
+  expect_snapshot(
+    {
+      cran_archive_list(packages = "pkg1")
+    },
+    transform = trfm
+  )
 
   expect_error(cran_archive_summary(), NA)
   expect_error(suppressMessages(cran_archive_cleanup(force = TRUE)), NA)

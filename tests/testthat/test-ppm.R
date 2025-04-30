@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -40,18 +39,22 @@ test_that("ppm_snapshots", {
     "async_get_ppm_versions",
     function(...) async_constant(ver)
   )
-  expect_snapshot(ppm_snapshots()[1:1000,])
+  expect_snapshot(ppm_snapshots()[1:1000, ])
 })
 
 test_that("ppm_platforms", {
-  plt <- structure(list(
-    name = c("centos7", "centos8", "rhel9"),
-    os = c("linux", "linux", "linux"),
-    binary_url = c("centos7", "centos8", "rhel9"),
-    distribution = c("centos", "centos", "rockylinux"),
-    release = c("7", "8", "9"),
-    binaries = c(TRUE, TRUE, TRUE)
-  ), row.names = c(NA, 3L), class = "data.frame")
+  plt <- structure(
+    list(
+      name = c("centos7", "centos8", "rhel9"),
+      os = c("linux", "linux", "linux"),
+      binary_url = c("centos7", "centos8", "rhel9"),
+      distribution = c("centos", "centos", "rockylinux"),
+      release = c("7", "8", "9"),
+      binaries = c(TRUE, TRUE, TRUE)
+    ),
+    row.names = c(NA, 3L),
+    class = "data.frame"
+  )
 
   fake(
     ppm_platforms,
@@ -150,21 +153,34 @@ test_that("ppm_has_binaries 2", {
   fake(
     ppm_has_binaries,
     "current_r_platform_data",
-    structure(list(
-      cpu = "aarch64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "22.04",
-      platform = "aarch64-pc-linux-gnu-ubuntu-22.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
+    structure(
+      list(
+        cpu = "aarch64",
+        vendor = "pc",
+        os = "linux-gnu",
+        distribution = "ubuntu",
+        release = "22.04",
+        platform = "aarch64-pc-linux-gnu-ubuntu-22.04"
+      ),
+      row.names = c(NA, -1L),
+      class = "data.frame"
+    )
   )
   expect_false(ppm_has_binaries())
 
   fake(
     ppm_has_binaries,
     "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "apple", os = "darwin20",
-      platform = "x86_64-apple-darwin20"
-    ), row.names = c(NA, -1L), class = "data.frame")
+    structure(
+      list(
+        cpu = "x86_64",
+        vendor = "apple",
+        os = "darwin20",
+        platform = "x86_64-apple-darwin20"
+      ),
+      row.names = c(NA, -1L),
+      class = "data.frame"
+    )
   )
   expect_false(ppm_has_binaries())
 
@@ -177,10 +193,16 @@ test_that("ppm_has_binaries 2", {
   fake(
     ppm_has_binaries,
     "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "w64", os = "mingw32",
-      platform = "x86_64-w64-mingw32"
-    ), row.names = c(NA, -1L), class = "data.frame")
+    structure(
+      list(
+        cpu = "x86_64",
+        vendor = "w64",
+        os = "mingw32",
+        platform = "x86_64-w64-mingw32"
+      ),
+      row.names = c(NA, -1L),
+      class = "data.frame"
+    )
   )
   fake(ppm_has_binaries, "getRversion", "4.2.2")
   expect_true(ppm_has_binaries())
@@ -189,11 +211,18 @@ test_that("ppm_has_binaries 2", {
   fake(
     ppm_has_binaries,
     "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "14.04",
-      platform = "x86_64-pc-linux-gnu-ubuntu-14.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
+    structure(
+      list(
+        cpu = "x86_64",
+        vendor = "pc",
+        os = "linux-gnu",
+        distribution = "ubuntu",
+        release = "14.04",
+        platform = "x86_64-pc-linux-gnu-ubuntu-14.04"
+      ),
+      row.names = c(NA, -1L),
+      class = "data.frame"
+    )
   )
   fake(ppm_has_binaries, "getRversion", "4.2.2")
   expect_false(ppm_has_binaries())
@@ -202,11 +231,18 @@ test_that("ppm_has_binaries 2", {
   fake(
     ppm_has_binaries,
     "current_r_platform_data",
-    structure(list(
-      cpu = "x86_64", vendor = "pc", os = "linux-gnu",
-      distribution = "ubuntu", release = "22.04",
-      platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
-    ), row.names = c(NA, -1L), class = "data.frame")
+    structure(
+      list(
+        cpu = "x86_64",
+        vendor = "pc",
+        os = "linux-gnu",
+        distribution = "ubuntu",
+        release = "22.04",
+        platform = "x86_64-pc-linux-gnu-ubuntu-22.04"
+      ),
+      row.names = c(NA, -1L),
+      class = "data.frame"
+    )
   )
   fake(ppm_has_binaries, "getRversion", "4.2.2")
   expect_true(ppm_has_binaries())

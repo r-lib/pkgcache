@@ -1,5 +1,7 @@
 
-```{r setup2, include = FALSE}
+```{r}
+#| label: setup2
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -37,7 +39,8 @@ pak::pak("r-lib/pkgcache")
 Bioconductor package, and all versions (i.e. both binary and source)
 of the packages for the current platform and R version.
 
-```{r include = FALSE}
+```{r}
+#| include: false
 # If we don't do this, then Unicode characters end up in documentation
 # files.
 library(pkgcache)

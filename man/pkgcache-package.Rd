@@ -39,26 +39,26 @@ print nicer, similarly to tibbles.)
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
-#> # A data frame: 48,094 x 32
-#>    package     version depends suggests license imports linkingto archs enhances
-#>    <chr>       <chr>   <chr>   <chr>    <chr>   <chr>   <chr>     <chr> <chr>   
-#>  1 A3          1.0.0   R (>= ~ randomF~ GPL (>~ <NA>    <NA>      <NA>  <NA>    
-#>  2 AATtools    0.0.2   R (>= ~ <NA>     GPL-3   magrit~ <NA>      <NA>  <NA>    
-#>  3 ABACUS      1.0.0   R (>= ~ rmarkdo~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
-#>  4 ABC.RAP     0.9.0   R (>= ~ knitr, ~ GPL-3   graphi~ <NA>      <NA>  <NA>    
-#>  5 ABCanalysis 1.2.1   R (>= ~ <NA>     GPL-3   plotrix <NA>      <NA>  <NA>    
-#>  6 ABCoptim    0.15.0  <NA>    testtha~ MIT + ~ Rcpp, ~ Rcpp      ABCo~ <NA>    
-#>  7 ABCp2       1.2     MASS    <NA>     GPL-2   <NA>    <NA>      <NA>  <NA>    
-#>  8 ABHgenotyp~ 1.0.1   <NA>    knitr, ~ GPL-3   ggplot~ <NA>      <NA>  <NA>    
-#>  9 ABM         0.4.1   <NA>    <NA>     GPL (>~ R6, Rc~ Rcpp      ABM.~ <NA>    
-#> 10 ABPS        0.3     <NA>    testthat GPL (>~ kernlab <NA>      <NA>  <NA>    
-#> # i 48,084 more rows
-#> # i 23 more variables: license_restricts_use <chr>, priority <chr>,
-#> #   license_is_foss <chr>, os_type <chr>, repodir <chr>, rversion <chr>,
-#> #   platform <chr>, needscompilation <chr>, ref <chr>, type <chr>,
-#> #   direct <lgl>, status <chr>, target <chr>, mirror <chr>, sources <list>,
-#> #   filesize <int>, sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>,
-#> #   deps <list>, md5sum <chr>, path <chr>
+#> # A data frame: 50,641 x 33
+#>    package    version depends suggests license md5sum sha256sum needscompilation
+#>    <chr>      <chr>   <chr>   <chr>    <chr>   <chr>  <chr>     <chr>           
+#>  1 A3         1.0.0   R (>= ~ randomF~ GPL (>~ 929a4~ "\n     ~ no              
+#>  2 AATtools   0.0.3   R (>= ~ <NA>     GPL-3   de2ec~ "\n     ~ no              
+#>  3 ABACUS     1.0.0   R (>= ~ rmarkdo~ GPL-3   28795~ "\n     ~ no              
+#>  4 ABC.RAP    0.9.0   R (>= ~ knitr, ~ GPL-3   0158e~ "\n     ~ no              
+#>  5 ABCanalys~ 1.2.1   R (>= ~ <NA>     GPL-3   4cbe1~ "\n     ~ no              
+#>  6 ABCoptim   0.15.0  <NA>    testtha~ MIT + ~ a294d~ "\n     ~ yes             
+#>  7 ABCp2      1.2     MASS    <NA>     GPL-2   d049b~  <NA>     no              
+#>  8 ABHgenoty~ 1.0.1   <NA>    knitr, ~ GPL-3   fce25~ "\n     ~ no              
+#>  9 ABM        0.4.3   <NA>    <NA>     GPL (>~ 7aaae~ "\n     ~ yes             
+#> 10 ABPS       0.3     <NA>    testthat GPL (>~ d3f00~ "\n     ~ no              
+#> # i 50,631 more rows
+#> # i 25 more variables: imports <chr>, linkingto <chr>, archs <chr>,
+#> #   enhances <chr>, license_restricts_use <chr>, priority <chr>, os_type <chr>,
+#> #   license_is_foss <chr>, repodir <chr>, rversion <chr>, platform <chr>,
+#> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
+#> #   mirror <chr>, sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
+#> #   built <chr>, published <dttm>, deps <list>, path <chr>
 }\if{html}{\out{</div>}}
 
 \code{meta_cache_deps()} and \code{meta_cache_revdeps()} can be used to look up
@@ -84,35 +84,37 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 40
+#> [1] 475
 #> 
 #> $size
-#> [1] 61300737
+#> [1] 669462030
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A data frame: 40 x 11
+#> # A data frame: 475 x 11
 #>    fullpath    path  package url   etag  sha256 version platform built vignettes
 #>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/gab~ arch~ <NA>    http~ "\"1~ 9da51~ <NA>    <NA>        NA        NA
-#>  2 /Users/gab~ bin/~ cli     http~ "\"1~ b24b4~ 3.6.2   x86_64-~    NA        NA
-#>  3 /Users/gab~ bin/~ jose    http~ "\"7~ b1bac~ 1.2.0   aarch64~    NA        NA
-#>  4 /Users/gab~ src/~ gh      <NA>   <NA> <NA>   1.4.0.~ source       1         0
-#>  5 /Users/gab~ src/~ gh      <NA>   <NA> <NA>   1.4.0.~ aarch64~     1         0
-#>  6 /Users/gab~ bin/~ gh      http~ "\"1~ f5daf~ 1.4.0   aarch64~    NA        NA
-#>  7 /Users/gab~ src/~ tic     <NA>   <NA> 11103~ <NA>    <NA>         0        NA
-#>  8 /Users/gab~ src/~ tic     <NA>   <NA> 11103~ 0.14.0  source       1         0
-#>  9 /Users/gab~ src/~ tic     <NA>   <NA> 11103~ 0.14.0  aarch64~     1         0
-#> 10 /Users/gab~ bin/~ rhub    http~ "\"f~ af2d6~ 1.1.2   aarch64~    NA        NA
-#> # i 30 more rows
+#>  1 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ <NA>    <NA>         0        NA
+#>  2 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ 2.5.0.~ source       1         0
+#>  3 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ 2.5.0.~ aarch64~     1         0
+#>  4 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ <NA>    <NA>         0        NA
+#>  5 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ 3.6.3.~ source       1         0
+#>  6 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ 3.6.3.~ aarch64~     1         0
+#>  7 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ <NA>    <NA>         0        NA
+#>  8 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ 3.6.3.~ source       1         0
+#>  9 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ 3.6.3.~ aarch64~     1         0
+#> 10 /Users/gab~ src/~ cli     <NA>  <NA>  2dd91~ <NA>    <NA>         0        NA
+#> # i 465 more rows
 #> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A data frame: 0 x 11
-#> # i 11 variables: fullpath <chr>, path <chr>, package <chr>, url <chr>,
-#> #   etag <chr>, sha256 <chr>, version <chr>, platform <chr>, built <int>,
-#> #   vignettes <int>, rversion <chr>
+#> # A data frame: 2 x 11
+#>   fullpath     path  package url   etag  sha256 version platform built vignettes
+#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+#> 1 /Users/gabo~ bin/~ dplyr   http~ "\"6~ 721c2~ 1.1.4   aarch64~    NA        NA
+#> 2 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 721c2~ 1.1.4   aarch64~    NA        NA
+#> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \code{pkg_cache_add_file()} can be used to add a file,
@@ -131,26 +133,26 @@ all fields from \code{PACKAGES}, \code{PACKAGES.gz} or \code{PACKAGES.rds} files
 library:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{parse_installed()
-#> # A data frame: 888 x 128
-#>    Package  Type  Title Version Date  `Authors@R` Maintainer Description Imports
-#>    <chr>    <chr> <chr> <chr>   <chr> <chr>       <chr>      <chr>       <chr>  
-#>  1 AdaptGa~ Pack~ Gaus~ 1.6     2024~ "c(person(~ Michael T~ "Multimoda~ "Rcpp,~
-#>  2 Annotat~ <NA>  Mani~ 1.64.1  <NA>   <NA>       Bioconduc~ "Implement~ "DBI, ~
-#>  3 Annotat~ <NA>  Tool~ 1.42.2  <NA>   <NA>       Bioconduc~ "Provides ~ "DBI, ~
-#>  4 AsioHea~ Pack~ 'Asi~ 1.22.1~ 2022~  <NA>       Dirk Edde~ "'Asio' is~  <NA>  
-#>  5 AutoQua~ <NA>  Auto~ 1.0.1   2023~ "\n    c(p~ Adrian An~ "R package~ "bit64~
-#>  6 BH       Pack~ Boos~ 1.81.0~ 2023~  <NA>       Dirk Edde~ "Boost pro~  <NA>  
-#>  7 BayesFa~ Pack~ Comp~ 0.9.12~ 2022~ "c(person(~ Richard D~ "A suite o~ "pbapp~
-#>  8 Biobase  <NA>  Biob~ 2.62.0  <NA>  "c(\n    p~ Bioconduc~ "Functions~ "metho~
-#>  9 BiocBas~ <NA>  Gene~ 1.4.0   <NA>  "c(\n  per~ Marcel Ra~ "The packa~ "metho~
-#> 10 BiocFil~ <NA>  Mana~ 2.10.1  <NA>  "c(person(~ Lori Shep~ "This pack~ "metho~
-#> # i 878 more rows
-#> # i 119 more variables: Suggests <chr>, LinkingTo <chr>, Depends <chr>,
-#> #   License <chr>, LazyLoad <chr>, URL <chr>, Encoding <chr>,
-#> #   NeedsCompilation <chr>, VignetteBuilder <chr>, BugReports <chr>,
-#> #   Packaged <chr>, Author <chr>, Repository <chr>, `Date/Publication` <chr>,
-#> #   Built <chr>, Archs <chr>, RemoteType <chr>, RemotePkgRef <chr>,
-#> #   RemoteRef <chr>, RemoteRepos <chr>, RemotePkgPlatform <chr>, ...
+#> # A data frame: 606 x 125
+#>    Package      Title   Version `Authors@R` Description URL   BugReports License
+#>    <chr>        <chr>   <chr>   <chr>       <chr>       <chr> <chr>      <chr>  
+#>  1 AzureAuth    Authen~ 1.3.3   "c(\n    p~ "Provides ~ "htt~ https://g~ MIT + ~
+#>  2 AzureGraph   Simple~ 1.3.4   "c(\n    p~ "A simple ~ "htt~ https://g~ MIT + ~
+#>  3 AzureRMR     Interf~ 2.4.4   "c(\n    p~ "A lightwe~ "htt~ https://g~ MIT + ~
+#>  4 AzureStor    Storag~ 3.7.0   "c(\n    p~ "Manage st~ "htt~ https://g~ MIT + ~
+#>  5 BH           Boost ~ 1.84.0~  <NA>       "Boost pro~ "htt~ https://g~ BSL-1.0
+#>  6 Biobase      Biobas~ 2.64.0  "c(\n    p~ "Functions~ "htt~ https://g~ Artist~
+#>  7 BiocGenerics S4 gen~ 0.52.0   <NA>       "The packa~ "htt~ https://g~ Artist~
+#>  8 BiocManager  Access~ 1.30.23 "c(\n    p~ "A conveni~ "htt~ https://g~ Artist~
+#>  9 BiocVersion  Set th~ 3.19.1  "c(\n    p~ "This pack~  <NA> <NA>       Artist~
+#> 10 CompQuadForm Distri~ 1.4.3    <NA>       "Computes ~  <NA> <NA>       GPL (>~
+#> # i 596 more rows
+#> # i 117 more variables: VignetteBuilder <chr>, Depends <chr>, Imports <chr>,
+#> #   Suggests <chr>, RoxygenNote <chr>, NeedsCompilation <chr>, Packaged <chr>,
+#> #   Author <chr>, Maintainer <chr>, Repository <chr>, `Date/Publication` <chr>,
+#> #   Built <chr>, RemoteType <chr>, RemotePkgRef <chr>, RemoteRef <chr>,
+#> #   RemoteRepos <chr>, RemotePkgPlatform <chr>, RemoteSha <chr>, Type <chr>,
+#> #   Date <chr>, biocViews <chr>, LazyLoad <chr>, Collate <chr>, ...
 }\if{html}{\out{</div>}}
 }
 
@@ -272,7 +274,7 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item Posit Software, PBC [copyright holder, funder]
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
 }
 
 }

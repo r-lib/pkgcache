@@ -82,7 +82,7 @@ limit.
 cache.
 }
 \examples{
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 cran_archive_list(packages = "readr")
 \dontshow{\}) # examplesIf}
 }

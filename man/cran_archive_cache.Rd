@@ -109,7 +109,7 @@ pretty close to the release date and time of the package.
 }
 
 \examples{
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 arch <- cran_archive_cache$new()
 arch$update()
 arch$list()

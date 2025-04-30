@@ -177,7 +177,7 @@ use only.
 }
 
 \examples{
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()

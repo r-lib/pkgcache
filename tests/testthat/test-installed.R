@@ -14,7 +14,8 @@ test_that("parse_description", {
   expect_snapshot(
     error = TRUE,
     parse_description(tempfile()),
-    transform = fix_temp_path
+    transform = fix_temp_path,
+    variant = get_os_variant()
   )
 
   # empty file
@@ -116,7 +117,8 @@ test_that("parse_packages, errors", {
   expect_snapshot(
     error = TRUE,
     parse_packages(tempfile(), type = "uncompressed"),
-    transform = fix_temp_path
+    transform = fix_temp_path,
+    variant = get_os_variant()
   )
 
   p <- "Package: foo\n\n \n"

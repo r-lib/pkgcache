@@ -103,3 +103,17 @@ set_user_in_url <- function(url, username = "username", password = NULL) {
     psd$path
   )
 }
+
+get_os_variant <- function() {
+  if (.Platform$OS.type == "windows") {
+    "win"
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    "mac"
+  } else if (Sys.info()["sysname"] == "Linux") {
+    "linux"
+  } else if (.Platform$OS.type == "unix") {
+    "unix"
+  } else {
+    "unknown"
+  }
+}

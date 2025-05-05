@@ -37,6 +37,6 @@ test_that("file:// does not exist", {
   expect_snapshot(
     error = TRUE,
     synchronise(http_get(url)),
-    transform = fix_temp_path
+    transform = function(x) fix_temp_path(sub("Could not", "Couldn't", x))
   )
 })

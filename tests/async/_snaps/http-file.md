@@ -4,5 +4,5 @@
       synchronise(http_get(url))
     Condition
       Error:
-      ! Could not read a file:// file: Couldn't open file <tempdir>/<tempfile>
+      ! Couldn't read a file:// file: Couldn't open file <tempdir>/<tempfile>
 

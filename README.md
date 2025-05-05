@@ -12,7 +12,7 @@
 status](https://www.r-pkg.org/badges/version/pkgcache)](https://cran.r-project.org/package=pkgcache)
 [![R-CMD-check](https://github.com/r-lib/pkgcache/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/pkgcache/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/r-lib/pkgcache/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/pkgcache?branch=main)
+coverage](https://codecov.io/gh/r-lib/pkgcache/graph/badge.svg)](https://app.codecov.io/gh/r-lib/pkgcache)
 <!-- badges: end -->
 
 Metadata and package cache for CRAN-like repositories. This is a utility

@@ -53,7 +53,7 @@ test_that("finally", {
       function() "not this one"
     )$finally(function() called <<- TRUE)
   })
-  expect_error(synchronise(do()), "oops")
+  expect_snapshot(error = TRUE, synchronise(do()))
   expect_true(called)
 
   called <- FALSE

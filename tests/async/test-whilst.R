@@ -40,7 +40,7 @@ test_that("error", {
   }
 
   i <- 1
-  expect_error(synchronise(do()), "doh")
+  expect_snapshot(error = TRUE, synchronise(do()))
 
   i <- 1
   do2 <- function() {
@@ -61,7 +61,7 @@ test_that("test throws", {
     )
   }
 
-  expect_error(synchronise(do()), "doh")
+  expect_snapshot(error = TRUE, synchronise(do()))
   expect_false(called)
 
   called <- FALSE

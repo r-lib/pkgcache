@@ -293,7 +293,7 @@ test_that("fail stage if no error callback", {
     x$emit("foo")
   }
 
-  expect_error(run_event_loop(do()), "foobar")
+  expect_snapshot(error = TRUE, run_event_loop(do()))
 })
 
 test_that("all error callbacks are called", {
@@ -329,7 +329,7 @@ test_that("error within error callback", {
     x$emit("foo")
   }
 
-  expect_error(run_event_loop(do()), "baz")
+  expect_snapshot(error = TRUE, run_event_loop(do()))
   expect_false(is.null(err))
   expect_s3_class(err, "error")
   expect_equal(conditionMessage(err), "foobar")

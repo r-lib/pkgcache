@@ -22,8 +22,8 @@ test_that("def__make_parent_*", {
   }
 
   for (f in bad) {
-    expect_error(def__make_parent_resolve(f))
-    expect_error(def__make_parent_reject(f))
+    expect_snapshot(error = TRUE, def__make_parent_resolve(f))
+    expect_snapshot(error = TRUE, def__make_parent_reject(f))
   }
 })
 
@@ -67,12 +67,12 @@ test_that("def__make_parent_resolve", {
   r1 <- def__make_parent_reject(NULL)
   res <- NULL
   val <- NULL
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     r1("foobar", function(x) {
       res <<- "resolve"
       val <<- x
-    }),
-    "foobar"
+    })
   )
   expect_null(res)
   expect_null(val)

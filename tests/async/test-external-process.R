@@ -47,7 +47,7 @@ test_that("cancel external_process", {
     )
   }
 
-  expect_error(synchronise(afun()))
+  expect_snapshot(error = TRUE, synchronise(afun()))
   expect_true(running)
 
   limit <- Sys.time() + as.difftime(2, units = "secs")
@@ -87,10 +87,7 @@ test_that("can disable error on status", {
   }
   afun <- function(...) external_process(pxgen, ...)
 
-  expect_error(
-    synchronise(afun()),
-    "exited with non-zero status"
-  )
+  expect_snapshot(error = TRUE, synchronise(afun()))
 
   res <- synchronise(afun(error_on_status = FALSE))
   expect_equal(

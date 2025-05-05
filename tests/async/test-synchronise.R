@@ -19,7 +19,7 @@ test_that("error if async function is called from sync context", {
   )
 
   afun <- async(function() 42)
-  expect_error(afun())
+  expect_snapshot(error = TRUE, afun())
 })
 
 test_that("simple tests", {

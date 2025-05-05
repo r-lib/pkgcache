@@ -31,6 +31,9 @@ test_that("async_map with limit, error", {
   })
 
   for (l in c(1:10, Inf)) {
-    expect_error(synchronise(async_map(list, fun, .limit = l)), "oops")
+    expect_snapshot(
+      error = TRUE,
+      synchronise(async_map(list, fun, .limit = l))
+    )
   }
 })

@@ -177,10 +177,7 @@ test_that("automatic cancellation", {
 })
 
 test_that("http_status", {
-  expect_error(
-    http_status(0),
-    "Unknown http status code"
-  )
+  expect_snapshot(error = TRUE, http_status(0))
 })
 
 test_that("timeout, failed request", {

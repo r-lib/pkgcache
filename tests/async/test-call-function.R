@@ -57,7 +57,7 @@ test_that("calls that error", {
     )
   })
 
-  expect_error(synchronise(afun()), "nope", class = "error")
+  expect_snapshot(error = TRUE, synchronise(afun()))
 })
 
 test_that("calls that crash", {

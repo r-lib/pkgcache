@@ -29,7 +29,7 @@ test_that("errors", {
     t <- async_timer$new(1 / 100, cb)
   }
 
-  expect_error(run_event_loop(do()), "foobar")
+  expect_snapshot(error = TRUE, run_event_loop(do()))
   expect_equal(counter, 2L)
 
   counter <- 0L

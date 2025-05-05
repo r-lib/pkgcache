@@ -1,4 +1,3 @@
-
 check_packages_data <- function(pkgs) {
   cols <- packages_gz_cols()
   p_cols <- cols$pkgs
@@ -27,15 +26,20 @@ oneday <- function() as.difftime(1, units = "days")
 
 oneminute <- function() as.difftime(1, units = "mins")
 
-test_temp_file <- function(fileext = "", pattern = "test-file-",
-                           envir = parent.frame(), create = TRUE) {
+test_temp_file <- function(
+  fileext = "",
+  pattern = "test-file-",
+  envir = parent.frame(),
+  create = TRUE
+) {
   tmp <- tempfile(pattern = pattern, fileext = fileext)
   if (identical(envir, .GlobalEnv)) {
     message("Temporary files will _not_ be cleaned up")
   } else {
     withr::defer(
       try(unlink(tmp, recursive = TRUE, force = TRUE), silent = TRUE),
-      envir = envir)
+      envir = envir
+    )
   }
   if (create) {
     cat("", file = tmp)
@@ -73,7 +77,8 @@ fix_temp_path <- function(x) {
   x <- sub(normalizePath(tempdir()), "<tempdir>", x, fixed = TRUE)
   x <- sub(
     normalizePath(tempdir(), winslash = "/"),
-    "<tempdir>", x,
+    "<tempdir>",
+    x,
     fixed = TRUE
   )
   x <- sub("\\R\\", "/R/", x, fixed = TRUE)
@@ -82,13 +87,33 @@ fix_temp_path <- function(x) {
   x
 }
 
+fix_c_line_number <- function(x) {
+  sub("lib[.]c:[0-9]+", "lib.c:<linum>", x)
+}
+
 set_user_in_url <- function(url, username = "username", password = NULL) {
   psd <- parse_url(url)
-  paste0(psd$protocol, "://",
+  paste0(
+    psd$protocol,
+    "://",
     username,
     if (!is.null(password)) paste0(":", password),
     "@",
     psd$host,
     psd$path
   )
+}
+
+get_os_variant <- function() {
+  if (.Platform$OS.type == "windows") {
+    "win"
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    "mac"
+  } else if (Sys.info()["sysname"] == "Linux") {
+    "linux"
+  } else if (.Platform$OS.type == "unix") {
+    "unix"
+  } else {
+    "unknown"
+  }
 }

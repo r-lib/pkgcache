@@ -1,4 +1,3 @@
-
 if (!file.exists("../async")) {
   stop("Cannot find async in '../async'")
 }

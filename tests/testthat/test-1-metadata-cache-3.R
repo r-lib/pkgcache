@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -35,38 +34,47 @@ test_that("cmc__get_repos", {
   ## No bioc, CRAN is replaced
   expect_equal(
     cmc__get_repos(repos, FALSE, cran_mirror = "good", r_version = "3.5"),
-    data_frame(name = "CRAN", url = "good", type = "cran",
-               r_version = "*", bioc_version = NA_character_)
+    data_frame(
+      name = "CRAN",
+      url = "good",
+      type = "cran",
+      r_version = "*",
+      bioc_version = NA_character_
+    )
   )
 
   ## BioC, all new
   res <- cmc__get_repos(repos, TRUE, "good", r_version = "3.5")
   expect_equal(
     res$name,
-    c("CRAN", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
+    c("CRAN", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows")
+  )
   expect_equal(res$url[1], "good")
   expect_equal(res$type, c("cran", "bioc", "bioc", "bioc", "bioc"))
   expect_equal(
     res$bioc_version,
-    c(NA_character_, "3.8", "3.8", "3.8", "3.8"))
+    c(NA_character_, "3.8", "3.8", "3.8", "3.8")
+  )
 
   ## BioC, some are custom
   repos <- c(CRAN = "bad", BioCsoft = "ok")
   res <- cmc__get_repos(repos, TRUE, "good", r_version = "3.5")
   expect_equal(
     res$name,
-    c("CRAN", "BioCsoft", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows"))
+    c("CRAN", "BioCsoft", "BioCsoft", "BioCann", "BioCexp", "BioCworkflows")
+  )
   expect_equal(res$url[1], "good")
   expect_equal(res$url[2], "ok")
   expect_equal(res$type, c("cran", "cranlike", "bioc", "bioc", "bioc", "bioc"))
   expect_equal(
     res$bioc_version,
-    c(NA_character_, NA_character_, "3.8", "3.8", "3.8", "3.8"))
+    c(NA_character_, NA_character_, "3.8", "3.8", "3.8", "3.8")
+  )
 })
 
 test_that("cleanup", {
   fake(cmc_cleanup, "interactive", FALSE)
-  expect_error(cmc_cleanup(NULL, NULL, FALSE), "Not cleaning up cache")
+  expect_snapshot(error = TRUE, cmc_cleanup(NULL, NULL, FALSE))
 })
 
 test_that("cleanup", {
@@ -75,11 +83,11 @@ test_that("cleanup", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
   fake(cmc_cleanup, "interactive", TRUE)
   fake(cmc_cleanup, "readline", "")
-  expect_error(cmc_cleanup(cmc, get_private(cmc), FALSE), "Aborted")
+  expect_snapshot(error = TRUE, cmc_cleanup(cmc, get_private(cmc), FALSE))
 })
 
 test_that("memory cache", {
@@ -98,35 +106,45 @@ test_that("memory cache", {
 
   rep3 <- test_temp_dir()
   cmc3 <- cranlike_metadata_cache$new(pri, rep3, "source", bioc = FALSE)
-  instance <- as.difftime(1/100000, units = "secs")
-  expect_error(data3 <- get_private(cmc3)$get_memory_cache(instance),
-               "Memory cache outdated")
+  instance <- as.difftime(1 / 100000, units = "secs")
+  expect_snapshot(
+    error = TRUE,
+    data3 <- get_private(cmc3)$get_memory_cache(instance)
+  )
 })
 
 test_that("update_memory_cache", {
   pri <- test_temp_dir()
   rep <- test_temp_dir()
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
-                                     bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("macos", "source"),
+    bioc = FALSE
+  )
 
   fake(cmc__copy_to_replica, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE),
-    "Cannot acquire lock to copy primary cache")
+  expect_snapshot(
+    error = TRUE,
+    cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE)
+  )
 })
 
 test_that("summary", {
   pri <- test_temp_dir()
   rep <- test_temp_dir()
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
-                                     bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("macos", "source"),
+    bioc = FALSE
+  )
   sum <- cmc$summary()
   expect_equal(
     names(sum),
-    c("cachepath", "lockfile", "current_rds", "raw_files", "rds_files",
-      "size")
+    c("cachepath", "lockfile", "current_rds", "raw_files", "rds_files", "size")
   )
 })
 
@@ -146,7 +164,6 @@ test_that("corrupt metadata", {
 })
 
 test_that("missing packages note", {
-
   fake_cran2 <- webfakes::local_app_process(
     cran_app(cran_app_pkgs),
     opts = webfakes::server_opts(num_threads = 3)
@@ -161,7 +178,12 @@ test_that("missing packages note", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("source", "windows"), bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("source", "windows"),
+    bioc = FALSE
+  )
   msg <- ""
   withCallingHandlers(
     invisible(cmc$update()),
@@ -171,5 +193,9 @@ test_that("missing packages note", {
     }
   )
 
-  expect_match(msg, "packages are missing from CRAN and 127.0.0.1:", fixed = TRUE)
+  expect_match(
+    msg,
+    "packages are missing from CRAN and 127.0.0.1:",
+    fixed = TRUE
+  )
 })

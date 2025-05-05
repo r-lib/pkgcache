@@ -11,7 +11,7 @@ This is used by the \code{\link[=meta_cache_deps]{meta_cache_deps()}}, \code{\li
 functions.
 }
 \examples{
-\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
 get_cranlike_metadata_cache()
 get_cranlike_metadata_cache()$list("cli")
 \dontshow{\}) # examplesIf}

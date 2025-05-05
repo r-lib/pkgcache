@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -9,7 +8,7 @@ test_that("get_cache_files", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   rep_files <- get_private(cmc)$get_cache_files("replica")
@@ -19,19 +18,35 @@ test_that("get_cache_files", {
     expect_true(all(c("meta", "lock", "rds") %in% names(files)))
     expect_equal(
       fs::path_common(c(files$rds, files$lock, files$rds, root)),
-      root)
+      root
+    )
     expect_true(inherits(files$pkgs, "tbl"))
     expect_equal(
       sort(names(files$pkgs)),
-      sort(c("path", "etag", "basedir", "base", "mirror", "url",
-             "fallback_url", "platform", "r_version", "type",
-             "bioc_version", "meta_path", "meta_etag", "meta_url",
-             "bin_path", "bin_etag", "bin_url"
+      sort(c(
+        "path",
+        "etag",
+        "basedir",
+        "base",
+        "mirror",
+        "url",
+        "fallback_url",
+        "platform",
+        "r_version",
+        "type",
+        "bioc_version",
+        "meta_path",
+        "meta_etag",
+        "meta_url",
+        "bin_path",
+        "bin_etag",
+        "bin_url"
       ))
     )
     expect_equal(
       fs::path_common(c(files$pkgs$path, files$pkgs$etag, root)),
-      root)
+      root
+    )
   }
 
   check(pri_files, pri)
@@ -44,24 +59,29 @@ test_that("get_current_data", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
   set_private(cmc, "data") <- "DATA"
   set_private(cmc, "data_time") <- Sys.time()
   expect_equal(get_private(cmc)$get_current_data(oneday()), "DATA")
 
-  set_private(cmc,  "data_time") <- Sys.time() - 2 * oneday()
-  expect_error(
-    get_private(cmc)$get_current_data(oneday()),
-    "Loaded data outdated")
+  set_private(cmc, "data_time") <- Sys.time() - 2 * oneday()
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$get_current_data(oneday())
+  )
 
   set_private(cmc, "data_time") <- NULL
-  expect_error(
-    get_private(cmc)$get_current_data(oneday()),
-    "Loaded data outdated")
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$get_current_data(oneday())
+  )
 
   set_private(cmc, "data") <- NULL
-  expect_error(get_private(cmc)$get_current_data(oneday()), "No data loaded")
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$get_current_data(oneday())
+  )
 })
 
 test_that("load_replica_rds", {
@@ -70,26 +90,27 @@ test_that("load_replica_rds", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
-  expect_error(
-    get_private(cmc)$load_replica_rds(oneday()),
-    "No replica RDS file in cache"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_replica_rds(oneday())
   )
 
   rep_files <- get_private(cmc)$get_cache_files("replica")
   mkdirp(dirname(rep_files$rds))
   save_rds("This is it", rep_files$rds)
   file_set_time(rep_files$rds, Sys.time() - 2 * oneday())
-  expect_error(
-    get_private(cmc)$load_replica_rds(oneday()),
-    "Replica RDS cache file outdated"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_replica_rds(oneday())
   )
 
-  file_set_time(rep_files$rds, Sys.time() - 1/2  * oneday())
+  file_set_time(rep_files$rds, Sys.time() - 1 / 2 * oneday())
   expect_equal(
     suppressMessages(get_private(cmc)$load_replica_rds(oneday())),
-    "This is it")
+    "This is it"
+  )
   expect_equal(get_private(cmc)$data, "This is it")
   expect_true(Sys.time() - get_private(cmc)$data_time < oneday())
 })
@@ -100,35 +121,40 @@ test_that("load_primary_rds", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, "source",  bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
-  expect_error(
-    get_private(cmc)$load_primary_rds(oneday()),
-    "No primary RDS file in cache"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_primary_rds(oneday())
   )
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$rds))
   save_rds("This is it", pri_files$rds)
   file_set_time(pri_files$rds, Sys.time() - 2 * oneday())
-  expect_error(
-    get_private(cmc)$load_primary_rds(oneday()),
-    "Primary RDS cache file outdated"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_primary_rds(oneday())
   )
 
-  file_set_time(pri_files$rds, Sys.time() - 1/2  * oneday())
-  for (f in pri_files$pkgs$path) { mkdirp(dirname(f)); cat("x", file = f) }
-  file_set_time(pri_files$pkgs$path, Sys.time() - 2  * oneday())
+  file_set_time(pri_files$rds, Sys.time() - 1 / 2 * oneday())
+  for (f in pri_files$pkgs$path) {
+    mkdirp(dirname(f))
+    cat("x", file = f)
+  }
+  file_set_time(pri_files$pkgs$path, Sys.time() - 2 * oneday())
   expect_equal(
     suppressMessages(get_private(cmc)$load_primary_rds(oneday())),
-    "This is it")
+    "This is it"
+  )
   expect_equal(get_private(cmc)$data, "This is it")
   expect_true(Sys.time() - get_private(cmc)$data_time < oneday())
 
   ## Replica was also updated
   expect_equal(
     suppressMessages(get_private(cmc)$load_replica_rds(oneday())),
-    "This is it")
+    "This is it"
+  )
 })
 
 test_that("locking failures", {
@@ -138,14 +164,16 @@ test_that("locking failures", {
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
   fake(cmc__load_primary_rds, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
-    "Cannot acquire lock to copy RDS")
+  expect_snapshot(
+    error = TRUE,
+    cmc__load_primary_rds(cmc, get_private(cmc), oneday())
+  )
 
   fake(cmc__load_primary_pkgs, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__load_primary_pkgs(cmc, get_private(cmc), oneday()),
-    "Cannot acquire lock to copy PACKAGES")
+  expect_snapshot(
+    error = TRUE,
+    cmc__load_primary_pkgs(cmc, get_private(cmc), oneday())
+  )
 })
 
 test_that("load_primary_rds 3", {
@@ -156,9 +184,10 @@ test_that("load_primary_rds 3", {
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   touch(pri_files$rds)
-  expect_error(
-    cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
-    "Primary PACKAGES missing")
+  expect_snapshot(
+    error = TRUE,
+    cmc__load_primary_rds(cmc, get_private(cmc), oneday())
+  )
 })
 
 test_that("load_primary_pkgs", {
@@ -169,31 +198,38 @@ test_that("load_primary_pkgs", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
-                                     bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("macos", "source"),
+    bioc = FALSE
+  )
 
-  expect_error(
-    get_private(cmc)$load_primary_pkgs(oneday()),
-    "Some primary PACKAGES files don't exist")
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_primary_pkgs(oneday())
+  )
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$pkgs$path))
   fs::file_copy(test_path("fixtures/PACKAGES-mac.gz"), pri_files$pkgs$path[1])
   # if this fails, then we need to add a new R version to the list or
   # CRAN macOS platforms in platform.R
-  expect_error(
-    synchronise(get_private(cmc)$load_primary_pkgs(oneday())),
-    "Some primary PACKAGES files don't exist")
+  expect_snapshot(
+    error = TRUE,
+    synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
+  )
 
   for (i in utils::tail(seq_len(nrow(pri_files$pkgs)), -1)) {
     fs::file_copy(test_path("fixtures/PACKAGES-src.gz"), pri_files$pkgs$path[i])
   }
   file_set_time(pri_files$pkgs$path, Sys.time() - 2 * oneday())
-  expect_error(
-    synchronise(get_private(cmc)$load_primary_pkgs(oneday())),
-    "Some primary PACKAGES files are outdated")
+  expect_snapshot(
+    error = TRUE,
+    synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
+  )
 
-  file_set_time(pri_files$pkgs$path, Sys.time() - 1/2 * oneday())
+  file_set_time(pri_files$pkgs$path, Sys.time() - 1 / 2 * oneday())
   res <- suppressMessages(
     synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
   )
@@ -235,8 +271,12 @@ test_that("update_replica_rds", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
-                                     bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("macos", "source"),
+    bioc = FALSE
+  )
 
   rep_files <- get_private(cmc)$get_cache_files("replica")
   mkdirp(dirname(rep_files$pkgs$path))
@@ -257,8 +297,12 @@ test_that("update_primary", {
   dir.create(rep <- fs::path_norm(tempfile()))
   on.exit(unlink(rep, recursive = TRUE), add = TRUE)
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
-                                     bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("macos", "source"),
+    bioc = FALSE
+  )
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   rep_files <- get_private(cmc)$get_cache_files("replica")
@@ -286,19 +330,23 @@ test_that("update_primary", {
 })
 
 test_that("update_primary 2", {
-
   expect_null(cmc__update_primary(NULL, NULL, FALSE, FALSE, FALSE))
 
   pri <- test_temp_dir()
   rep <- test_temp_dir()
 
-  cmc <- cranlike_metadata_cache$new(pri, rep, c("macos", "source"),
-                                     bioc = FALSE)
+  cmc <- cranlike_metadata_cache$new(
+    pri,
+    rep,
+    c("macos", "source"),
+    bioc = FALSE
+  )
 
   fake(cmc__update_primary, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__update_primary(cmc, get_private(cmc), TRUE, TRUE, TRUE),
-    "Cannot acquire lock to update primary cache")
+  expect_snapshot(
+    error = TRUE,
+    cmc__update_primary(cmc, get_private(cmc), TRUE, TRUE, TRUE)
+  )
 })
 
 test_that("update", {

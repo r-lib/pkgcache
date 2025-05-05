@@ -39,7 +39,7 @@ See \code{tools::R_user_dir()}.}
 e.g. the number of files and their total size. It returns a named list.
 }
 \examples{
-\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
 pkg_cache_summary()
 pkg_cache_list()
 pkg_cache_find(package = "forecast")

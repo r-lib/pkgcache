@@ -1,3 +1,35 @@
+# parse_description
+
+    Code
+      .Call(pkgcache_parse_description_raw, charToRaw(d))
+    Condition
+      Error:
+      ! Invalid DESCRIPTION file, must start with an alphanumeric character @lib.c:<linum> (pkgcache_parse_description_raw)
+
+---
+
+    Code
+      .Call(pkgcache_parse_description_raw, charToRaw(d))
+    Condition
+      Error:
+      ! Line 1 invalid in DESCRIPTION: must be of form `key: value` @lib.c:<linum> (pkgcache_parse_description_raw)
+
+---
+
+    Code
+      .Call(pkgcache_parse_description_raw, charToRaw(d))
+    Condition
+      Error:
+      ! DESCRIPTION file ended while parsing a key @lib.c:278 (pkgcache_parse_description_raw)
+
+---
+
+    Code
+      .Call(pkgcache_parse_description_raw, charToRaw(d))
+    Condition
+      Error:
+      ! Line 2 invalid in DESCRIPTION: must be of form `key: value` @lib.c:<linum> (pkgcache_parse_description_raw)
+
 # parse_packages
 
     Code
@@ -63,6 +95,30 @@
       [1] NA                  NA                 
       [3] NA                  "4.2.0/Recommended"
       [5] "Older"             "Older"            
+
+# parse_packages, errors
+
+    Code
+      .Call(pkgcache_parse_packages_raw, charToRaw(p))
+    Condition
+      Error:
+      ! Invalid PACKAGES file in line 3: expected key @lib.c:<linum> (pkgcache_parse_packages_raw)
+
+---
+
+    Code
+      .Call(pkgcache_parse_packages_raw, charToRaw(p))
+    Condition
+      Error:
+      ! Invalid line 2 in PACKAGES file: must contain `:` @lib.c:<linum> (pkgcache_parse_packages_raw)
+
+---
+
+    Code
+      .Call(pkgcache_parse_packages_raw, charToRaw(p))
+    Condition
+      Error:
+      ! PACKAGES file ended while parsing a key @lib.c:487 (pkgcache_parse_packages_raw)
 
 # somewhat weird packages files
 

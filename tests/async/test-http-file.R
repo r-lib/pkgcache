@@ -1,4 +1,3 @@
-
 test_that("GET file://", {
   tmp <- tempfile()
   on.exit(unlink(tmp), add = TRUE)
@@ -35,5 +34,9 @@ test_that("file:// to file", {
 test_that("file:// does not exist", {
   tmp <- tempfile()
   url <- paste0("file://", tmp)
-  expect_error(synchronise(http_get(url)))
+  expect_snapshot(
+    error = TRUE,
+    synchronise(http_get(url)),
+    transform = function(x) fix_temp_path(sub("Could not", "Couldn't", x))
+  )
 })

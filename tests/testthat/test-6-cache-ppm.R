@@ -1,4 +1,3 @@
-
 test_that("add binary", {
   pc <- package_cache$new(withr::local_tempdir())
   pkg <- withr::local_tempfile()

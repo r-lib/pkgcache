@@ -1,4 +1,3 @@
-
 test_that("is_character", {
   pos <- list("", "NA", "foobar", character(), letters, c(a = "b"))
   neg <- list(1, 1L, NA, NA_character_, c("x", NA_character_), NULL)
@@ -8,16 +7,33 @@ test_that("is_character", {
 
 test_that("is_string", {
   pos <- list("", "x", "NA", "foobar", c(a = "b"))
-  neg <- list(1, 1L, 1:10, NA, NA_character_, letters, letters[1:2],
-              character(), NULL)
+  neg <- list(
+    1,
+    1L,
+    1:10,
+    NA,
+    NA_character_,
+    letters,
+    letters[1:2],
+    character(),
+    NULL
+  )
   for (p in pos) expect_true(is_string(p))
   for (n in neg) expect_false(is_string(n))
 })
 
 test_that("is_string_or_null", {
   pos <- list("", "x", "NA", "foobar", c(a = "b"), NULL)
-  neg <- list(1, 1L, 1:10, NA, NA_character_, letters, letters[1:2],
-              character())
+  neg <- list(
+    1,
+    1L,
+    1:10,
+    NA,
+    NA_character_,
+    letters,
+    letters[1:2],
+    character()
+  )
   for (p in pos) expect_true(is_string_or_null(p))
   for (n in neg) expect_false(is_string_or_null(n))
 })
@@ -31,16 +47,33 @@ test_that("is_flag", {
 
 test_that("is_path", {
   pos <- list("", "x", "NA", "foobar", c(a = "b"))
-  neg <- list(1, 1L, 1:10, NA, NA_character_, letters, letters[1:2],
-              character(), NULL)
+  neg <- list(
+    1,
+    1L,
+    1:10,
+    NA,
+    NA_character_,
+    letters,
+    letters[1:2],
+    character(),
+    NULL
+  )
   for (p in pos) expect_true(is_path(p))
   for (n in neg) expect_false(is_path(n))
 })
 
 test_that("is_path_or_null", {
   pos <- list("", "x", "NA", "foobar", c(a = "b"), NULL)
-  neg <- list(1, 1L, 1:10, NA, NA_character_, letters, letters[1:2],
-              character())
+  neg <- list(
+    1,
+    1L,
+    1:10,
+    NA,
+    NA_character_,
+    letters,
+    letters[1:2],
+    character()
+  )
   for (p in pos) expect_true(is_path_or_null(p))
   for (n in neg) expect_false(is_path_or_null(n))
 })
@@ -64,9 +97,17 @@ test_that("is_existing_file", {
 })
 
 test_that("is_dependencies", {
-  pos <- list(TRUE, FALSE, NA, NA_character_, character(),
-              "Depends", c("Depends", "Imports"), dep_types(),
-              "linkingto")
+  pos <- list(
+    TRUE,
+    FALSE,
+    NA,
+    NA_character_,
+    character(),
+    "Depends",
+    c("Depends", "Imports"),
+    dep_types(),
+    "linkingto"
+  )
   neg <- list(1, 1:5, "foo", c("Depends", NA))
   for (p in pos) expect_true(is_dependencies(p))
   for (n in neg) expect_false(is_dependencies(n))

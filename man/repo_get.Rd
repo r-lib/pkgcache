@@ -146,12 +146,12 @@ will trigger an error.
 
 \examples{
 repo_get()
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 repo_resolve("PPM@2021-01-21")
 #' repo_resolve("PPM@dplyr-1.0.0")
 #' repo_resolve("PPM@R-4.0.0")
 \dontshow{\}) # examplesIf}
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
 with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 

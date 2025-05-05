@@ -1,6 +1,4 @@
-
 test_that("tick", {
-
   do <- async(function() {
     deferred$new(
       function(resolve, progress) {
@@ -64,7 +62,7 @@ test_that("ratio", {
 
 test_that("amount", {
   amountx <- 0
-  totalx  <- 0
+  totalx <- 0
   do <- async(function() {
     deferred$new(
       function(resolve, progress) {

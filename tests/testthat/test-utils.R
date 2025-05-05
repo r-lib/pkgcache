@@ -1,4 +1,3 @@
-
 test_that("%||%", {
   expect_equal(NULL %||% 100, 100)
   expect_equal(100 %||% 1000, 100)
@@ -14,8 +13,10 @@ test_that("viapply", {
     vapply(list(), length, integer(1)),
     viapply(list(), length)
   )
-  expect_error(viapply(l, identity), "values must be length 1")
-  expect_error(viapply(letters, identity), "values must be type .*integer")
+  expect_snapshot(error = TRUE, {
+    viapply(l, identity)
+    viapply(letters, identity)
+  })
 })
 
 test_that("vcapply", {
@@ -29,8 +30,10 @@ test_that("vcapply", {
     vapply(list(), f, character(1)),
     vcapply(list(), f)
   )
-  expect_error(vcapply(l, identity), "values must be length 1")
-  expect_error(vcapply(1:5, identity), "values must be type .*character")
+  expect_snapshot(error = TRUE, {
+    vcapply(l, identity)
+    vcapply(1:5, identity)
+  })
 })
 
 test_that("vlapply", {
@@ -43,8 +46,10 @@ test_that("vlapply", {
     vapply(list(), is.character, logical(1)),
     vlapply(list(), is.character)
   )
-  expect_error(vlapply(l, identity), "values must be length 1")
-  expect_error(vlapply(1:5, identity), "values must be type .*logical")
+  expect_snapshot(error = TRUE, {
+    vlapply(l, identity)
+    vlapply(1:5, identity)
+  })
 })
 
 test_that("vdapply", {
@@ -58,8 +63,10 @@ test_that("vdapply", {
     vapply(list(), f, double(1)),
     vdapply(list(), f)
   )
-  expect_error(vdapply(l, identity), "values must be length 1")
-  expect_error(vdapply(letters, identity), "values must be type .*double")
+  expect_snapshot(error = TRUE, {
+    vdapply(l, identity)
+    vdapply(letters, identity)
+  })
 })
 
 test_that("mapx", {
@@ -76,22 +83,12 @@ test_that("mapx", {
     list()
   )
 
-  expect_error(
-    mapx(),
-    "No arguments"
-  )
-  expect_error(
-    mapx(1),
-    "argument not a function"
-  )
-  expect_error(
-    mapx(identity),
-    "No data"
-  )
-  expect_error(
-    mapx(1:2, 1:10, paste),
-    "Incompatible data lengths"
-  )
+  expect_snapshot(error = TRUE, {
+    mapx()
+    mapx(1)
+    mapx(identity)
+    mapx(1:2, 1:10, paste)
+  })
 })
 
 test_that("lapply_rows", {
@@ -128,7 +125,7 @@ test_that("zip_vecs", {
     zip_vecs(1:2, 3:4, 5:6),
     list(c(1L, 3L, 5L), c(2L, 4L, 6L))
   )
-  
+
   expect_equal(
     zip_vecs(1:2, 3L),
     list(c(1L, 3L), c(2L, 3L))
@@ -136,9 +133,10 @@ test_that("zip_vecs", {
 
   # This has changed in R 4.2.0, apparently
   if (getRversion() <= "4.1.100") {
-    expect_error(
+    expect_snapshot(
+      error = TRUE,
       zip_vecs(integer(), 3L),
-      "zero-length inputs cannot be mixed"
+      variant = if (getRversion() <= "4.1.100") "old" else "new"
     )
   } else {
     expect_equal(
@@ -196,7 +194,7 @@ test_that("is_na_scalar", {
     NA
   )
   for (c in good) expect_true(is_na_scalar(c), info = c)
-  
+
   bad <- list(
     NULL,
     c(NA, NA),
@@ -234,8 +232,21 @@ test_that("na_omit", {
 })
 
 test_that("shasum256", {
-  hello <- as.raw(c(0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72,
-                    0x6c, 0x64, 0x21, 0x0a))
+  hello <- as.raw(c(
+    0x48,
+    0x65,
+    0x6c,
+    0x6c,
+    0x6f,
+    0x20,
+    0x77,
+    0x6f,
+    0x72,
+    0x6c,
+    0x64,
+    0x21,
+    0x0a
+  ))
   tmp <- tempfile("pkgcache-test-shasum256")
   on.exit(unlink(tmp), add = TRUE)
   file.create(tmp)
@@ -255,7 +266,8 @@ test_that("msg_wrap", {
   local_edition(3)
   expect_snapshot(error = TRUE, {
     msg <- msg_wrap(
-      "some error message", "\n\n",
+      "some error message",
+      "\n\n",
       "Could not load or update archive cache. If you think your local ",
       "cache is broken, try deleting it with `cran_archive_cleanup()` or ",
       "the `$cleanup()` method."
@@ -301,7 +313,7 @@ test_that("modify_vec", {
 test_that("last", {
   expect_equal(last(1:3), 3)
   expect_equal(last(as.list(1:3)), 3)
-  expect_error(last(list()))
+  expect_snapshot(error = TRUE, last(list()))
 })
 
 test_that("get_os_type", {
@@ -332,7 +344,7 @@ test_that("gzip_decompress", {
 test_that("interpret_dependencies", {
   dp <- interpret_dependencies(TRUE)
   expect_equal(names(dp), c("direct", "indirect"))
-  expect_equal(interpret_dependencies(dp),  dp)
+  expect_equal(interpret_dependencies(dp), dp)
 
   expect_equal(
     interpret_dependencies(FALSE),

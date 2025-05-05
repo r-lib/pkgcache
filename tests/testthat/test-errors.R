@@ -1,7 +1,10 @@
-
 test_that("new_pkgcache_cond", {
   cnd <- new_pkgcache_cond(
-    "a ", "message", class = "myclass", data = list(foo = 1))
+    "a ",
+    "message",
+    class = "myclass",
+    data = list(foo = 1)
+  )
   cch <- tryCatch(signalCondition(cnd), pkgcache_condition = identity)
   expect_equal(conditionMessage(cch), "a message")
   expect_s3_class(cch, "myclass")
@@ -10,7 +13,11 @@ test_that("new_pkgcache_cond", {
 
 test_that("new_pkgcache_warning", {
   cnd <- new_pkgcache_warning(
-    "a ", "message", class = "myclass", data = list(foo = 1))
+    "a ",
+    "message",
+    class = "myclass",
+    data = list(foo = 1)
+  )
   cch <- tryCatch(warning(cnd), pkgcache_condition = identity)
   expect_equal(conditionMessage(cch), "a message")
   expect_s3_class(cch, "myclass")

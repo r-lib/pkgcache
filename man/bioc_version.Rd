@@ -69,21 +69,21 @@ See the \code{BioC_mirror} option and the \code{R_BIOC_MIRROR} and
 They can be used to customize the desired Bioconductor version.
 }
 \examples{
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 bioc_version()
 bioc_version("4.0")
 bioc_version("4.1")
 \dontshow{\}) # examplesIf}
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 bioc_version_map()
 \dontshow{\}) # examplesIf}
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 bioc_devel_version()
 \dontshow{\}) # examplesIf}
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 bioc_release_version()
 \dontshow{\}) # examplesIf}
-\dontshow{if (pkgcache:::run_examples()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (pkgcache:::run_examples()) withAutoprint(\{ # examplesIf}
 bioc_repos()
 \dontshow{\}) # examplesIf}
 }

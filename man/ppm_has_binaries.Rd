@@ -13,7 +13,7 @@ ppm_has_binaries()
 Does PPM build binary packages for the current platform?
 }
 \examples{
-\dontshow{if (!pkgcache:::is_rcmd_check()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (!pkgcache:::is_rcmd_check()) withAutoprint(\{ # examplesIf}
 current_r_platform()
 ppm_has_binaries()
 \dontshow{\}) # examplesIf}

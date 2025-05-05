@@ -1,4 +1,3 @@
-
 test_that("read_etag", {
   cat("foobar\n", file = tmp <- tempfile())
   expect_equal(read_etag(tmp), "foobar")
@@ -19,12 +18,11 @@ test_that("read_etag", {
 })
 
 test_that("download_file", {
-
   dir.create(dir <- tempfile())
   dx <- synchronise(download_file(
-    url    <- http$url("/response-headers?etag=foobar"),
+    url <- http$url("/response-headers?etag=foobar"),
     target <- file.path(dir, "file1"),
-    etag   <- file.path(dir, "etag"),
+    etag <- file.path(dir, "etag"),
     headers = c("accept-encoding" = "")
   ))
 
@@ -62,12 +60,11 @@ test_that("download_file, errors", {
 })
 
 test_that("download_if_newer, no etag file", {
-
   dir.create(dir <- tempfile())
   dx <- synchronise(download_if_newer(
-    url    <- http$url("/etag/foobar"),
+    url <- http$url("/etag/foobar"),
     target <- file.path(dir, "file1"),
-    etag   <- file.path(dir, "etag"),
+    etag <- file.path(dir, "etag"),
     headers = c("accept-encoding" = "")
   ))
 
@@ -78,12 +75,11 @@ test_that("download_if_newer, no etag file", {
 })
 
 test_that("download_if_newer, different etag", {
-
   dir.create(dir <- tempfile())
 
   cat("eeeetag\n", file = etag <- file.path(dir, "etag"))
   dx <- synchronise(download_if_newer(
-    url    <- http$url("/etag/foobar"),
+    url <- http$url("/etag/foobar"),
     target <- file.path(dir, "file1"),
     etag,
     headers = c("accept-encoding" = "")
@@ -96,13 +92,12 @@ test_that("download_if_newer, different etag", {
 })
 
 test_that("download_if_newer, matching etag", {
-
   dir.create(dir <- tempfile())
 
   cat("foobar\n", file = etag <- file.path(dir, "etag"))
   cat("dummy\n", file = target <- file.path(dir, "file1"))
   dx <- synchronise(download_if_newer(
-    url    <- http$url("/etag/foobar"),
+    url <- http$url("/etag/foobar"),
     target,
     etag
   ))
@@ -115,7 +110,6 @@ test_that("download_if_newer, matching etag", {
 })
 
 test_that("download_if_newer, error", {
-
   cat("dummy\n", file = target <- tempfile())
   on.exit(unlink(target), add = TRUE)
 
@@ -145,7 +139,8 @@ test_that("download_if_newer, error", {
       http$url("/status/201"),
       destfile = target
     )),
-    error = function(e) e)
+    error = function(e) e
+  )
   expect_s3_class(err, "async_rejected")
   expect_match(conditionMessage(err), "Unknown HTTP response")
 
@@ -160,7 +155,6 @@ test_that("download_if_newer, error", {
 })
 
 test_that("download_one_of", {
-
   dx <- synchronise(download_one_of(
     http$url(c("/status/404", "/status/403", "/get?q=1")),
     tmp <- tempfile()
@@ -174,14 +168,15 @@ test_that("download_one_of", {
 })
 
 test_that("download_one_of, etag", {
-
   dir.create(dir <- tempfile())
 
   cat("eeeetag\n", file = etag <- file.path(dir, "etag"))
   dx <- synchronise(download_one_of(
-    c(http$url("/status/404"),
+    c(
+      http$url("/status/404"),
       http$url("/status/403"),
-      url <- http$url("/etag/foobar")),
+      url <- http$url("/etag/foobar")
+    ),
     target <- file.path(dir, "file1"),
     etag_file = etag,
     headers = c("accept-encoding" = "")
@@ -194,7 +189,6 @@ test_that("download_one_of, etag", {
 })
 
 test_that("download_one_of, matching etag", {
-
   dir.create(dir <- tempfile())
 
   cat("foobar\n", file = etag <- file.path(dir, "etag"))
@@ -212,7 +206,6 @@ test_that("download_one_of, matching etag", {
 })
 
 test_that("download_one_of, errors", {
-
   tmp <- tempfile()
 
   afun <- async(function() {
@@ -248,11 +241,10 @@ test_that("download_one_of, errors", {
 })
 
 test_that("download_files", {
-
   dir <- test_temp_dir()
   downloads <- data.frame(
     stringsAsFactors = FALSE,
-    url  = http$url(paste0("/etag/foobar", 1:3)),
+    url = http$url(paste0("/etag/foobar", 1:3)),
     path = file.path(dir, paste0("file", 1:3)),
     etag = file.path(dir, paste0("etag", 1:3))
   )
@@ -273,8 +265,7 @@ test_that("download_files", {
   expect_equal(file.exists(downloads$path), rep(TRUE, 3))
   expect_equal(file.exists(downloads$etag), rep(TRUE, 3))
   for (i in 1:2) {
-    expect_equal(jsonlite::fromJSON(downloads$path[i])$url,
-                 downloads$url[i])
+    expect_equal(jsonlite::fromJSON(downloads$path[i])$url, downloads$url[i])
     expect_equal(read_lines(downloads$etag[i]), paste0("foobar", i))
   }
   expect_equal(read_lines(downloads$path[3]), "dummy")
@@ -285,26 +276,22 @@ test_that("download_files", {
 })
 
 test_that("download_files errors", {
-
   dir <- test_temp_dir()
   downloads <- data.frame(
     stringsAsFactors = FALSE,
-    url  = http$url(paste0("/etag/foobar", 1:3)),
+    url = http$url(paste0("/etag/foobar", 1:3)),
     path = "thesamepath",
     etag = file.path(dir, paste0("etag", 1:3))
   )
 
-  expect_error(
-    synchronise(download_files(downloads)),
-    "Duplicate target paths")
+  expect_snapshot(error = TRUE, synchronise(download_files(downloads)))
 })
 
 test_that("download_files, no errors", {
-
   dir <- test_temp_dir()
   downloads <- data.frame(
     stringsAsFactors = FALSE,
-    url  = http$url(paste0("/status/", 400 + 1:3)),
+    url = http$url(paste0("/status/", 400 + 1:3)),
     path = file.path(dir, paste0("file", 1:3)),
     etag = file.path(dir, paste0("etag", 1:3))
   )

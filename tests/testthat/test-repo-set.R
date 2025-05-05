@@ -1,4 +1,3 @@
-
 if (Sys.getenv("R_COVR") == "true") {
   return()
 }
@@ -114,7 +113,7 @@ test_that("repo_add", {
   expect_equal(repo_get(), before)
 
   repo_add(URL = "https://my.url", .list = c(PATH = "/foo/bar"))
-  expect_snapshot(repo_get()[1:3,])
+  expect_snapshot(repo_get()[1:3, ])
 })
 
 test_that("with_repo", {
@@ -125,7 +124,7 @@ test_that("with_repo", {
     cli.unicode = FALSE
   )
   expect_snapshot(
-    with_repo(c(URL = "https://my.url"), repo_get()[1,])
+    with_repo(c(URL = "https://my.url"), repo_get()[1, ])
   )
 })
 
@@ -153,10 +152,7 @@ test_that("repo_sugar_path", {
 
 test_that("repo_sugar_mran", {
   withr::local_envvar(PKGCACHE_MRAN_URL = NA_character_)
-  expect_error(
-    repo_sugar_mran("2017-01-31", NULL),
-    "PPM snapshots go back to 2017-10-10 only"
-  )
+  expect_snapshot(error = TRUE, repo_sugar_mran("2017-01-31", NULL))
 
   expect_equal(
     repo_sugar_mran("2020-01-21", NULL),
@@ -194,9 +190,9 @@ test_that("repo_sugar_ppm", {
     NULL
   })
 
-  expect_error(
-    repo_sugar_ppm(as.Date("2017-10-01"), NULL),
-    "PPM snapshots go back to 2017-10-10"
+  expect_snapshot(
+    error = TRUE,
+    repo_sugar_ppm(as.Date("2017-10-01"), NULL)
   )
   expect_true(called)
 })
@@ -225,10 +221,7 @@ test_that("parse_spec_r", {
     called <<- TRUE
     pkgenv$r_versions
   })
-  expect_error(
-    parse_spec_r("100.0.0"),
-    "Unknown R version"
-  )
+  expect_snapshot(error = TRUE, parse_spec_r("100.0.0"))
   expect_true(called)
 })
 
@@ -240,7 +233,7 @@ test_that("get_r_versions", {
   expect_snapshot(ret)
 
   withr::local_envvar(PKGCACHE_R_VERSIONS_URL = repo$url("/rversionsx"))
-  expect_error(get_r_versions(), "Failed to download R versions from")
+  expect_snapshot(error = TRUE, get_r_versions(), transform = fix_port)
 })
 
 test_that("parse_spec_date", {
@@ -251,28 +244,23 @@ test_that("parse_spec_pkg", {
   testthat::local_edition(3)
   withr::local_envvar(PKGCACHE_CRANDB_URL = repo$url("/crandb/%s"))
 
-  expect_error(parse_spec_pkg("foo-"), "Invalid package version")
-  expect_error(parse_spec_pkg("-1.0.1"), "Invalid package version")
+  expect_snapshot(error = TRUE, {
+    parse_spec_pkg("foo-")
+    parse_spec_pkg("-1.0.1")
+  })
 
   old <- pkgenv$pkg_versions[["dplyr"]]
   on.exit(pkgenv$pkg_versions[["dplyr"]] <- old, add = TRUE)
   pkgenv$pkg_versions[["dplyr"]] <- NULL
 
-  expect_error(
-    parse_spec_pkg("dplyr-0.0.0"),
-    "Unknown 'dplyr' version: '0.0.0'",
-    fixed = TRUE
-  )
+  expect_snapshot(error = TRUE, parse_spec_pkg("dplyr-0.0.0"))
   expect_snapshot(pkgenv$pkg_versions[["dplyr"]])
 
-  expect_error(
-    parse_spec_pkg("foobar-1.0.0"),
-    "Cannot find package versions for"
-  )
-
-  expect_error(
+  expect_snapshot(error = TRUE, parse_spec_pkg("foobar-1.0.0"))
+  expect_snapshot(
+    error = TRUE,
     parse_spec_pkg("bad-1.0.0"),
-    "Failed to download package versions for"
+    transform = fix_port
   )
 
   expect_equal(parse_spec_pkg("dplyr-1.0.0"), as.Date("2020-05-30"))

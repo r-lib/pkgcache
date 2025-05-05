@@ -1,4 +1,3 @@
-
 test_that("assert_that", {
   expect_silent({
     assert_that(is.integer(1L))
@@ -29,7 +28,6 @@ test_that("bad assertions", {
 })
 
 test_that("call is deparsed correctly", {
-
   is_integer <- function(x) {
     is.integer(x)
   }
@@ -40,14 +38,21 @@ test_that("call is deparsed correctly", {
 
   expect_snapshot(error = TRUE, {
     assert_that(is_integer(
-      1.00001 * 1.00001 * 1.00001 * 1.00001 * 1.00001 *
-      1.00001 * 1.00001 * 1.00001 * 1.00001 * 1.00001
+      1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001 *
+        1.00001
     ))
   })
 })
 
 test_that("custom failure message", {
-
   is_count <- function(x) {
     is.integer(x) && length(x) == 1 && !is.na(x) && x >= 0
   }

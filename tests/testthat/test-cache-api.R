@@ -1,4 +1,3 @@
-
 test_that("cache api", {
   dir.create(tmp <- tempfile())
   dir.create(tmp2 <- tempfile())
@@ -45,12 +44,14 @@ test_that("cache api", {
 
   expect_equal(
     nrow((pkg_cache_get_file(tmp, target = target, package = "blah"))),
-    0)
+    0
+  )
 
   pkg_cache_delete_files(tmp, package = "pkg1")
   expect_equal(
     nrow((pkg_cache_get_file(tmp, target = target, package = "pkg1"))),
-    0)
+    0
+  )
 
   l <- pkg_cache_list(tmp)
   expect_equal(pkg_cache_summary(tmp)$files, 1)

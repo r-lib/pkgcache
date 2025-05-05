@@ -208,7 +208,10 @@ test_that("bioc_version_map", {
 })
 
 test_that("bioc_release_version, bioc_devel_version", {
-  # This will fail when a new bioc devel version is out
+  # This will fail when a new bioc devel version is out. If this is an odd
+  # Bioc version, then we don'r include that in the version map, because
+  # it will eventually change. In this case only update the snapshots.
+  # If there is a new even version out, then also update the mappings.
   on.exit(bioconductor$.internal$clear_cache())
   bioconductor$.internal$clear_cache()
   skip_on_cran()

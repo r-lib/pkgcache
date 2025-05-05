@@ -68,6 +68,13 @@
 #'              R version is not in the builtin mapping.
 #' * 2020-11-21 Update internal map for 3.12.
 #' * 2023-05-08 Add 'books' repo.
+#' * 2023-06-07 Add 3.18
+#' * 2023-10-31 Better version matching, do not include versions that
+#'              eventually change their mapping in the cache.
+#' * 2023-12-10 Avoid `package_version(list())`, it fails on newer R.
+#' * 2024-06-20 Need to import `utils::download.file()`.
+#' * 2024-11-07 Update version mapping for R 4.4 -> Bioc 3.20.
+#' * 2025-04-30 Reformat code with air.
 #'
 #' @name bioconductor
 #' @keywords internal
@@ -114,9 +121,10 @@ bioconductor <- local({
     "4.1" = package_version("3.14"),
     "4.2" = package_version("3.16"),
     "4.3" = package_version("3.18"),
-    "4.4" = package_version("3.20")
-    # Do not include R 4.4 <-> Bioc 3.19, because R 4.4 will use
-    # Bioc 3.20 eventually.
+    "4.4" = package_version("3.20"),
+    NULL
+    # Do not include R 4.5 <-> Bioc 3.21, because R 4.5 will use
+    # Bioc 3.22 eventually.
   )
 
   # -------------------------------------------------------------------

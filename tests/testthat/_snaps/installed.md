@@ -12,7 +12,7 @@
       .Call(pkgcache_parse_description_raw, charToRaw(d))
     Condition
       Error:
-      ! Invalid DESCRIPTION file, must start with an alphanumeric character @lib.c:192 (pkgcache_parse_description_raw)
+      ! Invalid DESCRIPTION file, must start with an alphanumeric character @lib.c:<linum> (pkgcache_parse_description_raw)
 
 ---
 
@@ -20,7 +20,7 @@
       .Call(pkgcache_parse_description_raw, charToRaw(d))
     Condition
       Error:
-      ! Line 1 invalid in DESCRIPTION: must be of form `key: value` @lib.c:215 (pkgcache_parse_description_raw)
+      ! Line 1 invalid in DESCRIPTION: must be of form `key: value` @lib.c:<linum> (pkgcache_parse_description_raw)
 
 ---
 
@@ -36,7 +36,7 @@
       .Call(pkgcache_parse_description_raw, charToRaw(d))
     Condition
       Error:
-      ! Line 2 invalid in DESCRIPTION: must be of form `key: value` @lib.c:215 (pkgcache_parse_description_raw)
+      ! Line 2 invalid in DESCRIPTION: must be of form `key: value` @lib.c:<linum> (pkgcache_parse_description_raw)
 
 # parse_packages
 
@@ -118,7 +118,7 @@
       .Call(pkgcache_parse_packages_raw, charToRaw(p))
     Condition
       Error:
-      ! Invalid PACKAGES file in line 3: expected key @lib.c:375 (pkgcache_parse_packages_raw)
+      ! Invalid PACKAGES file in line 3: expected key @lib.c:<linum> (pkgcache_parse_packages_raw)
 
 ---
 
@@ -126,7 +126,7 @@
       .Call(pkgcache_parse_packages_raw, charToRaw(p))
     Condition
       Error:
-      ! Invalid line 2 in PACKAGES file: must contain `:` @lib.c:395 (pkgcache_parse_packages_raw)
+      ! Invalid line 2 in PACKAGES file: must contain `:` @lib.c:<linum> (pkgcache_parse_packages_raw)
 
 ---
 

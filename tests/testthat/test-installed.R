@@ -30,12 +30,14 @@ test_that("parse_description", {
   d <- ":notgood\n"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_description_raw, charToRaw(d))
+    .Call(pkgcache_parse_description_raw, charToRaw(d)),
+    transform = fix_c_line_number
   )
   d <- "foobar\n"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_description_raw, charToRaw(d))
+    .Call(pkgcache_parse_description_raw, charToRaw(d)),
+    transform = fix_c_line_number
   )
   d <- "foobar"
   expect_snapshot(
@@ -45,7 +47,8 @@ test_that("parse_description", {
   d <- "foo: bar\n:nokey\n"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_description_raw, charToRaw(d))
+    .Call(pkgcache_parse_description_raw, charToRaw(d)),
+    transform = fix_c_line_number
   )
 
   # \r\n line endings
@@ -119,13 +122,15 @@ test_that("parse_packages, errors", {
   p <- "Package: foo\n\n \n"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_packages_raw, charToRaw(p))
+    .Call(pkgcache_parse_packages_raw, charToRaw(p)),
+    transform = fix_c_line_number
   )
 
   p <- "Package: foo\nVersion is not good\nAnother: x\n"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_packages_raw, charToRaw(p))
+    .Call(pkgcache_parse_packages_raw, charToRaw(p)),
+    transform = fix_c_line_number
   )
 
   p <- "Package: foo\nimcoplete_key"

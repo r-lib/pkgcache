@@ -90,16 +90,25 @@ test_that("async_get_ppm_status", {
   expect_equal(pkgenv$ppm_distros, pkgenv$ppm_distros_cached)
 
   # forget = TRUE forces an update
-  expect_error(synchronise(async_get_ppm_status(forget = TRUE)))
+  expect_snapshot(
+    error = TRUE,
+    synchronise(async_get_ppm_status(forget = TRUE))
+  )
 
   # so does an unknown distro or release, if we haven't updated yet
   pkgenv$ppm_distros <- NULL
-  expect_error(synchronise(async_get_ppm_status(distribution = "123")))
+  expect_snapshot(
+    error = TRUE,
+    synchronise(async_get_ppm_status(distribution = "123"))
+  )
   pkgenv$ppm_distros <- NULL
-  expect_error(synchronise(async_get_ppm_status(
-    distribution = "ubuntu",
-    release = "123"
-  )))
+  expect_snapshot(
+    error = TRUE,
+    synchronise(async_get_ppm_status(
+      distribution = "ubuntu",
+      release = "123"
+    ))
+  )
 })
 
 test_that("async_get_ppm_status 2", {

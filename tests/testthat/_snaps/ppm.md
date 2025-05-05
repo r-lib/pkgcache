@@ -30,6 +30,30 @@
       2 centos8 linux centos8    centos       8       TRUE    
       3 rhel9   linux rhel9      rockylinux   9       TRUE    
 
+# async_get_ppm_status
+
+    Code
+      synchronise(async_get_ppm_status(forget = TRUE))
+    Condition
+      Error in `download_file()`:
+      ! nope
+
+---
+
+    Code
+      synchronise(async_get_ppm_status(distribution = "123"))
+    Condition
+      Error in `download_file()`:
+      ! nope
+
+---
+
+    Code
+      synchronise(async_get_ppm_status(distribution = "ubuntu", release = "123"))
+    Condition
+      Error in `download_file()`:
+      ! nope
+
 # async_get_ppm_status 2
 
     Code

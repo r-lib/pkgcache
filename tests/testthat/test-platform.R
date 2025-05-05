@@ -31,11 +31,10 @@ test_that("get_all_package_dirs", {
   )
   expect_gte(nrow(res), 1)
   expect_true(all(sapply(res, is.character)))
-  expect_error(get_all_package_dirs("source", "3.1"), "R versions before")
-  expect_error(
-    get_package_dirs_for_platform("source", "3.1"),
-    "R versions before"
-  )
+  expect_snapshot(error = TRUE, {
+    get_all_package_dirs("source", "3.1")
+    get_package_dirs_for_platform("source", "3.1")
+  })
 
   res2 <- get_all_package_dirs("i386+x86_64-w64-mingw32", "4.0")
   res3 <- get_all_package_dirs("windows", "4.0")
@@ -63,14 +62,10 @@ test_that("get_all_package_dirs", {
   expect_true("x86_64-apple-darwin17.0" %in% d$platform)
   expect_true("source" %in% d$platform)
 
-  expect_error(
-    get_all_package_dirs("windows", "2.15.0"),
-    "does not support packages for R versions before"
-  )
-  expect_error(
-    get_all_package_dirs("macos", "3.1.3"),
-    "does not support packages for R versions before"
-  )
+  expect_snapshot(error = TRUE, {
+    get_all_package_dirs("windows", "2.15.0")
+    get_all_package_dirs("macos", "3.1.3")
+  })
 
   d <- get_all_package_dirs("macos", "3.2.0")
   expect_equal(

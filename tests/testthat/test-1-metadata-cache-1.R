@@ -66,19 +66,22 @@ test_that("get_current_data", {
   expect_equal(get_private(cmc)$get_current_data(oneday()), "DATA")
 
   set_private(cmc, "data_time") <- Sys.time() - 2 * oneday()
-  expect_error(
-    get_private(cmc)$get_current_data(oneday()),
-    "Loaded data outdated"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$get_current_data(oneday())
   )
 
   set_private(cmc, "data_time") <- NULL
-  expect_error(
-    get_private(cmc)$get_current_data(oneday()),
-    "Loaded data outdated"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$get_current_data(oneday())
   )
 
   set_private(cmc, "data") <- NULL
-  expect_error(get_private(cmc)$get_current_data(oneday()), "No data loaded")
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$get_current_data(oneday())
+  )
 })
 
 test_that("load_replica_rds", {
@@ -89,18 +92,18 @@ test_that("load_replica_rds", {
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
-  expect_error(
-    get_private(cmc)$load_replica_rds(oneday()),
-    "No replica RDS file in cache"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_replica_rds(oneday())
   )
 
   rep_files <- get_private(cmc)$get_cache_files("replica")
   mkdirp(dirname(rep_files$rds))
   save_rds("This is it", rep_files$rds)
   file_set_time(rep_files$rds, Sys.time() - 2 * oneday())
-  expect_error(
-    get_private(cmc)$load_replica_rds(oneday()),
-    "Replica RDS cache file outdated"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_replica_rds(oneday())
   )
 
   file_set_time(rep_files$rds, Sys.time() - 1 / 2 * oneday())
@@ -120,18 +123,18 @@ test_that("load_primary_rds", {
 
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
-  expect_error(
-    get_private(cmc)$load_primary_rds(oneday()),
-    "No primary RDS file in cache"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_primary_rds(oneday())
   )
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   mkdirp(dirname(pri_files$rds))
   save_rds("This is it", pri_files$rds)
   file_set_time(pri_files$rds, Sys.time() - 2 * oneday())
-  expect_error(
-    get_private(cmc)$load_primary_rds(oneday()),
-    "Primary RDS cache file outdated"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_primary_rds(oneday())
   )
 
   file_set_time(pri_files$rds, Sys.time() - 1 / 2 * oneday())
@@ -161,15 +164,15 @@ test_that("locking failures", {
   cmc <- cranlike_metadata_cache$new(pri, rep, "source", bioc = FALSE)
 
   fake(cmc__load_primary_rds, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
-    "Cannot acquire lock to copy RDS"
+  expect_snapshot(
+    error = TRUE,
+    cmc__load_primary_rds(cmc, get_private(cmc), oneday())
   )
 
   fake(cmc__load_primary_pkgs, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__load_primary_pkgs(cmc, get_private(cmc), oneday()),
-    "Cannot acquire lock to copy PACKAGES"
+  expect_snapshot(
+    error = TRUE,
+    cmc__load_primary_pkgs(cmc, get_private(cmc), oneday())
   )
 })
 
@@ -181,9 +184,9 @@ test_that("load_primary_rds 3", {
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
   touch(pri_files$rds)
-  expect_error(
-    cmc__load_primary_rds(cmc, get_private(cmc), oneday()),
-    "Primary PACKAGES missing"
+  expect_snapshot(
+    error = TRUE,
+    cmc__load_primary_rds(cmc, get_private(cmc), oneday())
   )
 })
 
@@ -202,9 +205,9 @@ test_that("load_primary_pkgs", {
     bioc = FALSE
   )
 
-  expect_error(
-    get_private(cmc)$load_primary_pkgs(oneday()),
-    "Some primary PACKAGES files don't exist"
+  expect_snapshot(
+    error = TRUE,
+    get_private(cmc)$load_primary_pkgs(oneday())
   )
 
   pri_files <- get_private(cmc)$get_cache_files("primary")
@@ -212,18 +215,18 @@ test_that("load_primary_pkgs", {
   fs::file_copy(test_path("fixtures/PACKAGES-mac.gz"), pri_files$pkgs$path[1])
   # if this fails, then we need to add a new R version to the list or
   # CRAN macOS platforms in platform.R
-  expect_error(
-    synchronise(get_private(cmc)$load_primary_pkgs(oneday())),
-    "Some primary PACKAGES files don't exist"
+  expect_snapshot(
+    error = TRUE,
+    synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
   )
 
   for (i in utils::tail(seq_len(nrow(pri_files$pkgs)), -1)) {
     fs::file_copy(test_path("fixtures/PACKAGES-src.gz"), pri_files$pkgs$path[i])
   }
   file_set_time(pri_files$pkgs$path, Sys.time() - 2 * oneday())
-  expect_error(
-    synchronise(get_private(cmc)$load_primary_pkgs(oneday())),
-    "Some primary PACKAGES files are outdated"
+  expect_snapshot(
+    error = TRUE,
+    synchronise(get_private(cmc)$load_primary_pkgs(oneday()))
   )
 
   file_set_time(pri_files$pkgs$path, Sys.time() - 1 / 2 * oneday())
@@ -340,9 +343,9 @@ test_that("update_primary 2", {
   )
 
   fake(cmc__update_primary, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__update_primary(cmc, get_private(cmc), TRUE, TRUE, TRUE),
-    "Cannot acquire lock to update primary cache"
+  expect_snapshot(
+    error = TRUE,
+    cmc__update_primary(cmc, get_private(cmc), TRUE, TRUE, TRUE)
   )
 })
 

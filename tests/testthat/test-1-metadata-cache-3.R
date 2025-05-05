@@ -74,7 +74,7 @@ test_that("cmc__get_repos", {
 
 test_that("cleanup", {
   fake(cmc_cleanup, "interactive", FALSE)
-  expect_error(cmc_cleanup(NULL, NULL, FALSE), "Not cleaning up cache")
+  expect_snapshot(error = TRUE, cmc_cleanup(NULL, NULL, FALSE))
 })
 
 test_that("cleanup", {
@@ -87,7 +87,7 @@ test_that("cleanup", {
 
   fake(cmc_cleanup, "interactive", TRUE)
   fake(cmc_cleanup, "readline", "")
-  expect_error(cmc_cleanup(cmc, get_private(cmc), FALSE), "Aborted")
+  expect_snapshot(error = TRUE, cmc_cleanup(cmc, get_private(cmc), FALSE))
 })
 
 test_that("memory cache", {
@@ -107,9 +107,9 @@ test_that("memory cache", {
   rep3 <- test_temp_dir()
   cmc3 <- cranlike_metadata_cache$new(pri, rep3, "source", bioc = FALSE)
   instance <- as.difftime(1 / 100000, units = "secs")
-  expect_error(
-    data3 <- get_private(cmc3)$get_memory_cache(instance),
-    "Memory cache outdated"
+  expect_snapshot(
+    error = TRUE,
+    data3 <- get_private(cmc3)$get_memory_cache(instance)
   )
 })
 
@@ -125,9 +125,9 @@ test_that("update_memory_cache", {
   )
 
   fake(cmc__copy_to_replica, "filelock::lock", function(...) NULL)
-  expect_error(
-    cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE),
-    "Cannot acquire lock to copy primary cache"
+  expect_snapshot(
+    error = TRUE,
+    cmc__copy_to_replica(cmc, get_private(cmc), TRUE, TRUE, TRUE)
   )
 })
 

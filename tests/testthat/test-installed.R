@@ -11,9 +11,10 @@ test_that("parse_description", {
   expect_equal(d[["RoxygenNote"]], "7.1.1.9001")
 
   # cannot open file
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     parse_description(tempfile()),
-    "Cannot open file"
+    transform = fix_temp_path
   )
 
   # empty file
@@ -27,26 +28,24 @@ test_that("parse_description", {
 
   # invalid files
   d <- ":notgood\n"
-  expect_error(
-    .Call(pkgcache_parse_description_raw, charToRaw(d)),
-    "must start with an alphanumeric"
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_description_raw, charToRaw(d))
   )
   d <- "foobar\n"
-  expect_error(
-    .Call(pkgcache_parse_description_raw, charToRaw(d)),
-    "Line 1 invalid in DESCRIPTION: must be of form `key: value`",
-    fixed = TRUE
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_description_raw, charToRaw(d))
   )
   d <- "foobar"
-  expect_error(
-    .Call(pkgcache_parse_description_raw, charToRaw(d)),
-    "DESCRIPTION file ended while parsing a key"
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_description_raw, charToRaw(d))
   )
   d <- "foo: bar\n:nokey\n"
-  expect_error(
-    .Call(pkgcache_parse_description_raw, charToRaw(d)),
-    "Line 2 invalid in DESCRIPTION: must be of form `key: value`",
-    fixed = TRUE
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_description_raw, charToRaw(d))
   )
 
   # \r\n line endings
@@ -111,29 +110,28 @@ test_that("parse_packages, <CR><LF>", {
 })
 
 test_that("parse_packages, errors", {
-  expect_error(
+  expect_snapshot(
+    error = TRUE,
     parse_packages(tempfile(), type = "uncompressed"),
-    "Cannot open file"
+    transform = fix_temp_path
   )
 
   p <- "Package: foo\n\n \n"
-  expect_error(
-    .Call(pkgcache_parse_packages_raw, charToRaw(p)),
-    "Invalid PACKAGES file in line 3: expected key"
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_packages_raw, charToRaw(p))
   )
 
   p <- "Package: foo\nVersion is not good\nAnother: x\n"
-  expect_error(
-    .Call(pkgcache_parse_packages_raw, charToRaw(p)),
-    "Invalid line 2 in PACKAGES file: must contain `:`",
-    fixed = TRUE
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_packages_raw, charToRaw(p))
   )
 
   p <- "Package: foo\nimcoplete_key"
-  expect_error(
-    .Call(pkgcache_parse_packages_raw, charToRaw(p)),
-    "PACKAGES file ended while parsing a key",
-    fixed = TRUE
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_packages_raw, charToRaw(p))
   )
 })
 

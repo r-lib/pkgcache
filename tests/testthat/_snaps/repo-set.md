@@ -20,6 +20,30 @@
       * <chr> <chr>          <chr>    <chr>     <chr>       
       1 URL   https://my.url cranlike *         <NA>        
 
+# repo_sugar_mran
+
+    Code
+      repo_sugar_mran("2017-01-31", NULL)
+    Condition
+      Error in `repo_sugar_mran()`:
+      ! PPM snapshots go back to 2017-10-10 only
+
+# repo_sugar_ppm
+
+    Code
+      repo_sugar_ppm(as.Date("2017-10-01"), NULL)
+    Condition
+      Error in `repo_sugar_ppm()`:
+      ! PPM snapshots go back to 2017-10-10 only
+
+# parse_spec_r
+
+    Code
+      parse_spec_r("100.0.0")
+    Condition
+      Error in `parse_spec_r()`:
+      ! Unknown R version: '100.0.0'
+
 # get_r_versions
 
     Code
@@ -92,7 +116,36 @@
       
       
 
+---
+
+    Code
+      get_r_versions()
+    Condition
+      Error in `get_r_versions()`:
+      ! Failed to download R versions from 'http://127.0.0.1:<port>/rversionsx'
+
 # parse_spec_pkg
+
+    Code
+      parse_spec_pkg("foo-")
+    Condition
+      Error in `parse_spec_pkg()`:
+      ! Invalid package version: 'foo-'
+    Code
+      parse_spec_pkg("-1.0.1")
+    Condition
+      Error in `parse_spec_pkg()`:
+      ! Invalid package version: '-1.0.1'
+
+---
+
+    Code
+      parse_spec_pkg("dplyr-0.0.0")
+    Condition
+      Error in `parse_spec_pkg()`:
+      ! Unknown 'dplyr' version: '0.0.0'
+
+---
 
     Code
       pkgenv$pkg_versions[["dplyr"]]
@@ -199,4 +252,20 @@
       $`1.0.4`
       [1] "2021-02-02T16:10:03+00:00"
       
+
+---
+
+    Code
+      parse_spec_pkg("foobar-1.0.0")
+    Condition
+      Error in `get_pkg_versions()`:
+      ! Cannot find package versions for 'foobar'. Is it a CRAN package?
+
+---
+
+    Code
+      parse_spec_pkg("bad-1.0.0")
+    Condition
+      Error in `get_pkg_versions()`:
+      ! Failed to download package versions for 'bad' from 'http://127.0.0.1:<port>/crandb/bad'
 

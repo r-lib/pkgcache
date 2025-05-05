@@ -284,10 +284,7 @@ test_that("download_files errors", {
     etag = file.path(dir, paste0("etag", 1:3))
   )
 
-  expect_error(
-    synchronise(download_files(downloads)),
-    "Duplicate target paths"
-  )
+  expect_snapshot(error = TRUE, synchronise(download_files(downloads)))
 })
 
 test_that("download_files, no errors", {

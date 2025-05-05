@@ -37,10 +37,7 @@ test_that("error in R CMD check", {
     "R_USER_CACHE_DIR" = NA_character_,
     "R_PKG_CACHE_DIR" = NA_character_
   )
-  expect_error(
-    get_user_cache_dir(),
-    "env var not set during package check"
-  )
+  expect_snapshot(error = TRUE, get_user_cache_dir())
 })
 
 test_that("fall back to R_USER_CACHE_DIR via R_user_dir()", {
@@ -59,7 +56,7 @@ test_that("fall back to R_USER_CACHE_DIR via R_user_dir()", {
     "R_USER_CACHE_DIR" = tempdir()
   )
 
-  expect_error(get_user_cache_dir(), "wait")
+  expect_snapshot(error = TRUE, get_user_cache_dir())
   expect_equal(args, list("pkgcache", "cache"))
 })
 
@@ -72,11 +69,11 @@ test_that("cleanup_old_cache_dir", {
   cachedir <- file.path(tmp, "R-pkg")
   mkdirp(cachedir)
   fake(cleanup_old_cache_dir, "interactive", FALSE)
-  expect_error(cleanup_old_cache_dir(), "non-interactive session")
+  expect_snapshot(error = TRUE, cleanup_old_cache_dir())
 
   fake(cleanup_old_cache_dir, "interactive", TRUE)
   fake(cleanup_old_cache_dir, "readline", "n")
-  expect_error(cleanup_old_cache_dir(), "Aborted")
+  expect_snapshot(error = TRUE, cleanup_old_cache_dir())
 
   expect_true(file.exists(cachedir))
   fake(cleanup_old_cache_dir, "readline", "y")

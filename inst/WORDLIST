@@ -9,6 +9,7 @@ El
 MRAN
 PBC
 README
+ROR
 RSPM
 RStudio
 SHA
@@ -21,7 +22,6 @@ keyring
 libcurl
 lifecycle
 macos
-macOS
 netrc
 pak
 pkgdepends

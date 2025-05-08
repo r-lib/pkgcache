@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   internals: internals.html
   ppm: ppm.html
-last_built: 2025-05-05T09:24Z
+last_built: 2025-05-08T11:20Z
 urls:
   reference: https://r-lib.github.io/pkgcache/reference
   article: https://r-lib.github.io/pkgcache/articles

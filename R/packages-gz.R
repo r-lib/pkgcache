@@ -147,7 +147,14 @@ read_packages_file <- function(
 
     # fall back to previous version for filesize and sysreqs
     nameonly <- function(x) sub("_[^_]*$", "", x)
-    map2 <- match(nameonly(pkgs$target), nameonly(metatarget))
+    nameonly_metatarget <- nameonly(metatarget)
+    map2 <- match(nameonly(pkgs$target), nameonly_metatarget)
+    # handle the case when file names not package names, e.g. R Universe
+    miss_sr <- is.na(map2)
+    map2[miss_sr] <- match(
+      pkgs$package[miss_sr],
+      basename(nameonly_metatarget)
+    )
     filesize2 <- meta$size[map2]
     sysreqs2 <- as.character(meta$sysreqs[map2])
     pkgs$filesize <- ifelse(is.na(pkgs$filesize), filesize2, pkgs$filesize)

@@ -16,6 +16,10 @@ platform, see \code{\link[=ppm_snapshots]{ppm_snapshots()}}.
 \item \code{distribution}: for Linux platforms the name of the distribution,
 \item \code{release}: for Linux platforms, the name of the release,
 \item \code{binaries}: whether PPM builds binaries for this platform.
+\item \code{platforms}: a list column of character vectors; for each row they
+list all possible matching distribution and release strings. Each
+string can be a fixes strings, but if it starts and ends with a
+forward string, then it is used as regular expression.
 }
 }
 \description{

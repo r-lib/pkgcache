@@ -1,6 +1,6 @@
-PRETTY_NAME="Debian GNU/Linux bookworm/sid"
+PRETTY_NAME="Debian GNU/Linux trixie/sid"
 NAME="Debian GNU/Linux"
-VERSION_CODENAME=bookworm
+VERSION_CODENAME=trixie
 ID=debian
 HOME_URL="https://www.debian.org/"
 SUPPORT_URL="https://www.debian.org/support"

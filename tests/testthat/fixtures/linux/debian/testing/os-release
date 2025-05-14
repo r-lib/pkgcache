@@ -1,8 +1,6 @@
-PRETTY_NAME="Debian GNU/Linux 11 (bullseye)"
+PRETTY_NAME="Debian GNU/Linux trixie/sid"
 NAME="Debian GNU/Linux"
-VERSION_ID="11"
-VERSION="11 (bullseye)"
-VERSION_CODENAME=bullseye
+VERSION_CODENAME=trixie
 ID=debian
 HOME_URL="https://www.debian.org/"
 SUPPORT_URL="https://www.debian.org/support"

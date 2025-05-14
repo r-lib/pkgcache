@@ -18,6 +18,46 @@ test_that("default_platforms", {
   expect_equal(default_platforms(), "source")
 })
 
+test_that("parse_platform", {
+  expect_snapshot({
+    parse_platform(c(
+      "something-else",
+      "aarch64-apple-darwin20",
+      "x86_64-w64-mingw32",
+      "i386+x86_64-w64-mingw32",
+      "aarch64-pc-linux",
+      "aarch64-pc-linux-gnu",
+      "aarch64-pc-linux-ubuntu",
+      "aarch64-pc-linux-ubuntu-22.04",
+      "aarch64-pc-linux-ubuntu-22.04-libc++",
+      "aarch64-pc-linux-gnu-ubuntu",
+      "aarch64-pc-linux-gnu-ubuntu-24.04",
+      "aarch64-pc-linux-gnu-ubuntu-24.04-libc++",
+      "aarch64-pc-linux-musl-alpine-13.4"
+    ))
+  })
+})
+
+test_that("re_linux_platform", {
+  expect_snapshot({
+    re_match(
+      c(
+        "something-else",
+        "linux",
+        "linux-gnu",
+        "linux-ubuntu",
+        "linux-ubuntu-22.04",
+        "linux-ubuntu-22.04-libc++",
+        "linux-gnu-ubuntu",
+        "linux-gnu-ubuntu-24.04",
+        "linux-gnu-ubuntu-24.04-libc++",
+        "linux-musl-alpine-13.4"
+      ),
+      re_linux_platform()
+    )
+  })
+})
+
 test_that("get_all_package_dirs", {
   res <- get_all_package_dirs(
     unique(c(current_r_platform(), "source")),

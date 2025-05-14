@@ -1,8 +1,8 @@
 NAME="Ubuntu"
-VERSION="18.04.5 LTS (Bionic Beaver)"
+VERSION="18.04.6 LTS (Bionic Beaver)"
 ID=ubuntu
 ID_LIKE=debian
-PRETTY_NAME="Ubuntu 18.04.5 LTS"
+PRETTY_NAME="Ubuntu 18.04.6 LTS"
 VERSION_ID="18.04"
 HOME_URL="https://www.ubuntu.com/"
 SUPPORT_URL="https://help.ubuntu.com/"

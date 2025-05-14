@@ -332,6 +332,7 @@ test_that("error callback is called on error", {
 })
 
 test_that("fail stage if no error callback", {
+  testthat::local_edition(3)
   do <- function() {
     x <- event_emitter$new(async = TRUE)
     x$listen_on("foo", function() stop("foobar"))
@@ -363,6 +364,7 @@ test_that("all error callbacks are called", {
 })
 
 test_that("error within error callback", {
+  testthat::local_edition(3)
   err <- NULL
   do <- function() {
     x <- event_emitter$new(async = TRUE)

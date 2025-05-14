@@ -47,6 +47,7 @@ test_that("catch", {
 })
 
 test_that("finally", {
+  testthat::local_edition(3)
   called <- FALSE
   do <- async(function() {
     delay(1 / 1000)$then(function(.) .)$then(function() stop("oops"))$then(

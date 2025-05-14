@@ -1,4 +1,5 @@
 test_that("def__make_parent_*", {
+  testthat::local_edition(3)
   good <- list(
     NULL,
     function(x) x,
@@ -63,6 +64,7 @@ test_that("def__make_parent_resolve", {
 })
 
 test_that("def__make_parent_resolve", {
+  testthat::local_edition(3)
   ## NULL
   r1 <- def__make_parent_reject(NULL)
   res <- NULL

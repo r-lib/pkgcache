@@ -19,6 +19,7 @@ test_that("keeps event loop alive", {
 })
 
 test_that("errors", {
+  testthat::local_edition(3)
   counter <- 0L
   do <- function() {
     cb <- function() {

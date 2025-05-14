@@ -27,6 +27,7 @@ test_that("async_until is always called once", {
 })
 
 test_that("error", {
+  testthat::local_edition(3)
   do <- function() {
     async_until(
       function() i > 5,
@@ -49,6 +50,7 @@ test_that("error", {
 })
 
 test_that("test function throws", {
+  testthat::local_edition(3)
   called <- FALSE
 
   do <- function() {

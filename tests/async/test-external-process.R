@@ -23,6 +23,7 @@ test_that("external_process", {
 })
 
 test_that("cancel external_process", {
+  testthat::local_edition(3)
   px <- asNamespace("processx")$get_tool("px")
   proc <- NULL
   pxgen <- function(...) {
@@ -77,6 +78,7 @@ test_that("discarding stdout/stderr works", {
 })
 
 test_that("can disable error on status", {
+  testthat::local_edition(3)
   px <- asNamespace("processx")$get_tool("px")
   pxgen <- function(...) {
     processx::process$new(

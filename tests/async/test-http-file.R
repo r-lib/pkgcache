@@ -32,6 +32,7 @@ test_that("file:// to file", {
 })
 
 test_that("file:// does not exist", {
+  testthat::local_edition(3)
   tmp <- tempfile()
   url <- paste0("file://", tmp)
   expect_snapshot(

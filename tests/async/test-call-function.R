@@ -48,6 +48,7 @@ test_that("successful calls", {
 
 test_that("calls that error", {
   skip_without_package("processx", "3.4.1.9001")
+  testthat::local_edition(3)
   afun <- async(function(x) {
     when_all(
       call_function(function() Sys.getpid()),

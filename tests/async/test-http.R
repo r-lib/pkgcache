@@ -177,6 +177,7 @@ test_that("automatic cancellation", {
 })
 
 test_that("http_status", {
+  testthat::local_edition(3)
   expect_snapshot(error = TRUE, http_status(0))
 })
 

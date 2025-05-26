@@ -12,6 +12,8 @@
   which is a list column of character vectors, listing all possible
   matching platforms.
 
+* pkgcache now detects the platform and R version of R Universe binaries.
+
 # pkgcache 2.2.3
 
 * The metadata cache now does not use source URLs for packages in `Archive`

@@ -401,7 +401,7 @@
       2 pkg2    1.0.0   <md5sum> no               pkg1    src/co~ *        source  
       3 pkg3    1.0.0   <md5sum> no               pkg2    src/co~ *        source  
       # i 14 more variables: priority <chr>, ref <chr>, type <chr>, direct <lgl>,
-      #   status <chr>, target <chr>, mirror <chr>, sources <list>, filesize <int>,
+      #   status <chr>, target <chr>, mirror <chr>, sources <list>, filesize <dbl>,
       #   sha256 <chr>, sysreqs <chr>, built <chr>, published <dttm>, deps <list>
       $deps
       # A data frame: 2 x 7

@@ -1,4 +1,4 @@
-# pkgcache (development version)
+# pkgcache 2.2.4
 
 * `parse_packages()` now parses files ending with an extra newline
   correctly (#122).

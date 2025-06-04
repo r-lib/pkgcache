@@ -183,6 +183,16 @@ test_that("parse_packages edge case (#122)", {
   expect_equal(do("Package: foo\r\n\r\n\r\n\r\n"), res2)
 })
 
+# https://github.com/r-lib/pak/issues/785
+test_that("another parse_packages edge case (r-lib/pak#785)", {
+  p <- "Package: foo\nVersion: 1.0.0\n \n\nPackage: bar\nVersion: 2.0.0\n"
+  psd <- .Call(pkgcache_parse_packages_raw, charToRaw(p))
+  expect_equal(
+    psd,
+    list(Package = c("foo", "bar"), Version = c("1.0.0", "2.0.0"))
+  )
+})
+
 test_that("parse_installed", {
   testthat::local_edition(3)
   testthat::local_reproducible_output(width = 60)

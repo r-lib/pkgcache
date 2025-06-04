@@ -118,7 +118,7 @@
       .Call(pkgcache_parse_packages_raw, charToRaw(p))
     Condition
       Error:
-      ! PACKAGES file ended while parsing a key @lib.c:487 (pkgcache_parse_packages_raw)
+      ! PACKAGES file ended while parsing a key @lib.c:493 (pkgcache_parse_packages_raw)
 
 # somewhat weird packages files
 

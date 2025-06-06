@@ -88,7 +88,7 @@ fix_temp_path <- function(x) {
 }
 
 fix_c_line_number <- function(x) {
-  sub("lib[.]c:[0-9]+", "lib.c:<linum>", x)
+  gsub("lib[.]c:[0-9]+", "lib.c:<linum>", x)
 }
 
 set_user_in_url <- function(url, username = "username", password = NULL) {
@@ -117,3 +117,5 @@ get_os_variant <- function() {
     "unknown"
   }
 }
+
+lns <- function(...) charToRaw(paste(collapse = "\n", c(...)))

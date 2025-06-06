@@ -20,7 +20,7 @@
       .Call(pkgcache_parse_description_raw, charToRaw(d))
     Condition
       Error:
-      ! DESCRIPTION file ended while parsing a key @lib.c:278 (pkgcache_parse_description_raw)
+      ! DESCRIPTION file ended while parsing a key @lib.c:<linum> (pkgcache_parse_description_raw)
 
 ---
 
@@ -29,6 +29,14 @@
     Condition
       Error:
       ! Line 2 invalid in DESCRIPTION: must be of form `key: value` @lib.c:<linum> (pkgcache_parse_description_raw)
+
+# parse_description comments
+
+    Code
+      .Call(pkgcache_parse_description_raw, d)
+    Condition
+      Error:
+      ! Line 5 invalid in DESCRIPTION: must be of form `key: value` @lib.c:<linum> (pkgcache_parse_description_raw)
 
 # parse_packages
 
@@ -118,7 +126,7 @@
       .Call(pkgcache_parse_packages_raw, charToRaw(p))
     Condition
       Error:
-      ! PACKAGES file ended while parsing a key @lib.c:493 (pkgcache_parse_packages_raw)
+      ! PACKAGES file ended while parsing a key @lib.c:<linum> (pkgcache_parse_packages_raw)
 
 # somewhat weird packages files
 
@@ -213,6 +221,24 @@
       parse_installed(lib5, priority = c("base", NA))$Package
     Output
       [1] "cli"   "rlang" "stats"
+
+# parse_installed comments
+
+    Code
+      .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)
+    Output
+      [[1]]
+      [[1]]$Package
+      [1] "foo" "foo"
+      
+      
+      [[2]]
+      [1] "Line 5 is invalid in `<tempdir>/<tempfile>`: must contain `:` @lib.c:<linum> (pkgcache_parse_descriptions)"
+      [2] "Line 5 is invalid in `<tempdir>/<tempfile>`: must contain `:` @lib.c:<linum> (pkgcache_parse_descriptions)"
+      
+      [[3]]
+      [1] TRUE
+      
 
 # fix_encodings
 

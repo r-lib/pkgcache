@@ -19,6 +19,7 @@ test_that("invalid PACKAGES file errors", {
 
   expect_snapshot(
     error = TRUE,
-    suppressMessages(get_private(cmc)$update_replica_rds())
+    suppressMessages(get_private(cmc)$update_replica_rds()),
+    transform = fix_c_line_number
   )
 })

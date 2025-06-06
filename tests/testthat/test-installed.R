@@ -14,7 +14,7 @@ test_that("parse_description", {
   expect_snapshot(
     error = TRUE,
     parse_description(tempfile()),
-    transform = fix_temp_path,
+    transform = function(x) fix_temp_path(fix_c_line_number(x)),
     variant = get_os_variant()
   )
 
@@ -43,7 +43,8 @@ test_that("parse_description", {
   d <- "foobar"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_description_raw, charToRaw(d))
+    .Call(pkgcache_parse_description_raw, charToRaw(d)),
+    transform = fix_c_line_number
   )
   d <- "foo: bar\n:nokey\n"
   expect_snapshot(
@@ -65,6 +66,132 @@ test_that("parse_description encoding", {
     "fixtures/description/pkgcachel1/DESCRIPTION"
   ))
   expect_equal(Encoding(d2[["Authors@R"]]), "UTF-8")
+})
+
+test_that("parse_description comments", {
+  # comment before
+  d <- lns(
+    "# comment",
+    "Package: foo"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(Package = "foo")
+  )
+  # comment in between
+  d <- lns(
+    "Package: foo",
+    "# comment",
+    "Version: 1.0.0"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(Package = "foo", Version = "1.0.0")
+  )
+
+  # comment inside a value
+  d <- lns(
+    "Package: foo",
+    "F1: Multi-line field, with a comment.",
+    "# comment",
+    "# comment2",
+    "  It is continued here.",
+    "F2: Another one",
+    "  still going",
+    "# comment",
+    "  and still going."
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(
+      Package = "foo",
+      F1 = "Multi-line field, with a comment.\n  It is continued here.",
+      F2 = "Another one\n  still going\n  and still going."
+    )
+  )
+
+  # multiple comment lines within a value
+  d <- lns(
+    "Package: foo",
+    "F1: one",
+    "# comment",
+    "  two",
+    "# comment 2",
+    "  three"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(
+      Package = "foo",
+      F1 = "one\n  two\n  three"
+    )
+  )
+
+  # comment at the end
+  d <- lns(
+    "Package: foo",
+    "F1: one",
+    "# comment"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(
+      Package = "foo",
+      F1 = "one"
+    )
+  )
+  d <- lns(
+    "Package: foo",
+    "F1: one",
+    "  two",
+    "# comment",
+    "  three",
+    "# comment",
+    "# comsdfsdfsdfsdfsf",
+    ""
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(
+      Package = "foo",
+      F1 = "one\n  two\n  three"
+    )
+  )
+
+  # comments and whitespace at the beginning
+  d <- lns(
+    "# comment ",
+    "",
+    "# more comment",
+    "Package: foo"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(Package = "foo")
+  )
+  d <- lns(
+    "# comment ",
+    "",
+    "Package: foo"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_description_raw, d),
+    c(Package = "foo")
+  )
+  d <- lns(
+    "# comment ",
+    "",
+    "# comment 2",
+    "Package: foo",
+    "bad",
+    "field"
+  )
+
+  expect_snapshot(
+    error = TRUE,
+    .Call(pkgcache_parse_description_raw, d),
+    transform = fix_c_line_number
+  )
 })
 
 test_that("parse_packages", {
@@ -138,7 +265,8 @@ test_that("parse_packages, errors", {
   p <- "Package: foo\nimcoplete_key"
   expect_snapshot(
     error = TRUE,
-    .Call(pkgcache_parse_packages_raw, charToRaw(p))
+    .Call(pkgcache_parse_packages_raw, charToRaw(p)),
+    transform = fix_c_line_number
   )
 })
 
@@ -190,6 +318,52 @@ test_that("another parse_packages edge case (r-lib/pak#785)", {
   expect_equal(
     psd,
     list(Package = c("foo", "bar"), Version = c("1.0.0", "2.0.0"))
+  )
+})
+
+test_that("parse_packages comments", {
+  # before
+  d <- lns(
+    "# comment",
+    "Package: foo",
+    "",
+    "Package: bar"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_packages_raw, d),
+    list(Package = c("foo", "bar"))
+  )
+
+  # between, after
+  d <- lns(
+    "# comment",
+    "Package: foo",
+    "# comment",
+    "",
+    "Package: bar",
+    "# comment",
+    "# comment"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_packages_raw, d),
+    list(Package = c("foo", "bar"))
+  )
+
+  # within value
+  d <- lns(
+    "F: foo",
+    "# comment",
+    "  bar",
+    "",
+    "F: bar",
+    "# comment",
+    "# comment",
+    "  baz",
+    "V: 1.0.0"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_packages_raw, d),
+    list(F = c("foo\n  bar", "bar\n  baz"), V = c("", "1.0.0"))
   )
 })
 
@@ -275,6 +449,142 @@ test_that("parse_installed lowercase", {
   pkgs <- parse_installed(test_path("fixtures/lib"))
   pkgsl <- parse_installed(test_path("fixtures/lib"), lowercase = TRUE)
   expect_equal(tolower(names(pkgs)), names(pkgsl))
+})
+
+test_that("parse_installed comments", {
+  tmp1 <- tempfile()
+  tmp2 <- tempfile()
+  on.exit(unlink(c(tmp1, tmp2)), add = TRUE)
+
+  wrt <- function(...) {
+    bin <- lns(...)
+    writeBin(bin, tmp1)
+    writeBin(bin, tmp2)
+  }
+
+  # comment before
+  wrt(
+    "# comment",
+    "Package: foo"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(Package = c("foo", "foo"))
+  )
+
+  # comment in between
+  wrt(
+    "Package: foo",
+    "# comment",
+    "Version: 1.0.0"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(Package = c("foo", "foo"), Version = c("1.0.0", "1.0.0"))
+  )
+
+  # comment inside a value
+  wrt(
+    "Package: foo",
+    "F1: Multi-line field, with a comment.",
+    "# comment",
+    "# comment2",
+    "  It is continued here.",
+    "F2: Another one",
+    "  still going",
+    "# comment",
+    "  and still going."
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(
+      Package = c("foo", "foo"),
+      F1 = rep("Multi-line field, with a comment.\n  It is continued here.", 2),
+      F2 = rep("Another one\n  still going\n  and still going.", 2)
+    )
+  )
+
+  # multiple comment lines within a value
+  wrt(
+    "Package: foo",
+    "F1: one",
+    "# comment",
+    "  two",
+    "# comment 2",
+    "  three"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(
+      Package = rep("foo", 2),
+      F1 = rep("one\n  two\n  three", 2)
+    )
+  )
+
+  # comment at the end
+  wrt(
+    "Package: foo",
+    "F1: one",
+    "# comment"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(
+      Package = c("foo", "foo"),
+      F1 = c("one", "one")
+    )
+  )
+  wrt(
+    "Package: foo",
+    "F1: one",
+    "  two",
+    "# comment",
+    "  three",
+    "# comment",
+    "# comsdfsdfsdfsdfsf",
+    ""
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(
+      Package = rep("foo", 2),
+      F1 = rep("one\n  two\n  three", 2)
+    )
+  )
+
+  # comments and whitespace at the beginning
+  wrt(
+    "# comment ",
+    "",
+    "# more comment",
+    "Package: foo"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(Package = rep("foo", 2))
+  )
+  wrt(
+    "# comment ",
+    "",
+    "Package: foo"
+  )
+  expect_equal(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE)[[1]],
+    list(Package = c("foo", "foo"))
+  )
+  wrt(
+    "# comment ",
+    "",
+    "# comment 2",
+    "Package: foo",
+    "bad",
+    "field"
+  )
+
+  expect_snapshot(
+    .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE),
+    transform = function(x) fix_temp_path(fix_c_line_number(x))
+  )
 })
 
 as_bytes <- function(l) {

@@ -583,7 +583,7 @@ test_that("parse_installed comments", {
 
   expect_snapshot(
     .Call(pkgcache_parse_descriptions, c(tmp1, tmp2), FALSE),
-    transform = function(x) fix_temp_path(fix_c_line_number(x))
+    transform = function(x) trimws(fix_temp_path(fix_c_line_number(x)))
   )
 })
 

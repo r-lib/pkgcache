@@ -12,3 +12,4 @@
 /src/*.gcno
 /src/*.gcda
 docs
+/.dev

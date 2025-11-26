@@ -266,6 +266,7 @@ onload_pkgcache <- function(libname, pkgname) {
   pkgenv$global_metadata_cache <- new.env(parent = emptyenv())
   pkgenv$archive_cache <- new.env(parent = emptyenv())
   err$onload_hook()
+  .Call(c_sql3_set_tempdir, enc2utf8(tempdir()))
 }
 
 if (exists(".onLoad", inherits = FALSE)) {

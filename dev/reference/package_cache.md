@@ -121,29 +121,29 @@ cat("foo\n", file = f1 <- tempfile())
 cat("bar\n", file = f2 <- tempfile())
 pc$add(f1, "/f1")
 #>                               fullpath path package url etag
-#> 1 /tmp/RtmpsckFzs/file1a395c9ab6d6//f1  /f1      NA  NA   NA
+#> 1 /tmp/RtmpnX4e9K/file1a5e201d9722//f1  /f1      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 pc$add(f2, "/f2")
 #>                               fullpath path package url etag
-#> 2 /tmp/RtmpsckFzs/file1a395c9ab6d6//f2  /f2      NA  NA   NA
+#> 2 /tmp/RtmpnX4e9K/file1a5e201d9722//f2  /f2      NA  NA   NA
 #>                                                             sha256
 #> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730
 pc$list()
 #>                               fullpath path package url etag
-#> 1 /tmp/RtmpsckFzs/file1a395c9ab6d6//f1  /f1      NA  NA   NA
-#> 2 /tmp/RtmpsckFzs/file1a395c9ab6d6//f2  /f2      NA  NA   NA
+#> 1 /tmp/RtmpnX4e9K/file1a5e201d9722//f1  /f1      NA  NA   NA
+#> 2 /tmp/RtmpnX4e9K/file1a5e201d9722//f2  /f2      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 #> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730
 pc$find(path = "/f1")
 #>                               fullpath path package url etag
-#> 1 /tmp/RtmpsckFzs/file1a395c9ab6d6//f1  /f1      NA  NA   NA
+#> 1 /tmp/RtmpnX4e9K/file1a5e201d9722//f1  /f1      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 pc$copy_to(target = f3 <- tempfile(), path = "/f1")
 #>                               fullpath path package url etag
-#> 1 /tmp/RtmpsckFzs/file1a395c9ab6d6//f1  /f1      NA  NA   NA
+#> 1 /tmp/RtmpnX4e9K/file1a5e201d9722//f1  /f1      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 readLines(f3)

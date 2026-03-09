@@ -1,0 +1,288 @@
+# Cache for package data and metadata
+
+Metadata and package cache for CRAN-like repositories. This is a utility
+package to be used by package management tools that want to take
+advantage of caching.
+
+## Details
+
+Metadata and package cache for CRAN-like repositories. This is a utility
+package to be used by package management tools that want to take
+advantage of caching.
+
+### Installation
+
+You can install the released version of pkgcache from
+[CRAN](https://CRAN.R-project.org) with:
+
+    install.packages("pkgcache")
+
+If you need the development version, you can install it from
+[GitHub](https://github.com) with:
+
+    pak::pak("r-lib/pkgcache")
+
+### Metadata cache
+
+[`meta_cache_list()`](https://r-lib.github.io/pkgcache/dev/reference/meta_cache_deps.md)
+lists all packages in the metadata cache. It includes Bioconductor
+package, and all versions (i.e. both binary and source) of the packages
+for the current platform and R version.
+
+(We load the pillar package, because it makes the pkgcache data frames
+print nicer, similarly to tibbles.)
+
+    library(pkgcache)
+    library(pillar)
+    meta_cache_list()
+    #> # A data frame: 50,641 x 33
+    #>    package    version depends suggests license md5sum sha256sum needscompilation
+    #>    <chr>      <chr>   <chr>   <chr>    <chr>   <chr>  <chr>     <chr>
+    #>  1 A3         1.0.0   R (>= ~ randomF~ GPL (>~ 929a4~ "\n     ~ no
+    #>  2 AATtools   0.0.3   R (>= ~ <NA>     GPL-3   de2ec~ "\n     ~ no
+    #>  3 ABACUS     1.0.0   R (>= ~ rmarkdo~ GPL-3   28795~ "\n     ~ no
+    #>  4 ABC.RAP    0.9.0   R (>= ~ knitr, ~ GPL-3   0158e~ "\n     ~ no
+    #>  5 ABCanalys~ 1.2.1   R (>= ~ <NA>     GPL-3   4cbe1~ "\n     ~ no
+    #>  6 ABCoptim   0.15.0  <NA>    testtha~ MIT + ~ a294d~ "\n     ~ yes
+    #>  7 ABCp2      1.2     MASS    <NA>     GPL-2   d049b~  <NA>     no
+    #>  8 ABHgenoty~ 1.0.1   <NA>    knitr, ~ GPL-3   fce25~ "\n     ~ no
+    #>  9 ABM        0.4.3   <NA>    <NA>     GPL (>~ 7aaae~ "\n     ~ yes
+    #> 10 ABPS       0.3     <NA>    testthat GPL (>~ d3f00~ "\n     ~ no
+    #> # i 50,631 more rows
+    #> # i 25 more variables: imports <chr>, linkingto <chr>, archs <chr>,
+    #> #   enhances <chr>, license_restricts_use <chr>, priority <chr>, os_type <chr>,
+    #> #   license_is_foss <chr>, repodir <chr>, rversion <chr>, platform <chr>,
+    #> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
+    #> #   mirror <chr>, sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
+    #> #   built <chr>, published <dttm>, deps <list>, path <chr>
+
+[`meta_cache_deps()`](https://r-lib.github.io/pkgcache/dev/reference/meta_cache_deps.md)
+and
+[`meta_cache_revdeps()`](https://r-lib.github.io/pkgcache/dev/reference/meta_cache_deps.md)
+can be used to look up dependencies and reverse dependencies.
+
+The metadata is updated automatically if it is older than seven days,
+and it can also be updated manually with
+[`meta_cache_update()`](https://r-lib.github.io/pkgcache/dev/reference/meta_cache_deps.md).
+
+See the `cranlike_metadata_cache` R6 class for a lower level API, and
+more control.
+
+### Package cache
+
+Package management tools may use the `pkg_cache_*` functions and in
+particular the `package_cache` class, to make use of local caching of
+package files.
+
+The `pkg_cache_*` API is high level, and uses a user level cache:
+
+    pkg_cache_summary()
+    #> $cachepath
+    #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
+    #>
+    #> $files
+    #> [1] 475
+    #>
+    #> $size
+    #> [1] 669462030
+
+    pkg_cache_list()
+    #> # A data frame: 475 x 11
+    #>    fullpath    path  package url   etag  sha256 version platform built vignettes
+    #>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+    #>  1 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ <NA>    <NA>         0        NA
+    #>  2 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ 2.5.0.~ source       1         0
+    #>  3 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ 2.5.0.~ aarch64~     1         0
+    #>  4 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ <NA>    <NA>         0        NA
+    #>  5 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ 3.6.3.~ source       1         0
+    #>  6 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ 3.6.3.~ aarch64~     1         0
+    #>  7 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ <NA>    <NA>         0        NA
+    #>  8 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ 3.6.3.~ source       1         0
+    #>  9 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ 3.6.3.~ aarch64~     1         0
+    #> 10 /Users/gab~ src/~ cli     <NA>  <NA>  2dd91~ <NA>    <NA>         0        NA
+    #> # i 465 more rows
+    #> # i 1 more variable: rversion <chr>
+
+    pkg_cache_find(package = "dplyr")
+    #> # A data frame: 2 x 11
+    #>   fullpath     path  package url   etag  sha256 version platform built vignettes
+    #>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
+    #> 1 /Users/gabo~ bin/~ dplyr   http~ "\"6~ 721c2~ 1.1.4   aarch64~    NA        NA
+    #> 2 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 721c2~ 1.1.4   aarch64~    NA        NA
+    #> # i 1 more variable: rversion <chr>
+
+[`pkg_cache_add_file()`](https://r-lib.github.io/pkgcache/dev/reference/pkg_cache_api.md)
+can be used to add a file,
+[`pkg_cache_delete_files()`](https://r-lib.github.io/pkgcache/dev/reference/pkg_cache_api.md)
+to remove files, `pkg_cache_get_files()` to copy files out of the cache.
+
+The `package_cache` class provides a finer API.
+
+### Installed packages
+
+pkgcache contains a very fast DCF parser to parse `PACKAGES*` files, or
+the `DESCRIPTION` files in installed packages.
+[`parse_packages()`](https://r-lib.github.io/pkgcache/dev/reference/parse_packages.md)
+parses all fields from `PACKAGES`, `PACKAGES.gz` or `PACKAGES.rds`
+files.
+[`parse_installed()`](https://r-lib.github.io/pkgcache/dev/reference/parse_installed.md)
+reads *all* metadata from packages installed into a library:
+
+    parse_installed()
+    #> # A data frame: 606 x 125
+    #>    Package      Title   Version `Authors@R` Description URL   BugReports License
+    #>    <chr>        <chr>   <chr>   <chr>       <chr>       <chr> <chr>      <chr>
+    #>  1 AzureAuth    Authen~ 1.3.3   "c(\n    p~ "Provides ~ "htt~ https://g~ MIT + ~
+    #>  2 AzureGraph   Simple~ 1.3.4   "c(\n    p~ "A simple ~ "htt~ https://g~ MIT + ~
+    #>  3 AzureRMR     Interf~ 2.4.4   "c(\n    p~ "A lightwe~ "htt~ https://g~ MIT + ~
+    #>  4 AzureStor    Storag~ 3.7.0   "c(\n    p~ "Manage st~ "htt~ https://g~ MIT + ~
+    #>  5 BH           Boost ~ 1.84.0~  <NA>       "Boost pro~ "htt~ https://g~ BSL-1.0
+    #>  6 Biobase      Biobas~ 2.64.0  "c(\n    p~ "Functions~ "htt~ https://g~ Artist~
+    #>  7 BiocGenerics S4 gen~ 0.52.0   <NA>       "The packa~ "htt~ https://g~ Artist~
+    #>  8 BiocManager  Access~ 1.30.23 "c(\n    p~ "A conveni~ "htt~ https://g~ Artist~
+    #>  9 BiocVersion  Set th~ 3.19.1  "c(\n    p~ "This pack~  <NA> <NA>       Artist~
+    #> 10 CompQuadForm Distri~ 1.4.3    <NA>       "Computes ~  <NA> <NA>       GPL (>~
+    #> # i 596 more rows
+    #> # i 117 more variables: VignetteBuilder <chr>, Depends <chr>, Imports <chr>,
+    #> #   Suggests <chr>, RoxygenNote <chr>, NeedsCompilation <chr>, Packaged <chr>,
+    #> #   Author <chr>, Maintainer <chr>, Repository <chr>, `Date/Publication` <chr>,
+    #> #   Built <chr>, RemoteType <chr>, RemotePkgRef <chr>, RemoteRef <chr>,
+    #> #   RemoteRepos <chr>, RemotePkgPlatform <chr>, RemoteSha <chr>, Type <chr>,
+    #> #   Date <chr>, biocViews <chr>, LazyLoad <chr>, Collate <chr>, ...
+
+### Bioconductor support
+
+Both the metadata cache and the package cache support Bioconductor by
+default, automatically. See the `BioC_mirror` option and the
+`R_BIOC_MIRROR` and `R_BIOC_VERSION` environment variables below to
+configure Bioconductor support.
+
+### Package Options
+
+- The `BioC_mirror` option can be used to select a Bioconductor mirror.
+  This takes priority over the `R_BIOC_MIRROR` environment variable.
+
+- You can use the `pkg.current_platform` option to set the platform
+  string for the current platform for the
+  [`current_r_platform()`](https://r-lib.github.io/pkgcache/dev/reference/current_r_platform.md)
+  function. This is useful if pkgcache didn’t detect the platform
+  correctly. Alternatively, you can use the `PKG_CURRENT_PLATFORM`
+  environment variable. The option takes priority.
+
+- `pkgcache_timeout` is the HTTP timeout for all downloads. It is in
+  seconds, and the limit for downloading the whole file. Defaults to
+  3600, one hour. It corresponds to the [`TIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html).
+
+- `pkgcache_connecttimeout` is the HTTP timeout for the connection
+  phase. It is in seconds and defaults to 30 seconds. It corresponds to
+  the [`CONNECTTIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html).
+
+- `pkgcache_low_speed_limit` and `pkgcache_low_speed_time` are used for
+  a more sensible HTTP timeout. If the download speed is less than
+  `pkgcache_low_speed_limit` bytes per second for at least
+  `pkgcache_low_speed_time` seconds, the download errors. They
+  correspond to the
+  [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+  and
+  [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+  curl options.
+
+### Package environment variables
+
+- The `R_BIOC_VERSION` environment variable can be used to override the
+  default Bioconductor version detection and force a given version. E.g.
+  this can be used to force the development version of Bioconductor.
+
+- The `R_BIOC_MIRROR` environment variable can be used to select a
+  Bioconductor mirror. The `BioC_mirror` option takes priority over
+  this, if set.
+
+- You can use the `PKG_CURRENT_PLATFORM` environment variable to set the
+  platform string for the current platform for the
+  [`current_r_platform()`](https://r-lib.github.io/pkgcache/dev/reference/current_r_platform.md)
+  function. This is useful if pkgcache didn’t detect the platform
+  correctly. Alternatively, you can use the `pkg.current_platofrm`
+  option, which takes. priority over the environment variable.
+
+- `PKGCACHE_PPM_REPO` is the name of the Posit Package Manager
+  repository to use. Defaults to `"cran"`.
+
+- `PKGCACHE_PPM_URL` is the base URL of the Posit Package Manager
+  instance to use. It defaults to the URL of the Posit Public Package
+  Manager instance at <https://packagemanager.posit.co/client/#/>.
+
+- `PKGCACHE_TIMEOUT` is the HTTP timeout for all downloads. It is in
+  seconds, and the limit for downloading the whole file. Defaults to
+  3600, one hour. It corresponds to the [`TIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_TIMEOUT.html). The
+  `pkgcache_timeout` option has priority over this, if set.
+
+- `PKGCACHE_CONNECTTIMEOUT` is the HTTP timeout for the connection
+  phase. It is in seconds and defaults to 30 seconds. It corresponds to
+  the [`CONNECTTIMEOUT` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html). The
+  `pkgcache_connecttimeout` option takes precedence over this, if set.
+
+- `PKGCACHE_LOW_SPEED_LIMIT` and `PKGCACHE_LOW_SPEED_TIME` are used for
+  a more sensible HTTP timeout. If the download speed is less than
+  `PKGCACHE_LOW_SPEED_LIMIT` bytes per second for at least
+  `PKGCACHE_LOW_SPEED_TIME` seconds, the download errors. They
+  correspond to the
+  [`LOW_SPEED_LIMIT`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+  and
+  [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+  curl options. The `pkgcache_low_speed_time` and
+  `pkgcache_low_speed_limit` options have priority over these
+  environment variables, if they are set.
+
+- `R_PKG_CACHE_DIR` is used for the cache directory, if set. (Otherwise
+  `tools::R_user_dir("pkgcache", "cache")` is used, see also
+  [`meta_cache_summary()`](https://r-lib.github.io/pkgcache/dev/reference/meta_cache_deps.md)
+  and
+  [`pkg_cache_summary()`](https://r-lib.github.io/pkgcache/dev/reference/pkg_cache_api.md)).
+
+### Using pkgcache in CRAN packages
+
+If you use pkgcache in your CRAN package, please make sure that
+
+- you don’t use pkgcache in your examples, and
+
+- you set the `R_USER_CACHE_DIR` environment variable to a temporary
+  directory (e.g. via
+  [`tempfile()`](https://rdrr.io/r/base/tempfile.html)) during test
+  cases. See the `tests/testthat/setup.R` file in pkgcache for an
+  example.
+
+This is to make sure that pkgcache does not modify the user’s files
+while running `R CMD check`.
+
+### Code of Conduct
+
+Please note that the pkgcache project is released with a [Contributor
+Code of Conduct](https://r-lib.github.io/pkgcache/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
+
+### License
+
+MIT (c) [Posit Software, PBC](https://posit.co)
+
+## See also
+
+Useful links:
+
+- <https://r-lib.github.io/pkgcache/>
+
+- <https://github.com/r-lib/pkgcache>
+
+- Report bugs at <https://github.com/r-lib/pkgcache/issues>
+
+## Author
+
+**Maintainer**: Gábor Csárdi <csardi.gabor@gmail.com>
+
+Other contributors:
+
+- Posit Software, PBC ([ROR](https://ror.org/03wc8by49)) \[copyright
+  holder, funder\]

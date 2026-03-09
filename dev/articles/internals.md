@@ -1,0 +1,57 @@
+# pkgcache internals
+
+### Platforms
+
+`get_cran_extension()`
+
+`get_all_package_dirs()`
+
+`async_repo_status()`
+
+`packages_make_target()`
+
+`packages_make_sources()`
+
+`cmc__get_cache_files()`
+
+[`current_r_platform()`](https://r-lib.github.io/pkgcache/dev/reference/current_r_platform.md)
+
+[`default_platforms()`](https://r-lib.github.io/pkgcache/dev/reference/current_r_platform.md)
+
+#### Windows
+
+Windows is special, because the same repository is used for multiple
+architectures. Probably most people use 64 bit R on Windows, because
+that’s what RStudio starts by default. But we also need to make sure
+that people who need 32 bit R will have a way to install packages,
+without ruining the 64 bit installation.
+
+Luckily, there are no packages on CRAN or Bioconductor currently that
+are 32 bit only. (There are a few that are 64 bit only.) In addition, 32
+bit R currently installs the package for both architectures, when
+installing from source. (64 bit R-devel does the same currently, but
+this might change.)
+
+In light of these, this is what we do:
+
+- The default platform is `x86_64-w64-mingw32` on 64 bit R from R 4.2.
+  It is `i386+x86_64-mingw32` on 64 bit R before R 4.2.
+- The default platform is `i386+x86_64-w64-mingw32` on 32 bit R.
+- The `windows` platform name is an alias to `i386+x86_64-w64-mingw32`.
+- When compiling a package from source, we’ll observe the requested
+  platform name:
+  - For `x86_64-w64-mingw32` on 64 bit R, we compile 64 bit only.
+  - For `i386-w64-mingw32` on 64 bit R, we compile for both 32 bit and
+    64 bit. (There is probably no way to avoid using the current arch.)
+  - For `i386+x86_64-w64-mingw32` on 64 bit R, we compile for both 32
+    bit and 64.
+  - For `i386-w64-mingw32` on 32 bit R, we compile for both 32 bit and
+    64 bit. This is to avoid mistakenly messing up a 64 bit library.
+  - For `x86_64-w64-mingw32` on 32 bit R, we compile for both 32 bit and
+    64 bit. (There is probably no way to avoid using the current arch.)
+  - For `i386+x86_64-w64-mingw32` on 32 bit R, we compile for both 32
+    bit and 64 bit.
+
+In summary, when compiling packages, we compile for both archs, except
+if we are in a 64 bit R session and the platform is
+`x86_64-w64-mingw32`.

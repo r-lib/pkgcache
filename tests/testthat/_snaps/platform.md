@@ -59,19 +59,6 @@
       Error in `get_package_dirs_for_platform()`:
       ! pkgcache does not support packages for R versions before R 3.2
 
----
-
-    Code
-      get_all_package_dirs("windows", "2.15.0")
-    Condition
-      Error in `FUN()`:
-      ! pkgcache does not support packages for R versions before R 3.2
-    Code
-      get_all_package_dirs("macos", "3.1.3")
-    Condition
-      Error in `FUN()`:
-      ! pkgcache does not support packages for R versions before R 3.2
-
 # current_r_platform_data_linux
 
     Code
@@ -530,23 +517,24 @@
       38         3.18       4.3 out-of-date
       39         3.19       4.4 out-of-date
       40         3.20       4.4 out-of-date
-      41         3.21       4.5     release
-      42         3.22       4.5       devel
-      43         3.22       4.6      future
+      41         3.21       4.5 out-of-date
+      42         3.22       4.5     release
+      43         3.23       4.6       devel
+      44         3.23       4.7      future
 
 # bioc_release_version, bioc_devel_version
 
     Code
       bioc_release_version(forget = TRUE)
     Output
-      [1] '3.21'
+      [1] '3.22'
 
 ---
 
     Code
       bioc_devel_version(forget = TRUE)
     Output
-      [1] '3.22'
+      [1] '3.23'
 
 # bioc_repos
 

@@ -136,7 +136,7 @@ test_that("zip_vecs", {
     expect_snapshot(
       error = TRUE,
       zip_vecs(integer(), 3L),
-      variant = if (getRversion() <= "4.1.100") "old" else "new"
+      variant = if (getRversion() <= "4.1.100") "oldr" else "new"
     )
   } else {
     expect_equal(

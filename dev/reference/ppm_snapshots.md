@@ -57,7 +57,7 @@ Other PPM functions:
 
 ``` r
 ppm_snapshots()
-#> # A data frame: 3,072 × 2
+#> # A data frame: 3,078 × 2
 #>    date       id        
 #>    <date>     <chr>     
 #>  1 2017-10-10 2017-10-10
@@ -70,5 +70,5 @@ ppm_snapshots()
 #>  8 2017-10-17 2017-10-17
 #>  9 2017-10-18 2017-10-18
 #> 10 2017-10-19 2017-10-19
-#> # ℹ 3,062 more rows
+#> # ℹ 3,068 more rows
 ```

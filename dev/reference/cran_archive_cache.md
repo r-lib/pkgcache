@@ -117,7 +117,7 @@ entries:
 ``` r
 arch <- cran_archive_cache$new()
 arch$update()
-#> # A data frame: 170,934 × 6
+#> # A data frame: 171,172 × 6
 #>    package  version raw                mtime               url   mirror
 #>  * <chr>    <chr>   <chr>              <dttm>              <chr> <chr> 
 #>  1 A3       0.9.1   A3/A3_0.9.1.tar.gz 2013-02-07 09:00:29 http… https…
@@ -130,9 +130,9 @@ arch$update()
 #>  8 aaSEA    1.1.0   aaSEA/aaSEA_1.1.0… 2019-11-09 16:20:04 http… https…
 #>  9 AATtools 0.0.1   AATtools/AATtools… 2020-06-14 15:10:07 http… https…
 #> 10 AATtools 0.0.2   AATtools/AATtools… 2022-08-12 13:40:11 http… https…
-#> # ℹ 170,924 more rows
+#> # ℹ 171,162 more rows
 arch$list()
-#> # A data frame: 170,934 × 6
+#> # A data frame: 171,172 × 6
 #>    package  version raw                mtime               url   mirror
 #>  * <chr>    <chr>   <chr>              <dttm>              <chr> <chr> 
 #>  1 A3       0.9.1   A3/A3_0.9.1.tar.gz 2013-02-07 09:00:29 http… https…
@@ -145,5 +145,5 @@ arch$list()
 #>  8 aaSEA    1.1.0   aaSEA/aaSEA_1.1.0… 2019-11-09 16:20:04 http… https…
 #>  9 AATtools 0.0.1   AATtools/AATtools… 2020-06-14 15:10:07 http… https…
 #> 10 AATtools 0.0.2   AATtools/AATtools… 2022-08-12 13:40:11 http… https…
-#> # ℹ 170,924 more rows
+#> # ℹ 171,162 more rows
 ```

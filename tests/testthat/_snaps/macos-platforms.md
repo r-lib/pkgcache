@@ -29,17 +29,18 @@
     Output
          rversion               platform         subdir
       43      4.6  x86_64-apple-darwin20 big-sur-x86_64
-      44      4.6 aarch64-apple-darwin23   sonoma-arm64
+      44      4.6 aarch64-apple-darwin20  big-sur-arm64
+      45      4.6 aarch64-apple-darwin23   sonoma-arm64
     Code
       get_cran_macos_platform("5.0")
     Output
          rversion               platform         subdir
-      45      5.0  x86_64-apple-darwin20 big-sur-x86_64
-      46      5.0 aarch64-apple-darwin23   sonoma-arm64
+      46      5.0  x86_64-apple-darwin20 big-sur-x86_64
+      47      5.0 aarch64-apple-darwin23   sonoma-arm64
     Code
       get_cran_macos_platform("10.0")
     Output
          rversion               platform         subdir
-      45      5.0  x86_64-apple-darwin20 big-sur-x86_64
-      46      5.0 aarch64-apple-darwin23   sonoma-arm64
+      46      5.0  x86_64-apple-darwin20 big-sur-x86_64
+      47      5.0 aarch64-apple-darwin23   sonoma-arm64
 

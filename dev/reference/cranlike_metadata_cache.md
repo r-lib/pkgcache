@@ -221,20 +221,20 @@ cmc$list()
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 46,886 × 32
+#> # A data frame: 46,923 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
-#>  1 aae.pop    0.2.0   R (>= … stats,… knitr, … NA               Apache…
-#>  2 AalenJoha… 1.0     NA      NA      knitr, … NA               GPL (>…
-#>  3 aamatch    0.4.5   R (>= … iTOS, … DOS2, s… NA               GPL-2  
-#>  4 AATtools   0.0.3   R (>= … magrit… NA       NA               GPL-3  
-#>  5 ABACUS     1.0.0   R (>= … ggplot… rmarkdo… NA               GPL-3  
-#>  6 abasequen… 0.1.0   NA      NA      NA       NA               GPL-3  
-#>  7 abbreviate 0.1     NA      NA      testtha… NA               GPL-3  
-#>  8 abc        2.2.2   R (>= … NA      NA       NA               GPL (>…
-#>  9 abc.data   1.1     R (>= … NA      NA       NA               GPL (>…
-#> 10 ABC.RAP    0.9.0   R (>= … graphi… knitr, … NA               GPL-3  
-#> # ℹ 46,876 more rows
+#>  1 a5R        0.2.0   R (>= … cli, r… "knitr,… yes              Apache…
+#>  2 aae.pop    0.2.0   R (>= … stats,… "knitr,… NA               Apache…
+#>  3 AalenJoha… 1.0     NA      NA      "knitr,… NA               GPL (>…
+#>  4 aamatch    0.4.5   R (>= … iTOS, … "DOS2, … NA               GPL-2  
+#>  5 AATtools   0.0.3   R (>= … magrit…  NA      NA               GPL-3  
+#>  6 ABACUS     1.0.0   R (>= … ggplot… "rmarkd… NA               GPL-3  
+#>  7 abasequen… 0.1.0   NA      NA       NA      NA               GPL-3  
+#>  8 abbreviate 0.1     NA      NA      "testth… NA               GPL-3  
+#>  9 abc        2.2.2   R (>= … NA       NA      NA               GPL (>…
+#> 10 abc.data   1.1     R (>= … NA       NA      NA               GPL (>…
+#> # ℹ 46,913 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,

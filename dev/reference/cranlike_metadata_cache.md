@@ -216,15 +216,15 @@ dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()
 #> 
-#> ✔ Updated metadata database: 5.53 MB in 4 files.
+#> ✔ Updated metadata database: 5.54 MB in 4 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 46,923 × 32
+#> # A data frame: 46,946 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
-#>  1 a5R        0.2.0   R (>= … cli, r… "knitr,… yes              Apache…
+#>  1 a5R        0.2.0   R (>= … cli, r… "knitr,… NA               Apache…
 #>  2 aae.pop    0.2.0   R (>= … stats,… "knitr,… NA               Apache…
 #>  3 AalenJoha… 1.0     NA      NA      "knitr,… NA               GPL (>…
 #>  4 aamatch    0.4.5   R (>= … iTOS, … "DOS2, … NA               GPL-2  
@@ -234,7 +234,7 @@ cmc$list()
 #>  8 abbreviate 0.1     NA      NA      "testth… NA               GPL-3  
 #>  9 abc        2.2.2   R (>= … NA       NA      NA               GPL (>…
 #> 10 abc.data   1.1     R (>= … NA       NA      NA               GPL (>…
-#> # ℹ 46,913 more rows
+#> # ℹ 46,936 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,

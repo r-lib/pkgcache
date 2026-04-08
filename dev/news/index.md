@@ -9,6 +9,12 @@
   whitespace. Comments within values are also supported
   ([\#130](https://github.com/r-lib/pkgcache/issues/130)).
 
+- pkgcache now does not fail if Bioconductor is unreachable and
+  Bioconductor repositories are off
+  ([\#131](https://github.com/r-lib/pkgcache/issues/131)).
+
+- pkgcache now supports macOS binaries on R 4.6.x and later.
+
 ## pkgcache 2.2.4
 
 CRAN release: 2025-05-26

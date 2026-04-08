@@ -216,7 +216,7 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
 #> 7 BioCbooks     https://bioconductor.org/… bioc  4.5.3     3.22        
 with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #> 
-#> ✔ Updated metadata database: 4.75 MB in 5 files.
+#> ✔ Updated metadata database: 4.76 MB in 5 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
@@ -224,7 +224,7 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #> # A data frame: 2 × 32
 #>   package version depends     imports suggests needscompilation license
 #> * <chr>   <chr>   <chr>       <chr>   <chr>    <chr>            <chr>  
-#> 1 dplyr   1.2.0   R (>= 4.1.… "cli (… "broom,… NA               MIT + …
+#> 1 dplyr   1.2.1   R (>= 4.1.… "cli (… "broom,… NA               MIT + …
 #> 2 dplyr   0.8.5   R (>= 3.2.… "ellip… "bit64,… yes              MIT + …
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
@@ -236,11 +236,11 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 
 with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 #> Repository summary:                       source          
-#> RSPM          @ packagemanager.posit.co     ✔      (253ms)
-#> CRAN          @ packagemanager.posit.co     ✔      (306ms)
-#> BioCsoft      @ bioconductor.org            ✔      (55ms )
-#> BioCann       @ bioconductor.org            ✔      (253ms)
-#> BioCexp       @ bioconductor.org            ✔      (270ms)
-#> BioCworkflows @ bioconductor.org            ✔      (304ms)
-#> BioCbooks     @ bioconductor.org            ✔      (272ms)
+#> RSPM          @ packagemanager.posit.co     ✔      (228ms)
+#> CRAN          @ packagemanager.posit.co     ✔      (266ms)
+#> BioCsoft      @ bioconductor.org            ✔      (36ms )
+#> BioCann       @ bioconductor.org            ✔      (227ms)
+#> BioCexp       @ bioconductor.org            ✔      (237ms)
+#> BioCworkflows @ bioconductor.org            ✔      (261ms)
+#> BioCbooks     @ bioconductor.org            ✔      (238ms)
 ```

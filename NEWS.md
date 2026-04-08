@@ -9,6 +9,8 @@
 * pkgcache now does not fail if Bioconductor is unreachable and Bioconductor
   repositories are off (#131).
 
+* pkgcache now supports macOS binaries on R 4.6.x and later.
+
 # pkgcache 2.2.4
 
 * `parse_packages()` now parses files ending with an extra newline

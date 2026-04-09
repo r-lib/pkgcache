@@ -2,6 +2,10 @@
 
 ## pkgcache (development version)
 
+## pkgcache 2.2.5
+
+CRAN release: 2026-04-09
+
 - pkgcache now supports comments in `DESCRIPTION` and `PACKAGES` files.
   Current R-devel supports this since
   <https://github.com/wch/r-source/commit/92d9660517ceae66d422a510dc58e0840d55cdfc>.

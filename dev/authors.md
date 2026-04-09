@@ -15,12 +15,12 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/pkgcache/blob/main/DESCRIPTION)
 
 Csárdi G (2026). *pkgcache: Cache 'CRAN'-Like Metadata and R Packages*.
-R package version 2.2.4.9000, <https://r-lib.github.io/pkgcache/>.
+R package version 2.2.5.9000, <https://r-lib.github.io/pkgcache/>.
 
     @Manual{,
       title = {pkgcache: Cache 'CRAN'-Like Metadata and R Packages},
       author = {Gábor Csárdi},
       year = {2026},
-      note = {R package version 2.2.4.9000},
+      note = {R package version 2.2.5.9000},
       url = {https://r-lib.github.io/pkgcache/},
     }

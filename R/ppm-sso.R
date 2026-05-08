@@ -82,9 +82,10 @@ ppm_sso_get_existing_token <- function() {
 }
 
 ppm_sso_can_authenticate <- function(token) {
-  req <- httr2::request(ppm_sso_data$ppm_url) |>
-    httr2::req_auth_bearer_token(token) |>
-    httr2::req_error(is_error = function(resp) FALSE) # Handle errors manually
+  req <- httr2::request(ppm_sso_data$ppm_url)
+  req <- httr2::req_auth_bearer_token(req, token)
+  # Handle errors manually
+  req <- httr2::req_error(req, is_error = function(resp) FALSE)
 
   resp <- httr2::req_perform(req)
 
@@ -118,10 +119,9 @@ ppm_sso_device_flow <- function() {
     code_challenge_method = "S256",
     code_challenge = challenge
   )
-  init_resp_body <- httr2::request(init_url) |>
-    httr2::req_body_form(!!!payload) |>
-    httr2::req_perform() |>
-    httr2::resp_body_json()
+  init_req <- httr2::request(init_url)
+  init_req <- httr2::req_body_form(init_req, !!!payload)
+  init_resp_body <- httr2::resp_body_json(httr2::req_perform(init_req))
 
   display_uri <- init_resp_body$verification_uri_complete %||%
     init_resp_body$verification_uri
@@ -160,9 +160,9 @@ ppm_sso_identity_to_ppm_token <- function(identity_token) {
     subject_token_type = "urn:ietf:params:oauth:token-type:id_token"
   )
 
-  resp <- httr2::request(url) |>
-    httr2::req_body_form(!!!payload) |>
-    httr2::req_perform()
+  req <- httr2::request(url)
+  req <- httr2::req_body_form(req, !!!payload)
+  resp <- httr2::req_perform(req)
 
   token_data <- httr2::resp_body_json(resp)
   if (is.null(token_data$access_token)) {
@@ -261,10 +261,11 @@ ppm_sso_complete_device_auth = function(
   )
 
   while (as.numeric(Sys.time() - start_time) < expires_in) {
-    resp <- httr2::request(url) |>
-      httr2::req_body_form(!!!payload) |>
-      httr2::req_error(is_error = \(resp) FALSE) |> # Handle errors manually
-      httr2::req_perform()
+    req <- httr2::request(url)
+    req <- httr2::req_body_form(req, !!!payload)
+    # Handle errors manually
+    req <- httr2::req_error(req, is_error = function(resp) FALSE)
+    resp <- httr2::req_perform(req)
 
     status <- httr2::resp_status(resp)
 

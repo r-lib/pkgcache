@@ -30,7 +30,6 @@ Suggests:
     desc,
     fs,
     keyring,
-    openssl,
     pillar,
     pingr,
     RcppTOML,

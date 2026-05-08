@@ -21,29 +21,6 @@ ppm_sso_app <- function(
   app$locals$audience <- audience
   app$locals$scope <- scope
 
-  post_form <- function(url, payload) {
-    payload <- payload[!vapply(payload, is.null, logical(1))]
-    body <- paste(
-      paste0(
-        curl::curl_escape(names(payload)),
-        "=",
-        curl::curl_escape(unlist(payload, use.names = FALSE))
-      ),
-      collapse = "&"
-    )
-    h <- curl::new_handle()
-    curl::handle_setheaders(
-      h,
-      "Content-Type" = "application/x-www-form-urlencoded"
-    )
-    curl::handle_setopt(h, post = TRUE, postfields = body)
-    resp <- curl::curl_fetch_memory(url, handle = h)
-    list(
-      status = resp$status_code,
-      body = jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
-    )
-  }
-
   # Bearer-token check used by ppm_sso_can_authenticate(): any token passes.
   app$get("/", function(req, res) {
     res$set_status(200L)$send("ok")
@@ -65,7 +42,7 @@ ppm_sso_app <- function(
       audience = app$locals$audience
     )
 
-    upstream <- post_form(
+    upstream <- ppm_sso_post_form(
       paste0("https://", app$locals$auth0_domain, "/oauth/device/code"),
       payload
     )
@@ -115,7 +92,7 @@ ppm_sso_app <- function(
       ))
     }
 
-    upstream <- post_form(
+    upstream <- ppm_sso_post_form(
       paste0("https://", app$locals$auth0_domain, "/oauth/token"),
       list(
         grant_type = "urn:ietf:params:oauth:grant-type:device_code",

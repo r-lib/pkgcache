@@ -2,6 +2,29 @@ ppm_sso_data <- new.env(parent = emptyenv())
 ppm_sso_data$name <- "ppm"
 ppm_sso_data$viable <- FALSE
 
+ppm_sso_post_form <- function(url, payload) {
+  payload <- payload[!vapply(payload, is.null, logical(1))]
+  body <- paste(
+    paste0(
+      curl::curl_escape(names(payload)),
+      "=",
+      curl::curl_escape(unlist(payload, use.names = FALSE))
+    ),
+    collapse = "&"
+  )
+  h <- curl::new_handle()
+  curl::handle_setheaders(
+    h,
+    "Content-Type" = "application/x-www-form-urlencoded"
+  )
+  curl::handle_setopt(h, post = TRUE, postfields = body)
+  resp <- curl::curl_fetch_memory(url, handle = h)
+  list(
+    status = resp$status_code,
+    body = jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  )
+}
+
 ppm_sso_init <- function(url = NULL) {
   url <- url %||% Sys.getenv("PACKAGEMANAGER_ADDRESS", NA_character_)
   if (!is_string(url)) {
@@ -82,14 +105,10 @@ ppm_sso_get_existing_token <- function() {
 }
 
 ppm_sso_can_authenticate <- function(token) {
-  req <- httr2::request(ppm_sso_data$ppm_url)
-  req <- httr2::req_auth_bearer_token(req, token)
-  # Handle errors manually
-  req <- httr2::req_error(req, is_error = function(resp) FALSE)
-
-  resp <- httr2::req_perform(req)
-
-  status <- httr2::resp_status(resp)
+  h <- curl::new_handle()
+  curl::handle_setheaders(h, "Authorization" = paste("Bearer", token))
+  resp <- curl::curl_fetch_memory(ppm_sso_data$ppm_url, handle = h)
+  status <- resp$status_code
   status < 500 && status != 401 && status != 403
 }
 
@@ -119,9 +138,15 @@ ppm_sso_device_flow <- function() {
     code_challenge_method = "S256",
     code_challenge = challenge
   )
-  init_req <- httr2::request(init_url)
-  init_req <- httr2::req_body_form(init_req, !!!payload)
-  init_resp_body <- httr2::resp_body_json(httr2::req_perform(init_req))
+  init_resp <- ppm_sso_post_form(init_url, payload)
+  if (init_resp$status >= 400) {
+    stop(
+      "Failed to initiate device authorization (HTTP ",
+      init_resp$status,
+      ")."
+    )
+  }
+  init_resp_body <- init_resp$body
 
   display_uri <- init_resp_body$verification_uri_complete %||%
     init_resp_body$verification_uri
@@ -160,11 +185,16 @@ ppm_sso_identity_to_ppm_token <- function(identity_token) {
     subject_token_type = "urn:ietf:params:oauth:token-type:id_token"
   )
 
-  req <- httr2::request(url)
-  req <- httr2::req_body_form(req, !!!payload)
-  resp <- httr2::req_perform(req)
+  resp <- ppm_sso_post_form(url, payload)
+  if (resp$status >= 400) {
+    stop(
+      "Failed to exchange identity token for PPM token (HTTP ",
+      resp$status,
+      ")."
+    )
+  }
 
-  token_data <- httr2::resp_body_json(resp)
+  token_data <- resp$body
   if (is.null(token_data$access_token)) {
     stop("Failed to exchange identity token for PPM token.")
   }
@@ -261,19 +291,13 @@ ppm_sso_complete_device_auth = function(
   )
 
   while (as.numeric(Sys.time() - start_time) < expires_in) {
-    req <- httr2::request(url)
-    req <- httr2::req_body_form(req, !!!payload)
-    # Handle errors manually
-    req <- httr2::req_error(req, is_error = function(resp) FALSE)
-    resp <- httr2::req_perform(req)
-
-    status <- httr2::resp_status(resp)
+    resp <- ppm_sso_post_form(url, payload)
+    status <- resp$status
 
     if (status == 200) {
-      return(httr2::resp_body_json(resp))
+      return(resp$body)
     } else if (status == 400) {
-      error_data <- httr2::resp_body_json(resp)
-      error_code <- error_data$error
+      error_code <- resp$body$error
       if (error_code == "access_denied") {
         stop("Access denied by user.")
       }
@@ -282,7 +306,7 @@ ppm_sso_complete_device_auth = function(
       }
       # For "authorization_pending" or "slow_down", just wait and retry.
     } else {
-      httr2::resp_check_status(resp)
+      stop("Device authorization failed (HTTP ", status, ").")
     }
 
     Sys.sleep(interval)

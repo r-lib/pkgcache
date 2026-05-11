@@ -12,6 +12,7 @@ You can install the released version of pkgcache from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
+
 install.packages("pkgcache")
 ```
 
@@ -19,6 +20,7 @@ If you need the development version, you can install it from
 [GitHub](https://github.com) with:
 
 ``` r
+
 pak::pak("r-lib/pkgcache")
 ```
 
@@ -33,6 +35,7 @@ for the current platform and R version.
 print nicer, similarly to tibbles.)
 
 ``` r
+
 library(pkgcache)
 library(pillar)
 meta_cache_list()
@@ -79,6 +82,7 @@ package files.
 The `pkg_cache_*` API is high level, and uses a user level cache:
 
 ``` r
+
 pkg_cache_summary()
 #> $cachepath
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
@@ -91,6 +95,7 @@ pkg_cache_summary()
 ```
 
 ``` r
+
 pkg_cache_list()
 #> # A data frame: 610 × 11
 #>    fullpath    path  package url   etag  sha256 version platform built vignettes
@@ -110,6 +115,7 @@ pkg_cache_list()
 ```
 
 ``` r
+
 pkg_cache_find(package = "dplyr")
 #> # A data frame: 1 × 11
 #>   fullpath     path  package url   etag  sha256 version platform built vignettes
@@ -136,6 +142,7 @@ files.
 reads *all* metadata from packages installed into a library:
 
 ``` r
+
 parse_installed()
 #> # A data frame: 259 × 92
 #>    Package     Title    Version `Authors@R` Description License URL   BugReports

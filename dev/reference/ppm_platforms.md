@@ -46,7 +46,7 @@ Other PPM functions:
 
 ``` r
 ppm_platforms()
-#> # A data frame: 35 × 7
+#> # A data frame: 36 × 7
 #>    name        os    binary_url distribution release binaries platforms
 #>    <chr>       <chr> <chr>      <chr>        <chr>   <lgl>    <list>   
 #>  1 centos7     linux centos7    centos       7       TRUE     <chr [1]>
@@ -59,5 +59,5 @@ ppm_platforms()
 #>  8 opensuse154 linux opensuse1… opensuse     15.4    TRUE     <chr [2]>
 #>  9 opensuse155 linux opensuse1… opensuse     15.5    TRUE     <chr [2]>
 #> 10 opensuse156 linux opensuse1… opensuse     15.6    TRUE     <chr [2]>
-#> # ℹ 25 more rows
+#> # ℹ 26 more rows
 ```

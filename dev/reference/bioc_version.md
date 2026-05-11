@@ -84,13 +84,13 @@ version.
 
 ``` r
 bioc_version()
-#> [1] ‘3.22’
+#> [1] ‘3.23’
 bioc_version("4.0")
 #> [1] ‘3.12’
 bioc_version("4.1")
 #> [1] ‘3.14’
 bioc_version_map()
-#> # A data frame: 44 × 3
+#> # A data frame: 45 × 3
 #>    bioc_version r_version  bioc_status
 #>    <pckg_vrs>   <pckg_vrs> <fct>      
 #>  1 1.6          2.1        out-of-date
@@ -103,20 +103,20 @@ bioc_version_map()
 #>  8 2.3          2.8        out-of-date
 #>  9 2.4          2.9        out-of-date
 #> 10 2.5          2.10       out-of-date
-#> # ℹ 34 more rows
+#> # ℹ 35 more rows
 bioc_devel_version()
-#> [1] ‘3.23’
+#> [1] ‘3.24’
 bioc_release_version()
-#> [1] ‘3.22’
+#> [1] ‘3.23’
 bioc_repos()
 #>                                                 BioCsoft 
-#>            "https://bioconductor.org/packages/3.22/bioc" 
+#>            "https://bioconductor.org/packages/3.23/bioc" 
 #>                                                  BioCann 
-#> "https://bioconductor.org/packages/3.22/data/annotation" 
+#> "https://bioconductor.org/packages/3.23/data/annotation" 
 #>                                                  BioCexp 
-#> "https://bioconductor.org/packages/3.22/data/experiment" 
+#> "https://bioconductor.org/packages/3.23/data/experiment" 
 #>                                            BioCworkflows 
-#>       "https://bioconductor.org/packages/3.22/workflows" 
+#>       "https://bioconductor.org/packages/3.23/workflows" 
 #>                                                BioCbooks 
-#>           "https://bioconductor.org/packages/3.22/books" 
+#>           "https://bioconductor.org/packages/3.23/books" 
 ```

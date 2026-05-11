@@ -34,6 +34,7 @@ Call
 to decide if PPM builds binaries for your platform:
 
 ``` r
+
 pkgcache::ppm_has_binaries()
 ```
 
@@ -44,6 +45,7 @@ You can use
 to see if pkgcache detects your platform correctly:
 
 ``` r
+
 pkgcache::current_r_platform()
 ```
 
@@ -82,10 +84,11 @@ PPM snapshot or `latest` for the latest snapshot.
 lists platforms supported by a PPM instance:
 
 ``` r
+
 pkgcache::ppm_platforms()
 ```
 
-    ## # A data frame: 35 × 7
+    ## # A data frame: 36 × 7
     ##    name        os    binary_url distribution release binaries platforms
     ##    <chr>       <chr> <chr>      <chr>        <chr>   <lgl>    <list>   
     ##  1 centos7     linux centos7    centos       7       TRUE     <chr [1]>
@@ -98,7 +101,7 @@ pkgcache::ppm_platforms()
     ##  8 opensuse154 linux opensuse1… opensuse     15.4    TRUE     <chr [2]>
     ##  9 opensuse155 linux opensuse1… opensuse     15.5    TRUE     <chr [2]>
     ## 10 opensuse156 linux opensuse1… opensuse     15.6    TRUE     <chr [2]>
-    ## # ℹ 25 more rows
+    ## # ℹ 26 more rows
 
 The `binary_url` column contains the code name that you need to use in
 the repository URL.
@@ -107,10 +110,11 @@ the repository URL.
 lists all PPM snapshot dates and ids:
 
 ``` r
+
 pkgcache::ppm_snapshots()
 ```
 
-    ## # A data frame: 3,116 × 2
+    ## # A data frame: 3,135 × 2
     ##    date       id        
     ##    <date>     <chr>     
     ##  1 2017-10-10 2017-10-10
@@ -123,7 +127,7 @@ pkgcache::ppm_snapshots()
     ##  8 2017-10-17 2017-10-17
     ##  9 2017-10-18 2017-10-18
     ## 10 2017-10-19 2017-10-19
-    ## # ℹ 3,106 more rows
+    ## # ℹ 3,125 more rows
 
 You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are
@@ -139,6 +143,7 @@ to include the distribution and release as well. E.g. the platform of
 the machine building this document is:
 
 ``` r
+
 pkgcache::current_r_platform()
 ```
 
@@ -155,6 +160,7 @@ pkgcache detects binary PPM repositories, and constructs their platform
 string:
 
 ``` r
+
 print(
   pkgcache::meta_cache_list(package = c("ggplot2", "pkgcache"))[, c("package", "mirror", "platform")],
   width = Inf
@@ -197,17 +203,18 @@ check if your configured PPM instance supports your R version, and
 function to list the R versions supported by your instance:
 
 ``` r
+
 pkgcache::ppm_r_versions()
 ```
 
     ## # A data frame: 6 × 1
     ##   r_version
     ##   <chr>    
-    ## 1 4.5      
-    ## 2 4.4      
-    ## 3 4.3      
-    ## 4 4.2      
-    ## 5 4.1      
+    ## 1 4.6      
+    ## 2 4.5      
+    ## 3 4.4      
+    ## 4 4.3      
+    ## 5 4.2      
     ## 6 3.6
 
 Note that these version numbers do not include the patch version. E.g.
@@ -223,6 +230,7 @@ setting up PPM on Windows simply means setting the `repos` option to a
 PPM repository. E.g. for the public P3M this would be something like:
 
 ``` r
+
 options(repos = c(
   RSPM = "https://packagemanager.posit.co/cran/latest",
   CRAN = getOption("repos")[["CRAN"]]

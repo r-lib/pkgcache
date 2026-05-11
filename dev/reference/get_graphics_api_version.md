@@ -17,5 +17,5 @@ An integer scalar, the version of the graphics API of this R version.
 
 ``` r
 get_graphics_api_version()
-#> [1] 16
+#> [1] 17
 ```

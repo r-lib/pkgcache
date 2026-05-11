@@ -99,34 +99,34 @@ Other repository functions:
 ``` r
 repo_status()
 #> # A data frame: 7 × 10
-#>   name    url   type  bioc_version platform path  r_version ok     ping
-#>   <chr>   <chr> <chr> <chr>        <chr>    <chr> <chr>     <lgl> <dbl>
-#> 1 RSPM    http… cran… NA           source   src/… 4.5       TRUE  0.551
-#> 2 CRAN    http… cran  NA           source   src/… 4.5       TRUE  0.667
-#> 3 BioCso… http… bioc  3.22         source   src/… 4.5       TRUE  0.667
-#> 4 BioCann http… bioc  3.22         source   src/… 4.5       TRUE  0.690
-#> 5 BioCexp http… bioc  3.22         source   src/… 4.5       TRUE  0.692
-#> 6 BioCwo… http… bioc  3.22         source   src/… 4.5       TRUE  0.743
-#> 7 BioCbo… http… bioc  3.22         source   src/… 4.5       TRUE  0.764
+#>   name   url   type  bioc_version platform path  r_version ok      ping
+#>   <chr>  <chr> <chr> <chr>        <chr>    <chr> <chr>     <lgl>  <dbl>
+#> 1 RSPM   http… cran… NA           source   src/… 4.6       TRUE  0.344 
+#> 2 CRAN   http… cran  NA           source   src/… 4.6       TRUE  0.0651
+#> 3 BioCs… http… bioc  3.23         source   src/… 4.6       TRUE  0.208 
+#> 4 BioCa… http… bioc  3.23         source   src/… 4.6       TRUE  0.225 
+#> 5 BioCe… http… bioc  3.23         source   src/… 4.6       TRUE  0.233 
+#> 6 BioCw… http… bioc  3.23         source   src/… 4.6       TRUE  0.221 
+#> 7 BioCb… http… bioc  3.23         source   src/… 4.6       TRUE  0.224 
 #> # ℹ 1 more variable: error <list>
 rst <- repo_status(
   platforms = c("windows", "macos"),
   r_version = c("4.0", "4.1")
 )
 summary(rst)
-#> Repository summary:                               i386+x86_64-w64-mingw32 x86_64-apple-darwin17.0           
-#> RSPM          @ packagemanager.posit.co (R 4.0)              ✔                       ✔              (459ms )
-#> CRAN          @ cran.rstudio.com        (R 4.0)              ✔                       ✔              (215ms )
-#> RSPM          @ packagemanager.posit.co (R 4.1)              ✔                       ✔              (244ms )
-#> CRAN          @ cran.rstudio.com        (R 4.1)              ✔                       ✔              (215ms )
-#> BioCsoft      @ bioconductor.org        (R 4.0)              ✔                       ✔              (711ms )
-#> BioCann       @ bioconductor.org        (R 4.0)              ✔                       ✔              (1000ms)
-#> BioCexp       @ bioconductor.org        (R 4.0)              ✔                       ✔              (853ms )
-#> BioCworkflows @ bioconductor.org        (R 4.0)              ✔                       ✔              (876ms )
-#> BioCbooks     @ bioconductor.org        (R 4.0)              ✔                       ✔              (577ms )
-#> BioCsoft      @ bioconductor.org        (R 4.1)              ✔                       ✔              (852ms )
-#> BioCann       @ bioconductor.org        (R 4.1)              ✔                       ✔              (909ms )
-#> BioCexp       @ bioconductor.org        (R 4.1)              ✔                       ✔              (720ms )
-#> BioCworkflows @ bioconductor.org        (R 4.1)              ✔                       ✔              (854ms )
-#> BioCbooks     @ bioconductor.org        (R 4.1)              ✔                       ✔              (344ms )
+#> Repository summary:                               i386+x86_64-w64-mingw32 x86_64-apple-darwin17.0          
+#> RSPM          @ packagemanager.posit.co (R 4.0)              ✔                       ✔              (388ms)
+#> CRAN          @ cran.rstudio.com        (R 4.0)              ✔                       ✔              (65ms )
+#> RSPM          @ packagemanager.posit.co (R 4.1)              ✔                       ✔              (388ms)
+#> CRAN          @ cran.rstudio.com        (R 4.1)              ✔                       ✔              (79ms )
+#> BioCsoft      @ bioconductor.org        (R 4.0)              ✔                       ✔              (918ms)
+#> BioCann       @ bioconductor.org        (R 4.0)              ✔                       ✔              (1.2s )
+#> BioCexp       @ bioconductor.org        (R 4.0)              ✔                       ✔              (1.3s )
+#> BioCworkflows @ bioconductor.org        (R 4.0)              ✔                       ✔              (1.1s )
+#> BioCbooks     @ bioconductor.org        (R 4.0)              ✔                       ✔              (400ms)
+#> BioCsoft      @ bioconductor.org        (R 4.1)              ✔                       ✔              (965ms)
+#> BioCann       @ bioconductor.org        (R 4.1)              ✔                       ✔              (1.2s )
+#> BioCexp       @ bioconductor.org        (R 4.1)              ✔                       ✔              (1.2s )
+#> BioCworkflows @ bioconductor.org        (R 4.1)              ✔                       ✔              (1.1s )
+#> BioCbooks     @ bioconductor.org        (R 4.1)              ✔                       ✔              (526ms)
 ```

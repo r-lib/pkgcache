@@ -110,6 +110,7 @@ avoid unnecessary downloads.
 ## Examples
 
 ``` r
+
 ## Although package_cache usually stores packages, it may store
 ## arbitrary files, that can be search by metadata
 pc <- package_cache$new(path = tempfile())
@@ -120,30 +121,30 @@ pc$list()
 cat("foo\n", file = f1 <- tempfile())
 cat("bar\n", file = f2 <- tempfile())
 pc$add(f1, "/f1")
-#>                               fullpath path package url etag
-#> 1 /tmp/Rtmpo2S2M7/file1a4d2ce19039//f1  /f1      NA  NA   NA
+#>                              fullpath path package url etag
+#> 1 /tmp/RtmpEmz74v/file1b2737bfb06//f1  /f1      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 pc$add(f2, "/f2")
-#>                               fullpath path package url etag
-#> 2 /tmp/Rtmpo2S2M7/file1a4d2ce19039//f2  /f2      NA  NA   NA
+#>                              fullpath path package url etag
+#> 2 /tmp/RtmpEmz74v/file1b2737bfb06//f2  /f2      NA  NA   NA
 #>                                                             sha256
 #> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730
 pc$list()
-#>                               fullpath path package url etag
-#> 1 /tmp/Rtmpo2S2M7/file1a4d2ce19039//f1  /f1      NA  NA   NA
-#> 2 /tmp/Rtmpo2S2M7/file1a4d2ce19039//f2  /f2      NA  NA   NA
+#>                              fullpath path package url etag
+#> 1 /tmp/RtmpEmz74v/file1b2737bfb06//f1  /f1      NA  NA   NA
+#> 2 /tmp/RtmpEmz74v/file1b2737bfb06//f2  /f2      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 #> 2 7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730
 pc$find(path = "/f1")
-#>                               fullpath path package url etag
-#> 1 /tmp/Rtmpo2S2M7/file1a4d2ce19039//f1  /f1      NA  NA   NA
+#>                              fullpath path package url etag
+#> 1 /tmp/RtmpEmz74v/file1b2737bfb06//f1  /f1      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 pc$copy_to(target = f3 <- tempfile(), path = "/f1")
-#>                               fullpath path package url etag
-#> 1 /tmp/Rtmpo2S2M7/file1a4d2ce19039//f1  /f1      NA  NA   NA
+#>                              fullpath path package url etag
+#> 1 /tmp/RtmpEmz74v/file1b2737bfb06//f1  /f1      NA  NA   NA
 #>                                                             sha256
 #> 1 b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
 readLines(f3)

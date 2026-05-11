@@ -279,11 +279,10 @@ test_that("ppm_r_versions", {
 
 test_that("pkgenv$ppm_distros_cached is current", {
   skip_on_cran()
-  cached <- pkgenv$ppm_distros_cached
   current <- canonicalize_ppm_platforms(
     synchronise(async_get_ppm_status(forget = TRUE))$distros
   )
-  expect_equal(cached, current)
+  expect_equal(pkgenv$ppm_distros_cached, current)
   expect_snapshot(current)
 })
 

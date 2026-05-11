@@ -236,11 +236,11 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 
 with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 #> Repository summary:                       source          
-#> RSPM          @ packagemanager.posit.co     ✔      (255ms)
-#> CRAN          @ packagemanager.posit.co     ✔      (255ms)
-#> BioCsoft      @ bioconductor.org            ✔      (255ms)
-#> BioCann       @ bioconductor.org            ✔      (310ms)
-#> BioCexp       @ bioconductor.org            ✔      (360ms)
-#> BioCworkflows @ bioconductor.org            ✔      (360ms)
-#> BioCbooks     @ bioconductor.org            ✔      (310ms)
+#> RSPM          @ packagemanager.posit.co     ✔      (196ms)
+#> CRAN          @ packagemanager.posit.co     ✔      (242ms)
+#> BioCsoft      @ bioconductor.org            ✔      (72ms )
+#> BioCann       @ bioconductor.org            ✔      (196ms)
+#> BioCexp       @ bioconductor.org            ✔      (213ms)
+#> BioCworkflows @ bioconductor.org            ✔      (240ms)
+#> BioCbooks     @ bioconductor.org            ✔      (212ms)
 ```

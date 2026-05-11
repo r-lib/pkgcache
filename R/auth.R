@@ -480,7 +480,7 @@ repo_auth_sso <- function(repourl, username) {
     return(NULL)
   }
 
-  token <- try_catch_null(ppm_sso_login(service = repourl))
+  token <- try_catch_null(ppm_sso_auth(repourl))
 
   token
 }

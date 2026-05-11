@@ -184,14 +184,15 @@
       25                 focal   linux          focal       ubuntu   20.04     TRUE
       26                 jammy   linux          jammy       ubuntu   22.04     TRUE
       27                 noble   linux          noble       ubuntu   24.04     TRUE
-      28                buster   linux         buster       debian      10    FALSE
-      29              bullseye   linux       bullseye       debian      11     TRUE
-      30              bookworm   linux       bookworm       debian      12     TRUE
-      31                trixie   linux         trixie       debian      13     TRUE
-      32               windows windows                     windows     all     TRUE
-      33                 macos   macos                       macos     all     TRUE
-      34        manylinux_2_28   linux manylinux_2_28       centos       8     TRUE
-      35              internal   linux       internal     internal     all     TRUE
+      28              resolute   linux       resolute       ubuntu   26.04     TRUE
+      29                buster   linux         buster       debian      10    FALSE
+      30              bullseye   linux       bullseye       debian      11     TRUE
+      31              bookworm   linux       bookworm       debian      12     TRUE
+      32                trixie   linux         trixie       debian      13     TRUE
+      33               windows windows                     windows     all     TRUE
+      34                 macos   macos                       macos     all     TRUE
+      35        manylinux_2_28   linux manylinux_2_28       centos       8     TRUE
+      36              internal   linux       internal     internal     all     TRUE
                                                                                                                 platforms
       1                                                                                                          centos-7
       2                                                                                                          centos-8
@@ -220,12 +221,13 @@
       25                                                                                                     ubuntu-20.04
       26                                                                                                     ubuntu-22.04
       27                                                                                                     ubuntu-24.04
-      28                                                                                                        debian-10
-      29                                                                                                        debian-11
-      30                                                                                                        debian-12
-      31                                                                                                        debian-13
-      32                                                                                                      windows-all
-      33                                                                                                        macos-all
-      34                                                                                                         centos-8
-      35                                                                                                     internal-all
+      28                                                                                                     ubuntu-26.04
+      29                                                                                                        debian-10
+      30                                                                                                        debian-11
+      31                                                                                                        debian-12
+      32                                                                                                        debian-13
+      33                                                                                                      windows-all
+      34                                                                                                        macos-all
+      35                                                                                                         centos-8
+      36                                                                                                     internal-all
 

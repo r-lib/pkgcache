@@ -254,6 +254,7 @@ pkgenv$ppm_distros_cached <-
  focal                   linux   focal          ubuntu       20.04     TRUE
  jammy                   linux   jammy          ubuntu       22.04     TRUE
  noble                   linux   noble          ubuntu       24.04     TRUE
+ resolute                linux   resolute       ubuntu       26.04     TRUE
  buster                  linux   buster         debian       10        FALSE
  bullseye                linux   bullseye       debian       11        TRUE
  bookworm                linux   bookworm       debian       12        TRUE

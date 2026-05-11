@@ -59,7 +59,7 @@
       Error in `get_package_dirs_for_platform()`:
       ! pkgcache does not support packages for R versions before R 3.2
 
----
+# get_all_package_dirs 2
 
     Code
       get_all_package_dirs("windows", "2.15.0")

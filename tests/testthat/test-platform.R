@@ -96,8 +96,10 @@ test_that("get_cran_extension", {
   )
 })
 
-test_that("get_all_package_dirs", {
-  if (grepl("^aarch64-apple-", R.version$platform)) skip("M1")
+test_that("get_all_package_dirs 2", {
+  if (grepl("^aarch64-apple-", R.version$platform)) {
+    skip("M1")
+  }
   d <- get_all_package_dirs(c("macos", "source"), "4.0.0")
   expect_true("x86_64-apple-darwin17.0" %in% d$platform)
   expect_true("source" %in% d$platform)
@@ -128,7 +130,9 @@ test_that("current_r_platform_data_linux", {
 
   nlapply <- function(X, FUN, ...) {
     ret <- lapply(X, FUN, ...)
-    if (is.character(X) && is.null(names(ret))) names(ret) <- X
+    if (is.character(X) && is.null(names(ret))) {
+      names(ret) <- X
+    }
     ret
   }
 

@@ -50,4 +50,4 @@ Config/usethis/last-upkeep: 2025-04-30
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE, r6 = FALSE)
-RoxygenNote: 7.3.2.9000
+RoxygenNote: 7.3.3

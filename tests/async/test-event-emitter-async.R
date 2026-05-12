@@ -1,8 +1,7 @@
 test_that("outside of async context errors", {
   do <- function() {
     x <- event_emitter$new(async = TRUE)
-    x$listen_on("foo", function() {
-    })
+    x$listen_on("foo", function() {})
     x$emit("foo")
   }
 
@@ -23,8 +22,7 @@ test_that("can create event emitter", {
 test_that("can add a listener", {
   do <- function() {
     x <- event_emitter$new(async = TRUE)
-    x$listen_on("foo", function() {
-    })
+    x$listen_on("foo", function() {})
   }
   expect_silent(run_event_loop(do()))
 })
@@ -32,8 +30,7 @@ test_that("can add a listener", {
 test_that("can add a one-shot listener", {
   do <- function() {
     x <- event_emitter$new()
-    x$listen_once("foo", function() {
-    })
+    x$listen_once("foo", function() {})
   }
   expect_silent(run_event_loop(do()))
 })

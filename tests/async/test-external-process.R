@@ -42,7 +42,9 @@ test_that("cancel external_process", {
       external_process(pxgen),
       delay(0.001)$then(function() {
         limit <- Sys.time() + as.difftime(2, units = "secs")
-        while (Sys.time() < limit && !proc$is_alive()) Sys.sleep(0.1)
+        while (Sys.time() < limit && !proc$is_alive()) {
+          Sys.sleep(0.1)
+        }
         running <<- proc$is_alive()
       })$then(function() stop("failed"))
     )
@@ -52,7 +54,9 @@ test_that("cancel external_process", {
   expect_true(running)
 
   limit <- Sys.time() + as.difftime(2, units = "secs")
-  while (Sys.time() < limit && proc$is_alive()) Sys.sleep(0.1)
+  while (Sys.time() < limit && proc$is_alive()) {
+    Sys.sleep(0.1)
+  }
   expect_false(proc$is_alive())
 })
 

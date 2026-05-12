@@ -39,7 +39,9 @@ test_that("repeated delay", {
     0.1,
     function() {
       counter <<- counter + 1
-      if (counter == 10) el$cancel(id)
+      if (counter == 10) {
+        el$cancel(id)
+      }
       counter
     },
     function(err, res) {

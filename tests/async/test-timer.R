@@ -24,7 +24,9 @@ test_that("errors", {
   do <- function() {
     cb <- function() {
       counter <<- counter + 1L
-      if (counter == 2L) stop("foobar")
+      if (counter == 2L) {
+        stop("foobar")
+      }
       if (counter == 3L) t$cancel()
     }
     t <- async_timer$new(1 / 100, cb)
@@ -38,7 +40,9 @@ test_that("errors", {
   do <- function() {
     cb <- function() {
       counter <<- counter + 1L
-      if (counter == 2L) stop("foobar")
+      if (counter == 2L) {
+        stop("foobar")
+      }
       if (counter == 3L) t$cancel()
     }
     t <- async_timer$new(1 / 100, cb)

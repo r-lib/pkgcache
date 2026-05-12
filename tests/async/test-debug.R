@@ -141,8 +141,7 @@ test_that("async_debug", {
   priv$null()
   expect_message(async_debug(get_private(res)$id), "has no action")
 
-  res <- deferred$new(action = function() {
-  })
+  res <- deferred$new(action = function() {})
   priv <- get_private(res)
   priv$null()
   expect_message(async_debug(get_private(res)$id), "debugging action")

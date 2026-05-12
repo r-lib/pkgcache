@@ -1,25 +1,17 @@
 test_that("it returns a function", {
-  ret <- async(function() {
-  })
+  ret <- async(function() {})
   expect_true(is.function(ret))
 })
 
 test_that("it returns a function with the same arity", {
   defs <- list(
-    function(a, b, c) {
-    },
-    function() {
-    },
-    function(a, b, c, d, e, f, g, h) {
-    },
-    function(x) {
-    },
-    function(a = "foo", b = "bar") {
-    },
-    function(...) {
-    },
-    function(x = 10, ..., last = "foo") {
-    }
+    function(a, b, c) {},
+    function() {},
+    function(a, b, c, d, e, f, g, h) {},
+    function(x) {},
+    function(a = "foo", b = "bar") {},
+    function(...) {},
+    function(x = 10, ..., last = "foo") {}
   )
 
   for (f in defs) {

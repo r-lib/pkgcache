@@ -193,7 +193,9 @@ test_that("is_na_scalar", {
     NA_complex_,
     NA
   )
-  for (c in good) expect_true(is_na_scalar(c), info = c)
+  for (c in good) {
+    expect_true(is_na_scalar(c), info = c)
+  }
 
   bad <- list(
     NULL,
@@ -201,7 +203,9 @@ test_that("is_na_scalar", {
     list(NA),
     list()
   )
-  for (c in bad) expect_false(is_na_scalar(c), info = c)
+  for (c in bad) {
+    expect_false(is_na_scalar(c), info = c)
+  }
 })
 
 test_that("drop_nulls", {
@@ -212,7 +216,9 @@ test_that("drop_nulls", {
     list(list(NULL), list()),
     list(list(NULL, a = 1, b = NULL), list(a = 1))
   )
-  for (c in cases) expect_equal(drop_nulls(c[[1]]), c[[2]], info = c[[1]])
+  for (c in cases) {
+    expect_equal(drop_nulls(c[[1]]), c[[2]], info = c[[1]])
+  }
 })
 
 test_that("null2na", {
@@ -228,7 +234,9 @@ test_that("na_omit", {
     list(list(a = 1, b = 2, c = NA), list(a = 1, b = 2)),
     list(c(a = NA, b = "2", c = NA), c(b = "2"))
   )
-  for (c in cases) expect_equal(na_omit(c[[1]]), c[[2]], info = c[[1]])
+  for (c in cases) {
+    expect_equal(na_omit(c[[1]]), c[[2]], info = c[[1]])
+  }
 })
 
 test_that("shasum256", {
@@ -391,8 +399,12 @@ test_that("is_na_scalar", {
   pos <- list(NA, NA_character_, NA_real_, NA_integer_, NA_complex_)
   neg <- list(logical(), integer(), 1, 1L, NULL, "foobar", c(NA, 1))
 
-  for (p in pos) expect_true(is_na_scalar(p))
-  for (n in neg) expect_false(is_na_scalar(n))
+  for (p in pos) {
+    expect_true(is_na_scalar(p))
+  }
+  for (n in neg) {
+    expect_false(is_na_scalar(n))
+  }
 })
 
 test_that("file.size", {

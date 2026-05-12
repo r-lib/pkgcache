@@ -1,6 +1,8 @@
 test_that("tools vs rappdirs", {
   skip_on_cran()
-  if (getRversion() < "4.0.0") skip("Needs newer R")
+  if (getRversion() < "4.0.0") {
+    skip("Needs newer R")
+  }
 
   withr::local_envvar(
     "_R_CHECK_PACKAGE_NAME_" = NA_character_,

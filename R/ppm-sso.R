@@ -429,6 +429,10 @@ ppm_sso_device_flow_message <- function(ppm_url, init_result) {
   if (interactive()) {
     readline("Press ENTER to open in browser...")
     utils::browseURL(init_result$display_uri)
+  } else if (Sys.getenv("R_PKG_PKG_WORKER") == "true") {
+    # called from pak, make the UI slightly nicer.
+    # unfortunately we cannot interact with the user here
+    utils::browseURL(init_result$display_uri)
   }
 }
 
@@ -561,9 +565,14 @@ ppm_sso_device_flow_complete <- function(ppm_url, init_result) {
     code_verifier = verifier
   )
 
+  # PPM might not respond until the user completes auth, so show this
+  oldopt <- options(cli.progress_show_after = 0)
+  on.exit(options(oldopt), add = TRUE)
   cli::cli_progress_bar(
     format = "{cli::pb_spin} Waiting for browser."
   )
+  cli::cli_progress_update()
+
   while (as.numeric(Sys.time() - start_time) < expires_in) {
     resp <- ppm_sso_post_form(url, payload)
     status <- resp$status
@@ -600,5 +609,7 @@ ppm_sso_device_flow_complete <- function(ppm_url, init_result) {
     }
   }
 
+  cli::cli_progress_done()
+  cli::cli_alert_danger("Device authorization timed out.")
   stop("Device authorization timed out.")
 }

@@ -1,10 +1,6 @@
 #' Posit Package Manager single sign-on (SSO) authentication
 #'
 #' @details
-#' `ppm_sso_login()` initiates the SSO login process. You should be
-#' prompted to log in via your browser, and the obtained token will be
-#' cached for future use.
-#'
 #' ## Set up SSO authentication:
 #' - Set the `PACKAGEMANAGER_ADDRESS` environment variable to the URL of
 #'   your RStudio Package Manager instance. For example, add this line to
@@ -22,6 +18,8 @@
 #'     getOption("repos")
 #'   ))
 #'   ```
+#'   You probably want to add this to your `.Rprofile` file, so that it is
+#'   set in every R session.
 #' - Call [repo_get()] to trigger authentication and caching of the token.
 #'   You should be prompted to log in via your browser, and the obtained
 #'   token will be cached for future use. Call [ppm_sso_status()] to check
@@ -29,6 +27,10 @@
 #'   token and its expiration time.
 #' - Alternatively, you can call `ppm_sso_login()` directly to trigger
 #'   the login process directly.
+#'
+#' `ppm_sso_login()` initiates the SSO login process. You should be
+#' prompted to log in via your browser, and the obtained token will be
+#' cached for future use.
 #'
 #' @return `ppm_sso_login()` returns the obtained token invisibly.
 #'

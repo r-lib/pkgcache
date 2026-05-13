@@ -49,9 +49,6 @@ expired.
 Posit Package Manager single sign-on (SSO) authentication
 }
 \details{
-\code{ppm_sso_login()} initiates the SSO login process. You should be
-prompted to log in via your browser, and the obtained token will be
-cached for future use.
 \subsection{Set up SSO authentication:}{
 \itemize{
 \item Set the \code{PACKAGEMANAGER_ADDRESS} environment variable to the URL of
@@ -71,6 +68,9 @@ instance. Include \verb{__token__} as the username in the URL. For example:
   getOption("repos")
 ))
 }\if{html}{\out{</div>}}
+
+You probably want to add this to your \code{.Rprofile} file, so that it is
+set in every R session.
 \item Call \code{\link[=repo_get]{repo_get()}} to trigger authentication and caching of the token.
 You should be prompted to log in via your browser, and the obtained
 token will be cached for future use. Call \code{\link[=ppm_sso_status]{ppm_sso_status()}} to check
@@ -79,6 +79,10 @@ token and its expiration time.
 \item Alternatively, you can call \code{ppm_sso_login()} directly to trigger
 the login process directly.
 }
+
+\code{ppm_sso_login()} initiates the SSO login process. You should be
+prompted to log in via your browser, and the obtained token will be
+cached for future use.
 }
 
 \code{ppm_sso_logout()} removes the cached token, effectively logging you

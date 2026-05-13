@@ -341,7 +341,12 @@ ppm_sso_post_form <- function(url, payload) {
   resp <- curl::curl_fetch_memory(url, handle = h)
   list(
     status = resp$status_code,
-    body = jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+    body = tryCatch(
+      jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE),
+      error = function(e) {
+        resp$content
+      }
+    )
   )
 }
 

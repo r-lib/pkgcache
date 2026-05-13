@@ -76,7 +76,7 @@ ppm_sso_logout <- function() {
   tokens <- try_catch_null({
     tokens <- suppressWarnings(tstoml::ts_read_toml(token_file_path))
     urls <- ts::ts_tree_unserialize(
-      ts::ts_tree_select(tokens, list("connection", TRUE, "url"))
+      ts::ts_tree_select(tokens, list("connections", TRUE, "address"))
     )
     idx <- which(urls == ppm_url)[1]
     tokens
@@ -87,7 +87,7 @@ ppm_sso_logout <- function() {
   }
 
   tokens <- ts::ts_tree_delete(
-    ts::ts_tree_select(tokens, list("connection", idx))
+    ts::ts_tree_select(tokens, list("connections", idx))
   )
 
   ts::ts_tree_write(tokens, token_file_path)
@@ -357,8 +357,8 @@ ppm_sso_get_existing_token <- function(ppm_url, valid = TRUE) {
   path <- ppm_sso_token_path()
   try_catch_null({
     ts_tokens <- suppressWarnings(tstoml::ts_read_toml(path))
-    for (conn in ts_tokens[[list("connection", TRUE)]]) {
-      if (identical(conn$url, ppm_url)) {
+    for (conn in ts_tokens[[list("connections", TRUE)]]) {
+      if (identical(conn$address, ppm_url)) {
         if (valid && !ppm_sso_can_authenticate(ppm_url, conn$token)) {
           return(NULL)
         }
@@ -469,15 +469,15 @@ ppm_sso_write_token_to_file <- function(ppm_url, token) {
   token_file_path <- ppm_sso_token_path()
   mkdirp(dirname(token_file_path))
   new_conn <- list(
-    url = ppm_url,
+    address = ppm_url,
     token = token,
-    method = "sso"
+    auth_type = "sso"
   )
 
   tokens <- try_catch_null({
     tokens <- suppressWarnings(tstoml::ts_read_toml(token_file_path))
     urls <- ts::ts_tree_unserialize(
-      ts::ts_tree_select(tokens, list("connection", TRUE, "url"))
+      ts::ts_tree_select(tokens, list("connections", TRUE, "address"))
     )
     idx <- which(urls == ppm_url)[1]
     tokens
@@ -485,15 +485,15 @@ ppm_sso_write_token_to_file <- function(ppm_url, token) {
 
   if (is.null(tokens)) {
     tokens <- tstoml::ts_parse_toml("")
-    tokens <- ts::ts_tree_insert(tokens, key = "connection", list(new_conn))
+    tokens <- ts::ts_tree_insert(tokens, key = "connections", list(new_conn))
   } else if (!is.na(idx)) {
     tokens <- ts::ts_tree_update(
-      ts::ts_tree_select(tokens, list("connection", idx, "token")),
+      ts::ts_tree_select(tokens, list("connections", idx, "token")),
       new_conn$token
     )
   } else {
     tokens <- ts::ts_tree_insert(
-      ts::ts_tree_select(tokens, "connection"),
+      ts::ts_tree_select(tokens, "connections"),
       list(new_conn)
     )
   }

@@ -538,6 +538,8 @@ ppm_sso_write_token_to_file <- function(ppm_url, token) {
       ts::ts_tree_select(tokens, list("connections", idx, "token")),
       new_conn$token
     )
+  } else if (length(urls) == 0) {
+    tokens <- ts::ts_tree_insert(tokens, key = "connections", list(new_conn))
   } else {
     tokens <- ts::ts_tree_insert(
       ts::ts_tree_select(tokens, "connections"),

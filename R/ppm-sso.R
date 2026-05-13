@@ -378,7 +378,7 @@ ppm_sso_get_identity_token_from_file <- function() {
   })
 }
 
-ppm_sso_device_flow <- function(ppm_url) {
+ppm_sso_device_flow_init <- function(ppm_url) {
   verifier <- ppm_sso_new_pkce_verifier()
   challenge <- ppm_sso_new_pkce_challenge(verifier)
 
@@ -404,30 +404,37 @@ ppm_sso_device_flow <- function(ppm_url) {
     stop("No verification URI found in device auth response.")
   }
 
+  list(
+    verifier = verifier,
+    display_uri = display_uri,
+    user_code = init_resp_body$user_code,
+    device_code = init_resp_body$device_code,
+    expires_in = init_resp_body$expires_in,
+    interval = init_resp_body$interval
+  )
+}
+
+ppm_sso_device_flow_message <- function(ppm_url, init_result) {
   cli::cli_rule("PPM SSO Login")
-  cli::cli_text("Login at {.url {display_uri}}")
+  cli::cli_text("Login at {.url {init_result$display_uri}}")
   cli::cli_text(
-    "and enter code {.emph {cli::col_magenta(init_resp_body$user_code)}} when prompted."
+    "and enter code {.emph {cli::col_magenta(init_result$user_code)}}
+     when prompted."
   )
   if (interactive()) {
     readline("Press ENTER to open in browser...")
-    utils::browseURL(display_uri)
+    utils::browseURL(init_result$display_uri)
   }
+}
 
-  # 2. Poll for token
-  token_resp_body <- ppm_sso_complete_device_auth(
-    ppm_url,
-    init_resp_body$device_code,
-    verifier,
-    init_resp_body$interval %||% 5,
-    init_resp_body$expires_in %||% 300
-  )
-
-  if (is.null(token_resp_body) || is.null(token_resp_body$id_token)) {
+ppm_sso_device_flow <- function(ppm_url) {
+  init_result <- ppm_sso_device_flow_init(ppm_url)
+  ppm_sso_device_flow_message(ppm_url, init_result)
+  token <- ppm_sso_device_flow_complete(ppm_url, init_result)
+  if (is.null(token)) {
     stop("Failed to complete device authorization or obtain identity token.")
   }
-
-  token_resp_body$id_token
+  token
 }
 
 ppm_sso_can_authenticate <- function(ppm_url, token) {
@@ -536,13 +543,12 @@ ppm_sso_new_pkce_challenge <- function(verifier) {
   ppm_sso_base64url_encode(ppm_sso_sha256_raw(verifier))
 }
 
-ppm_sso_complete_device_auth = function(
-  ppm_url,
-  device_code,
-  verifier,
-  interval,
-  expires_in
-) {
+ppm_sso_device_flow_complete <- function(ppm_url, init_result) {
+  device_code <- init_result$device_code
+  verifier <- init_result$verifier
+  interval <- init_result$interval %||% 5
+  expires_in <- init_result$expires_in %||% 300
+
   url <- paste0(ppm_url, "/__api__/device_access")
   start_time <- Sys.time()
   payload <- list(
@@ -560,7 +566,7 @@ ppm_sso_complete_device_auth = function(
     if (status == 200) {
       cli::cli_progress_done()
       cli::cli_alert_success("Authorization successful.")
-      return(resp$body)
+      return(resp$body$id_token)
     } else if (status == 400) {
       error_code <- resp$body$error
       if (error_code == "access_denied") {

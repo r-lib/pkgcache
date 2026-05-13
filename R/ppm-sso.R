@@ -57,11 +57,11 @@ ppm_sso_logout <- function() {
   ppm_url <- Sys.getenv("PACKAGEMANAGER_ADDRESS", NA_character_)
 
   # remove from cache if there
-  try_catch_null(rm(
+  try_catch_null(suppressWarnings(rm(
     list = ppm_url,
     envir = pkgenv$ppm_sso_cache,
     inherits = FALSE
-  ))
+  )))
   parsed <- parse_url(ppm_url)
   try_catch_null(suppressWarnings(rm(
     list = parsed$host,
@@ -71,7 +71,7 @@ ppm_sso_logout <- function() {
 
   token_file_path <- ppm_sso_token_path()
   if (!file.exists(token_file_path)) {
-    return()
+    return(invisible())
   }
   tokens <- try_catch_null({
     tokens <- suppressWarnings(tstoml::ts_read_toml(token_file_path))
@@ -83,7 +83,7 @@ ppm_sso_logout <- function() {
   })
 
   if (is.na(idx)) {
-    return()
+    return(invisible())
   }
 
   tokens <- ts::ts_tree_delete(
@@ -201,7 +201,7 @@ format.ppm_sso_status <- function(x, ...) {
     cli::col_cyan(x)
   }
   url <- function(x) {
-    if (startsWith(x, "http")) {
+    if (!is.na(x) && startsWith(x, "http")) {
       cli::style_hyperlink(x, x)
     } else {
       x

@@ -103,6 +103,25 @@ ppm_sso_logout <- function() {
 #' @details
 #' `ppm_sso_status()` checks the status of your authentication, including
 #' the path of the cached token and its expiration time.
+#' @return `ppm_sso_status()` returns a list with the following components:
+#' - `ppm_url`: The URL of the Package Manager instance.
+#' - `token_file`: The path of the cached token file.
+#' - `token`: The cached token (partially masked for display) or `NA` if
+#'   no token is found locally.
+#' - `valid`: `TRUE` if the token is valid (only if `connect = TRUE`),
+#'   `FALSE` if invalid, or `NA` if not checked.
+#' - `issuer`: The issuer of the token, or `NA` if not available.
+#' - `subject`: The subject of the token, or `NA` if not available.
+#' - `audience`: The audience of the token, or `NA` if not available.
+#' - `issued_at`: The issue time of the token as a POSIXct object, or `NA`
+#'   if not available.
+#' - `expires_at`: The expiration time of the token as a POSIXct object,
+#'   or `NA`  if not available.
+#' - `expired`: `TRUE` if the token is expired, `FALSE` if not expired,
+#'   or `NA` if expiration time is not available.
+#' - `expires_in`: The time until expiration as a difftime object, or
+#'   `NA` if expiration time is not available or the token is already
+#'   expired.
 #' @export
 
 ppm_sso_status <- function(connect = FALSE) {

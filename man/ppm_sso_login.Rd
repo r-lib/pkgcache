@@ -18,6 +18,33 @@ request to the Package Manager instance. This requires an active internet
 connection and may take a few seconds. If \code{FALSE}, only checks if a
 token is cached and not expired.}
 }
+\value{
+\code{ppm_sso_login()} returns the obtained token invisibly.
+
+\code{ppm_sso_logout()} does not return anything.
+
+\code{ppm_sso_status()} returns a list with the following components:
+\itemize{
+\item \code{ppm_url}: The URL of the Package Manager instance.
+\item \code{token_file}: The path of the cached token file.
+\item \code{token}: The cached token (partially masked for display) or \code{NA} if
+no token is found locally.
+\item \code{valid}: \code{TRUE} if the token is valid (only if \code{connect = TRUE}),
+\code{FALSE} if invalid, or \code{NA} if not checked.
+\item \code{issuer}: The issuer of the token, or \code{NA} if not available.
+\item \code{subject}: The subject of the token, or \code{NA} if not available.
+\item \code{audience}: The audience of the token, or \code{NA} if not available.
+\item \code{issued_at}: The issue time of the token as a POSIXct object, or \code{NA}
+if not available.
+\item \code{expires_at}: The expiration time of the token as a POSIXct object,
+or \code{NA}  if not available.
+\item \code{expired}: \code{TRUE} if the token is expired, \code{FALSE} if not expired,
+or \code{NA} if expiration time is not available.
+\item \code{expires_in}: The time until expiration as a difftime object, or
+\code{NA} if expiration time is not available or the token is already
+expired.
+}
+}
 \description{
 Posit Package Manager single sign-on (SSO) authentication
 }
@@ -55,7 +82,7 @@ the login process directly.
 }
 
 \code{ppm_sso_logout()} removes the cached token, effectively logging you
-out.
+out. If there is no cached token, it does nothing.
 
 \code{ppm_sso_status()} checks the status of your authentication, including
 the path of the cached token and its expiration time.

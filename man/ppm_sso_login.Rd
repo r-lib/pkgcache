@@ -87,6 +87,19 @@ out. If there is no cached token, it does nothing.
 \code{ppm_sso_status()} checks the status of your authentication, including
 the path of the cached token and its expiration time.
 }
+\examples{
+\dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
+Sys.setenv(PACKAGEMANAGER_ADDRESS = "https://<ppm-url>")
+options(repos = c(
+  PPM = "https://__token__@<ppm-url>/<repo-path>",
+  getOption("repos")
+))
+ppm_sso_login()
+ppm_sso_status()
+ppm_sso_status(connect = TRUE)
+ppm_sso_logout()
+\dontshow{\}) # examplesIf}
+}
 \seealso{
 \url{https://docs.posit.co/rspm/admin/authentication/}
 }

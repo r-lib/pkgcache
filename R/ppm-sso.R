@@ -34,6 +34,16 @@
 #'
 #' @seealso <https://docs.posit.co/rspm/admin/authentication/>
 #' @export
+#' @examplesIf FALSE
+#' Sys.setenv(PACKAGEMANAGER_ADDRESS = "https://<ppm-url>")
+#' options(repos = c(
+#'   PPM = "https://__token__@<ppm-url>/<repo-path>",
+#'   getOption("repos")
+#' ))
+#' ppm_sso_login()
+#' ppm_sso_status()
+#' ppm_sso_status(connect = TRUE)
+#' ppm_sso_logout()
 
 ppm_sso_login <- function() {
   ppm_url <- Sys.getenv("PACKAGEMANAGER_ADDRESS", NA_character_)

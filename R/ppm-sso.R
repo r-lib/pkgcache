@@ -457,7 +457,7 @@ ppm_sso_device_flow_message <- function(ppm_url, init_result) {
     "and enter code {.emph {cli::col_magenta(init_result$user_code)}}
      when prompted."
   )
-  if (interactive()) {
+  if (is_interactive()) {
     readline("Press ENTER to open in browser...")
     utils::browseURL(init_result$display_uri)
   } else if (isTRUE(getOption("pak.is_worker"))) {

@@ -96,7 +96,7 @@ test_that("get_cran_extension", {
   )
 })
 
-test_that("get_all_package_dirs", {
+test_that("get_all_package_dirs 2", {
   if (grepl("^aarch64-apple-", R.version$platform)) {
     skip("M1")
   }

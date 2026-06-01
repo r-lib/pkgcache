@@ -23,6 +23,8 @@ Imports:
     processx (>= 3.3.0.9001),
     R6,
     tools,
+    tsitter,
+    tstoml,
     utils
 Suggests:
     covr,
@@ -39,6 +41,9 @@ Suggests:
     webfakes (>= 1.1.5),
     withr,
     zip
+Remotes:
+    r-lib/tsitter,
+    gaborcsardi/tstoml
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
 Config/usethis/last-upkeep: 2025-04-30

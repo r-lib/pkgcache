@@ -2,6 +2,14 @@
 
 ## pkgcache (development version)
 
+- New `PKG_USE_BIOCONDUCTOR` environment variable and new
+  `pkg.use_bioconductor` option to opt out from automatic Bioconductor
+  support.
+
+- Improved Bioconductor version detection. Avoid HTTP requests if the
+  appropriate Bioconductor version can be determined without it. Closes
+  <https://github.com/r-lib/pak/issues/879>.
+
 ## pkgcache 2.2.5
 
 CRAN release: 2026-04-09

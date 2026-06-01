@@ -23,7 +23,7 @@ Imports:
     processx (>= 3.3.0.9001),
     R6,
     tools,
-    ts,
+    tsitter,
     tstoml,
     utils
 Suggests:
@@ -42,7 +42,7 @@ Suggests:
     withr,
     zip
 Remotes:
-    r-lib/ts,
+    r-lib/tsitter,
     gaborcsardi/tstoml
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3

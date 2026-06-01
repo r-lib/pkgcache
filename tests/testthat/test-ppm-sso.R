@@ -12,8 +12,8 @@ local_token_path <- function(envir = parent.frame()) {
 
 read_connections <- function(path) {
   tokens <- suppressWarnings(tstoml::ts_read_toml(path))
-  ts::ts_tree_unserialize(
-    ts::ts_tree_select(tokens, list("connections", TRUE))
+  tsitter::ts_tree_unserialize(
+    tsitter::ts_tree_select(tokens, list("connections", TRUE))
   )
 }
 
@@ -69,8 +69,8 @@ test_that("ppm_sso_write_token_to_file: non-empty file, creating connections tab
   ppm_sso_write_token_to_file("https://ppm.example.com", "tkn1")
 
   tokens <- suppressWarnings(tstoml::ts_read_toml(path))
-  conns <- ts::ts_tree_unserialize(
-    ts::ts_tree_select(tokens, list("connections", TRUE))
+  conns <- tsitter::ts_tree_unserialize(
+    tsitter::ts_tree_select(tokens, list("connections", TRUE))
   )
   expect_equal(
     conns,
@@ -81,12 +81,14 @@ test_that("ppm_sso_write_token_to_file: non-empty file, creating connections tab
     ))
   )
   expect_equal(
-    ts::ts_tree_unserialize(ts::ts_tree_select(tokens, "top_level"))[[1]],
+    tsitter::ts_tree_unserialize(tsitter::ts_tree_select(tokens, "top_level"))[[
+      1
+    ]],
     "keep me"
   )
   expect_equal(
-    ts::ts_tree_unserialize(
-      ts::ts_tree_select(tokens, list("meta", "version"))
+    tsitter::ts_tree_unserialize(
+      tsitter::ts_tree_select(tokens, list("meta", "version"))
     )[[1]],
     1L
   )
@@ -179,8 +181,8 @@ test_that("ppm_sso_write_token_to_file: updating preserves extra data", {
   ppm_sso_write_token_to_file("https://ppm.example.com", "new-tkn")
 
   tokens <- suppressWarnings(tstoml::ts_read_toml(path))
-  conns <- ts::ts_tree_unserialize(
-    ts::ts_tree_select(tokens, list("connections", TRUE))
+  conns <- tsitter::ts_tree_unserialize(
+    tsitter::ts_tree_select(tokens, list("connections", TRUE))
   )
   expect_equal(
     conns,
@@ -200,12 +202,14 @@ test_that("ppm_sso_write_token_to_file: updating preserves extra data", {
     )
   )
   expect_equal(
-    ts::ts_tree_unserialize(ts::ts_tree_select(tokens, "top_level"))[[1]],
+    tsitter::ts_tree_unserialize(tsitter::ts_tree_select(tokens, "top_level"))[[
+      1
+    ]],
     "keep me"
   )
   expect_equal(
-    ts::ts_tree_unserialize(
-      ts::ts_tree_select(tokens, list("meta", "version"))
+    tsitter::ts_tree_unserialize(
+      tsitter::ts_tree_select(tokens, list("meta", "version"))
     )[[1]],
     1L
   )

@@ -167,7 +167,7 @@ Notes:
 - `MRAN@...` repository specifications now resolve to PPM, but note that
   PPM snapshots are only available from 2017-10-10. See more about this
   at
-  <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
+  <https://posit.co/blog/migrating-from-mran-to-posit-package-manager>.
 
 - All dates (or times) can be specified in the ISO 8601 format.
 
@@ -236,11 +236,11 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 
 with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 #> Repository summary:                       source          
-#> RSPM          @ packagemanager.posit.co     ✔      (174ms)
-#> CRAN          @ packagemanager.posit.co     ✔      (174ms)
-#> BioCsoft      @ bioconductor.org            ✔      (61ms )
-#> BioCann       @ bioconductor.org            ✔      (176ms)
-#> BioCexp       @ bioconductor.org            ✔      (185ms)
-#> BioCworkflows @ bioconductor.org            ✔      (191ms)
-#> BioCbooks     @ bioconductor.org            ✔      (187ms)
+#> RSPM          @ packagemanager.posit.co     ✔      (182ms)
+#> CRAN          @ packagemanager.posit.co     ✔      (219ms)
+#> BioCsoft      @ bioconductor.org            ✔      (62ms )
+#> BioCann       @ bioconductor.org            ✔      (182ms)
+#> BioCexp       @ bioconductor.org            ✔      (192ms)
+#> BioCworkflows @ bioconductor.org            ✔      (194ms)
+#> BioCbooks     @ bioconductor.org            ✔      (192ms)
 ```

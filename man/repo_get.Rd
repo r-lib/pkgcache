@@ -159,7 +159,7 @@ with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other repository functions: 
-\code{\link{repo_status}()}
+Other repository functions:
+\code{\link[=repo_status]{repo_status()}}
 }
 \concept{repository functions}

@@ -22,10 +22,10 @@ ppm_has_binaries()
 The 'pkgcache and Posit Package Manager on Linux'
 article at \url{https://r-lib.github.io/pkgcache/dev/}.
 
-Other PPM functions: 
-\code{\link{ppm_platforms}()},
-\code{\link{ppm_r_versions}()},
-\code{\link{ppm_repo_url}()},
-\code{\link{ppm_snapshots}()}
+Other PPM functions:
+\code{\link[=ppm_platforms]{ppm_platforms()}},
+\code{\link[=ppm_r_versions]{ppm_r_versions()}},
+\code{\link[=ppm_repo_url]{ppm_repo_url()}},
+\code{\link[=ppm_snapshots]{ppm_snapshots()}}
 }
 \concept{PPM functions}

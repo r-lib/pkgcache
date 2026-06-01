@@ -50,10 +50,10 @@ ppm_snapshots()
 The 'pkgcache and Posit Package Manager on Linux'
 article at \url{https://r-lib.github.io/pkgcache/dev/}.
 
-Other PPM functions: 
-\code{\link{ppm_has_binaries}()},
-\code{\link{ppm_platforms}()},
-\code{\link{ppm_r_versions}()},
-\code{\link{ppm_repo_url}()}
+Other PPM functions:
+\code{\link[=ppm_has_binaries]{ppm_has_binaries()}},
+\code{\link[=ppm_platforms]{ppm_platforms()}},
+\code{\link[=ppm_r_versions]{ppm_r_versions()}},
+\code{\link[=ppm_repo_url]{ppm_repo_url()}}
 }
 \concept{PPM functions}

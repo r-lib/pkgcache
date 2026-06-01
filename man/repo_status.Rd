@@ -75,7 +75,7 @@ summary(rst)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other repository functions: 
-\code{\link{repo_get}()}
+Other repository functions:
+\code{\link[=repo_get]{repo_get()}}
 }
 \concept{repository functions}

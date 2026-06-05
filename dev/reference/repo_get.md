@@ -216,7 +216,7 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
 #> 7 BioCbooks     https://bioconductor.org/… bioc  4.6.0     3.23        
 with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #> 
-#> ✔ Updated metadata database: 4.75 MB in 5 files.
+#> ✔ Updated metadata database: 4.76 MB in 5 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
@@ -236,11 +236,11 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 
 with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 #> Repository summary:                       source          
-#> RSPM          @ packagemanager.posit.co     ✔      (186ms)
-#> CRAN          @ packagemanager.posit.co     ✔      (213ms)
-#> BioCsoft      @ bioconductor.org            ✔      (59ms )
-#> BioCann       @ bioconductor.org            ✔      (186ms)
-#> BioCexp       @ bioconductor.org            ✔      (194ms)
-#> BioCworkflows @ bioconductor.org            ✔      (201ms)
-#> BioCbooks     @ bioconductor.org            ✔      (195ms)
+#> RSPM          @ packagemanager.posit.co     ✔      (294ms)
+#> CRAN          @ packagemanager.posit.co     ✔      (356ms)
+#> BioCsoft      @ bioconductor.org            ✔      (96ms )
+#> BioCann       @ bioconductor.org            ✔      (293ms)
+#> BioCexp       @ bioconductor.org            ✔      (332ms)
+#> BioCworkflows @ bioconductor.org            ✔      (346ms)
+#> BioCbooks     @ bioconductor.org            ✔      (333ms)
 ```

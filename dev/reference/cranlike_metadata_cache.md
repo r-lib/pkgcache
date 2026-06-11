@@ -219,12 +219,12 @@ dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()
 #> 
-#> ✔ Updated metadata database: 5.88 MB in 4 files.
+#> ✔ Updated metadata database: 5.89 MB in 4 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 47,733 × 32
+#> # A data frame: 47,839 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
 #>  1 a11yShiny  0.1.4   R (>= … "shiny… "devtoo… NA               EUPL-1…
@@ -237,7 +237,7 @@ cmc$list()
 #>  8 abasequen… 0.1.0   NA       NA      NA      NA               GPL-3  
 #>  9 abba       0.2.0   NA      "yaml,… "testth… NA               Apache…
 #> 10 abbreviate 0.1     NA       NA     "testth… NA               GPL-3  
-#> # ℹ 47,723 more rows
+#> # ℹ 47,829 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,

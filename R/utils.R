@@ -2,6 +2,10 @@ repoman_data <- new.env(parent = emptyenv())
 
 `%||%` <- function(l, r) if (is.null(l)) r else l
 
+`%&&%` <- function(l, r) if (is.null(l)) NULL else r
+
+isFALSE <- function(x) is.logical(x) && length(x) == 1L && !is.na(x) && !x
+
 vcapply <- function(X, FUN, ...) {
   vapply(X, FUN, FUN.VALUE = character(1), ...)
 }
@@ -249,4 +253,14 @@ is_rcmd_check <- function() {
 
 random_key <- function() {
   basename(tempfile())
+}
+
+is_interactive <- function() {
+  if (isTRUE(getOption("rlib.interactive"))) {
+    TRUE
+  } else if (isFALSE(getOption("rlib.interactive"))) {
+    FALSE
+  } else {
+    interactive()
+  }
 }

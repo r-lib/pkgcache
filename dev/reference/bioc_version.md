@@ -109,14 +109,14 @@ bioc_devel_version()
 bioc_release_version()
 #> [1] ‘3.23’
 bioc_repos()
-#>                                                 BioCsoft 
-#>            "https://bioconductor.org/packages/3.23/bioc" 
-#>                                                  BioCann 
-#> "https://bioconductor.org/packages/3.23/data/annotation" 
-#>                                                  BioCexp 
-#> "https://bioconductor.org/packages/3.23/data/experiment" 
-#>                                            BioCworkflows 
-#>       "https://bioconductor.org/packages/3.23/workflows" 
-#>                                                BioCbooks 
-#>           "https://bioconductor.org/packages/3.23/books" 
+#>                                                      BioCsoft 
+#>            "https://bioconductor.posit.co/packages/3.23/bioc" 
+#>                                                       BioCann 
+#> "https://bioconductor.posit.co/packages/3.23/data/annotation" 
+#>                                                       BioCexp 
+#> "https://bioconductor.posit.co/packages/3.23/data/experiment" 
+#>                                                 BioCworkflows 
+#>       "https://bioconductor.posit.co/packages/3.23/workflows" 
+#>                                                     BioCbooks 
+#>           "https://bioconductor.posit.co/packages/3.23/books" 
 ```

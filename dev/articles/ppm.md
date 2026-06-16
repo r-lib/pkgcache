@@ -114,7 +114,7 @@ lists all PPM snapshot dates and ids:
 pkgcache::ppm_snapshots()
 ```
 
-    ## # A data frame: 3,166 × 2
+    ## # A data frame: 3,171 × 2
     ##    date       id        
     ##    <date>     <chr>     
     ##  1 2017-10-10 2017-10-10
@@ -127,7 +127,7 @@ pkgcache::ppm_snapshots()
     ##  8 2017-10-17 2017-10-17
     ##  9 2017-10-18 2017-10-18
     ## 10 2017-10-19 2017-10-19
-    ## # ℹ 3,156 more rows
+    ## # ℹ 3,161 more rows
 
 You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are

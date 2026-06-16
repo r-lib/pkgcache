@@ -193,11 +193,11 @@ repo_get()
 #> * <chr>         <chr>                      <chr> <chr>     <chr>       
 #> 1 RSPM          https://packagemanager.po… cran… *         NA          
 #> 2 CRAN          https://cran.rstudio.com   cran  *         NA          
-#> 3 BioCsoft      https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 4 BioCann       https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 5 BioCexp       https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 6 BioCworkflows https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 7 BioCbooks     https://bioconductor.org/… bioc  4.6.0     3.23        
+#> 3 BioCsoft      https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 4 BioCann       https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 5 BioCexp       https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 6 BioCworkflows https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 7 BioCbooks     https://bioconductor.posi… bioc  4.6.0     3.23        
 repo_resolve("PPM@2021-01-21")
 #>                                                              CRAN 
 #> "https://packagemanager.posit.co/cran/__linux__/noble/2021-01-21" 
@@ -209,11 +209,11 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), repo_get())
 #> * <chr>         <chr>                      <chr> <chr>     <chr>       
 #> 1 RSPM          https://packagemanager.po… cran… *         NA          
 #> 2 CRAN          https://packagemanager.po… cran  *         NA          
-#> 3 BioCsoft      https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 4 BioCann       https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 5 BioCexp       https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 6 BioCworkflows https://bioconductor.org/… bioc  4.6.0     3.23        
-#> 7 BioCbooks     https://bioconductor.org/… bioc  4.6.0     3.23        
+#> 3 BioCsoft      https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 4 BioCann       https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 5 BioCexp       https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 6 BioCworkflows https://bioconductor.posi… bioc  4.6.0     3.23        
+#> 7 BioCbooks     https://bioconductor.posi… bioc  4.6.0     3.23        
 with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 #> 
 #> ✔ Updated metadata database: 4.77 MB in 5 files.
@@ -236,11 +236,11 @@ with_repo(c(CRAN = "PPM@dplyr-1.0.0"), meta_cache_list(package = "dplyr"))
 
 with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 #> Repository summary:                       source          
-#> RSPM          @ packagemanager.posit.co     ✔      (103ms)
-#> CRAN          @ packagemanager.posit.co     ✔      (102ms)
-#> BioCsoft      @ bioconductor.org            ✔      (214ms)
-#> BioCann       @ bioconductor.org            ✔      (220ms)
-#> BioCexp       @ bioconductor.org            ✔      (222ms)
-#> BioCworkflows @ bioconductor.org            ✔      (225ms)
-#> BioCbooks     @ bioconductor.org            ✔      (230ms)
+#> RSPM          @ packagemanager.posit.co     ✔      (135ms)
+#> CRAN          @ packagemanager.posit.co     ✔      (136ms)
+#> BioCsoft      @ bioconductor.posit.co       ✔      (43ms )
+#> BioCann       @ bioconductor.posit.co       ✔      (79ms )
+#> BioCexp       @ bioconductor.posit.co       ✔      (79ms )
+#> BioCworkflows @ bioconductor.posit.co       ✔      (79ms )
+#> BioCbooks     @ bioconductor.posit.co       ✔      (79ms )
 ```

@@ -63,8 +63,11 @@ location and size.
 
 ``` r
 meta_cache_list("pkgdown")
-#> ℹ Loading metadata database
-#> ✔ Loading metadata database ... done
+#> 
+#> ✔ Updated metadata database: 2.89 MB in 7 files.
+#> 
+#> ℹ Updating metadata database
+#> ✔ Updating metadata database ... done
 #> 
 #> # A data frame: 2 × 32
 #>   package version depends    imports  suggests needscompilation license

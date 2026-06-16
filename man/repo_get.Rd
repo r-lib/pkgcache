@@ -134,7 +134,7 @@ Notes:
 for details.
 \item \code{MRAN@...} repository specifications now resolve to PPM, but note that
 PPM snapshots are only available from 2017-10-10. See more about this
-at \url{https://posit.co/blog/migrating-from-mran-to-posit-package-manager/}.
+at \url{https://posit.co/blog/migrating-from-mran-to-posit-package-manager}.
 \item All dates (or times) can be specified in the ISO 8601 format.
 \item If PPM does not have a snapshot available for a date, the next
 available date is used.
@@ -159,7 +159,7 @@ with_repo(c(CRAN = "MRAN@2018-06-30"), summary(repo_status()))
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other repository functions: 
-\code{\link{repo_status}()}
+Other repository functions:
+\code{\link[=repo_status]{repo_status()}}
 }
 \concept{repository functions}

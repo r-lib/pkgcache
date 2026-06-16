@@ -3,7 +3,9 @@ if (Sys.getenv("R_COVR") == "true") {
 }
 
 test_that("metadata api", {
-  if (packageVersion("callr") < "3.1.0.9000") skip("Need newer callr")
+  if (packageVersion("callr") < "3.1.0.9000") {
+    skip("Need newer callr")
+  }
 
   setup_fake_apps()
 

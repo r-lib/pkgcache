@@ -4,8 +4,7 @@ test_that("on_cancel callback is called", {
   cancel_msg <- NULL
   do <- async(function() {
     dx <<- deferred$new(
-      action = function(resolve) {
-      },
+      action = function(resolve) {},
       on_cancel = function(msg) {
         cancelled <<- TRUE
         cancel_msg <<- msg
@@ -25,8 +24,7 @@ test_that("on_cancel callback is called", {
 test_that("then() is also rejected on cancel", {
   dx <- dx2 <- NULL
   do <- async(function() {
-    dx <<- deferred$new(action = function(resolve) {
-    })
+    dx <<- deferred$new(action = function(resolve) {})
     dx2 <<- dx$then(function() "not this far")
     dx$cancel("changed my mind")
     dx2
@@ -44,8 +42,7 @@ test_that("then() is also rejected on cancel", {
 test_that("can catch and handle cancellation", {
   err <- NULL
   do <- async(function() {
-    dx <- deferred$new(action = function(resolve) {
-    })
+    dx <- deferred$new(action = function(resolve) {})
     dx2 <- dx$catch(error = function(e) err <<- e)
     dx$cancel("changed my mind")
     dx2

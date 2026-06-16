@@ -12,8 +12,7 @@ test_that("def__make_parent_*", {
     function(a, b, c) resolve(value)
   )
 
-  eta <- function(value, resolve) {
-  }
+  eta <- function(value, resolve) {}
 
   for (f in good) {
     res <- def__make_parent_resolve(f)

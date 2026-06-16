@@ -32,11 +32,12 @@ test_that("error", {
   do <- function() {
     async_whilst(
       function() i < 5,
-      function()
+      function() {
         delay(1 / 1000)$then(function(value) {
           i <<- i + 1
           if (i >= 3) stop("doh")
         })
+      }
     )
   }
 

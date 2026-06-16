@@ -77,8 +77,8 @@ test_that("packages_make_sources", {
       downloadurl = NULL
     ),
     list(
-      c("URL/s/c/p1_1.0.tgz", "https://mac.r-project.org/s/c/p1_1.0.tgz"),
-      c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")
+      c("URL/s/c/p1_1.0.tgz", "https://mac.cran.dev/s/c/p1_1.0.tgz"),
+      c("URL/s/c/p2_2.0.tgz", "https://mac.cran.dev/s/c/p2_2.0.tgz")
     )
   )
 
@@ -114,7 +114,7 @@ test_that("packages_make_sources", {
     ),
     list(
       c("foo"),
-      c("URL/s/c/p2_2.0.tgz", "https://mac.r-project.org/s/c/p2_2.0.tgz")
+      c("URL/s/c/p2_2.0.tgz", "https://mac.cran.dev/s/c/p2_2.0.tgz")
     )
   )
 })

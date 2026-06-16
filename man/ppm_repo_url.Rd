@@ -47,10 +47,10 @@ article at \url{https://r-lib.github.io/pkgcache/dev/}.
 \code{\link[=repo_resolve]{repo_resolve()}} and \code{\link[=repo_add]{repo_add()}} to find and configure PPM
 snapshots.
 
-Other PPM functions: 
-\code{\link{ppm_has_binaries}()},
-\code{\link{ppm_platforms}()},
-\code{\link{ppm_r_versions}()},
-\code{\link{ppm_snapshots}()}
+Other PPM functions:
+\code{\link[=ppm_has_binaries]{ppm_has_binaries()}},
+\code{\link[=ppm_platforms]{ppm_platforms()}},
+\code{\link[=ppm_r_versions]{ppm_r_versions()}},
+\code{\link[=ppm_snapshots]{ppm_snapshots()}}
 }
 \concept{PPM functions}

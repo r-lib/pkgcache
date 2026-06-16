@@ -9,6 +9,7 @@ make_dummy_package <- function(data, path) {
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
   withr::local_dir(tmp)
   mkdirp(package)
+  mkdirp(file.path(package, "R"))
   file.create(file.path(package, "NAMESPACE"))
   write.dcf(data, file.path(package, "DESCRIPTION"))
   suppressMessages(utils::capture.output(
@@ -16,14 +17,18 @@ make_dummy_package <- function(data, path) {
   ))
   unlink(package, recursive = TRUE)
   out <- dir()
-  if (length(out) != 1) stop("Failed to build package ", package, " :(")
+  if (length(out) != 1) {
+    stop("Failed to build package ", package, " :(")
+  }
   mkdirp(path)
   file.copy(out, path, overwrite = TRUE)
   out
 }
 
 dummy_so <- function() {
-  if (!is.null(fake_env$dummy_so)) return(fake_env$dummy_so)
+  if (!is.null(fake_env$dummy_so)) {
+    return(fake_env$dummy_so)
+  }
 
   mkdirp(tmp <- tempfile())
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -175,15 +180,19 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
     if (
       options[["platform"]] == "source" &&
         packages$Package[i] %in% options[["no_sources"]]
-    )
+    ) {
       next
+    }
     if (
       options[["platform"]] != "source" &&
         packages$Package[i] %in% options[["no_binaries"]]
-    )
+    ) {
       next
+    }
     if (extra$archive[i]) {
-      if (isTRUE(options$no_archive)) next
+      if (isTRUE(options$no_archive)) {
+        next
+      }
       pkg_dir <- file.path(pkgs_dir, "Archive", packages$Package[i])
     } else {
       pkg_dir <- pkgs_dir
@@ -271,7 +280,9 @@ cran_app <- function(
   app <- webfakes::new_app()
 
   # Log requests by default
-  if (log) app$use("logger" = webfakes::mw_log())
+  if (log) {
+    app$use("logger" = webfakes::mw_log())
+  }
 
   if (!is.null(basic_auth)) {
     app$use("basic auth" = function(req, res) {
@@ -374,7 +385,9 @@ bioc_app <- function(packages = NULL, log = interactive(), options = list()) {
   app <- webfakes::new_app()
 
   # Log requests by default
-  if (log) app$use("logger" = webfakes::mw_log())
+  if (log) {
+    app$use("logger" = webfakes::mw_log())
+  }
 
   # Parse all kinds of bodies
   app$use("json body parser" = webfakes::mw_json())

@@ -1,10 +1,25 @@
 # pkgcache (development version)
 
+* New `PKG_USE_BIOCONDUCTOR` environment variable and new
+  `pkg.use_bioconductor` option to opt out from automatic Bioconductor
+  support.
+
+* Improved Bioconductor version detection. Avoid HTTP requests if
+  the appropriate Bioconductor version can be determined without it.
+  Closes https://github.com/r-lib/pak/issues/879.
+
+# pkgcache 2.2.5
+
 * pkgcache now supports comments in `DESCRIPTION` and `PACKAGES` files.
   Current R-devel supports this since
   https://github.com/wch/r-source/commit/92d9660517ceae66d422a510dc58e0840d55cdfc.
   Comments are lines that start with a hash (`#`), without leading
   whitespace. Comments within values are also supported (#130).
+
+* pkgcache now does not fail if Bioconductor is unreachable and Bioconductor
+  repositories are off (#131).
+
+* pkgcache now supports macOS binaries on R 4.6.x and later.
 
 # pkgcache 2.2.4
 
@@ -54,7 +69,7 @@
 
 * In `repo_add()` and `repo_resolve()` the `MRAN@` prefix is now deprecated
   and resolves to PPM, because MRAN will be retired soon. See more at
-  <https://posit.co/blog/migrating-from-mran-to-posit-package-manager/>.
+  <https://posit.co/blog/migrating-from-mran-to-posit-package-manager>.
 
 * The metadata cache now has `SystemRequirements` information for Bioconductor
   packages.

@@ -47,7 +47,9 @@ test_that("simple CRUD", {
     expect_equal(sum(wp$list_tasks()$status == "running"), 4)
 
     ## Cancel the rest
-    for (i in 5:10) wp$cancel_task(as.character(i))
+    for (i in 5:10) {
+      wp$cancel_task(as.character(i))
+    }
 
     ## Workers are idle, no tasks
     expect_equal(is.na(wp$list_workers()$task), rep(TRUE, 4))

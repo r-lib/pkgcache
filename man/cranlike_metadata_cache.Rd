@@ -29,7 +29,7 @@ It has a synchronous and an asynchronous API.
 \if{html}{\out{<div class="sourceCode">}}\preformatted{cmc <- cranlike_metadata_cache$new(
   primary_path = NULL, replica_path = tempfile(),
   platforms = default_platforms(), r_version = getRversion(),
-  bioc = TRUE, cran_mirror = default_cran_mirror(),
+  bioc = NULL, cran_mirror = default_cran_mirror(),
   repos = getOption("repos"),
   update_after = as.difftime(7, units = "days"))
 
@@ -62,7 +62,10 @@ the user level cache directory of the machine.
 within the session temporary directory.
 \item \code{platforms}: see \code{\link[=default_platforms]{default_platforms()}} for possible values.
 \item \code{r_version}: R version to create the cache for.
-\item \code{bioc}: Whether to include BioConductor packages.
+\item \code{bioc}: Whether to include BioConductor packages. By default it is
+taken from the \code{pkg.use_bioconductor} option, or if that is unset, the
+\code{PKG_USE_BIOCONDUCTOR} environment variable is used. Otherwise it
+defaults to \code{TRUE}.
 \item \code{cran_mirror}: CRAN mirror to use, this takes precedence over \code{repos}.
 \item \code{repos}: Repositories to use.
 \item \code{update_after}: \code{difftime} object. Automatically update the cache if

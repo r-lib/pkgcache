@@ -83,7 +83,9 @@ repo_auth <- function(
     url <- res$url[w]
     if (check_credentials) {
       cred <- repo_auth_headers(url, warn = FALSE)
-      if (is.null(cred)) next
+      if (is.null(cred)) {
+        next
+      }
       res$username[w] <- cred$username
       res$has_password[w] <- cred$found
       res$auth_domains[w] <- list(cred$auth_domains)
@@ -315,7 +317,9 @@ parse_url_basic_auth <- function(url) {
 
 add_auth_status <- function(repos) {
   maybe_has_auth <- grepl("^https?://[^/]*@", repos$url)
-  if (!any(maybe_has_auth)) return(repos)
+  if (!any(maybe_has_auth)) {
+    return(repos)
+  }
 
   key <- random_key()
   on.exit(clear_auth_cache(key), add = TRUE)
@@ -326,7 +330,9 @@ add_auth_status <- function(repos) {
   for (w in which(maybe_has_auth)) {
     url <- repos$url[w]
     creds <- repo_auth_headers(url, warn = FALSE)
-    if (is.null(creds)) next
+    if (is.null(creds)) {
+      next
+    }
     repos$username[w] <- creds$username
     repos$has_password[w] <- creds$found
   }
@@ -342,7 +348,9 @@ repo_auth_netrc <- function(host, username) {
       netrc_path <- path.expand("~/_netrc")
     }
   }
-  if (!file.exists(netrc_path)) return(NULL)
+  if (!file.exists(netrc_path)) {
+    return(NULL)
+  }
 
   # netrc files do not allow port numbers
   host <- sub(":[0-9]+$", "", host)

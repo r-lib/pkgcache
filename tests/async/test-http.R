@@ -21,8 +21,9 @@ test_that("headers", {
   do <- async(function() {
     headers = c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
     http_get(http$url("/headers"), headers = headers)$then(
-      function(.)
+      function(.) {
         jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE)
+      }
     )$then(function(x) xx <<- x)
   })
   synchronise(do())
@@ -49,7 +50,9 @@ test_that("http progress bars", {
       http$url("/image/jpeg"),
       file = tmp <<- tempfile(),
       on_progress = function(data) {
-        if (!is.null(data$total)) totalx <<- data$total
+        if (!is.null(data$total)) {
+          totalx <<- data$total
+        }
         if (!is.null(data$current)) currentx <<- data$current
       }
     )$then(function(x) xx <<- x)
@@ -72,7 +75,9 @@ test_that("http progress bar, remove callback", {
 
   do <- async(function() {
     progress_callback <- function(data) {
-      if (!is.null(data$total)) totalx <<- data$total
+      if (!is.null(data$total)) {
+        totalx <<- data$total
+      }
       if (!is.null(data$current)) currentx <<- data$current
     }
     hx <- http_get(
@@ -110,7 +115,9 @@ test_that("http progress bars & etags", {
       file = tmp,
       headers = c("If-None-Match" = "etag"),
       on_progress = function(data) {
-        if (!is.null(data$total)) totalx <<- data$total
+        if (!is.null(data$total)) {
+          totalx <<- data$total
+        }
         currentx <<- c(currentx, data$current)
         statusx <<- curl::handle_data(data$handle)$status_code
       }

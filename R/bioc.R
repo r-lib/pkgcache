@@ -309,7 +309,7 @@ bioconductor <- local({
     } else {
       bioc_version <- package_version(bioc_version)
     }
-    mirror <- Sys.getenv("R_BIOC_MIRROR", "https://bioconductor.org")
+    mirror <- Sys.getenv("R_BIOC_MIRROR", "https://bioconductor.posit.co")
     mirror <- getOption("BioC_mirror", mirror)
     repos <- c(
       BioCsoft = "{mirror}/packages/{bv}/bioc",

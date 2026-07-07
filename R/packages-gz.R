@@ -114,7 +114,14 @@ read_packages_file <- function(
   pkgs$type <- if (nrow(pkgs)) type else character()
   pkgs$direct <- if (nrow(pkgs)) FALSE else logical()
   pkgs$status <- if (nrow(pkgs)) "OK" else character()
-  pkgs$target <- packages_make_target(
+
+  # The 'File' and/or 'Path' fields may contain a query string, e.g.
+  # `foo_1.0.0.tar.gz?sha256=...&file=`, that some repositories (e.g.
+  # r-universe) use for routing the download on the server side. We
+  # need to strip the query part from the `target` which we use as a
+  # local (on-disk) cache path because `?` is an illegal character for
+  # Windows file names.
+  url_target <- packages_make_target(
     pkgs$platform,
     repodir,
     pkgs$package,
@@ -122,11 +129,19 @@ read_packages_file <- function(
     pkgs[["file"]],
     pkgs[["path"]]
   )
+  pkgs$target <- packages_make_target(
+    pkgs$platform,
+    repodir,
+    pkgs$package,
+    pkgs$version,
+    packages_strip_query(pkgs[["file"]]),
+    packages_strip_query(pkgs[["path"]])
+  )
   pkgs$mirror <- if (nrow(pkgs)) mirror else character()
   pkgs$sources <- packages_make_sources(
     mirror,
     pkgs$platform,
-    pkgs$target,
+    url_target,
     repodir,
     pkgs$package,
     pkgs$version,
@@ -331,6 +346,18 @@ packages_parse_deps <- function(pkgs) {
 
   parsed <- parsed[order(parsed$idx, parsed$package, parsed$type), ]
   parsed
+}
+
+## Strips a trailing URL query string (`?...`), if any. Used to sanitize
+## 'File'/'Path' field values before they are used to construct a local
+## (on-disk) cache path, since query strings may contain characters that
+## are illegal in file names on some platforms (e.g. `?` and `&` on
+## Windows).
+packages_strip_query <- function(x) {
+  if (is.null(x)) {
+    return(x)
+  }
+  sub("[?].*$", "", x)
 }
 
 packages_make_target <- function(

@@ -69,6 +69,22 @@ test_that("packages_make_target", {
   )
 })
 
+test_that("packages_strip_query", {
+  expect_equal(packages_strip_query(NULL), NULL)
+  expect_equal(
+    packages_strip_query(c("foo_1.0.tar.gz", NA, "")),
+    c("foo_1.0.tar.gz", NA, "")
+  )
+  expect_equal(
+    packages_strip_query("foo_1.0.tar.gz?sha256=abc&file="),
+    "foo_1.0.tar.gz"
+  )
+  expect_equal(
+    packages_strip_query(c("foo_1.0.tar.gz?sha256=abc", "bar_2.0.tar.gz")),
+    c("foo_1.0.tar.gz", "bar_2.0.tar.gz")
+  )
+})
+
 test_that("packages_make_sources", {
   expect_equal(
     packages_make_sources(
@@ -315,6 +331,41 @@ test_that("read_packages_file combines Path and File fields", {
   expect_equal(
     data$pkgs$sources[[1]],
     "https://example.com/src/contrib/Archive/foo/foo_1.0.0.tar.gz"
+  )
+})
+
+test_that("read_packages_file strips query string from target, keeps it in sources", {
+  # Regression test for a query string in 'Path' (or 'File'), e.g. as used
+  # by r-universe.
+  pkgs_file <- test_temp_file()
+  cat(
+    "Package: unrtf\n",
+    "Version: 1.4.9000\n",
+    "NeedsCompilation: yes\n",
+    "Path: unrtf_1.4.9000.tar.gz?sha256=362c95be248cce252ba2e1a1386711a67e6f724544701ab4fa1c7693741f59b1&file=\n",
+    "\n",
+    file = pkgs_file,
+    sep = ""
+  )
+
+  data <- read_packages_file(
+    pkgs_file,
+    mirror = "https://jeroen.r-universe.dev",
+    repodir = "src/contrib",
+    platform = "source",
+    rversion = "*"
+  )
+
+  expect_false(grepl("[?]", data$pkgs$target))
+  expect_true(grepl("[?]sha256=", data$pkgs$sources[[1]]))
+  expect_equal(
+    data$pkgs$sources[[1]],
+    paste0(
+      "https://jeroen.r-universe.dev/src/contrib/",
+      "unrtf_1.4.9000.tar.gz?sha256=",
+      "362c95be248cce252ba2e1a1386711a67e6f724544701ab4fa1c7693741f59b1",
+      "&file=/unrtf_1.4.9000.tar.gz"
+    )
   )
 })
 

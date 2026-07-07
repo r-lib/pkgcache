@@ -6,6 +6,13 @@
   as `<repodir>/<path>/<file>`. See
   https://github.com/r-universe-org/help/issues/715.
 
+* Fixed a bug where a query string in the `File` or `Path` field of a
+  `PACKAGES` entry (e.g. `foo_1.0.0.tar.gz?sha256=...`) was included
+  verbatim in the local on-disk cache path. This broke downloads on
+  Windows, because `?` (and other query string characters) are not
+  legal in Windows file names. The query string is now only used for
+  the download URL, and stripped from the local cache path.
+
 * New `PKG_USE_BIOCONDUCTOR` environment variable and new
   `pkg.use_bioconductor` option to opt out from automatic Bioconductor
   support.

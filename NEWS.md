@@ -1,5 +1,11 @@
 # pkgcache (development version)
 
+* Fixed a bug where the `Path` field of a `PACKAGES` entry was silently
+  ignored when the entry also had a `File` field. The target/download
+  URL for such entries is now correctly derived from both fields,
+  as `<repodir>/<path>/<file>`. See
+  https://github.com/r-universe-org/help/issues/715.
+
 * New `PKG_USE_BIOCONDUCTOR` environment variable and new
   `pkg.use_bioconductor` option to opt out from automatic Bioconductor
   support.

@@ -359,34 +359,41 @@ packages_make_target <- function(
   res <- rep(NA_character_, length(package))
   ext <- get_cran_extension(platform)
 
-  ## 'File' field, if present
-  if (!is.null(file)) {
-    wh <- !is.na(file)
-    if (any(wh)) {
-      res[wh] <- paste0(repodir, "/", file[wh])
-    }
+  have_file <- if (is.null(file)) rep(FALSE, length(package)) else !is.na(file)
+  have_path <- if (is.null(path)) rep(FALSE, length(package)) else !is.na(path)
+
+  ## Both 'Path' and 'File' fields are present: the file named in 'File'
+  ## lives in the subdirectory named in 'Path'.
+  wh <- have_path & have_file
+  if (any(wh)) {
+    res[wh] <- paste0(repodir, "/", path[wh], "/", file[wh])
   }
 
-  ## 'Path' field, if present
-  if (!is.null(path)) {
-    wh <- is.na(res) & !is.na(path)
-    if (any(wh)) {
-      res[wh] <- paste0(
-        repodir,
-        "/",
-        path[wh],
-        "/",
-        package[wh],
-        "_",
-        version[wh],
-        ext[wh]
-      )
-    }
+  ## Only 'File' field is present, use it as is, relative to 'repodir'
+  wh <- have_file & !have_path
+  if (any(wh)) {
+    res[wh] <- paste0(repodir, "/", file[wh])
   }
 
-  ## Otherwise default
-  if (anyNA(res)) {
-    wh <- is.na(res)
+  ## Only 'Path' field is present, it is a subdirectory of 'repodir', and
+  ## the file name is the default one, from the package name and version
+  wh <- have_path & !have_file
+  if (any(wh)) {
+    res[wh] <- paste0(
+      repodir,
+      "/",
+      path[wh],
+      "/",
+      package[wh],
+      "_",
+      version[wh],
+      ext[wh]
+    )
+  }
+
+  ## Neither is present, use the default target path
+  wh <- !have_file & !have_path
+  if (any(wh)) {
     res[wh] <- paste0(repodir, "/", package[wh], "_", version[wh], ext[wh])
   }
 

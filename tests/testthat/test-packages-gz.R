@@ -23,6 +23,9 @@ test_that("packages_make_target", {
     c("src/contrib/foo", "src/contrib/bar")
   )
 
+  # When both 'File' and 'Path' are given, they must be combined into
+  # repodir/path/file, instead of dropping 'Path'. See
+  # https://github.com/r-universe-org/help/issues/715
   expect_equal(
     packages_make_target(
       "source",
@@ -32,7 +35,7 @@ test_that("packages_make_target", {
       c("foo", "bar"),
       c("1", "2")
     ),
-    c("src/contrib/foo", "src/contrib/bar")
+    c("src/contrib/1/foo", "src/contrib/2/bar")
   )
 
   expect_equal(
@@ -47,6 +50,8 @@ test_that("packages_make_target", {
     c("src/contrib/foo/p1_1.0.tar.gz", "src/contrib/bar/p2_2.0.tar.gz")
   )
 
+  # Mix of: both 'File' and 'Path' present, only 'Path' present, and
+  # neither present.
   expect_equal(
     packages_make_target(
       "source",
@@ -57,7 +62,7 @@ test_that("packages_make_target", {
       c("foox", "bar", NA)
     ),
     c(
-      "src/contrib/foo",
+      "src/contrib/foox/foo",
       "src/contrib/bar/p2_2.0.tar.gz",
       "src/contrib/p3_3.0.tar.gz"
     )
@@ -280,6 +285,37 @@ test_that("rbind_expand", {
   expect_identical(m$b, c("a", "b", NA, NA))
   expect_identical(m$c, c(NA, NA, "c", "d"))
   expect_identical(m$d, c(NA, NA, 1L, 2L))
+})
+
+test_that("read_packages_file combines Path and File fields", {
+  # Regression test for https://github.com/r-universe-org/help/issues/715
+  # When a PACKAGES entry has both a 'Path' and a 'File' field, the
+  # resulting target/download URL must combine them as repodir/path/file,
+  # instead of silently dropping 'Path'.
+  pkgs_file <- test_temp_file()
+  cat(
+    "Package: foo\n",
+    "Version: 1.0.0\n",
+    "Path: Archive/foo\n",
+    "File: foo_1.0.0.tar.gz\n",
+    "\n",
+    file = pkgs_file,
+    sep = ""
+  )
+
+  data <- read_packages_file(
+    pkgs_file,
+    mirror = "https://example.com",
+    repodir = "src/contrib",
+    platform = "source",
+    rversion = "*"
+  )
+
+  expect_equal(data$pkgs$target, "src/contrib/Archive/foo/foo_1.0.0.tar.gz")
+  expect_equal(
+    data$pkgs$sources[[1]],
+    "https://example.com/src/contrib/Archive/foo/foo_1.0.0.tar.gz"
+  )
 })
 
 test_that("empty PACKAGES file", {

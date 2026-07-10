@@ -189,6 +189,13 @@ configure Bioconductor support.
   [`LOW_SPEED_TIME`](https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
   curl options.
 
+- `pkgcache_http_version` selects the HTTP version to use for HTTP
+  requests. It corresponds to the [`HTTP_VERSION` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html), so e.g.
+  `2` forces HTTP/1.1 and `0` lets libcurl choose. It defaults to
+  HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+  client and server combinations.
+
 ### Package environment variables
 
 - The `R_BIOC_VERSION` environment variable can be used to override the
@@ -236,6 +243,14 @@ configure Bioconductor support.
   curl options. The `pkgcache_low_speed_time` and
   `pkgcache_low_speed_limit` options have priority over these
   environment variables, if they are set.
+
+- `PKGCACHE_HTTP_VERSION` selects the HTTP version to use for HTTP
+  requests. It corresponds to the [`HTTP_VERSION` libcurl
+  option](https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html), so e.g.
+  `2` forces HTTP/1.1 and `0` lets libcurl choose. It defaults to
+  HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+  client and server combinations. The `pkgcache_http_version` option has
+  priority over this, if set.
 
 - `R_PKG_CACHE_DIR` is used for the cache directory, if set. (Otherwise
   `tools::R_user_dir("pkgcache", "cache")` is used, see also

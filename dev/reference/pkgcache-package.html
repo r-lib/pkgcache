@@ -212,6 +212,11 @@ correspond to the
 and
 <a href="https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html" class="external-link"><code>LOW_SPEED_TIME</code></a>
 curl options.</p></li>
+<li><p><code>pkgcache_http_version</code> selects the HTTP version to use for HTTP requests.
+It corresponds to the <a href="https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html" class="external-link"><code>HTTP_VERSION</code> libcurl option</a>,
+so e.g. <code>2</code> forces HTTP/1.1 and <code>0</code> lets libcurl choose. It defaults to
+HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+client and server combinations.</p></li>
 </ul></div>
 
 <div class="section">
@@ -253,6 +258,12 @@ and
 curl options. The <code>pkgcache_low_speed_time</code> and
 <code>pkgcache_low_speed_limit</code> options have priority over these
 environment variables, if they are set.</p></li>
+<li><p><code>PKGCACHE_HTTP_VERSION</code> selects the HTTP version to use for HTTP requests.
+It corresponds to the <a href="https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html" class="external-link"><code>HTTP_VERSION</code> libcurl option</a>,
+so e.g. <code>2</code> forces HTTP/1.1 and <code>0</code> lets libcurl choose. It defaults to
+HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+client and server combinations. The <code>pkgcache_http_version</code> option has
+priority over this, if set.</p></li>
 <li><p><code>R_PKG_CACHE_DIR</code> is used for the cache directory, if set. (Otherwise
 <code>tools::R_user_dir("pkgcache", "cache")</code> is used, see also
 <code><a href="meta_cache_deps.html">meta_cache_summary()</a></code> and <code><a href="pkg_cache_api.html">pkg_cache_summary()</a></code>).</p></li>
@@ -311,7 +322,7 @@ By contributing to this project, you agree to abide by its terms.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer></body></html>

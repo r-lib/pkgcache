@@ -39,7 +39,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="pkgcache-development-version">pkgcache (development version)<a class="anchor" aria-label="anchor" href="#pkgcache-development-version"></a></h2>
-<ul><li><p>New <code>PKG_USE_BIOCONDUCTOR</code> environment variable and new <code>pkg.use_bioconductor</code> option to opt out from automatic Bioconductor support.</p></li>
+<ul><li><p>All HTTP requests now honor the <code>pkgcache_http_version</code> option and <code>PKGCACHE_HTTP_VERSION</code> environment variable. Closes <a href="https://github.com/r-lib/pkgcache/issues/140" class="external-link uri">https://github.com/r-lib/pkgcache/issues/140</a>.</p></li>
+<li><p>New <code>PKG_USE_BIOCONDUCTOR</code> environment variable and new <code>pkg.use_bioconductor</code> option to opt out from automatic Bioconductor support.</p></li>
 <li><p>Improved Bioconductor version detection. Avoid HTTP requests if the appropriate Bioconductor version can be determined without it. Closes <a href="https://github.com/r-lib/pak/issues/879" class="external-link uri">https://github.com/r-lib/pak/issues/879</a>.</p></li>
 </ul></div>
     <div class="section level2">
@@ -206,7 +207,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer></body></html>

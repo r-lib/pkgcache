@@ -188,6 +188,11 @@ correspond to the
 and
 \href{https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html}{\code{LOW_SPEED_TIME}}
 curl options.
+\item \code{pkgcache_http_version} selects the HTTP version to use for HTTP requests.
+It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html}{\code{HTTP_VERSION} libcurl option},
+so e.g. \code{2} forces HTTP/1.1 and \code{0} lets libcurl choose. It defaults to
+HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+client and server combinations.
 }
 }
 
@@ -229,6 +234,12 @@ and
 curl options. The \code{pkgcache_low_speed_time} and
 \code{pkgcache_low_speed_limit} options have priority over these
 environment variables, if they are set.
+\item \code{PKGCACHE_HTTP_VERSION} selects the HTTP version to use for HTTP requests.
+It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html}{\code{HTTP_VERSION} libcurl option},
+so e.g. \code{2} forces HTTP/1.1 and \code{0} lets libcurl choose. It defaults to
+HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+client and server combinations. The \code{pkgcache_http_version} option has
+priority over this, if set.
 \item \code{R_PKG_CACHE_DIR} is used for the cache directory, if set. (Otherwise
 \code{tools::R_user_dir("pkgcache", "cache")} is used, see also
 \code{meta_cache_summary()} and \code{pkg_cache_summary()}).

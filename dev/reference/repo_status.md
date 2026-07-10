@@ -101,13 +101,13 @@ repo_status()
 #> # A data frame: 7 × 10
 #>   name    url   type  bioc_version platform path  r_version ok     ping
 #>   <chr>   <chr> <chr> <chr>        <chr>    <chr> <chr>     <lgl> <dbl>
-#> 1 RSPM    http… cran… NA           source   src/… 4.6       TRUE  0.473
-#> 2 CRAN    http… cran  NA           source   src/… 4.6       TRUE  0.180
-#> 3 BioCso… http… bioc  3.23         source   src/… 4.6       TRUE  0.179
-#> 4 BioCann http… bioc  3.23         source   src/… 4.6       TRUE  0.179
-#> 5 BioCexp http… bioc  3.23         source   src/… 4.6       TRUE  0.183
-#> 6 BioCwo… http… bioc  3.23         source   src/… 4.6       TRUE  0.325
-#> 7 BioCbo… http… bioc  3.23         source   src/… 4.6       TRUE  0.190
+#> 1 RSPM    http… cran… NA           source   src/… 4.6       TRUE  0.191
+#> 2 CRAN    http… cran  NA           source   src/… 4.6       TRUE  0.177
+#> 3 BioCso… http… bioc  3.23         source   src/… 4.6       TRUE  0.130
+#> 4 BioCann http… bioc  3.23         source   src/… 4.6       TRUE  0.129
+#> 5 BioCexp http… bioc  3.23         source   src/… 4.6       TRUE  0.174
+#> 6 BioCwo… http… bioc  3.23         source   src/… 4.6       TRUE  0.169
+#> 7 BioCbo… http… bioc  3.23         source   src/… 4.6       TRUE  0.169
 #> # ℹ 1 more variable: error <list>
 rst <- repo_status(
   platforms = c("windows", "macos"),
@@ -115,10 +115,10 @@ rst <- repo_status(
 )
 summary(rst)
 #> Repository summary:                               i386+x86_64-w64-mingw32 x86_64-apple-darwin17.0          
-#> RSPM          @ packagemanager.posit.co (R 4.0)              ✔                       ✔              (655ms)
-#> CRAN          @ cran.rstudio.com        (R 4.0)              ✔                       ✔              (451ms)
-#> RSPM          @ packagemanager.posit.co (R 4.1)              ✔                       ✔              (761ms)
-#> CRAN          @ cran.rstudio.com        (R 4.1)              ✔                       ✔              (452ms)
+#> RSPM          @ packagemanager.posit.co (R 4.0)              ✔                       ✔              (311ms)
+#> CRAN          @ cran.rstudio.com        (R 4.0)              ✔                       ✔              (280ms)
+#> RSPM          @ packagemanager.posit.co (R 4.1)              ✔                       ✔              (335ms)
+#> CRAN          @ cran.rstudio.com        (R 4.1)              ✔                       ✔              (281ms)
 #> BioCsoft      @ bioconductor.posit.co   (R 4.0)              ✖                       ✖                
 #> BioCann       @ bioconductor.posit.co   (R 4.0)              ✖                       ✖                
 #> BioCexp       @ bioconductor.posit.co   (R 4.0)              ✖                       ✖                

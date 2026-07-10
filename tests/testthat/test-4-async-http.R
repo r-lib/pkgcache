@@ -1,3 +1,26 @@
+local_clear_http_options <- function(.local_envir = parent.frame()) {
+  nms <- c(
+    "timeout",
+    "connecttimeout",
+    "low_speed_time",
+    "low_speed_limit",
+    "http_version"
+  )
+  opts <- c(paste0("pkgcache_", nms), paste0("pkg_http_", nms))
+  withr::local_options(
+    structure(vector("list", length(opts)), names = opts),
+    .local_envir = .local_envir
+  )
+  envs <- c(
+    paste0("PKGCACHE_", toupper(nms)),
+    paste0("PKG_HTTP_", toupper(nms))
+  )
+  withr::local_envvar(
+    structure(rep(NA_character_, length(envs)), names = envs),
+    .local_envir = .local_envir
+  )
+}
+
 test_that("read_etag", {
   cat("foobar\n", file = tmp <- tempfile())
   expect_equal(read_etag(tmp), "foobar")
@@ -314,6 +337,8 @@ test_that("download_files, no errors", {
 })
 
 test_that("set_pkgcache_curl_options", {
+  local_clear_http_options()
+
   # nothing configured: leave the options untouched, no defaults added
   expect_equal(set_pkgcache_curl_options(list()), list())
   expect_equal(set_pkgcache_curl_options(list(foo = "bar")), list(foo = "bar"))
@@ -362,6 +387,8 @@ test_that("set_pkgcache_curl_options", {
 })
 
 test_that("set_pkgcache_curl_options, pkg_http_ fallback", {
+  local_clear_http_options()
+
   # pkg_http_* option is used when nothing with higher priority is set
   withr::local_options(pkg_http_http_version = 2)
   expect_equal(set_pkgcache_curl_options(list())$http_version, 2L)

@@ -19,7 +19,7 @@ test_that("HEAD", {
 test_that("headers", {
   xx <- NULL
   do <- async(function() {
-    headers = c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
+    headers <- c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
     http_get(http$url("/headers"), headers = headers)$then(
       function(.) {
         jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE)

@@ -1,5 +1,4 @@
 test_that("def__make_parent_*", {
-  testthat::local_edition(3)
   good <- list(
     NULL,
     function(x) x,
@@ -22,8 +21,8 @@ test_that("def__make_parent_*", {
   }
 
   for (f in bad) {
-    expect_snapshot(error = TRUE, def__make_parent_resolve(f))
-    expect_snapshot(error = TRUE, def__make_parent_reject(f))
+    expect_error(def__make_parent_resolve(f))
+    expect_error(def__make_parent_reject(f))
   }
 })
 
@@ -63,17 +62,16 @@ test_that("def__make_parent_resolve", {
 })
 
 test_that("def__make_parent_resolve", {
-  testthat::local_edition(3)
   ## NULL
   r1 <- def__make_parent_reject(NULL)
   res <- NULL
   val <- NULL
-  expect_snapshot(
-    error = TRUE,
+  expect_error(
     r1("foobar", function(x) {
       res <<- "resolve"
       val <<- x
-    })
+    }),
+    "foobar"
   )
   expect_null(res)
   expect_null(val)

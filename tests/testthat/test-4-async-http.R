@@ -424,10 +424,12 @@ test_that("http requests honor pkgcache_* options", {
   # `pkgcache_timeout` aborts a slow request. Without the wrapper applying it,
   # `http_get()` would only look at `async_http_timeout` and the request would
   # run to completion.
+  # `retry = FALSE` because we are checking that a single request is aborted
+  # by the timeout; otherwise the timed-out request would be retried.
   withr::local_options(pkgcache_timeout = 1)
   tic <- Sys.time()
   err <- tryCatch(
-    synchronise(http_get(http$url("/delay/5"))),
+    synchronise(http_get(http$url("/delay/5"), retry = FALSE)),
     error = function(e) e
   )
   toc <- Sys.time()

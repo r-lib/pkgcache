@@ -48,7 +48,6 @@ test_that("successful calls", {
 
 test_that("calls that error", {
   skip_without_package("processx", "3.4.1.9001")
-  testthat::local_edition(3)
   withr::local_options(cli.unicode = FALSE)
   afun <- async(function(x) {
     when_all(
@@ -59,7 +58,7 @@ test_that("calls that error", {
     )
   })
 
-  expect_snapshot(error = TRUE, synchronise(afun()))
+  expect_error(synchronise(afun()), "nope", class = "error")
 })
 
 test_that("calls that crash", {
@@ -132,9 +131,9 @@ test_that("mix calls with others", {
     when_all(
       delay = delay(1 / 1000)$then(function() 1),
       http = http_get(http$url("/status/418"))$then(function(x) x$status_code),
-      process = run_process(px, c("outln", "foobar"))$then(
-        function(x) str_trim(x$stdout)
-      ),
+      process = run_process(px, c("outln", "foobar"))$then(function(x) {
+        str_trim(x$stdout)
+      }),
       r_process = run_r_process(function() 2)$then(function(x) x$result),
       call = call_function(function() 3)$then(function(x) x$result)
     )

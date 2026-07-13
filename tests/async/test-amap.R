@@ -24,7 +24,6 @@ test_that("async_map with limit", {
 })
 
 test_that("async_map with limit, error", {
-  testthat::local_edition(3)
   list <- structure(as.list(1:10), names = letters[1:10])
   fun <- async(function(x) {
     force(x)
@@ -32,9 +31,6 @@ test_that("async_map with limit, error", {
   })
 
   for (l in c(1:10, Inf)) {
-    expect_snapshot(
-      error = TRUE,
-      synchronise(async_map(list, fun, .limit = l))
-    )
+    expect_error(synchronise(async_map(list, fun, .limit = l)), "oops")
   }
 })

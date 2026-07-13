@@ -58,7 +58,12 @@ test_that("download_file", {
 test_that("download_file, errors", {
   tmp <- tempfile()
   err <- tryCatch(
-    synchronise(download_file("http://0.42.42.42", tmp)),
+    synchronise(download_file(
+      "http://0.42.42.42",
+      tmp,
+      retry = FALSE,
+      options = list(connecttimeout = 1)
+    )),
     error = function(e) e
   )
   expect_s3_class(err, "async_rejected")
@@ -73,7 +78,7 @@ test_that("download_file, errors", {
   expect_s3_class(err2, "async_http_error")
 
   ret <- synchronise(download_file(
-    http$url("/statud/404"),
+    http$url("/status/404"),
     tmp,
     error_on_status = FALSE
   ))
@@ -139,7 +144,9 @@ test_that("download_if_newer, error", {
   err <- tryCatch(
     synchronise(download_if_newer(
       url <- "http://0.42.42.42",
-      destfile = target
+      destfile = target,
+      retry = FALSE,
+      options = list(connecttimeout = 1)
     )),
     error = function(e) e
   )

@@ -1,17 +1,11 @@
 # pkgcache (development version)
 
-* Fixed a bug where the `Path` field of a `PACKAGES` entry was silently
-  ignored when the entry also had a `File` field. The target/download
-  URL for such entries is now correctly derived from both fields,
-  as `<repodir>/<path>/<file>`. See
-  https://github.com/r-universe-org/help/issues/715.
+* pkgcache now treats `PACKAGES` entries with `Path` and/or `File`
+  fields correctly (#141, @jeroen).
 
-* Fixed a bug where a query string in the `File` or `Path` field of a
-  `PACKAGES` entry (e.g. `foo_1.0.0.tar.gz?sha256=...`) was included
-  verbatim in the local on-disk cache path. This broke downloads on
-  Windows, because `?` (and other query string characters) are not
-  legal in Windows file names. The query string is now only used for
-  the download URL, and stripped from the local cache path.
+* pkgcache now drops HTTP query parameter from `Path` and `File`
+  entries in `PACKAGES` when creating the path of the target filename
+  (#141, @jeroen).
 
 * All HTTP requests now honor the `pkgcache_http_version` option and
   `PKGCACHE_HTTP_VERSION` environment variable. Closes

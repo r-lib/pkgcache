@@ -115,12 +115,7 @@ read_packages_file <- function(
   pkgs$direct <- if (nrow(pkgs)) FALSE else logical()
   pkgs$status <- if (nrow(pkgs)) "OK" else character()
 
-  # The 'File' and/or 'Path' fields may contain a query string, e.g.
-  # `foo_1.0.0.tar.gz?sha256=...&file=`, that some repositories (e.g.
-  # r-universe) use for routing the download on the server side. We
-  # need to strip the query part from the `target` which we use as a
-  # local (on-disk) cache path because `?` is an illegal character for
-  # Windows file names.
+  # Strip query parameters from the final file names
   url_target <- packages_make_target(
     pkgs$platform,
     repodir,
@@ -348,11 +343,6 @@ packages_parse_deps <- function(pkgs) {
   parsed
 }
 
-## Strips a trailing URL query string (`?...`), if any. Used to sanitize
-## 'File'/'Path' field values before they are used to construct a local
-## (on-disk) cache path, since query strings may contain characters that
-## are illegal in file names on some platforms (e.g. `?` and `&` on
-## Windows).
 packages_strip_query <- function(x) {
   if (is.null(x)) {
     return(x)
@@ -389,21 +379,19 @@ packages_make_target <- function(
   have_file <- if (is.null(file)) rep(FALSE, length(package)) else !is.na(file)
   have_path <- if (is.null(path)) rep(FALSE, length(package)) else !is.na(path)
 
-  ## Both 'Path' and 'File' fields are present: the file named in 'File'
-  ## lives in the subdirectory named in 'Path'.
+  ## repodir / 'Path' / 'File'
   wh <- have_path & have_file
   if (any(wh)) {
     res[wh] <- paste0(repodir, "/", path[wh], "/", file[wh])
   }
 
-  ## Only 'File' field is present, use it as is, relative to 'repodir'
+  ## 'File' only
   wh <- have_file & !have_path
   if (any(wh)) {
     res[wh] <- paste0(repodir, "/", file[wh])
   }
 
-  ## Only 'Path' field is present, it is a subdirectory of 'repodir', and
-  ## the file name is the default one, from the package name and version
+  ## 'Path' only: relative to repodir
   wh <- have_path & !have_file
   if (any(wh)) {
     res[wh] <- paste0(
@@ -418,7 +406,7 @@ packages_make_target <- function(
     )
   }
 
-  ## Neither is present, use the default target path
+  ## Default
   wh <- !have_file & !have_path
   if (any(wh)) {
     res[wh] <- paste0(repodir, "/", package[wh], "_", version[wh], ext[wh])

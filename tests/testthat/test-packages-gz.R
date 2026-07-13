@@ -23,9 +23,7 @@ test_that("packages_make_target", {
     c("src/contrib/foo", "src/contrib/bar")
   )
 
-  # When both 'File' and 'Path' are given, they must be combined into
-  # repodir/path/file, instead of dropping 'Path'. See
-  # https://github.com/r-universe-org/help/issues/715
+  # repodir / Path / File
   expect_equal(
     packages_make_target(
       "source",
@@ -50,8 +48,6 @@ test_that("packages_make_target", {
     c("src/contrib/foo/p1_1.0.tar.gz", "src/contrib/bar/p2_2.0.tar.gz")
   )
 
-  # Mix of: both 'File' and 'Path' present, only 'Path' present, and
-  # neither present.
   expect_equal(
     packages_make_target(
       "source",
@@ -304,10 +300,6 @@ test_that("rbind_expand", {
 })
 
 test_that("read_packages_file combines Path and File fields", {
-  # Regression test for https://github.com/r-universe-org/help/issues/715
-  # When a PACKAGES entry has both a 'Path' and a 'File' field, the
-  # resulting target/download URL must combine them as repodir/path/file,
-  # instead of silently dropping 'Path'.
   pkgs_file <- test_temp_file()
   cat(
     "Package: foo\n",
@@ -335,8 +327,6 @@ test_that("read_packages_file combines Path and File fields", {
 })
 
 test_that("read_packages_file strips query string from target, keeps it in sources", {
-  # Regression test for a query string in 'Path' (or 'File'), e.g. as used
-  # by r-universe.
   pkgs_file <- test_temp_file()
   cat(
     "Package: unrtf\n",

@@ -27,7 +27,6 @@ Imports:
     tstoml,
     utils
 Suggests:
-    covr,
     debugme,
     desc,
     fs,

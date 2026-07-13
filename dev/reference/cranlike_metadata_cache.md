@@ -219,12 +219,12 @@ dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()
 #> 
-#> ✔ Updated metadata database: 5.91 MB in 4 files.
+#> ✔ Updated metadata database: 5.96 MB in 4 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 48,490 × 32
+#> # A data frame: 48,548 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
 #>  1 a11yShiny  0.1.4   R (>= … shiny … devtool… NA               EUPL-1…
@@ -237,7 +237,7 @@ cmc$list()
 #>  8 abasequen… 0.1.0   NA      NA      NA       NA               GPL-3  
 #>  9 abba       0.2.0   NA      yaml, … testtha… NA               Apache…
 #> 10 abbreviate 0.1     NA      NA      testtha… NA               GPL-3  
-#> # ℹ 48,480 more rows
+#> # ℹ 48,538 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,
@@ -275,7 +275,7 @@ cmc$revdeps("pkgconfig", recursive = FALSE)
 #>    package   version depends  imports suggests needscompilation license
 #>  * <chr>     <chr>   <chr>    <chr>   <chr>    <chr>            <chr>  
 #>  1 agua      0.1.4   parsnip  "cli, … "covr, … NA               MIT + …
-#>  2 biospear  1.0.2   R (>= 2… "cobs,…  NA      no               GPL-2  
+#>  2 biospear  1.0.2   R (>= 2… "cobs,…  NA      NA               GPL-2  
 #>  3 hms       1.1.4   NA       "cli, … "crayon… NA               MIT + …
 #>  4 igraph    2.3.3   methods… "cli, … "ape (>… NA               GPL (>…
 #>  5 jtools    2.3.1   R (>= 3… "cli, … "boot, … NA               GPL (>…

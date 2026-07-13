@@ -64,7 +64,7 @@ location and size.
 ``` r
 meta_cache_list("pkgdown")
 #> 
-#> ✔ Updated metadata database: 2.86 MB in 7 files.
+#> ✔ Updated metadata database: 2.91 MB in 7 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
@@ -114,7 +114,7 @@ meta_cache_revdeps("pkgdown", recursive = FALSE)
 #>  6 CALANGO    1.0.20  R (>= … "asser… "Annota… no               GPL-2  
 #>  7 devtools   2.5.2   R (>= … "cli (… "BiocMa… no               MIT + …
 #>  8 pkgdown    2.2.1   R (>= … "bslib… "covr, … no               MIT + …
-#>  9 pkgdown.o… 0.1.2   NA      "pkgdo… "knitr,… no               MIT + …
+#>  9 pkgdown.o… 0.1.3   NA      "pkgdo… "knitr,… no               MIT + …
 #> 10 washr      1.0.1   NA      "desc … "knitr,… no               GPL (>…
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,

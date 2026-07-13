@@ -1,5 +1,5 @@
 test_that("auto-cancellation", {
-  skip("flaky test")
+  skip("TODO: failing")
   httpx <- NULL
   idx <- 0
 
@@ -12,9 +12,9 @@ test_that("auto-cancellation", {
       httpx[[idx]]$then(function(x) {
         req_done <<- req_done + 1L
         x
-      })$then(http_stop_for_status)$then(
-        function() setNames(.[["times"]][["total"]], url)
-      )$catch(error = function(.) setNames(Inf, url))
+      })$then(http_stop_for_status)$then(function() {
+        setNames(.[["times"]][["total"]], url)
+      })$catch(error = function(.) setNames(Inf, url))
     })
 
     urls <- http$url(c("/delay/5", "/get"))
@@ -35,9 +35,9 @@ test_that("detect, if one is done", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() TRUE
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        TRUE
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -59,9 +59,9 @@ test_that("detect, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -85,9 +85,9 @@ test_that("every, if one is FALSE", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() FALSE
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        FALSE
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -108,9 +108,9 @@ test_that("every, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -134,9 +134,9 @@ test_that("filter, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -160,9 +160,9 @@ test_that("map, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -186,9 +186,9 @@ test_that("some, if one is TRUE", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() TRUE
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        TRUE
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -209,9 +209,9 @@ test_that("every, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -235,9 +235,9 @@ test_that("when_all, if one errors", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -263,9 +263,9 @@ test_that("when_some, if enough are done", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() "yep"
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        "yep"
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -290,9 +290,9 @@ test_that("when_some, if some error", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() stop("foobar")
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        stop("foobar")
+      })
       dx <<- c(dx, list(nx))
       nx
     }
@@ -321,9 +321,9 @@ test_that("when_any, if one is done", {
   do <- function() {
     f <- function(n) {
       force(n)
-      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(
-        function() "yep"
-      )
+      nx <- delay(n)$then(function() pinged <<- pinged + 1)$then(function() {
+        "yep"
+      })
       dx <<- c(dx, list(nx))
       nx
     }

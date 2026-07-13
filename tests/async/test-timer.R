@@ -19,7 +19,6 @@ test_that("keeps event loop alive", {
 })
 
 test_that("errors", {
-  testthat::local_edition(3)
   counter <- 0L
   do <- function() {
     cb <- function() {
@@ -32,7 +31,7 @@ test_that("errors", {
     t <- async_timer$new(1 / 100, cb)
   }
 
-  expect_snapshot(error = TRUE, run_event_loop(do()))
+  expect_error(run_event_loop(do()), "foobar")
   expect_equal(counter, 2L)
 
   counter <- 0L

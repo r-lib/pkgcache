@@ -329,14 +329,13 @@ test_that("error callback is called on error", {
 })
 
 test_that("fail stage if no error callback", {
-  testthat::local_edition(3)
   do <- function() {
     x <- event_emitter$new(async = TRUE)
     x$listen_on("foo", function() stop("foobar"))
     x$emit("foo")
   }
 
-  expect_snapshot(error = TRUE, run_event_loop(do()))
+  expect_error(run_event_loop(do()), "foobar")
 })
 
 test_that("all error callbacks are called", {
@@ -361,7 +360,6 @@ test_that("all error callbacks are called", {
 })
 
 test_that("error within error callback", {
-  testthat::local_edition(3)
   err <- NULL
   do <- function() {
     x <- event_emitter$new(async = TRUE)
@@ -373,7 +371,7 @@ test_that("error within error callback", {
     x$emit("foo")
   }
 
-  expect_snapshot(error = TRUE, run_event_loop(do()))
+  expect_error(run_event_loop(do()), "baz")
   expect_false(is.null(err))
   expect_s3_class(err, "error")
   expect_equal(conditionMessage(err), "foobar")

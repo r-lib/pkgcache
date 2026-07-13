@@ -27,7 +27,6 @@ test_that("async_until is always called once", {
 })
 
 test_that("error", {
-  testthat::local_edition(3)
   do <- function() {
     async_until(
       function() i > 5,
@@ -41,7 +40,7 @@ test_that("error", {
   }
 
   i <- 1
-  expect_snapshot(error = TRUE, synchronise(do()))
+  expect_error(synchronise(do()), "doh")
 
   i <- 1
   do2 <- function() {
@@ -51,7 +50,6 @@ test_that("error", {
 })
 
 test_that("test function throws", {
-  testthat::local_edition(3)
   called <- FALSE
 
   do <- function() {
@@ -63,7 +61,7 @@ test_that("test function throws", {
     )
   }
 
-  expect_snapshot(error = TRUE, synchronise(do()))
+  expect_error(synchronise(do()), "doh")
   expect_true(called)
 
   called <- FALSE

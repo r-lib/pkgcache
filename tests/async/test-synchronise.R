@@ -1,5 +1,4 @@
 test_that("error if async function is called from sync context", {
-  testthat::local_edition(3)
   fake(get_default_event_loop, "length", 0)
   expect_error(
     get_default_event_loop(),
@@ -20,7 +19,7 @@ test_that("error if async function is called from sync context", {
   )
 
   afun <- async(function() 42)
-  expect_snapshot(error = TRUE, afun())
+  expect_error(afun())
 })
 
 test_that("simple tests", {

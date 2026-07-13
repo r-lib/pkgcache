@@ -3,6 +3,7 @@ if (
     Sys.getenv("NOT_CRAN") == "true" &&
     Sys.getenv("R_COVR") == ""
 ) {
+  Sys.setenv("TESTTHAT_PARALLEL" = "FALSE")
   library(testthat)
   library(pkgcache)
   print(sessioninfo::package_info("pkgcache", dependencies = TRUE))

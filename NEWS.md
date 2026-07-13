@@ -13,6 +13,10 @@
   legal in Windows file names. The query string is now only used for
   the download URL, and stripped from the local cache path.
 
+* All HTTP requests now honor the `pkgcache_http_version` option and
+  `PKGCACHE_HTTP_VERSION` environment variable. Closes
+  https://github.com/r-lib/pkgcache/issues/140.
+
 * New `PKG_USE_BIOCONDUCTOR` environment variable and new
   `pkg.use_bioconductor` option to opt out from automatic Bioconductor
   support.

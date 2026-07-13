@@ -1,3 +1,26 @@
+local_clear_http_options <- function(.local_envir = parent.frame()) {
+  nms <- c(
+    "timeout",
+    "connecttimeout",
+    "low_speed_time",
+    "low_speed_limit",
+    "http_version"
+  )
+  opts <- c(paste0("pkgcache_", nms), paste0("pkg_http_", nms))
+  withr::local_options(
+    structure(vector("list", length(opts)), names = opts),
+    .local_envir = .local_envir
+  )
+  envs <- c(
+    paste0("PKGCACHE_", toupper(nms)),
+    paste0("PKG_HTTP_", toupper(nms))
+  )
+  withr::local_envvar(
+    structure(rep(NA_character_, length(envs)), names = envs),
+    .local_envir = .local_envir
+  )
+}
+
 test_that("read_etag", {
   cat("foobar\n", file = tmp <- tempfile())
   expect_equal(read_etag(tmp), "foobar")
@@ -35,7 +58,12 @@ test_that("download_file", {
 test_that("download_file, errors", {
   tmp <- tempfile()
   err <- tryCatch(
-    synchronise(download_file("http://0.42.42.42", tmp)),
+    synchronise(download_file(
+      "http://0.42.42.42",
+      tmp,
+      retry = FALSE,
+      options = list(connecttimeout = 1)
+    )),
     error = function(e) e
   )
   expect_s3_class(err, "async_rejected")
@@ -50,7 +78,7 @@ test_that("download_file, errors", {
   expect_s3_class(err2, "async_http_error")
 
   ret <- synchronise(download_file(
-    http$url("/statud/404"),
+    http$url("/status/404"),
     tmp,
     error_on_status = FALSE
   ))
@@ -116,7 +144,9 @@ test_that("download_if_newer, error", {
   err <- tryCatch(
     synchronise(download_if_newer(
       url <- "http://0.42.42.42",
-      destfile = target
+      destfile = target,
+      retry = FALSE,
+      options = list(connecttimeout = 1)
     )),
     error = function(e) e
   )
@@ -313,55 +343,40 @@ test_that("download_files, no errors", {
   expect_s3_class(ret[[3]], "async_http_error")
 })
 
-test_that("update_async_timeouts", {
-  envs <- list(
-    PKGCACHE_TIMEOUT = 200,
-    PKGCACHE_CONNECTTIMEOUT = 200,
-    PKGCACHE_LOW_SPEED_TIME = 200,
-    PKGCACHE_LOW_SPEED_LIMIT = 200,
-    PKGCACHE_HTTP_VERSION = 200
-  )
-  withr::local_envvar(envs)
+test_that("set_pkgcache_curl_options", {
+  local_clear_http_options()
 
-  opts <- list(
+  # nothing configured: leave the options untouched, no defaults added
+  expect_equal(set_pkgcache_curl_options(list()), list())
+  expect_equal(set_pkgcache_curl_options(list(foo = "bar")), list(foo = "bar"))
+
+  # pkgcache_* options are picked up and coerced to integer
+  withr::local_options(
     pkgcache_timeout = 100,
     pkgcache_connecttimeout = 100,
     pkgcache_low_speed_time = 100,
     pkgcache_low_speed_limit = 100,
-    pkgcache_http_version = 100
+    pkgcache_http_version = 2
   )
-  withr::local_options(opts)
-
-  arg <- list(
-    timeout = 10,
-    connecttimeout = 10,
-    low_speed_time = 10,
-    low_speed_limit = 10,
-    http_version = 10
-  )
-
-  # arg takes precedence
   expect_equal(
-    update_async_timeouts(arg),
-    arg
+    set_pkgcache_curl_options(list(foo = "bar")),
+    list(
+      foo = "bar",
+      timeout = 100L,
+      connecttimeout = 100L,
+      low_speed_time = 100L,
+      low_speed_limit = 100L,
+      http_version = 2L
+    )
   )
 
-  # extra options in arg are kept
-  arg2 <- utils::modifyList(arg, list(foo = "bar"))
+  # an explicit option in the request wins over the pkgcache_* option
   expect_equal(
-    update_async_timeouts(arg2),
-    arg2
+    set_pkgcache_curl_options(list(http_version = 3))$http_version,
+    3L
   )
 
-  # options are used next
-  exp <- c(list(foo = "bar"), opts)
-  names(exp) <- sub("^pkgcache_", "", names(exp))
-  expect_equal(
-    update_async_timeouts(list(foo = "bar")),
-    exp
-  )
-
-  # env vars are used next
+  # environment variables are used when the option is not set
   withr::local_options(
     pkgcache_timeout = NULL,
     pkgcache_connecttimeout = NULL,
@@ -369,40 +384,67 @@ test_that("update_async_timeouts", {
     pkgcache_low_speed_limit = NULL,
     pkgcache_http_version = NULL
   )
-  exp2 <- c(list(foo = "bar"), envs)
-  names(exp2) <- sub("^pkgcache_", "", tolower(names(exp2)))
-  expect_equal(
-    update_async_timeouts(list(foo = "bar")),
-    exp2
-  )
+  withr::local_envvar(PKGCACHE_HTTP_VERSION = "3")
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 3L)
 
-  # finally, fall back to defaults
+  # an unset pkgcache_* option must not add a curl option, so that the
+  # async_http_* option and the async default still apply downstream
+  withr::local_envvar(PKGCACHE_HTTP_VERSION = NA_character_)
+  expect_equal(set_pkgcache_curl_options(list()), list())
+})
+
+test_that("set_pkgcache_curl_options, pkg_http_ fallback", {
+  local_clear_http_options()
+
+  # pkg_http_* option is used when nothing with higher priority is set
+  withr::local_options(pkg_http_http_version = 2)
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 2L)
+
+  # PKG_HTTP_* env var is used when no option is set
+  withr::local_options(pkg_http_http_version = NULL)
+  withr::local_envvar(PKG_HTTP_HTTP_VERSION = "2")
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 2L)
+
+  # full precedence: pkgcache_ option > PKGCACHE_ env > pkg_http_ option >
+  # PKG_HTTP_ env
   withr::local_envvar(
-    PKGCACHE_TIMEOUT = NA_character_,
-    PKGCACHE_CONNECTTIMEOUT = NA_character_,
-    PKGCACHE_LOW_SPEED_TIME = NA_character_,
-    PKGCACHE_LOW_SPEED_LIMIT = NA_character_,
-    PKGCACHE_HTTP_VERSION = NA_character_
+    PKGCACHE_HTTP_VERSION = "4",
+    PKG_HTTP_HTTP_VERSION = "5"
   )
-  exp3 <- list(
-    foo = "bar",
-    timeout = 0,
-    connecttimeout = 300,
-    low_speed_time = 0,
-    low_speed_limit = 0,
-    http_version = default_http_version()
+  withr::local_options(
+    pkgcache_http_version = 3,
+    pkg_http_http_version = 6
   )
-  expect_equal(
-    update_async_timeouts(list(foo = "bar")),
-    exp3
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 3L)
+
+  withr::local_options(pkgcache_http_version = NULL)
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 4L)
+
+  withr::local_envvar(PKGCACHE_HTTP_VERSION = NA_character_)
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 6L)
+
+  withr::local_options(pkg_http_http_version = NULL)
+  expect_equal(set_pkgcache_curl_options(list())$http_version, 5L)
+})
+
+test_that("http requests honor pkgcache_* options", {
+  # `pkgcache_timeout` aborts a slow request. Without the wrapper applying it,
+  # `http_get()` would only look at `async_http_timeout` and the request would
+  # run to completion.
+  # `retry = FALSE` because we are checking that a single request is aborted
+  # by the timeout; otherwise the timed-out request would be retried.
+  withr::local_options(pkgcache_timeout = 1)
+  tic <- Sys.time()
+  err <- tryCatch(
+    synchronise(http_get(http$url("/delay/5"), retry = FALSE)),
+    error = function(e) e
   )
+  toc <- Sys.time()
+  expect_s3_class(err, "async_rejected")
+  expect_true(toc - tic < as.difftime(5, units = "secs"))
 })
 
 test_that("default_http_version", {
-  fake(default_http_version, "Sys.info", c(sysname = "Darwin"))
-  expect_equal(default_http_version(), 2)
-  fake(default_http_version, "Sys.info", c(sysname = "Linux"))
-  expect_equal(default_http_version(), 2)
-  fake(default_http_version, "Sys.info", c(sysname = "Windows"))
-  expect_equal(default_http_version(), 0)
+  # HTTP/1.1 on every platform
+  expect_equal(default_http_version(), 2L)
 })

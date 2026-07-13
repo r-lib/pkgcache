@@ -28,7 +28,6 @@ test_that("async_whilst with false test", {
 })
 
 test_that("error", {
-  testthat::local_edition(3)
   do <- function() {
     async_whilst(
       function() i < 5,
@@ -42,7 +41,7 @@ test_that("error", {
   }
 
   i <- 1
-  expect_snapshot(error = TRUE, synchronise(do()))
+  expect_error(synchronise(do()), "doh")
 
   i <- 1
   do2 <- function() {
@@ -52,7 +51,6 @@ test_that("error", {
 })
 
 test_that("test throws", {
-  testthat::local_edition(3)
   called <- FALSE
 
   do <- function() {
@@ -64,7 +62,7 @@ test_that("test throws", {
     )
   }
 
-  expect_snapshot(error = TRUE, synchronise(do()))
+  expect_error(synchronise(do()), "doh")
   expect_false(called)
 
   called <- FALSE

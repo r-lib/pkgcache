@@ -1,20 +1,22 @@
 test_that("action in formula notation", {
   do <- function() {
-    dx1 <- deferred$new(function(resolve) resolve(TRUE))$then(
-      function(.) expect_true(.)
-    )
+    dx1 <- deferred$new(function(resolve) resolve(TRUE))$then(function(.) {
+      expect_true(.)
+    })
 
-    dx2 <- deferred$new(function(resolve) stop("oops"))$catch(
-      error = function(.) expect_match(conditionMessage(.), "oops")
-    )
+    dx2 <- deferred$new(function(resolve) stop("oops"))$catch(error = function(
+      .
+    ) {
+      expect_match(conditionMessage(.), "oops")
+    })
 
-    dx3 <- deferred$new(
-      function(resolve) if (TRUE) resolve(TRUE) else stop("oops")
-    )$then(function(.) expect_true(.))
+    dx3 <- deferred$new(function(resolve) {
+      if (TRUE) resolve(TRUE) else stop("oops")
+    })$then(function(.) expect_true(.))
 
-    dx4 <- deferred$new(
-      function(resolve) if (FALSE) resolve(TRUE) else stop("oops")
-    )$catch(error = function(.) expect_match(conditionMessage(.), "oops"))
+    dx4 <- deferred$new(function(resolve) {
+      if (FALSE) resolve(TRUE) else stop("oops")
+    })$catch(error = function(.) expect_match(conditionMessage(.), "oops"))
 
     when_all(dx1, dx2, dx3, dx4)
   }
@@ -23,19 +25,19 @@ test_that("action in formula notation", {
 
 test_that("on_fulfilled / on_rejected without arguments", {
   do <- async(function() {
-    dx1 <- deferred$new(function(resolve) resolve(TRUE))$then(
-      function() "OK"
-    )$then(function(.) expect_equal(., "OK"))
+    dx1 <- deferred$new(function(resolve) resolve(TRUE))$then(function() {
+      "OK"
+    })$then(function(.) expect_equal(., "OK"))
 
-    dx2 <- deferred$new(function(resolve) resolve(TRUE))$then(
-      function() stop("oops")
-    )$catch(error = function(.) expect_match(conditionMessage(.), "oops"))
+    dx2 <- deferred$new(function(resolve) resolve(TRUE))$then(function() {
+      stop("oops")
+    })$catch(error = function(.) expect_match(conditionMessage(.), "oops"))
 
-    dx3 <- deferred$new(function(resolve) resolve(TRUE))$then(
-      function() stop("ooops")
-    )$catch(error = function(.) "aaah")$then(
-      function(.) expect_equal(., "aaah")
-    )
+    dx3 <- deferred$new(function(resolve) resolve(TRUE))$then(function() {
+      stop("ooops")
+    })$catch(error = function(.) "aaah")$then(function(.) {
+      expect_equal(., "aaah")
+    })
 
     when_all(dx1, dx2, dx3)
   })

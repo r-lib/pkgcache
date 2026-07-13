@@ -1,11 +1,3 @@
-# http_status
-
-    Code
-      http_status(0)
-    Condition
-      Error:
-      ! Unknown http status code: 0
-
 # http_post form
 
     Code

@@ -1,8 +1,8 @@
 test_that("GET", {
   do <- async(function() {
-    http_get(http$url("/get", query = list(q = 42)))$then(
-      function(.) rawToChar(.$content)
-    )$then(function(.) expect_match(., "\"q\":[ ]*\"42\""))
+    http_get(http$url("/get", query = list(q = 42)))$then(function(.) {
+      rawToChar(.$content)
+    })$then(function(.) expect_match(., "\"q\":[ ]*\"42\""))
   })
   synchronise(do())
 })
@@ -19,12 +19,10 @@ test_that("HEAD", {
 test_that("headers", {
   xx <- NULL
   do <- async(function() {
-    headers = c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
-    http_get(http$url("/headers"), headers = headers)$then(
-      function(.) {
-        jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE)
-      }
-    )$then(function(x) xx <<- x)
+    headers <- c("X-Header-Test" = "foobar", "X-Another" = "boooyakasha")
+    http_get(http$url("/headers"), headers = headers)$then(function(.) {
+      jsonlite::fromJSON(rawToChar(.$content), simplifyVector = FALSE)
+    })$then(function(x) xx <<- x)
   })
   synchronise(do())
   expect_equal(xx$headers$`X-Header-Test`, "foobar")
@@ -184,13 +182,15 @@ test_that("automatic cancellation", {
 })
 
 test_that("http_status", {
-  testthat::local_edition(3)
-  expect_snapshot(error = TRUE, http_status(0))
+  expect_error(
+    http_status(0),
+    "Unknown http status code"
+  )
 })
 
 test_that("timeout, failed request", {
   do <- function() {
-    http_get(http$url("/delay/5"), options = list(timeout = 1))
+    http_get(http$url("/delay/5"), options = list(timeout = 1), retry = FALSE)
   }
 
   tic <- Sys.time()
@@ -220,10 +220,13 @@ test_that("more sophisticated timeouts", {
       async_http_low_speed_time = 2,
       async_http_low_speed_limit = 10
     ))
-    http_get(http$url(
-      "/drip",
-      c(duration = 5, numbytes = 10, code = 200, delay = 0)
-    ))
+    http_get(
+      http$url(
+        "/drip",
+        c(duration = 5, numbytes = 10, code = 200, delay = 0)
+      ),
+      retry = FALSE
+    )
   }
 
   tic <- Sys.time()
@@ -233,6 +236,34 @@ test_that("more sophisticated timeouts", {
   expect_s3_class(err, "async_rejected")
   expect_match(conditionMessage(err), "too slow")
   expect_true(toc - tic < as.difftime(5, units = "secs"))
+})
+
+test_that("http_version is set from options and env vars", {
+  # explicit option wins
+  expect_equal(
+    get_default_curl_options(list(http_version = 3))$http_version,
+    3L
+  )
+
+  # async_http_http_version option
+  withr::local_options(async_http_http_version = 3)
+  expect_equal(get_default_curl_options(list())$http_version, 3L)
+
+  # ASYNC_HTTP_HTTP_VERSION env var (option has priority)
+  withr::local_options(async_http_http_version = NULL)
+  withr::local_envvar(ASYNC_HTTP_HTTP_VERSION = "3")
+  expect_equal(get_default_curl_options(list())$http_version, 3L)
+
+  # default is used when nothing is set
+  withr::local_envvar(ASYNC_HTTP_HTTP_VERSION = NA_character_)
+  expect_equal(
+    get_default_curl_options(list())$http_version,
+    default_http_version()
+  )
+})
+
+test_that("default_http_version", {
+  expect_equal(default_http_version(), 2L)
 })
 
 test_that("errors contain the response", {
@@ -318,6 +349,114 @@ test_that("http_post form", {
   obj <- jsonlite::fromJSON(rawToChar(resp$content))
   expect_snapshot(obj$files)
   expect_snapshot(obj$form)
+})
+
+test_that("get_default_http_retry normalization", {
+  expect_null(get_default_http_retry(FALSE, "GET"))
+  expect_null(get_default_http_retry(NULL, "GET"))
+  expect_null(get_default_http_retry(0, "GET"))
+
+  # POST is not retryable with the defaults
+  expect_null(get_default_http_retry(TRUE, "POST"))
+
+  # GET uses the documented defaults
+  r <- get_default_http_retry(TRUE, "GET")
+  expect_equal(r$limit, 2L)
+  expect_true(all(c(408L, 429L, 503L) %in% r$status_codes))
+  expect_true(r$errors)
+
+  # a single number sets the limit
+  expect_equal(get_default_http_retry(5, "GET")$limit, 5L)
+
+  # list entries override the defaults, methods are case insensitive
+  r <- get_default_http_retry(list(limit = 1, methods = "post"), "POST")
+  expect_equal(r$limit, 1L)
+
+  # unknown list entries and invalid types are errors
+  expect_error(get_default_http_retry(list(bad = 1), "GET"), "Unknown")
+  expect_error(get_default_http_retry("nope", "GET"), "Invalid")
+})
+
+test_that("http_retry_after parses the header", {
+  mkresp <- function(h) list(headers = charToRaw(h))
+  expect_equal(
+    http_retry_after(mkresp("HTTP/1.1 503\r\nRetry-After: 7\r\n\r\n")),
+    7
+  )
+  expect_null(http_retry_after(mkresp("HTTP/1.1 503\r\n\r\n")))
+  expect_null(http_retry_after(list(headers = NULL)))
+  # a date in the past means retry immediately
+  expect_equal(
+    http_retry_after(mkresp(
+      "HTTP/1.1 503\r\nRetry-After: Wed, 21 Oct 2015 07:28:00 GMT\r\n\r\n"
+    )),
+    0
+  )
+})
+
+test_that("retryable status codes are retried", {
+  app <- webfakes::new_app()
+  app$locals$n <- 0L
+  app$get("/flaky", function(req, res) {
+    req$app$locals$n <- req$app$locals$n + 1L
+    n <- req$app$locals$n
+    if (n < 3L) {
+      res$set_status(503L)$send("nope")
+    } else {
+      res$set_status(200L)$send(as.character(n))
+    }
+  })
+  proc <- webfakes::new_app_process(app)
+  on.exit(proc$stop(), add = TRUE)
+
+  # default limit is 2, so the third attempt (a 200) succeeds.
+  # `backoff` is set to zero so the test does not sleep between retries.
+  resp <- synchronise(http_get(
+    proc$url("/flaky"),
+    retry = list(backoff = function(i) 0)
+  ))
+  expect_equal(resp$status_code, 200L)
+  expect_equal(rawToChar(resp$content), "3")
+})
+
+test_that("retries are exhausted and the last response is returned", {
+  resp <- synchronise(http_get(
+    http$url("/status/503"),
+    retry = list(limit = 1, backoff = function(i) 0)
+  ))
+  expect_equal(resp$status_code, 503L)
+})
+
+test_that("retry = FALSE and non-retryable codes do not retry", {
+  # neither request retries, so no backoff happens
+  # 404 is not in the default status_codes
+  resp <- synchronise(http_get(http$url("/status/404")))
+  expect_equal(resp$status_code, 404L)
+  # retry = FALSE disables retries entirely
+  resp <- synchronise(http_get(http$url("/status/503"), retry = FALSE))
+  expect_equal(resp$status_code, 503L)
+})
+
+test_that("connection errors are retried unless disabled", {
+  # RFC 2606 reserves `.invalid`, a refused port is slow on windows.
+  url <- "http://nao.invalid/nope"
+  err <- tryCatch(
+    synchronise(http_get(
+      url,
+      retry = list(limit = 1, backoff = function(i) 0)
+    )),
+    error = identity
+  )
+  expect_s3_class(err, "async_rejected")
+
+  err2 <- tryCatch(
+    synchronise(http_get(
+      url,
+      retry = list(limit = 5, errors = FALSE)
+    )),
+    error = identity
+  )
+  expect_s3_class(err2, "async_rejected")
 })
 
 test_that("curl multi options", {

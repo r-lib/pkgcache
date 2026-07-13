@@ -7,13 +7,13 @@ test_that("async_every", {
   do <- function() {
     d1 <- async_every(1:10, is_odd)$then(function(.) expect_identical(., FALSE))
 
-    d2 <- async_every(numeric(), is_odd)$then(
-      function(.) expect_identical(., TRUE)
-    )
+    d2 <- async_every(numeric(), is_odd)$then(function(.) {
+      expect_identical(., TRUE)
+    })
 
-    d3 <- async_every(1:10 * 2 + 1, is_odd)$then(
-      function(.) expect_identical(., TRUE)
-    )
+    d3 <- async_every(1:10 * 2 + 1, is_odd)$then(function(.) {
+      expect_identical(., TRUE)
+    })
 
     when_all(d1, d2, d3)
   }
@@ -23,9 +23,9 @@ test_that("async_every", {
 test_that("async_every, errors", {
   called <- FALSE
   do <- function() {
-    async_every(1:10, function(x) stop("doh"))$then(
-      function() called <<- TRUE
-    )$catch(error = function(e) {
+    async_every(1:10, function(x) stop("doh"))$then(function() {
+      called <<- TRUE
+    })$catch(error = function(e) {
       expect_equal(conditionMessage(e), "doh")
       expect_s3_class(e, "async_rejected")
     })

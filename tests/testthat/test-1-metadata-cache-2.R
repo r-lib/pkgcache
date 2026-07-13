@@ -41,7 +41,7 @@ test_that("check_update", {
   cat("foobar2\n", file = rep_files$rds)
   cat("foobar\n", file = pri_files$pkgs$path[1])
   cat("foobar2\n", file = pri_files$rds)
-  data2 <- cmc$check_update()
+  data2 <- suppressMessages(cmc$check_update())
   expect_identical(data, data2)
   expect_equal(read_lines(rep_files$pkgs$path[1]), "foobar")
 

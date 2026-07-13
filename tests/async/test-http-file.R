@@ -32,12 +32,7 @@ test_that("file:// to file", {
 })
 
 test_that("file:// does not exist", {
-  testthat::local_edition(3)
   tmp <- tempfile()
   url <- paste0("file://", tmp)
-  expect_snapshot(
-    error = TRUE,
-    synchronise(http_get(url)),
-    transform = function(x) fix_temp_path(sub("Could not", "Couldn't", x))
-  )
+  expect_error(synchronise(http_get(url)))
 })

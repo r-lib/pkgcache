@@ -39,23 +39,23 @@ print nicer, similarly to tibbles.)
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(pkgcache)
 library(pillar)
 meta_cache_list()
-#> # A data frame: 50,641 x 33
-#>    package    version depends suggests license md5sum sha256sum needscompilation
-#>    <chr>      <chr>   <chr>   <chr>    <chr>   <chr>  <chr>     <chr>           
-#>  1 A3         1.0.0   R (>= ~ randomF~ GPL (>~ 929a4~ "\n     ~ no              
-#>  2 AATtools   0.0.3   R (>= ~ <NA>     GPL-3   de2ec~ "\n     ~ no              
-#>  3 ABACUS     1.0.0   R (>= ~ rmarkdo~ GPL-3   28795~ "\n     ~ no              
-#>  4 ABC.RAP    0.9.0   R (>= ~ knitr, ~ GPL-3   0158e~ "\n     ~ no              
-#>  5 ABCanalys~ 1.2.1   R (>= ~ <NA>     GPL-3   4cbe1~ "\n     ~ no              
-#>  6 ABCoptim   0.15.0  <NA>    testtha~ MIT + ~ a294d~ "\n     ~ yes             
-#>  7 ABCp2      1.2     MASS    <NA>     GPL-2   d049b~  <NA>     no              
-#>  8 ABHgenoty~ 1.0.1   <NA>    knitr, ~ GPL-3   fce25~ "\n     ~ no              
-#>  9 ABM        0.4.3   <NA>    <NA>     GPL (>~ 7aaae~ "\n     ~ yes             
-#> 10 ABPS       0.3     <NA>    testthat GPL (>~ d3f00~ "\n     ~ no              
-#> # i 50,631 more rows
-#> # i 25 more variables: imports <chr>, linkingto <chr>, archs <chr>,
-#> #   enhances <chr>, license_restricts_use <chr>, priority <chr>, os_type <chr>,
-#> #   license_is_foss <chr>, repodir <chr>, rversion <chr>, platform <chr>,
+#> # A data frame: 53,991 x 33
+#>    package     version depends imports license md5sum sha256sum needscompilation
+#>    <chr>       <chr>   <chr>   <chr>   <chr>   <chr>  <chr>     <chr>           
+#>  1 AATtools    0.0.3   R (>= ~ "magri~ GPL-3   77b8a~ "\n     ~ no              
+#>  2 ABACUS      1.0.0   R (>= ~ "ggplo~ GPL-3   f6450~ "\n     ~ no              
+#>  3 ABC.RAP     0.9.0   R (>= ~ "graph~ GPL-3   0dd81~ "\n     ~ no              
+#>  4 ABCDscores  6.1.0   R (>= ~ "chk, ~ GPL (>~ 0de2a~ "\n     ~ no              
+#>  5 ABCanalysis 1.2.1   R (>= ~ "plotr~ GPL-3   fb77c~ "\n     ~ no              
+#>  6 ABCoptim    0.15.0  <NA>    "Rcpp,~ MIT + ~ 0487b~ "\n     ~ yes             
+#>  7 ABHgenotyp~ 1.0.1   <NA>    "ggplo~ GPL-3   2b2aa~ "\n     ~ no              
+#>  8 ABM         0.4.3   <NA>    "R6, R~ GPL (>~ 338a6~ "\n     ~ yes             
+#>  9 ABPS        0.3     <NA>    "kernl~ GPL (>~ 54a9e~ "\n     ~ no              
+#> 10 ABRSQOL     1.0.0   R (>= ~  <NA>   MIT + ~ 2fb4a~ "\n     ~ no              
+#> # i 53,981 more rows
+#> # i 25 more variables: suggests <chr>, linkingto <chr>, archs <chr>,
+#> #   enhances <chr>, priority <chr>, os_type <chr>, license_is_foss <chr>,
+#> #   license_restricts_use <chr>, repodir <chr>, rversion <chr>, platform <chr>,
 #> #   ref <chr>, type <chr>, direct <lgl>, status <chr>, target <chr>,
 #> #   mirror <chr>, sources <list>, filesize <int>, sha256 <chr>, sysreqs <chr>,
 #> #   built <chr>, published <dttm>, deps <list>, path <chr>
@@ -84,36 +84,37 @@ The \verb{pkg_cache_*} API is high level, and uses a user level cache:
 #> [1] "/Users/gaborcsardi/Library/Caches/org.R-project.R/R/pkgcache/pkg"
 #> 
 #> $files
-#> [1] 475
+#> [1] 544
 #> 
 #> $size
-#> [1] 669462030
+#> [1] 501117315
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_list()
-#> # A data frame: 475 x 11
+#> # A data frame: 544 x 11
 #>    fullpath    path  package url   etag  sha256 version platform built vignettes
-#>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#>  1 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ <NA>    <NA>         0        NA
-#>  2 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ 2.5.0.~ source       1         0
-#>  3 /Users/gab~ src/~ remotes <NA>  <NA>  5b7eb~ 2.5.0.~ aarch64~     1         0
-#>  4 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ <NA>    <NA>         0        NA
-#>  5 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ 3.6.3.~ source       1         0
-#>  6 /Users/gab~ src/~ cli     <NA>  <NA>  9d6e9~ 3.6.3.~ aarch64~     1         0
-#>  7 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ <NA>    <NA>         0        NA
-#>  8 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ 3.6.3.~ source       1         0
-#>  9 /Users/gab~ src/~ cli     <NA>  <NA>  8a0b8~ 3.6.3.~ aarch64~     1         0
-#> 10 /Users/gab~ src/~ cli     <NA>  <NA>  2dd91~ <NA>    <NA>         0        NA
-#> # i 465 more rows
+#>    <chr>       <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <chr> <chr>    
+#>  1 /Users/gab~ bin/~ cli     http~ "\"1~ b747b~ 3.6.5   aarch64~ <NA>  <NA>     
+#>  2 /Users/gab~ bin/~ brio    http~ "\"c~ 08165~ 1.1.5   aarch64~ <NA>  <NA>     
+#>  3 /Users/gab~ bin/~ askpass http~ "\"6~ 8c6b9~ 1.2.1   aarch64~ <NA>  <NA>     
+#>  4 /Users/gab~ bin/~ glue    http~ "\"2~ f0b34~ 1.8.0   aarch64~ <NA>  <NA>     
+#>  5 /Users/gab~ bin/~ crayon  http~ "\"2~ 77feb~ 1.5.3   aarch64~ <NA>  <NA>     
+#>  6 /Users/gab~ bin/~ covr    http~ "\"5~ 55f0f~ 3.6.5   aarch64~ <NA>  <NA>     
+#>  7 /Users/gab~ bin/~ callr   http~ "\"6~ 7cd55~ 3.7.6   aarch64~ <NA>  <NA>     
+#>  8 /Users/gab~ bin/~ evalua~ http~ "\"1~ 307ea~ 1.0.5   aarch64~ <NA>  <NA>     
+#>  9 /Users/gab~ bin/~ curl    http~ "\"1~ 15871~ 7.0.0   aarch64~ <NA>  <NA>     
+#> 10 /Users/gab~ bin/~ pkgbui~ http~ "\"3~ d874a~ 1.4.8   aarch64~ <NA>  <NA>     
+#> # i 534 more rows
 #> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pkg_cache_find(package = "dplyr")
-#> # A data frame: 2 x 11
+#> # A data frame: 3 x 11
 #>   fullpath     path  package url   etag  sha256 version platform built vignettes
-#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <int>     <int>
-#> 1 /Users/gabo~ bin/~ dplyr   http~ "\"6~ 721c2~ 1.1.4   aarch64~    NA        NA
-#> 2 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 721c2~ 1.1.4   aarch64~    NA        NA
+#>   <chr>        <chr> <chr>   <chr> <chr> <chr>  <chr>   <chr>    <chr> <chr>    
+#> 1 /Users/gabo~ src/~ dplyr   http~ "\"e~ a82c2~ 1.2.0   source   <NA>  <NA>     
+#> 2 /Users/gabo~ src/~ dplyr   <NA>   <NA> <NA>   1.2.0   aarch64~ TRUE  FALSE    
+#> 3 /Users/gabo~ bin/~ dplyr   http~ "\"1~ 64938~ 1.2.1   aarch64~ <NA>  <NA>     
 #> # i 1 more variable: rversion <chr>
 }\if{html}{\out{</div>}}
 
@@ -133,26 +134,26 @@ all fields from \code{PACKAGES}, \code{PACKAGES.gz} or \code{PACKAGES.rds} files
 library:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{parse_installed()
-#> # A data frame: 606 x 125
-#>    Package      Title   Version `Authors@R` Description URL   BugReports License
-#>    <chr>        <chr>   <chr>   <chr>       <chr>       <chr> <chr>      <chr>  
-#>  1 AzureAuth    Authen~ 1.3.3   "c(\n    p~ "Provides ~ "htt~ https://g~ MIT + ~
-#>  2 AzureGraph   Simple~ 1.3.4   "c(\n    p~ "A simple ~ "htt~ https://g~ MIT + ~
-#>  3 AzureRMR     Interf~ 2.4.4   "c(\n    p~ "A lightwe~ "htt~ https://g~ MIT + ~
-#>  4 AzureStor    Storag~ 3.7.0   "c(\n    p~ "Manage st~ "htt~ https://g~ MIT + ~
-#>  5 BH           Boost ~ 1.84.0~  <NA>       "Boost pro~ "htt~ https://g~ BSL-1.0
-#>  6 Biobase      Biobas~ 2.64.0  "c(\n    p~ "Functions~ "htt~ https://g~ Artist~
-#>  7 BiocGenerics S4 gen~ 0.52.0   <NA>       "The packa~ "htt~ https://g~ Artist~
-#>  8 BiocManager  Access~ 1.30.23 "c(\n    p~ "A conveni~ "htt~ https://g~ Artist~
-#>  9 BiocVersion  Set th~ 3.19.1  "c(\n    p~ "This pack~  <NA> <NA>       Artist~
-#> 10 CompQuadForm Distri~ 1.4.3    <NA>       "Computes ~  <NA> <NA>       GPL (>~
-#> # i 596 more rows
-#> # i 117 more variables: VignetteBuilder <chr>, Depends <chr>, Imports <chr>,
-#> #   Suggests <chr>, RoxygenNote <chr>, NeedsCompilation <chr>, Packaged <chr>,
-#> #   Author <chr>, Maintainer <chr>, Repository <chr>, `Date/Publication` <chr>,
-#> #   Built <chr>, RemoteType <chr>, RemotePkgRef <chr>, RemoteRef <chr>,
-#> #   RemoteRepos <chr>, RemotePkgPlatform <chr>, RemoteSha <chr>, Type <chr>,
-#> #   Date <chr>, biocViews <chr>, LazyLoad <chr>, Collate <chr>, ...
+#> # A data frame: 281 x 106
+#>    Package     Title    Version `Authors@R` Description License URL   BugReports
+#>    <chr>       <chr>    <chr>   <chr>       <chr>       <chr>   <chr> <chr>     
+#>  1 pkgcache    "Cache ~ 2.2.5.~ "c(\n    p~ "Metadata ~ MIT + ~ "htt~ https://g~
+#>  2 BiocManager "Access~ 1.30.27 "c(\n    p~ "A conveni~ Artist~ "htt~ https://g~
+#>  3 DBI         "R Data~ 1.3.0   "c(\n    p~ "A databas~ LGPL (~ "htt~ https://g~
+#>  4 Formula     "Extend~ 1.2-5   "c(person(~ "Infrastru~ GPL-2 ~  <NA> <NA>      
+#>  5 GPArotation "Gradie~ 2025.3~ "c( \n\tpe~ "Gradient ~ GPL (>~ "htt~ <NA>      
+#>  6 Hmisc       "Harrel~ 5.2-5   "\n    c(p~ "Contains ~ GPL (>~ "htt~ <NA>      
+#>  7 PlotTools   "Extend~ 0.4.0   "c(person(~ "Annotate ~ GPL (>~ "htt~ https://g~
+#>  8 R.cache     "Fast a~ 0.17.0  "c(person(~ "Memoizati~ LGPL (~ "htt~ https://g~
+#>  9 R.methodsS3 "S3 Met~ 1.8.2   "c(person(~ "Methods t~ LGPL (~ "htt~ https://g~
+#> 10 R.oo        "R Obje~ 1.27.1  "c(person(~ "Methods a~ LGPL (~ "htt~ https://g~
+#> # i 271 more rows
+#> # i 98 more variables: Depends <chr>, Imports <chr>, Suggests <chr>,
+#> #   `Config/Needs/website` <chr>, `Config/testthat/edition` <chr>,
+#> #   `Config/usethis/last-upkeep` <chr>, Encoding <chr>, Language <chr>,
+#> #   Roxygen <chr>, RoxygenNote <chr>, Author <chr>, Maintainer <chr>,
+#> #   Built <chr>, LibPath <chr>, VignetteBuilder <chr>, NeedsCompilation <chr>,
+#> #   Packaged <chr>, Repository <chr>, `Date/Publication` <chr>, ...
 }\if{html}{\out{</div>}}
 }
 
@@ -188,6 +189,11 @@ correspond to the
 and
 \href{https://curl.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html}{\code{LOW_SPEED_TIME}}
 curl options.
+\item \code{pkgcache_http_version} selects the HTTP version to use for HTTP
+requests. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html}{\code{HTTP_VERSION} libcurl option}, so
+e.g. \code{2} forces HTTP/1.1 and \code{0} lets libcurl choose. It defaults to
+HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+client and server combinations.
 }
 }
 
@@ -229,6 +235,12 @@ and
 curl options. The \code{pkgcache_low_speed_time} and
 \code{pkgcache_low_speed_limit} options have priority over these
 environment variables, if they are set.
+\item \code{PKGCACHE_HTTP_VERSION} selects the HTTP version to use for HTTP
+requests. It corresponds to the \href{https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html}{\code{HTTP_VERSION} libcurl option}, so
+e.g. \code{2} forces HTTP/1.1 and \code{0} lets libcurl choose. It defaults to
+HTTP/1.1, because HTTP/2 has caused transport-level failures with some
+client and server combinations. The \code{pkgcache_http_version} option has
+priority over this, if set.
 \item \code{R_PKG_CACHE_DIR} is used for the cache directory, if set. (Otherwise
 \code{tools::R_user_dir("pkgcache", "cache")} is used, see also
 \code{meta_cache_summary()} and \code{pkg_cache_summary()}).

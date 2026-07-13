@@ -30,9 +30,9 @@ test_that("then for fulfilled", {
     dx <- http_head(http$url("/status/404"))
     dx2 <- http_head(http$url("/status/404"))
     dx$then(function() {
-      dx2$then(function(value) value$status_code)$then(
-        function(value) expect_equal(value, 404)
-      )
+      dx2$then(function(value) value$status_code)$then(function(value) {
+        expect_equal(value, 404)
+      })
     })
   })
   synchronise(do())
@@ -52,9 +52,11 @@ test_that("multiple then clauses are not allowed", {
 
 test_that("compact function notation", {
   do <- function() {
-    http_head(http$url("/"))$then(function(.) http_get(.$url))$then(
-      function(.) .$status_code
-    )$then(function(.) expect_equal(., 200))
+    http_head(http$url("/"))$then(function(.) http_get(.$url))$then(function(
+      .
+    ) {
+      .$status_code
+    })$then(function(.) expect_equal(., 200))
   }
   synchronise(do())
 })
@@ -79,13 +81,13 @@ test_that("more embedded thens", {
   steps <- numeric()
   do <- function() {
     async(function() steps <<- c(steps, 1))()$then(function() {
-      async_constant()$then(function() steps <<- c(steps, 2))$then(
-        function() steps <<- c(steps, 3)
-      )
+      async_constant()$then(function() steps <<- c(steps, 2))$then(function() {
+        steps <<- c(steps, 3)
+      })
     })$then(function() {
-      async_constant()$then(function() steps <<- c(steps, 4))$then(
-        function() steps <<- c(steps, 5)
-      )
+      async_constant()$then(function() steps <<- c(steps, 4))$then(function() {
+        steps <<- c(steps, 5)
+      })
     })$then(function() steps <<- c(steps, 6))
   }
   synchronise(do())

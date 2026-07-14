@@ -224,7 +224,7 @@ cmc$list()
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 48,548 × 32
+#> # A data frame: 48,534 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
 #>  1 a11yShiny  0.1.4   R (>= … shiny … devtool… NA               EUPL-1…
@@ -237,7 +237,7 @@ cmc$list()
 #>  8 abasequen… 0.1.0   NA      NA      NA       NA               GPL-3  
 #>  9 abba       0.2.0   NA      yaml, … testtha… NA               Apache…
 #> 10 abbreviate 0.1     NA      NA      testtha… NA               GPL-3  
-#> # ℹ 48,538 more rows
+#> # ℹ 48,524 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,

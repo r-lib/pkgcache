@@ -4,7 +4,8 @@ local_clear_http_options <- function(.local_envir = parent.frame()) {
     "connecttimeout",
     "low_speed_time",
     "low_speed_limit",
-    "http_version"
+    "http_version",
+    "retry"
   )
   opts <- c(paste0("pkgcache_", nms), paste0("pkg_http_", nms))
   withr::local_options(
@@ -343,12 +344,15 @@ test_that("download_files, no errors", {
   expect_s3_class(ret[[3]], "async_http_error")
 })
 
-test_that("set_pkgcache_curl_options", {
+test_that("set_pkgcache_http_options", {
   local_clear_http_options()
 
   # nothing configured: leave the options untouched, no defaults added
-  expect_equal(set_pkgcache_curl_options(list()), list())
-  expect_equal(set_pkgcache_curl_options(list(foo = "bar")), list(foo = "bar"))
+  expect_equal(set_pkgcache_http_options(list())$options, list())
+  expect_equal(
+    set_pkgcache_http_options(list(foo = "bar"))$options,
+    list(foo = "bar")
+  )
 
   # pkgcache_* options are picked up and coerced to integer
   withr::local_options(
@@ -359,7 +363,7 @@ test_that("set_pkgcache_curl_options", {
     pkgcache_http_version = 2
   )
   expect_equal(
-    set_pkgcache_curl_options(list(foo = "bar")),
+    set_pkgcache_http_options(list(foo = "bar"))$options,
     list(
       foo = "bar",
       timeout = 100L,
@@ -372,7 +376,7 @@ test_that("set_pkgcache_curl_options", {
 
   # an explicit option in the request wins over the pkgcache_* option
   expect_equal(
-    set_pkgcache_curl_options(list(http_version = 3))$http_version,
+    set_pkgcache_http_options(list(http_version = 3))$options$http_version,
     3L
   )
 
@@ -385,25 +389,25 @@ test_that("set_pkgcache_curl_options", {
     pkgcache_http_version = NULL
   )
   withr::local_envvar(PKGCACHE_HTTP_VERSION = "3")
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 3L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 3L)
 
   # an unset pkgcache_* option must not add a curl option, so that the
   # async_http_* option and the async default still apply downstream
   withr::local_envvar(PKGCACHE_HTTP_VERSION = NA_character_)
-  expect_equal(set_pkgcache_curl_options(list()), list())
+  expect_equal(set_pkgcache_http_options(list())$options, list())
 })
 
-test_that("set_pkgcache_curl_options, pkg_http_ fallback", {
+test_that("set_pkgcache_http_options, pkg_http_ fallback", {
   local_clear_http_options()
 
   # pkg_http_* option is used when nothing with higher priority is set
   withr::local_options(pkg_http_http_version = 2)
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 2L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 2L)
 
   # PKG_HTTP_* env var is used when no option is set
   withr::local_options(pkg_http_http_version = NULL)
   withr::local_envvar(PKG_HTTP_HTTP_VERSION = "2")
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 2L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 2L)
 
   # full precedence: pkgcache_ option > PKGCACHE_ env > pkg_http_ option >
   # PKG_HTTP_ env
@@ -415,16 +419,49 @@ test_that("set_pkgcache_curl_options, pkg_http_ fallback", {
     pkgcache_http_version = 3,
     pkg_http_http_version = 6
   )
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 3L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 3L)
 
   withr::local_options(pkgcache_http_version = NULL)
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 4L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 4L)
 
   withr::local_envvar(PKGCACHE_HTTP_VERSION = NA_character_)
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 6L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 6L)
 
   withr::local_options(pkg_http_http_version = NULL)
-  expect_equal(set_pkgcache_curl_options(list())$http_version, 5L)
+  expect_equal(set_pkgcache_http_options(list())$options$http_version, 5L)
+})
+
+test_that("set_pkgcache_http_options, retry", {
+  local_clear_http_options()
+
+  # nothing configured and nothing passed: fall back to the default `TRUE`
+  expect_equal(set_pkgcache_http_options(list())$retry, TRUE)
+  # an explicit (non-`NULL`) retry in the request is kept as-is
+  expect_equal(set_pkgcache_http_options(list(), retry = FALSE)$retry, FALSE)
+
+  # a configured retry is used when none is passed, and is coerced
+  withr::local_options(pkgcache_retry = 5)
+  expect_equal(set_pkgcache_http_options(list())$retry, 5)
+
+  # an explicit `retry` in the request wins over the configured one
+  expect_equal(set_pkgcache_http_options(list(), retry = 1)$retry, 1)
+
+  # options are used as-is, e.g. a list configuring the retry policy
+  withr::local_options(pkgcache_retry = list(limit = 3))
+  expect_equal(set_pkgcache_http_options(list())$retry, list(limit = 3))
+
+  # environment variables arrive as strings and are coerced
+  withr::local_options(pkgcache_retry = NULL)
+  withr::local_envvar(PKGCACHE_RETRY = "4")
+  expect_equal(set_pkgcache_http_options(list())$retry, 4L)
+
+  withr::local_envvar(PKGCACHE_RETRY = "FALSE")
+  expect_equal(set_pkgcache_http_options(list())$retry, FALSE)
+
+  # pkg_http_ fallback works for retry too
+  withr::local_envvar(PKGCACHE_RETRY = NA_character_)
+  withr::local_options(pkg_http_retry = 2)
+  expect_equal(set_pkgcache_http_options(list())$retry, 2)
 })
 
 test_that("http requests honor pkgcache_* options", {

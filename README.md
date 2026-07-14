@@ -204,6 +204,10 @@ configure Bioconductor support.
   `2` forces HTTP/1.1 and `0` lets libcurl choose. It defaults to HTTP/1.1,
   because HTTP/2 has caused transport-level failures with some client and
   server combinations.
+- `pkgcache_retry` configures whether and how failed HTTP requests are
+  retried. It is either a number, to set the maximum number of retries, or
+  `TRUE` (the default) or `FALSE` to enable or disable retries. It can also
+  be a named list for finer control over the retry policy.
 
 ## Package environment variables
 
@@ -252,6 +256,10 @@ configure Bioconductor support.
   because HTTP/2 has caused transport-level failures with some client and
   server combinations. The `pkgcache_http_version` option has priority over
   this, if set.
+- `PKGCACHE_RETRY` configures whether and how failed HTTP requests are
+  retried. It is either a number, to set the maximum number of retries, or
+  `TRUE` (the default) or `FALSE` to enable or disable retries. The
+  `pkgcache_retry` option has priority over this, if set.
 - `R_PKG_CACHE_DIR` is used for the cache directory, if set. (Otherwise
   `tools::R_user_dir("pkgcache", "cache")` is used, see also
   `meta_cache_summary()` and `pkg_cache_summary()`).

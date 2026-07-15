@@ -362,9 +362,9 @@
     Code
       cmc$update()
     Message
-      ! Cannot find credentials for URL <http://username@127.0.0.1:3000//src/contrib/PACKAGES.gz>, credential lookup
+      ! Cannot find credentials for URL <http://username@127.0.0.1:3000/src/contrib/PACKAGES.gz>, credential lookup
       failed. Keyring backend: "env".
-      x Did not find credentials for repo <http://username@127.0.0.1:3000/>, keyring
+      x Did not find credentials for repo <http://username@127.0.0.1:3000>, keyring
       lookup failed (env backend).
       v Updated metadata database: <size> <unit> in <num> file<s>.
       i source packages are missing from CRAN: Unauthorized (HTTP 401).
@@ -388,7 +388,7 @@
     Code
       cmc$update()
     Message
-      v Found credentials for repo <http://username@127.0.0.1:3000/> (keyring:env).
+      v Found credentials for repo <http://username@127.0.0.1:3000> (keyring:env).
       v Updated metadata database: <size> <unit> in <num> file<s>.
       i Updating metadata database
       v Updating metadata database ... done

@@ -15,9 +15,9 @@
       stat
     Output
       # A data frame: 1 x 10
-        name  url                     type  bioc_version platform path        r_version ok     ping error 
-        <chr> <chr>                   <chr> <chr>        <chr>    <chr>       <chr>     <lgl> <dbl> <list>
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
+        name  url                    type  bioc_version platform path        r_version ok     ping error 
+        <chr> <chr>                  <chr> <chr>        <chr>    <chr>       <chr>     <lgl> <dbl> <list>
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
     Code
       summary(stat)
     Output
@@ -41,10 +41,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform               path                                 r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform               path                                 r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -68,12 +68,12 @@
       stat
     Output
       # A data frame: 4 x 10
-        name  url                     type  bioc_version platform               path                                 r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                 src/contrib                          4.1       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>    
-      3 CRAN  http://127.0.0.1:3000/ cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.1 4.1       FALSE  NA   <async_rj>
-      4 CRAN  http://127.0.0.1:3000/ cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform               path                                 r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                 src/contrib                          4.1       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>    
+      3 CRAN  http://127.0.0.1:3000 cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.1 4.1       FALSE  NA   <async_rj>
+      4 CRAN  http://127.0.0.1:3000 cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -98,10 +98,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform                path                   r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                   <chr>                  <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                  src/contrib            4.2       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         x86_64-apple-darwin17.0 bin/macosx/contrib/4.2 4.2       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform                path                   r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                   <chr>                  <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                  src/contrib            4.2       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         x86_64-apple-darwin17.0 bin/macosx/contrib/4.2 4.2       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -125,10 +125,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform                path                    r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                  src/contrib             4.2       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/4.2 4.2       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform                path                    r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                  src/contrib             4.2       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/4.2 4.2       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -152,10 +152,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform                path                    r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                  src/contrib             4.0       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/4.0 4.0       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform                path                    r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                  src/contrib             4.0       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/4.0 4.0       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -179,10 +179,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform                path                    r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                  src/contrib             3.6       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/3.6 3.6       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform                path                    r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                  src/contrib             3.6       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/3.6 3.6       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -206,10 +206,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform                path                    r_version ok     ping error     
-        <chr> <chr>                   <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                  src/contrib             3.5       TRUE    0.1 <NULL>    
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/3.5 3.5       FALSE  NA   <async_rj>
+        name  url                    type  bioc_version platform                path                    r_version ok     ping error     
+        <chr> <chr>                  <chr> <chr>        <chr>                   <chr>                   <chr>     <lgl> <dbl> <list>    
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                  src/contrib             3.5       TRUE    0.1 <NULL>    
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         i386+x86_64-w64-mingw32 bin/windows/contrib/3.5 3.5       FALSE  NA   <async_rj>
     Code
       summary(stat)
     Output
@@ -226,7 +226,7 @@
       # A data frame: 6 x 10
         name          url                                                   type  bioc_version platform path        r_version ok     ping error 
         <chr>         <chr>                                                 <chr> <chr>        <chr>    <chr>       <chr>     <lgl> <dbl> <list>
-      1 CRAN          http://127.0.0.1:3000/                               cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
+      1 CRAN          http://127.0.0.1:3000                                cran  <NA>         source   src/contrib 4.2       TRUE    0.1 <NULL>
       2 BioCsoft      http://127.0.0.1:3000//packages/3.16/bioc            bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
       3 BioCann       http://127.0.0.1:3000//packages/3.16/data/annotation bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>
       4 BioCexp       http://127.0.0.1:3000//packages/3.16/data/experiment bioc  3.16         source   src/contrib 4.2       TRUE    0.1 <NULL>

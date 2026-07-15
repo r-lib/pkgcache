@@ -70,6 +70,12 @@ test_that("cmc__get_repos", {
     res$bioc_version,
     c(NA_character_, NA_character_, "3.8", "3.8", "3.8", "3.8")
   )
+
+  ## Trailing slashes are dropped, so we don't create URLs with a double
+  ## slash. See r-lib/pak#888.
+  repos <- c(CRAN = "https://example.com/repo/", EXTRA = "https://x.com//")
+  res <- cmc__get_repos(repos, FALSE, "https://example.com/repo/", "3.5")
+  expect_equal(res$url, c("https://example.com/repo", "https://x.com"))
 })
 
 test_that("cleanup", {

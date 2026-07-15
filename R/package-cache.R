@@ -429,13 +429,23 @@ package_cache <- R6Class(
       l <- private$lock(exclusive = TRUE)
       on.exit(filelock::unlock(l), add = TRUE)
       dbfile <- get_db_file(private$path)
+      pkgs <- c(list(...), .list)
 
-      ex <- private$find_locked(..., .list = .list)
-      if (nrow(ex) != 0) {
-        unlink(file.path(private$path, ex$path))
-        db <- delete_from_data_frame(read_db_rds(dbfile), ..., .list = .list)
-        save_rds(db, dbfile)
+      if (length(pkgs) == 0) {
+        files <- list.files(private$path, recursive = TRUE, full.names = TRUE)
+        files <- setdiff(files, get_lock_file(private$path))
+        unlink(files, recursive = TRUE, force = TRUE)
+        unlink(dbfile, force = TRUE)
+      } else {
+        db <- read_db_rds(dbfile)
+        idx <- find_in_data_frame(db, .list = pkgs)
+        if (length(idx) != 0) {
+          unlink(file.path(private$path, db$path[idx]))
+          save_rds(db[-idx, ], dbfile)
+        }
       }
+
+      invisible()
     }
   ),
 
@@ -468,19 +478,20 @@ get_lock_file <- function(path) {
   file.path(path, ".db.lock")
 }
 
-# Read the package cache database (`.db.rds`). If the RDS file is corrupt,
-# then `readRDS()` fails with an unhelpful message (see r-lib/pak#884), so
-# we throw a more useful error, telling the user how to fix the problem.
 read_db_rds <- function(dbfile) {
   tryCatch(
     suppressWarnings(readRDS(dbfile)),
     error = function(err) {
-      throw(new_error(
+      cond <- new_error(
         "Failed to read the package cache database from ",
         encodeString(dbfile, quote = "`"),
-        ". The cache file is possibly corrupt, please delete it manually ",
-        "and try again."
-      ), parent = err)
+        ". The cache file is possibly corrupt, call ",
+        "`pkgcache::pkg_cache_delete_files()` to reset the cache, ",
+        "and then try again."
+      )
+      cond$dbfile <- dbfile
+      class(cond) <- c("pkgcache_corrupt_db_error", class(cond))
+      throw(cond, parent = err)
     }
   )
 }

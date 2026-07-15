@@ -1,9 +1,8 @@
 # pkgcache (development version)
 
-* When the package cache database file (`.db.rds`) is corrupt, pkgcache
-  now fails with an informative error message, telling the user to delete
-  the cache file manually, instead of an unhelpful `readRDS()` error.
-  Closes https://github.com/r-lib/pak/issues/884.
+* Better behavior for a corrupt package cache database: better error
+  message, and cleaning the cache does not fail in this case
+  (https://github.com/r-lib/pak/issues/884).
 
 * pkgcache now treats `PACKAGES` entries with `Path` and/or `File`
   fields correctly (#141, @jeroen).

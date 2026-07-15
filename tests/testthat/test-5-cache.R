@@ -291,11 +291,38 @@ test_that("corrupt db file gives helpful error", {
   writeLines("this is not an RDS file", dbfile)
 
   err <- tryCatch(pc$list(), error = function(e) e)
-  expect_s3_class(err, "error")
+  # classed condition, so callers (e.g. pak) can handle it specifically
+  expect_s3_class(err, "pkgcache_corrupt_db_error")
+  expect_equal(err$dbfile, dbfile)
   expect_match(
     conditionMessage(err),
-    "cache file is possibly corrupt, please delete it manually"
+    "cache file is possibly corrupt, call"
   )
   # the original readRDS error is kept as the parent condition
   expect_false(is.null(err$parent))
+})
+
+test_that("can delete everything even if db file is corrupt", {
+  pc <- package_cache$new(tmp <- tempfile())
+  on.exit(unlink(tmp, recursive = TRUE))
+  cat("f1\n", file = f1 <- tempfile())
+  pc$add(f1, path = file.path("src", "contrib", "p_1.0.tar.gz"), package = "p")
+
+  # corrupt the cache database file
+  dbfile <- get_db_file(tmp)
+  writeLines("this is not an RDS file", dbfile)
+
+  # deleting everything must still work and reset the cache
+  expect_silent(pc$delete())
+  expect_false(file.exists(file.path(tmp, "src", "contrib", "p_1.0.tar.gz")))
+  # the corrupt database file is removed, and recreated empty on demand
+  expect_false(file.exists(get_db_file(tmp)))
+  expect_equal(nrow(package_cache$new(tmp)$list()), 0L)
+
+  # ... but a selective delete cannot, and reports the corruption
+  writeLines("this is not an RDS file", dbfile)
+  expect_error(
+    pc$delete(package = "p"),
+    "cache file is possibly corrupt, call"
+  )
 })

@@ -281,3 +281,21 @@ test_that("update_or_add, cache is current", {
   attr(hit2, "action") <- "Current"
   expect_equal(hit2, hit)
 })
+
+test_that("corrupt db file gives helpful error", {
+  pc <- package_cache$new(tmp <- tempfile())
+  on.exit(unlink(tmp, recursive = TRUE))
+
+  # corrupt the cache database file
+  dbfile <- get_db_file(tmp)
+  writeLines("this is not an RDS file", dbfile)
+
+  err <- tryCatch(pc$list(), error = function(e) e)
+  expect_s3_class(err, "error")
+  expect_match(
+    conditionMessage(err),
+    "cache file is possibly corrupt, please delete it manually"
+  )
+  # the original readRDS error is kept as the parent condition
+  expect_false(is.null(err$parent))
+})

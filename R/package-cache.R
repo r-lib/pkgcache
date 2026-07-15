@@ -486,8 +486,8 @@ read_db_rds <- function(dbfile) {
         "Failed to read the package cache database from ",
         encodeString(dbfile, quote = "`"),
         ". The cache file is possibly corrupt, call ",
-        "`pkgcache::pkg_cache_delete_files()` to reset the cache, ",
-        "and then try again."
+        "`pkgcache::pkg_cache_delete_files()` or `pak::cache_clean()` ",
+        "to reset the cache, and then try again."
       )
       cond$dbfile <- dbfile
       class(cond) <- c("pkgcache_corrupt_db_error", class(cond))

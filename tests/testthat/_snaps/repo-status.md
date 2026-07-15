@@ -251,10 +251,10 @@
       stat
     Output
       # A data frame: 2 x 10
-        name  url                     type  bioc_version platform               path                                 r_version ok     ping error 
-        <chr> <chr>                   <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>
-      1 CRAN  http://127.0.0.1:3000/ cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>
-      2 CRAN  http://127.0.0.1:3000/ cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       TRUE    0.1 <NULL>
+        name  url                    type  bioc_version platform               path                                 r_version ok     ping error 
+        <chr> <chr>                  <chr> <chr>        <chr>                  <chr>                                <chr>     <lgl> <dbl> <list>
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                 src/contrib                          4.2       TRUE    0.1 <NULL>
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         aarch64-apple-darwin20 bin/macosx/big-sur-arm64/contrib/4.2 4.2       TRUE    0.1 <NULL>
     Code
       summary(stat)
     Output

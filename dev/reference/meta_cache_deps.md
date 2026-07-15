@@ -64,7 +64,7 @@ location and size.
 ``` r
 meta_cache_list("pkgdown")
 #> 
-#> ✔ Updated metadata database: 2.90 MB in 7 files.
+#> ✔ Updated metadata database: 2.91 MB in 7 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done

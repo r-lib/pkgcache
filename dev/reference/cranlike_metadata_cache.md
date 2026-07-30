@@ -167,7 +167,10 @@ some might be missing on some platforms.
   - `"source"` for source packages,
 
   - a platform string, e.g. `x86_64-apple-darwin17.0` for macOS packages
-    compatible with macOS High Sierra or newer.
+    compatible with macOS High Sierra or newer,
+
+  - a platform string with a custom binary package type, e.g.
+    `aarch64-w64-mingw32-windows.binary.clang-aarch64`.
 
 - `needscompilation`: Whether the package needs compilation.
 
@@ -219,12 +222,12 @@ dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()
 #> 
-#> ✔ Updated metadata database: 5.96 MB in 4 files.
+#> ✔ Updated metadata database: 6.01 MB in 4 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 48,540 × 32
+#> # A data frame: 48,944 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
 #>  1 a11yShiny  0.1.4   R (>= … shiny … devtool… NA               EUPL-1…
@@ -237,7 +240,7 @@ cmc$list()
 #>  8 abasequen… 0.1.0   NA      NA      NA       NA               GPL-3  
 #>  9 abba       0.2.0   NA      yaml, … testtha… NA               Apache…
 #> 10 abbreviate 0.1     NA      NA      testtha… NA               GPL-3  
-#> # ℹ 48,530 more rows
+#> # ℹ 48,934 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,

@@ -43,6 +43,9 @@
 <li><p>pkgcache now treats <code>PACKAGES</code> entries with <code>Path</code> and/or <code>File</code> fields correctly (<a href="https://github.com/r-lib/pkgcache/issues/141" class="external-link">#141</a>, <a href="https://github.com/jeroen" class="external-link">@jeroen</a>).</p></li>
 <li><p>pkgcache now drops HTTP query parameter from <code>Path</code> and <code>File</code> entries in <code>PACKAGES</code> when creating the path of the target filename (<a href="https://github.com/r-lib/pkgcache/issues/141" class="external-link">#141</a>, <a href="https://github.com/jeroen" class="external-link">@jeroen</a>).</p></li>
 <li><p>All HTTP requests now honor the <code>pkgcache_http_version</code> option and <code>PKGCACHE_HTTP_VERSION</code> environment variable. Closes <a href="https://github.com/r-lib/pkgcache/issues/140" class="external-link uri">https://github.com/r-lib/pkgcache/issues/140</a>.</p></li>
+<li><p>pkgcache now supports the custom binary package types of R 4.6.0 and later.</p></li>
+<li><p><code><a href="../reference/current_r_platform.html">current_r_platform_data()</a></code> gained a <code>pkg_type</code> column, for custom binary package types.</p></li>
+<li><p><code><a href="../reference/current_r_platform.html">current_r_platform()</a></code> now handles setting <code>PKG_CURRENT_PLATFORM</code> to a non-Linux platform correctly.</p></li>
 <li><p>New <code>PKG_USE_BIOCONDUCTOR</code> environment variable and new <code>pkg.use_bioconductor</code> option to opt out from automatic Bioconductor support.</p></li>
 <li><p>Improved Bioconductor version detection. Avoid HTTP requests if the appropriate Bioconductor version can be determined without it. Closes <a href="https://github.com/r-lib/pak/issues/879" class="external-link uri">https://github.com/r-lib/pak/issues/879</a>.</p></li>
 </ul></div>

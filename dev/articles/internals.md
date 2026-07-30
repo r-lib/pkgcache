@@ -55,3 +55,41 @@ In light of these, this is what we do:
 In summary, when compiling packages, we compile for both archs, except
 if we are in a 64 bit R session and the platform is
 `x86_64-w64-mingw32`.
+
+#### Custom binary package types
+
+From R 4.6.0 `.Platform$pkgType` may be a custom binary package type of
+the form `<system>.binary.<build>`, where `<system>` is the lower case
+name of the system and `<build>` is the name of the build. The author of
+a binary R distribution sets this with the `R_PLATFORM_PKGTYPE`
+environment variable. The matching repository layout, from
+[`utils::contrib.url()`](https://rdrr.io/r/utils/contrib.url.html), is
+`bin/<system>/<build>/contrib/<x.y>`, with `mac` mapped to `macosx` and
+`win` mapped to `windows`. This is a generalization of the
+`mac.binary.<subdir>` types that macOS has been using for a long time.
+
+In light of this, this is what we do:
+
+- The platform name is the usual `cpu-vendor-os` platform string, with
+  the package type appended, e.g.
+  `aarch64-w64-mingw32-windows.binary.clang-aarch64` for Windows on
+  arm64. Two different builds of R for the same platform triple must
+  remain distinguishable, and the platform triple on its own cannot do
+  that.
+- We keep the literal `.binary` in the platform name. It makes it clear
+  that the suffix is a `.Platform$pkgType`, and it is a reliable anchor
+  when parsing a platform name, because no other part of a platform name
+  may contain it. This is what makes a package type work together with
+  the Linux distribution and release parts of a platform name.
+- We only append the package type if it is a *custom* one, i.e. not
+  `win.binary` and not `mac.binary[.<subdir>]`. pkgcache has always had
+  platform names for those, so the platform names on Windows and macOS
+  do not change.
+- The file extension follows `<system>`: `.zip` for `windows` and `.tgz`
+  for `macosx`, the same as `R CMD INSTALL --build` produces, no matter
+  whether the package type is a custom one.
+- A platform name without a package type is unchanged. In particular a
+  plain `aarch64-w64-mingw32` must not be served the x86_64 binaries
+  from `bin/windows/contrib`.
+- A package type on its own is not a valid platform name, it needs the
+  platform triple as well.

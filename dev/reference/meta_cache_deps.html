@@ -102,11 +102,8 @@ and size.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">meta_cache_list</span><span class="op">(</span><span class="st">"pkgdown"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Updated metadata database: 2.91 MB in 7 files.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Updating metadata database</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Updating metadata database ... done</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Loading metadata database</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Loading metadata database ... done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A data frame: 2 × 32</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   package version depends    imports  suggests needscompilation license</span>
@@ -149,12 +146,12 @@ and size.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> devtools   2.5.2   R (&gt;= … <span style="color: #949494;">"</span>cli (… <span style="color: #949494;">"</span>BiocMa… <span style="color: #BB0000;">NA</span>               MIT + …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> pkgdown    2.2.1   R (&gt;= … <span style="color: #949494;">"</span>bslib… <span style="color: #949494;">"</span>covr, … <span style="color: #BB0000;">NA</span>               MIT + …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> pkgdown.o… 0.1.3   <span style="color: #BB0000;">NA</span>      <span style="color: #949494;">"</span>pkgdo… <span style="color: #949494;">"</span>knitr,… <span style="color: #BB0000;">NA</span>               MIT + …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> washr      1.0.1   <span style="color: #BB0000;">NA</span>      <span style="color: #949494;">"</span>desc … <span style="color: #949494;">"</span>knitr,… <span style="color: #BB0000;">NA</span>               GPL (&gt;…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> washr      1.0.2   <span style="color: #BB0000;">NA</span>      <span style="color: #949494;">"</span>desc … <span style="color: #949494;">"</span>knitr,… <span style="color: #BB0000;">NA</span>               GPL (&gt;…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> CALANGO    1.0.20  R (&gt;= … <span style="color: #949494;">"</span>asser… <span style="color: #949494;">"</span>Annota… no               GPL-2  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> devtools   2.5.2   R (&gt;= … <span style="color: #949494;">"</span>cli (… <span style="color: #949494;">"</span>BiocMa… no               MIT + …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> pkgdown    2.2.1   R (&gt;= … <span style="color: #949494;">"</span>bslib… <span style="color: #949494;">"</span>covr, … no               MIT + …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> pkgdown.o… 0.1.3   <span style="color: #BB0000;">NA</span>      <span style="color: #949494;">"</span>pkgdo… <span style="color: #949494;">"</span>knitr,… no               MIT + …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> washr      1.0.1   <span style="color: #BB0000;">NA</span>      <span style="color: #949494;">"</span>desc … <span style="color: #949494;">"</span>knitr,… no               GPL (&gt;…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> washr      1.0.2   <span style="color: #BB0000;">NA</span>      <span style="color: #949494;">"</span>desc … <span style="color: #949494;">"</span>knitr,… no               GPL (&gt;…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 25 more variables: linkingto &lt;chr&gt;, enhances &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   license_restricts_use &lt;chr&gt;, os_type &lt;chr&gt;, path &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   priority &lt;chr&gt;, license_is_foss &lt;chr&gt;, archs &lt;chr&gt;, repodir &lt;chr&gt;,</span></span>

@@ -60,6 +60,7 @@ scalar columns:</p><ul><li><p><code>cpu</code>,</p></li>
 <li><p><code>os</code>,</p></li>
 <li><p><code>distribution</code> (only on Linux),</p></li>
 <li><p><code>release</code> (only on Linux),</p></li>
+<li><p><code>pkg_type</code> (only for a custom binary package type),</p></li>
 <li><p><code>platform</code>: the concatenation of the other columns, separated by
 a dash.</p></li>
 </ul><p><code>default_platforms()</code> returns a character vector of the
@@ -104,7 +105,19 @@ builds might have the same platform string, unfortunately.)</p></li>
 <li><p><code>s390x-ibm-linux-gnu-ubuntu-20.04</code>: Ubuntu Linux 20.04 on S390x.</p></li>
 <li><p><code>amd64-portbld-freebsd12.1</code>: FreeBSD 12.1 on x86_64.</p></li>
 </ul></li>
-</ul><p><code>default_platfoms()</code> returns the default platforms for the current R
+<li><p>A platform string as above, followed by a custom binary package type.
+From R 4.6.0 <code>.Platform$pkgType</code> may be <code>&lt;system&gt;.binary.&lt;build&gt;</code>, and
+then binary packages live in <code>bin/&lt;system&gt;/&lt;build&gt;/contrib/&lt;x.y&gt;</code> in
+the repository, see <code><a href="https://rdrr.io/r/utils/contrib.url.html" class="external-link">utils::contrib.url()</a></code>. pkgcache includes the
+package type in the platform name, so that two builds of R for the
+same platform triple remain distinguishable. Examples:</p><ul><li><p><code>aarch64-w64-mingw32-windows.binary.clang-aarch64</code>: Windows on arm64,
+built with clang.</p></li>
+<li><p><code>aarch64-apple-darwin23-mac.binary.sonoma-arm64</code>: macOS Sonoma on
+arm64. (This is the same as <code>aarch64-apple-darwin23</code>, which pkgcache
+already knows about, so <code>current_r_platform()</code> uses the shorter form.)</p></li>
+</ul><p>A package type on its own, without a platform triple, is not a valid
+platform name.</p></li>
+</ul><p><code>default_platforms()</code> returns the default platforms for the current R
 session. These typically consist of the detected platform of the current
 R session, and <code>"source"</code>, for source packages.</p>
     </div>

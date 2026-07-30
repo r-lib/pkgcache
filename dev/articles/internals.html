@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Gábor
 Csárdi</h4>
             
-            <h4 data-toc-skip class="date">2026-07-15</h4>
+            <h4 data-toc-skip class="date">2026-07-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/pkgcache/blob/main/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
       <div class="d-none name"><code>internals.Rmd</code></div>
@@ -136,6 +136,52 @@ both 32 bit and 64 bit.</li>
 <p>In summary, when compiling packages, we compile for both archs,
 except if we are in a 64 bit R session and the platform is
 <code>x86_64-w64-mingw32</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="custom-binary-package-types">Custom binary package types<a class="anchor" aria-label="anchor" href="#custom-binary-package-types"></a>
+</h4>
+<p>From R 4.6.0 <code>.Platform$pkgType</code> may be a custom binary
+package type of the form
+<code>&lt;system&gt;.binary.&lt;build&gt;</code>, where
+<code>&lt;system&gt;</code> is the lower case name of the system and
+<code>&lt;build&gt;</code> is the name of the build. The author of a
+binary R distribution sets this with the <code>R_PLATFORM_PKGTYPE</code>
+environment variable. The matching repository layout, from
+<code><a href="https://rdrr.io/r/utils/contrib.url.html" class="external-link">utils::contrib.url()</a></code>, is
+<code>bin/&lt;system&gt;/&lt;build&gt;/contrib/&lt;x.y&gt;</code>, with
+<code>mac</code> mapped to <code>macosx</code> and <code>win</code>
+mapped to <code>windows</code>. This is a generalization of the
+<code>mac.binary.&lt;subdir&gt;</code> types that macOS has been using
+for a long time.</p>
+<p>In light of this, this is what we do:</p>
+<ul>
+<li>The platform name is the usual <code>cpu-vendor-os</code> platform
+string, with the package type appended, e.g.
+<code>aarch64-w64-mingw32-windows.binary.clang-aarch64</code> for
+Windows on arm64. Two different builds of R for the same platform triple
+must remain distinguishable, and the platform triple on its own cannot
+do that.</li>
+<li>We keep the literal <code>.binary</code> in the platform name. It
+makes it clear that the suffix is a <code>.Platform$pkgType</code>, and
+it is a reliable anchor when parsing a platform name, because no other
+part of a platform name may contain it. This is what makes a package
+type work together with the Linux distribution and release parts of a
+platform name.</li>
+<li>We only append the package type if it is a <em>custom</em> one,
+i.e. not <code>win.binary</code> and not
+<code>mac.binary[.&lt;subdir&gt;]</code>. pkgcache has always had
+platform names for those, so the platform names on Windows and macOS do
+not change.</li>
+<li>The file extension follows <code>&lt;system&gt;</code>:
+<code>.zip</code> for <code>windows</code> and <code>.tgz</code> for
+<code>macosx</code>, the same as <code>R CMD INSTALL --build</code>
+produces, no matter whether the package type is a custom one.</li>
+<li>A platform name without a package type is unchanged. In particular a
+plain <code>aarch64-w64-mingw32</code> must not be served the x86_64
+binaries from <code>bin/windows/contrib</code>.</li>
+<li>A package type on its own is not a valid platform name, it needs the
+platform triple as well.</li>
+</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

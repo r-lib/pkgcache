@@ -29,6 +29,8 @@ columns:
 
 - `release` (only on Linux),
 
+- `pkg_type` (only for a custom binary package type),
+
 - `platform`: the concatenation of the other columns, separated by a
   dash.
 
@@ -94,7 +96,27 @@ These functions accept the following platform names:
 
   - `amd64-portbld-freebsd12.1`: FreeBSD 12.1 on x86_64.
 
-`default_platfoms()` returns the default platforms for the current R
+- A platform string as above, followed by a custom binary package type.
+  From R 4.6.0 `.Platform$pkgType` may be `<system>.binary.<build>`, and
+  then binary packages live in `bin/<system>/<build>/contrib/<x.y>` in
+  the repository, see
+  [`utils::contrib.url()`](https://rdrr.io/r/utils/contrib.url.html).
+  pkgcache includes the package type in the platform name, so that two
+  builds of R for the same platform triple remain distinguishable.
+  Examples:
+
+  - `aarch64-w64-mingw32-windows.binary.clang-aarch64`: Windows on
+    arm64, built with clang.
+
+  - `aarch64-apple-darwin23-mac.binary.sonoma-arm64`: macOS Sonoma on
+    arm64. (This is the same as `aarch64-apple-darwin23`, which pkgcache
+    already knows about, so `current_r_platform()` uses the shorter
+    form.)
+
+  A package type on its own, without a platform triple, is not a valid
+  platform name.
+
+`default_platforms()` returns the default platforms for the current R
 session. These typically consist of the detected platform of the current
 R session, and `"source"`, for source packages.
 

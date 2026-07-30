@@ -147,7 +147,9 @@ column is either
 \itemize{
 \item \code{"source"} for source packages,
 \item a platform string, e.g. \code{x86_64-apple-darwin17.0} for macOS
-packages compatible with macOS High Sierra or newer.
+packages compatible with macOS High Sierra or newer,
+\item a platform string with a custom binary package type, e.g.
+\code{aarch64-w64-mingw32-windows.binary.clang-aarch64}.
 }
 \item \code{needscompilation}: Whether the package needs compilation.
 \item \code{type}: \code{bioc} or \code{cran}  currently.

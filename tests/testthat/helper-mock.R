@@ -100,10 +100,10 @@ fake <- local({
     tree
   }
 
-  fake <- function(where, what, how) {
+  fake <- function(where, what, how, test_env = parent.frame()) {
+    force(test_env)
     where_name <- deparse(substitute(where))
     stopifnot(is.character(what), length(what) == 1)
-    test_env <- parent.frame()
     tree <- build_function_tree(test_env, where, where_name)
     fake_through_tree(tree, what, how)
   }

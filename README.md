@@ -221,7 +221,7 @@ configure Bioconductor support.
   platform string for the current platform for the
   `current_r_platform()` function. This is useful if pkgcache didn’t
   detect the platform correctly. Alternatively, you can use the
-  `pkg.current_platofrm` option, which takes. priority over the
+  `pkg.current_platform` option, which takes priority over the
   environment variable.
 - `PKGCACHE_PPM_REPO` is the name of the Posit Package Manager
   repository to use. Defaults to `"cran"`.

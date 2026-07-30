@@ -261,6 +261,19 @@
       Repository summary:      source aarch64-apple-darwin20          
       CRAN @ 127.0.0.1:3000     OK             OK             (100ms)
 
+# repo with custom binary package type
+
+    Code
+      stat <- repo_status(platforms = platforms, r_version = "4.7", bioc = FALSE)
+      stat$ping[stat$ok] <- 0.1
+      stat
+    Output
+      # A data frame: 2 x 10
+        name  url                    type  bioc_version platform                                         path                                  r_version ok     ping error 
+        <chr> <chr>                  <chr> <chr>        <chr>                                            <chr>                                 <chr>     <lgl> <dbl> <list>
+      1 CRAN  http://127.0.0.1:3000 cran  <NA>         source                                           src/contrib                           4.7       TRUE    0.1 <NULL>
+      2 CRAN  http://127.0.0.1:3000 cran  <NA>         aarch64-w64-mingw32-windows.binary.clang-aarch64 bin/windows/clang-aarch64/contrib/4.7 4.7       TRUE    0.1 <NULL>
+
 # repo_status unicode output [fancy]
 
     Code

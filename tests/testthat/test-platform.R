@@ -314,7 +314,7 @@ test_that("get_cran_extension, custom binary package types", {
   )
 })
 
-test_that("get_all_package_dirs", {
+test_that("get_all_package_dirs, macOS", {
   if (grepl("^aarch64-apple-", R.version$platform)) {
     skip("M1")
   }

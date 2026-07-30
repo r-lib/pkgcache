@@ -165,6 +165,19 @@
       1 aarch64-w64-mingw32-windows.binary.clang-aarch64 4.7      bin/windows/clang-a~
       2 source                                           *        src/contrib         
 
+# get_all_package_dirs, macOS
+
+    Code
+      get_all_package_dirs("windows", "2.15.0")
+    Condition
+      Error in `FUN()`:
+      ! pkgcache does not support packages for R versions before R 3.2
+    Code
+      get_all_package_dirs("macos", "3.1.3")
+    Condition
+      Error in `FUN()`:
+      ! pkgcache does not support packages for R versions before R 3.2
+
 # current_r_platform_data_linux
 
     Code

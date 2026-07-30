@@ -166,13 +166,16 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
   mkdirp(repo)
 
   options[["platform"]] <- options[["platform"]] %||% "source"
-  options[["rversion"]] <- options[["rversion"]] %||% format(getRversion())
+  options[["r_version"]] <- options[["r_version"]] %||% format(getRversion())
   packages <- standardize_dummy_packages(packages)
 
   if (!is.null(options$repo_prefix)) {
     repo <- file.path(repo, options$repo_prefix)
   }
-  pkgdirs <- get_all_package_dirs(options[["platform"]], getRversion())
+  pkgdirs <- get_all_package_dirs(
+    options[["platform"]],
+    options[["r_version"]]
+  )
   mkdirp(pkgs_dir <- file.path(repo, pkgdirs$contriburl))
 
   extra <- packages
@@ -214,7 +217,8 @@ make_dummy_repo_platform <- function(repo, packages = NULL, options = list()) {
       fn <- make_dummy_binary(
         packages[i, , drop = FALSE],
         pkg_dir,
-        options[["platform"]]
+        options[["platform"]],
+        options[["r_version"]]
       )
     }
     extra$file[i] <- fn

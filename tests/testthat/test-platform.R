@@ -161,7 +161,9 @@ test_that("parse_platform, custom binary package types", {
     "x86_64-pc-linux-gnu-ubuntu-22.04-libc++"
   )
   expect_equal(
-    apply(parse_platform(plt), 1, function(x) paste0(na_omit(x), collapse = "-")),
+    apply(parse_platform(plt), 1, function(x) {
+      paste0(na_omit(x), collapse = "-")
+    }),
     plt
   )
 })
@@ -227,7 +229,10 @@ test_that("get_all_package_dirs, custom binary package types", {
   )
   # a package type without a `<build>` part
   expect_equal(
-    get_all_package_dirs("aarch64-w64-mingw32-windows.binary", "4.7.0")$contriburl,
+    get_all_package_dirs(
+      "aarch64-w64-mingw32-windows.binary",
+      "4.7.0"
+    )$contriburl,
     "bin/windows/contrib/4.7"
   )
   expect_equal(

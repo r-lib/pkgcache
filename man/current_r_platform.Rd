@@ -23,6 +23,7 @@ scalar columns:
 \item \code{os},
 \item \code{distribution} (only on Linux),
 \item \code{release} (only on Linux),
+\item \code{pkg_type} (only for a custom binary package type),
 \item \code{platform}: the concatenation of the other columns, separated by
 a dash.
 }
@@ -77,9 +78,25 @@ builds might have the same platform string, unfortunately.)
 \item \code{s390x-ibm-linux-gnu-ubuntu-20.04}: Ubuntu Linux 20.04 on S390x.
 \item \code{amd64-portbld-freebsd12.1}: FreeBSD 12.1 on x86_64.
 }
+\item A platform string as above, followed by a custom binary package type.
+From R 4.6.0 \code{.Platform$pkgType} may be \verb{<system>.binary.<build>}, and
+then binary packages live in \verb{bin/<system>/<build>/contrib/<x.y>} in
+the repository, see \code{\link[utils:contrib.url]{utils::contrib.url()}}. pkgcache includes the
+package type in the platform name, so that two builds of R for the
+same platform triple remain distinguishable. Examples:
+\itemize{
+\item \code{aarch64-w64-mingw32-windows.binary.clang-aarch64}: Windows on arm64,
+built with clang.
+\item \code{aarch64-apple-darwin23-mac.binary.sonoma-arm64}: macOS Sonoma on
+arm64. (This is the same as \code{aarch64-apple-darwin23}, which pkgcache
+already knows about, so \code{current_r_platform()} uses the shorter form.)
 }
 
-\code{default_platfoms()} returns the default platforms for the current R
+A package type on its own, without a platform triple, is not a valid
+platform name.
+}
+
+\code{default_platforms()} returns the default platforms for the current R
 session. These typically consist of the detected platform of the current
 R session, and \code{"source"}, for source packages.
 }

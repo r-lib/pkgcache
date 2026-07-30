@@ -1,3 +1,82 @@
+# parse_pkg_type
+
+    Code
+      parse_pkg_type("source")
+    Output
+      NULL
+    Code
+      parse_pkg_type("win.binary")
+    Output
+      $system
+      [1] "windows"
+      
+      $build
+      [1] NA
+      
+    Code
+      parse_pkg_type("mac.binary")
+    Output
+      $system
+      [1] "macosx"
+      
+      $build
+      [1] NA
+      
+    Code
+      parse_pkg_type("mac.binary.big-sur-arm64")
+    Output
+      $system
+      [1] "macosx"
+      
+      $build
+      [1] "big-sur-arm64"
+      
+    Code
+      parse_pkg_type("windows.binary.clang-aarch64")
+    Output
+      $system
+      [1] "windows"
+      
+      $build
+      [1] "clang-aarch64"
+      
+    Code
+      parse_pkg_type("windows.binary")
+    Output
+      $system
+      [1] "windows"
+      
+      $build
+      [1] NA
+      
+    Code
+      parse_pkg_type("linux.binary.clang19")
+    Output
+      $system
+      [1] "linux"
+      
+      $build
+      [1] "clang19"
+      
+    Code
+      parse_pkg_type("Windows.Binary.X")
+    Output
+      NULL
+    Code
+      parse_pkg_type("win.binary.a.b")
+    Output
+      NULL
+
+# current_r_platform_data, custom binary package type
+
+    Code
+      current_r_platform_data()
+    Output
+            cpu vendor      os                     pkg_type
+      1 aarch64    w64 mingw32 windows.binary.clang-aarch64
+                                                platform
+      1 aarch64-w64-mingw32-windows.binary.clang-aarch64
+
 # parse_platform
 
     Code
@@ -23,6 +102,21 @@
       11     aarch64     pc  linux-gnu       ubuntu        24.04
       12     aarch64     pc  linux-gnu       ubuntu 24.04-libc++
       13     aarch64     pc linux-musl       alpine         13.4
+
+# parse_platform, custom binary package types
+
+    Code
+      parse_platform(c("aarch64-w64-mingw32-windows.binary.clang-aarch64",
+        "x86_64-w64-mingw32", "aarch64-apple-darwin23-mac.binary.sonoma-arm64",
+        "aarch64-w64-mingw32-windows.binary",
+        "x86_64-pc-linux-gnu-ubuntu-24.04-linux.binary.clang19"))
+    Output
+            cpu vendor        os distribution release                     pkg_type
+      1 aarch64    w64   mingw32         <NA>    <NA> windows.binary.clang-aarch64
+      2  x86_64    w64   mingw32         <NA>    <NA>                         <NA>
+      3 aarch64  apple  darwin23         <NA>    <NA>      mac.binary.sonoma-arm64
+      4 aarch64    w64   mingw32         <NA>    <NA>               windows.binary
+      5  x86_64     pc linux-gnu       ubuntu   24.04         linux.binary.clang19
 
 # re_linux_platform
 
@@ -59,18 +153,17 @@
       Error in `get_package_dirs_for_platform()`:
       ! pkgcache does not support packages for R versions before R 3.2
 
----
+# get_all_package_dirs, custom binary package types
 
     Code
-      get_all_package_dirs("windows", "2.15.0")
-    Condition
-      Error in `FUN()`:
-      ! pkgcache does not support packages for R versions before R 3.2
-    Code
-      get_all_package_dirs("macos", "3.1.3")
-    Condition
-      Error in `FUN()`:
-      ! pkgcache does not support packages for R versions before R 3.2
+      get_all_package_dirs(c("aarch64-w64-mingw32-windows.binary.clang-aarch64",
+        "source"), "4.7.0")
+    Output
+      # A data frame: 2 x 3
+        platform                                         rversion contriburl          
+      * <chr>                                            <chr>    <chr>               
+      1 aarch64-w64-mingw32-windows.binary.clang-aarch64 4.7      bin/windows/clang-a~
+      2 source                                           *        src/contrib         
 
 # current_r_platform_data_linux
 
@@ -580,7 +673,7 @@
       current_r_platform()
     Condition
       Error in `forced_platform()`:
-      ! The pkg.current_platform` option must be a valid platform triple: `cpu-vendor-os`. "foobar" is not.
+      ! The pkg.current_platform` option must be a valid platform name: `cpu-vendor-os`, optionally followed by a Linux distribution and release, or a binary package type. "foobar" is not.
 
 ---
 
@@ -588,7 +681,7 @@
       current_r_platform()
     Condition
       Error in `forced_platform()`:
-      ! The `PKG_CURRENT_PLATFORM` environment variable must be a valid platform triple: "cpu-vendor-os". "foobar" is not.
+      ! The `PKG_CURRENT_PLATFORM` environment variable must be a valid platform name: "cpu-vendor-os", optionally followed by a Linux distribution and release, or a binary package type. "foobar" is not.
 
 # platform with flavors
 
@@ -606,4 +699,14 @@
       current_r_platform()
     Output
       [1] "x86_64-pc-linux-gnu-ubuntu-22.04-libc++"
+
+# forced platform with a custom binary package type
+
+    Code
+      current_r_platform_data()
+    Output
+            cpu vendor      os                     pkg_type
+      1 aarch64    w64 mingw32 windows.binary.clang-aarch64
+                                                platform
+      1 aarch64-w64-mingw32-windows.binary.clang-aarch64
 

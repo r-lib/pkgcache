@@ -88,6 +88,64 @@ test_that("repo with binary packages", {
   )
 })
 
+test_that("repo with custom binary package type", {
+  withr::local_options(width = 1000)
+
+  platforms <- c(
+    "aarch64-w64-mingw32-windows.binary.clang-aarch64",
+    "source"
+  )
+  fake_cran <- webfakes::local_app_process(
+    cran_app(
+      cran_app_pkgs,
+      options = list(platforms = platforms, r_version = "4.7")
+    ),
+    opts = webfakes::server_opts(num_threads = 3)
+  )
+  withr::local_options(repos = c(CRAN = fake_cran$url()))
+
+  expect_snapshot(
+    {
+      stat <- repo_status(
+        platforms = platforms,
+        r_version = "4.7",
+        bioc = FALSE
+      )
+      stat$ping[stat$ok] <- 0.1
+      stat
+    },
+    transform = fix_port_number
+  )
+
+  # the metadata must list the binaries, with a target that exists
+  cmc <- cranlike_metadata_cache$new(
+    platforms = platforms,
+    r_version = "4.7",
+    bioc = FALSE,
+    cran_mirror = fake_cran$url(),
+    primary_path = withr::local_tempdir(),
+    replica_path = withr::local_tempdir()
+  )
+  pkgs <- cmc$list()
+  bin <- pkgs[pkgs$platform != "source", ]
+  expect_true(nrow(bin) > 0)
+  expect_equal(
+    unique(bin$platform),
+    "aarch64-w64-mingw32-windows.binary.clang-aarch64"
+  )
+  expect_true(all(startsWith(
+    bin$target,
+    "bin/windows/clang-aarch64/contrib/4.7/"
+  )))
+  expect_true(all(grepl("[.]zip$", bin$target)))
+
+  # and the files are really there
+  urls <- paste0(fake_cran$url(), sub("^/", "", bin$target))
+  for (u in urls) {
+    expect_equal(curl::curl_fetch_memory(u)$status_code, 200L)
+  }
+})
+
 cli::test_that_cli(config = "fancy", "repo_status unicode output", {
   setup_fake_apps()
   withr::local_options(

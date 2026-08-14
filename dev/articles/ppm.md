@@ -114,7 +114,7 @@ lists all PPM snapshot dates and ids:
 pkgcache::ppm_snapshots()
 ```
 
-    ## # A data frame: 3,215 × 2
+    ## # A data frame: 3,230 × 2
     ##    date       id        
     ##    <date>     <chr>     
     ##  1 2017-10-10 2017-10-10
@@ -127,7 +127,7 @@ pkgcache::ppm_snapshots()
     ##  8 2017-10-17 2017-10-17
     ##  9 2017-10-18 2017-10-18
     ## 10 2017-10-19 2017-10-19
-    ## # ℹ 3,205 more rows
+    ## # ℹ 3,220 more rows
 
 You can use the snapshot ids or dates in the PPM repository URL to
 select a particular snapshot. E.g. these two repository URLs are
@@ -157,7 +157,11 @@ because R recognizes binary packages at installation time, and handles
 them appropriately.
 
 pkgcache detects binary PPM repositories, and constructs their platform
-string:
+string. For a distribution specific repository this is the platform of
+the current machine. `manylinux` repositories serve generic Linux
+binaries, which are built against a certain glibc version instead of a
+distribution, so their platform contains the glibc version, e.g.
+`aarch64-unknown-linux-gnu-manylinux-2.28`.
 
 ``` r
 

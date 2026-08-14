@@ -202,6 +202,54 @@ test_that("read_packages_file from PPM", {
   expect_snapshot(pkgs$pkgs$target)
 })
 
+test_that("read_packages_file from PPM manylinux", {
+  pkgs1 <- test_path("fixtures", "PACKAGES-ppm1.gz")
+  pkgs2 <- test_path("fixtures", "PACKAGES-ppm2.gz")
+
+  pkgs <- read_packages_file(
+    pkgs1,
+    mirror = "https://p3m.dev/cran/__linux__/manylinux_2_28/latest",
+    repodir = "src/contrib",
+    platform = "source",
+    rversion = "*",
+    bin_path = pkgs2,
+    orig_r_version = "4.2",
+  )
+
+  cols <- c("package", "platform", "rversion")
+  # the cpu-vendor-os triple is the current one, drop it from the snapshot
+  fix_platform <- function(x) {
+    sub(
+      "[-._a-zA-Z0-9]+-manylinux-2[.]28",
+      "<current-triple>-manylinux-2.28",
+      x
+    )
+  }
+  pkgs$pkgs$platform <- fix_platform(pkgs$pkgs$platform)
+  pkgs$pkgs$target <- fix_platform(pkgs$pkgs$target)
+  expect_snapshot(pkgs$pkgs[, cols])
+  expect_snapshot(pkgs$pkgs$target)
+})
+
+test_that("ppm_manylinux_platform_suffix", {
+  expect_equal(
+    ppm_manylinux_platform_suffix(c(
+      "https://p3m.dev/cran/__linux__/manylinux_2_28/latest",
+      "https://p3m.dev/cran/__linux__/manylinux_2_28/latest/",
+      "https://p3m.dev/cran/__linux__/manylinux_2_34/2026-01-01",
+      "https://p3m.dev/cran/__linux__/noble/latest",
+      "https://cran.r-project.org"
+    )),
+    c(
+      "manylinux-2.28",
+      "manylinux-2.28",
+      "manylinux-2.34",
+      NA_character_,
+      NA_character_
+    )
+  )
+})
+
 test_that("rversion and platform", {
   pkgs1 <- test_path("fixtures", "PACKAGES-rhub")
   pkgs <- read_packages_file(

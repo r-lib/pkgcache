@@ -70,6 +70,29 @@
       [3] "src/contrib/<current-platform>/4.2/ps_1.7.2.tar.gz"
       [4] "src/contrib/zip_2.2.2.tar.gz"                      
 
+# read_packages_file from PPM manylinux
+
+    Code
+      pkgs$pkgs[, cols]
+    Output
+      # A data frame: 4 x 3
+        package  platform                        rversion
+        <chr>    <chr>                           <chr>   
+      1 filelock source                          *       
+      2 fs       <current-triple>-manylinux-2.28 4.2     
+      3 ps       <current-triple>-manylinux-2.28 4.2     
+      4 zip      source                          *       
+
+---
+
+    Code
+      pkgs$pkgs$target
+    Output
+      [1] "src/contrib/filelock_1.0.2.tar.gz"                              
+      [2] "src/contrib/<current-triple>-manylinux-2.28/4.2/fs_1.6.1.tar.gz"
+      [3] "src/contrib/<current-triple>-manylinux-2.28/4.2/ps_1.7.2.tar.gz"
+      [4] "src/contrib/zip_2.2.2.tar.gz"                                   
+
 # rversion and platform
 
     Code

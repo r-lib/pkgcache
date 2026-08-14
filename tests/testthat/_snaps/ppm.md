@@ -93,7 +93,7 @@
       31                trixie   linux         trixie       debian      13     TRUE
       32               windows windows                     windows     all     TRUE
       33                 macos   macos                       macos     all     TRUE
-      34        manylinux_2_28   linux manylinux_2_28       centos       8     TRUE
+      34        manylinux_2_28   linux manylinux_2_28    manylinux    2.28     TRUE
       35              internal   linux       internal     internal     all     TRUE
                                                                                                                 platforms
       1                                                                                                          centos-7
@@ -129,7 +129,7 @@
       31                                                                                                        debian-13
       32                                                                                                      windows-all
       33                                                                                                        macos-all
-      34                                                                                                         centos-8
+      34                                                                                                   manylinux-2.28
       35                                                                                                     internal-all
 
 # async_get_ppm_status 3
@@ -191,7 +191,7 @@
       32                trixie   linux         trixie       debian      13     TRUE
       33               windows windows                     windows     all     TRUE
       34                 macos   macos                       macos     all     TRUE
-      35        manylinux_2_28   linux manylinux_2_28       centos       8     TRUE
+      35        manylinux_2_28   linux manylinux_2_28    manylinux    2.28     TRUE
       36              internal   linux       internal     internal     all     TRUE
                                                                                                                 platforms
       1                                                                                                          centos-7
@@ -228,6 +228,6 @@
       32                                                                                                        debian-13
       33                                                                                                      windows-all
       34                                                                                                        macos-all
-      35                                                                                                         centos-8
+      35                                                                                                   manylinux-2.28
       36                                                                                                     internal-all
 

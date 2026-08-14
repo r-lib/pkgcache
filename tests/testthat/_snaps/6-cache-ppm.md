@@ -42,3 +42,15 @@
               platform
       1 *-ubuntu-22.04
 
+# source expected, got manylinux binary
+
+    Code
+      pkgs[, cols]
+    Output
+                                                     path package url etag
+      1 src/contrib/*-manylinux-2.28/4.2/pkg_1.0.0.tar.gz      NA  NA   NA
+                                                                  sha256
+      1 32f7b637cf5ab87ba96679679e673901c339626b513a6b9d033d360302602080
+                platform
+      1 *-manylinux-2.28
+

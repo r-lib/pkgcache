@@ -93,6 +93,34 @@ test_that("source expected, got binary", {
   expect_true(all(file.exists(pkgs$fullpath)))
 })
 
+test_that("source expected, got manylinux binary", {
+  pc <- package_cache$new(withr::local_tempdir())
+  pkg <- withr::local_tempfile()
+  writeBin(c(charToRaw("just a file"), as.raw(0x0a)), pkg)
+  pc$add(
+    pkg,
+    "src/contrib/pkg_1.0.0.tar.gz",
+    platform = "source",
+    .headers = c(
+      "x-content-type-options: nosniff",
+      "x-frame-options: DENY",
+      "x-package-binary-tag: 4.2-manylinux_2_28",
+      "x-package-type: binary",
+      "x-repository-type: RSPM"
+    )
+  )
+
+  pkgs <- pc$list()
+  cols <- setdiff(colnames(pkgs), "fullpath")
+  fix_platform <- function(x) {
+    sub("[-._a-zA-Z0-9]+manylinux-2.28", "*-manylinux-2.28", x)
+  }
+  pkgs$path <- fix_platform(pkgs$path)
+  pkgs$platform <- fix_platform(pkgs$platform)
+  expect_snapshot(pkgs[, cols])
+  expect_true(all(file.exists(pkgs$fullpath)))
+})
+
 test_that("update_fields_for_ppm_download edge cases", {
   path <- "foobar"
   extra <- list(foo = "bar")

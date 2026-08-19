@@ -49,10 +49,10 @@ test_that("get_matching_bioc_version errors helpfully on download failure", {
   app <- webfakes::new_app()
   app$get("/config.yaml", function(req, res) res$send(""))
   proc <- webfakes::local_app_process(app)
-  withr::local_envvar(
-    R_BIOC_CONFIG_URL = paste0(proc$url(), "/config.yaml"),
-    R_BIOC_VERSION = NA_character_
+  withr::local_options(
+    BIOCONDUCTOR_CONFIG_FILE = paste0(proc$url(), "/config.yaml")
   )
+  withr::local_envvar(R_BIOC_VERSION = NA_character_)
 
   gmbv <- bioconductor$.internal$get_matching_bioc_version
   fake(gmbv, "getRversion", function() package_version("1.0.0"))

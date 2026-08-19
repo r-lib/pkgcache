@@ -55,6 +55,7 @@ setup_fake_apps <- function(.local_envir = parent.frame()) {
   withr::local_options(
     repos = c(CRAN = fake_cran$url()),
     pkg.cran_metadata_url = fake_cran$url(),
+    BIOCONDUCTOR_CONFIG_FILE = paste0(fake_bioc$url(), "/config.yaml"),
     .local_envir = .local_envir
   )
   withr::local_envvar(

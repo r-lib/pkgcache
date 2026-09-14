@@ -94,6 +94,10 @@ built with clang.
 \item \code{aarch64-apple-darwin23-mac.binary.sonoma-arm64}: macOS Sonoma on
 arm64. (This is the same as \code{aarch64-apple-darwin23}, which pkgcache
 already knows about, so \code{current_r_platform()} uses the shorter form.)
+\item \code{aarch64-apple-darwin23-macos.binary.arm64}: macOS on arm64, as built
+by R-devel (4.7.0). Unlike the \verb{mac.binary.*} types above this one is
+kept in the platform name, because its binaries live in
+\verb{bin/macos/arm64/contrib/<x.y>}.
 }
 
 A package type on its own, without a platform triple, is not a valid

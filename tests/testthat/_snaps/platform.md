@@ -165,7 +165,7 @@
       1 aarch64-w64-mingw32-windows.binary.clang-aarch64 4.7      bin/windows/clang-a~
       2 source                                           *        src/contrib         
 
-# get_all_package_dirs 2
+# get_all_package_dirs, macOS
 
     Code
       get_all_package_dirs("windows", "2.15.0")

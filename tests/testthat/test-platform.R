@@ -106,6 +106,28 @@ test_that("current_r_custom_pkg_type", {
   # the package type must belong to the platform
   expect_null(current_r_custom_pkg_type("darwin23"))
   expect_null(current_r_custom_pkg_type(NA_character_))
+
+  # R-devel (4.7.0) on macOS arm64, `<system>` is `macos`, not `macosx`
+  fake(
+    current_r_custom_pkg_type,
+    "current_r_pkg_type",
+    "macos.binary.arm64"
+  )
+  expect_equal(
+    current_r_custom_pkg_type("darwin23"),
+    "macos.binary.arm64"
+  )
+  expect_null(current_r_custom_pkg_type("mingw32"))
+  expect_null(current_r_custom_pkg_type(NA_character_))
+})
+
+test_that("pkg_type_systems_for_os", {
+  # macOS accepts both the classic and the R-devel spelling
+  expect_equal(pkg_type_systems_for_os("darwin23"), c("macosx", "macos"))
+  expect_equal(pkg_type_systems_for_os("darwin17.0"), c("macosx", "macos"))
+  expect_equal(pkg_type_systems_for_os("mingw32"), "windows")
+  expect_equal(pkg_type_systems_for_os("linux-gnu"), "linux")
+  expect_equal(pkg_type_systems_for_os(NA_character_), NA_character_)
 })
 
 test_that("default_platforms", {
@@ -227,6 +249,14 @@ test_that("get_all_package_dirs, custom binary package types", {
     )$contriburl,
     "bin/macosx/sonoma-arm64/contrib/4.7"
   )
+  # R-devel (4.7.0) on macOS arm64 moved to `bin/macos/arm64`
+  expect_equal(
+    get_all_package_dirs(
+      "aarch64-apple-darwin23-macos.binary.arm64",
+      "4.7.0"
+    )$contriburl,
+    "bin/macos/arm64/contrib/4.7"
+  )
   # a package type without a `<build>` part
   expect_equal(
     get_all_package_dirs(
@@ -314,7 +344,7 @@ test_that("get_cran_extension, custom binary package types", {
   )
 })
 
-test_that("get_all_package_dirs 2", {
+test_that("get_all_package_dirs, macOS", {
   if (grepl("^aarch64-apple-", R.version$platform)) {
     skip("M1")
   }

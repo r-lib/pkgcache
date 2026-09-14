@@ -119,6 +119,10 @@ built with clang.</p></li>
 <li><p><code>aarch64-apple-darwin23-mac.binary.sonoma-arm64</code>: macOS Sonoma on
 arm64. (This is the same as <code>aarch64-apple-darwin23</code>, which pkgcache
 already knows about, so <code>current_r_platform()</code> uses the shorter form.)</p></li>
+<li><p><code>aarch64-apple-darwin23-macos.binary.arm64</code>: macOS on arm64, as built
+by R-devel (4.7.0). Unlike the <code>mac.binary.*</code> types above this one is
+kept in the platform name, because its binaries live in
+<code>bin/macos/arm64/contrib/&lt;x.y&gt;</code>.</p></li>
 </ul><p>A package type on its own, without a platform triple, is not a valid
 platform name.</p></li>
 </ul><p><code>default_platforms()</code> returns the default platforms for the current R

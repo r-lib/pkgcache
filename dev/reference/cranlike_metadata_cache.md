@@ -222,25 +222,25 @@ dir.create(cache_path <- tempfile())
 cmc <- cranlike_metadata_cache$new(cache_path, bioc = FALSE)
 cmc$list()
 #> 
-#> ✔ Updated metadata database: 6.07 MB in 4 files.
+#> ✔ Updated metadata database: 6.32 MB in 4 files.
 #> 
 #> ℹ Updating metadata database
 #> ✔ Updating metadata database ... done
 #> 
-#> # A data frame: 49,465 × 32
+#> # A data frame: 50,054 × 32
 #>    package    version depends imports suggests needscompilation license
 #>    <chr>      <chr>   <chr>   <chr>   <chr>    <chr>            <chr>  
 #>  1 a11yShiny  0.1.4   R (>= … shiny … devtool… NA               EUPL-1…
-#>  2 a5R        0.5.0   R (>= … cli, r… arrow, … NA               Apache…
+#>  2 a5R        0.6.0   R (>= … cli, r… arrow, … NA               Apache…
 #>  3 aae.pop    0.2.0   R (>= … stats,… knitr, … NA               Apache…
 #>  4 AalenJoha… 1.0     NA      NA      knitr, … NA               GPL (>…
 #>  5 aamatch    0.4.5   R (>= … iTOS, … DOS2, s… NA               GPL-2  
-#>  6 AATtools   0.0.3   R (>= … magrit… NA       NA               GPL-3  
-#>  7 ABACUS     1.0.0   R (>= … ggplot… rmarkdo… NA               GPL-3  
-#>  8 abasequen… 0.1.0   NA      NA      NA       NA               GPL-3  
-#>  9 abba       0.2.0   NA      yaml, … testtha… NA               Apache…
-#> 10 abbreviate 0.1     NA      NA      testtha… NA               GPL-3  
-#> # ℹ 49,455 more rows
+#>  6 aanova     1.0.1   R (>= … RColor… knitr, … NA               MIT + …
+#>  7 AATtools   0.0.3   R (>= … magrit… NA       NA               GPL-3  
+#>  8 ABACUS     1.0.0   R (>= … ggplot… rmarkdo… NA               GPL-3  
+#>  9 abasequen… 0.1.0   NA      NA      NA       NA               GPL-3  
+#> 10 abba       0.2.0   NA      yaml, … testtha… NA               Apache…
+#> # ℹ 50,044 more rows
 #> # ℹ 25 more variables: linkingto <chr>, enhances <chr>,
 #> #   license_restricts_use <chr>, os_type <chr>, path <chr>,
 #> #   priority <chr>, license_is_foss <chr>, archs <chr>, repodir <chr>,

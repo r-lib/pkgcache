@@ -2,6 +2,10 @@
 
 ## pkgcache (development version)
 
+- pkgcache now detects the `macos.binary.arm64` package type that
+  R-devel (4.7.0) uses on macOS arm64, and looks for binaries in
+  `bin/macos/arm64/contrib/<x.y>`, where CRAN now serves them.
+
 - Binary packages from a PPM `manylinux` repository now have the correct
   platform, e.g. `aarch64-unknown-linux-gnu-manylinux-2.28`. Similarly,
   [`ppm_platforms()`](https://r-lib.github.io/pkgcache/dev/reference/ppm_platforms.md)

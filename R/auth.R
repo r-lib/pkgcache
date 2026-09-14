@@ -176,7 +176,7 @@ repo_auth_headers <- function(
   # - host URL w/o username
   # We try each with and without a keyring username
   urls <- unique(unlist(
-    parsed_url[c("repouserurl", "repourl", "hostuserurl", "hosturl")]
+    parsed_url[c("repouserurl", "repourl", "hostuserurl", "hosturl", "host")]
   ))
 
   if (use_cache) {
@@ -199,10 +199,18 @@ repo_auth_headers <- function(
     error = NULL
   )
 
-  pwd <- repo_auth_netrc(parsed_url$host, parsed_url$username)
+  pwd <- repo_auth_sso(parsed_url$repourl, parsed_url$username)
   if (!is.null(pwd)) {
     res$auth_domain <- parsed_url$host
-    res$source <- paste0(".netrc")
+    res$source <- "SSO"
+  }
+
+  if (is.null(pwd)) {
+    pwd <- repo_auth_netrc(parsed_url$host, parsed_url$username)
+    if (!is.null(pwd)) {
+      res$auth_domain <- parsed_url$host
+      res$source <- paste0(".netrc")
+    }
   }
 
   if (is.null(pwd) && !requireNamespace("keyring", quietly = TRUE)) {
@@ -460,4 +468,29 @@ repo_auth_netrc <- function(host, username) {
   }
 
   NULL
+}
+
+repo_auth_sso <- function(repourl, username) {
+  ppm_url <- Sys.getenv("PACKAGEMANAGER_ADDRESS", NA_character_)
+  if (is.na(ppm_url)) {
+    return(NULL)
+  }
+
+  if (!startsWith(repourl, ppm_url)) {
+    return(NULL)
+  }
+
+  token <- tryCatch(
+    ppm_sso_auth(repourl),
+    error = function(e) {
+      cli::cli_alert_warning(
+        "PPM SSO authentication failed for repo {.url {repourl}}: {conditionMessage(e)}"
+      )
+      cli::cli_alert_info(
+        "Try calling {.code ppm_sso_login()} directly."
+      )
+      NULL
+    }
+  )
+  token
 }

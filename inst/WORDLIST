@@ -13,11 +13,13 @@ Encodings
 FreeBSD
 MRAN
 PBC
+POSIXct
 README
 ROR
 RSPM
 RStudio
 SHA
+SSO
 Solaris
 Sonoma
 Sur
@@ -26,6 +28,7 @@ UUID
 archs
 async
 devel
+difftime
 encodings
 funder
 glibc

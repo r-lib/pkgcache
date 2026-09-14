@@ -92,7 +92,7 @@ repo_resolve <- function(spec, username = NULL) {
 
 repo_add <- function(..., .list = NULL, username = NULL) {
   repo_add_internal(..., .list = .list, username = username)
-  invisible(suppressMessages(repo_get()))
+  invisible(repo_get())
 }
 
 repo_add_internal <- function(..., .list = NULL, username = NULL) {

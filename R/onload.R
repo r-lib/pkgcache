@@ -1,6 +1,7 @@
 ## nocov start
 
 pkgenv <- new.env(parent = emptyenv())
+pkgenv$ppm_sso_cache <- new.env(parent = emptyenv())
 
 pkgenv$r_versions <- list(
   list(version = "0.60", date = "1997-12-04T08:47:58.000000Z"),

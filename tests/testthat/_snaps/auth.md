@@ -18,6 +18,7 @@
       [2] "https://ppm.internal/healthz"         
       [3] "https://username@ppm.internal"        
       [4] "https://ppm.internal"                 
+      [5] "ppm.internal"                         
       
       $auth_domain
       [1] NA
@@ -51,6 +52,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -84,6 +86,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -119,6 +122,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] NA
@@ -151,6 +155,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -180,6 +185,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -208,6 +214,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal/cran/latest"
@@ -243,6 +250,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal"
@@ -272,6 +280,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal"
@@ -300,6 +309,7 @@
       [2] "https://ppm.internal/cran/latest"         
       [3] "https://username@ppm.internal"            
       [4] "https://ppm.internal"                     
+      [5] "ppm.internal"                             
       
       $auth_domain
       [1] "https://ppm.internal"
@@ -613,6 +623,7 @@
       $auth_domains
       [1] "http://username@foo.bar.com/path" "http://foo.bar.com/path"         
       [3] "http://username@foo.bar.com"      "http://foo.bar.com"              
+      [5] "foo.bar.com"                     
       
       $auth_domain
       [1] "foo.bar.com"

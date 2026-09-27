@@ -32,6 +32,9 @@ reference:
   - ppm_r_versions
   - ppm_repo_url
   - ppm_snapshots
+  - ppm_sso_login
+  - ppm_sso_logout
+  - ppm_sso_status
   - repo_auth
   - repo_get
   - repo_status

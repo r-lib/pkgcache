@@ -117,7 +117,7 @@ entries:
 ``` r
 arch <- cran_archive_cache$new()
 arch$update()
-#> # A data frame: 179,860 × 6
+#> # A data frame: 180,560 × 6
 #>    package   version raw               mtime               url   mirror
 #>  * <chr>     <chr>   <chr>             <dttm>              <chr> <chr> 
 #>  1 a11yShiny 0.1.3   a11yShiny/a11ySh… 2026-03-30 19:20:21 http… https…
@@ -130,9 +130,9 @@ arch$update()
 #>  8 a5R       0.5.0   a5R/a5R_0.5.0.ta… 2026-07-02 03:20:34 http… https…
 #>  9 aamatch   0.3.7   aamatch/aamatch_… 2025-06-24 09:40:05 http… https…
 #> 10 aaMI      1.0-0   aaMI/aaMI_1.0-0.… 2005-06-24 15:55:17 http… https…
-#> # ℹ 179,850 more rows
+#> # ℹ 180,550 more rows
 arch$list()
-#> # A data frame: 179,860 × 6
+#> # A data frame: 180,560 × 6
 #>    package   version raw               mtime               url   mirror
 #>  * <chr>     <chr>   <chr>             <dttm>              <chr> <chr> 
 #>  1 a11yShiny 0.1.3   a11yShiny/a11ySh… 2026-03-30 19:20:21 http… https…
@@ -145,5 +145,5 @@ arch$list()
 #>  8 a5R       0.5.0   a5R/a5R_0.5.0.ta… 2026-07-02 03:20:34 http… https…
 #>  9 aamatch   0.3.7   aamatch/aamatch_… 2025-06-24 09:40:05 http… https…
 #> 10 aaMI      1.0-0   aaMI/aaMI_1.0-0.… 2005-06-24 15:55:17 http… https…
-#> # ℹ 179,850 more rows
+#> # ℹ 180,550 more rows
 ```
